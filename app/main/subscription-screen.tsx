@@ -1,7 +1,7 @@
+import { router } from 'expo-router';
 import { useEffect } from 'react';
-import { BackHandler } from 'react-native';
-import { Text } from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { BackHandler, View } from 'react-native';
+import { Appbar, Text } from 'react-native-paper';
 
 export default function SubscriptionScreen(props: any) {
 	useEffect(() => {
@@ -19,8 +19,21 @@ export default function SubscriptionScreen(props: any) {
 	}, []);
 
 	return (
-		<SafeAreaView>
-			<Text>Hello from subscription screen</Text>
-		</SafeAreaView>
+		<View>
+			<Appbar.Header>
+				<Appbar.Content
+					title="Subscriptions"
+					titleStyle={{ fontWeight: 'bold' }}
+				/>
+
+				<Appbar.Action icon="calendar" onPress={() => {}} />
+				<Appbar.Action
+					icon="cog-outline"
+					onPress={() => router.push('/setting-screen')}
+				/>
+			</Appbar.Header>
+
+			<Text>Hello from subscriptions screen</Text>
+		</View>
 	);
 }
