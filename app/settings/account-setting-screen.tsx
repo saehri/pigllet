@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { useEffect } from 'react';
 import { BackHandler, Dimensions, ScrollView, View } from 'react-native';
-import { Appbar, Avatar, Text, useTheme } from 'react-native-paper';
+import { Appbar, Avatar, Button, Text, useTheme } from 'react-native-paper';
 
 export default function TransactionScreen() {
 	const theme = useTheme();
@@ -36,11 +36,11 @@ export default function TransactionScreen() {
 				style={{
 					justifyContent: 'center',
 					alignItems: 'center',
-					gap: 32,
+					gap: 24,
 					marginTop: 64,
 				}}
 			>
-				<Avatar.Text size={64} label="SB" />
+				<Avatar.Text size={80} label="SB" />
 
 				<View>
 					<Text variant="headlineLarge" style={{ textAlign: 'center' }}>
@@ -55,9 +55,9 @@ export default function TransactionScreen() {
 				</View>
 			</View>
 
-			{/* <Button mode="contained" onPress={() => router.push('/auth-screen')}>
+			<Button mode="contained" onPress={() => router.push('/auth-screen')}>
 				Login
-			</Button> */}
+			</Button>
 		</ScrollView>
 	);
 }

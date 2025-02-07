@@ -1,12 +1,15 @@
 import { useState } from 'react';
+import { useColorScheme } from 'react-native';
 import { BottomNavigation } from 'react-native-paper';
 
 import HomeScreen from './main/home-screen';
-import SettingScreen from './main/setting-screen';
+import WalletScreen from './main/wallet-screen';
 import TransactionScreen from './main/transaction-screen';
 import SubscriptionScreen from './main/subscription-screen';
 
 export default function MainScreen() {
+	const colorScheme = useColorScheme();
+
 	const [index, setIndex] = useState(0);
 	const [routes] = useState([
 		{
@@ -22,10 +25,10 @@ export default function MainScreen() {
 			focusedIcon: 'autorenew',
 		},
 		{
-			key: 'settings',
-			title: 'Settings',
-			focusedIcon: 'cog',
-			unfocusedIcon: 'cog-outline',
+			key: 'wallets',
+			title: 'Wallets',
+			focusedIcon: 'wallet',
+			unfocusedIcon: 'wallet-outline',
 		},
 	]);
 
@@ -33,7 +36,7 @@ export default function MainScreen() {
 		home: HomeScreen,
 		transactions: TransactionScreen,
 		subscriptions: SubscriptionScreen,
-		settings: SettingScreen,
+		wallets: WalletScreen,
 	});
 
 	return (
@@ -44,6 +47,9 @@ export default function MainScreen() {
 			sceneAnimationEnabled
 			sceneAnimationType="shifting"
 			labelMaxFontSizeMultiplier={3}
+			barStyle={{
+				backgroundColor: colorScheme === 'dark' ? '#111' : '#fff',
+			}}
 		/>
 	);
 }

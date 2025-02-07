@@ -1,15 +1,19 @@
+import { router } from 'expo-router';
 import { useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Text, Avatar } from 'react-native-paper';
-import { Alert, BackHandler, ScrollView, StyleSheet, View } from 'react-native';
+import { Text, Avatar, useTheme } from 'react-native-paper';
+import { BackHandler, ScrollView, StyleSheet, View } from 'react-native';
 
 import MainSetting from '@/components/profile/main-settings';
 import SecondarySetting from '@/components/profile/secondary-setting';
 
-export default function ProfileScreen(props: any) {
+export default function ProfileScreen() {
+	const theme = useTheme();
+
 	useEffect(() => {
 		const backAction = () => {
-			props.jumpTo('home');
+			router.back();
+
 			return true;
 		};
 
@@ -22,7 +26,7 @@ export default function ProfileScreen(props: any) {
 	}, []);
 
 	return (
-		<SafeAreaView>
+		<SafeAreaView style={{ backgroundColor: theme.colors.background }}>
 			<ScrollView
 				style={style.mainContainer}
 				showsVerticalScrollIndicator={false}
