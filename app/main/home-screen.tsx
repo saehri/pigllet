@@ -6,7 +6,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import TodayTransaction from '@/components/home/today-transactions';
 import BudgetStatsWidget from '@/components/home/budget-stats-widget';
 import AccountOverviewWidget from '@/components/home/account-overview-widget';
-import TransactionHistory from '@/components/home/transaction-history';
 
 export default function TransactionScreen() {
 	return (
@@ -28,7 +27,6 @@ export default function TransactionScreen() {
 				<AccountOverviewWidget />
 				<BudgetStatsWidget />
 				<TodayTransaction />
-				<TransactionHistory />
 			</ScrollView>
 		</SafeAreaView>
 	);
