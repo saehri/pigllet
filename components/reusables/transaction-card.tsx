@@ -1,3 +1,4 @@
+import React from 'react';
 import { View } from 'react-native';
 import { Icon, Text, useTheme } from 'react-native-paper';
 
@@ -7,6 +8,16 @@ interface TransactionCard {
 
 export default function TransactionCard(props: TransactionCard) {
 	const theme = useTheme();
+	const iconName = {
+		expense: 'food',
+		income: 'arrow-bottom-left-thin',
+		transfer: 'bank-transfer',
+	};
+	const cardLabel = {
+		expense: 'Mie ayam',
+		income: 'Bank to Cash',
+		transfer: 'Bank to Cash',
+	};
 
 	return (
 		<View
@@ -28,7 +39,11 @@ export default function TransactionCard(props: TransactionCard) {
 					justifyContent: 'center',
 				}}
 			>
-				<Icon size={24} source="bank-transfer" color={theme.colors.surface} />
+				<Icon
+					size={24}
+					source={iconName[props.type]}
+					color={theme.colors.surface}
+				/>
 			</View>
 
 			<View style={{ flex: 1 }}>
@@ -40,7 +55,24 @@ export default function TransactionCard(props: TransactionCard) {
 						gap: 16,
 					}}
 				>
-					<Text variant="bodyLarge">Mie ayam</Text>
+					<View
+						style={{
+							flexDirection: 'row',
+							alignItems: 'center',
+							gap: 2,
+							flex: 1,
+						}}
+					>
+						{props.type !== 'expense' ? (
+							<React.Fragment>
+								<Text variant="bodyLarge">Bank</Text>
+								<Icon source="arrow-right" size={16} />
+								<Text variant="bodyLarge">Cash</Text>
+							</React.Fragment>
+						) : (
+							<Text variant="bodyLarge">{cardLabel[props.type]}</Text>
+						)}
+					</View>
 					<Text variant="bodyLarge">Rp 15.000</Text>
 				</View>
 
@@ -52,7 +84,9 @@ export default function TransactionCard(props: TransactionCard) {
 						gap: 64,
 					}}
 				>
-					<Text variant="bodySmall">Food</Text>
+					<Text variant="bodySmall" style={{ textTransform: 'capitalize' }}>
+						Transaction category
+					</Text>
 					<Text variant="labelSmall" style={{ opacity: 0.8 }}>
 						Feb 8 2025
 					</Text>

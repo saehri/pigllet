@@ -1,10 +1,14 @@
+import { useState } from 'react';
+
 import { View } from 'react-native';
 import { Text } from 'react-native-paper';
 import TransactionCard from '../reusables/transaction-card';
 
 export default function TodayTransaction() {
+	const [todayDate] = useState(new Date());
+
 	return (
-		<View style={{ marginTop: 24, gap: 16 }}>
+		<View style={{ marginTop: 36, gap: 16 }}>
 			<View
 				style={{
 					flexDirection: 'row',
@@ -14,10 +18,12 @@ export default function TodayTransaction() {
 				}}
 			>
 				<Text variant="titleLarge" style={{ fontWeight: 'bold' }}>
-					Today Transactions
+					Today transactions
 				</Text>
 				<Text variant="titleSmall" style={{ opacity: 0.8 }}>
-					8 Feb 2025
+					{todayDate.toLocaleDateString('id-ID', {
+						dateStyle: 'medium',
+					})}
 				</Text>
 			</View>
 

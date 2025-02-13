@@ -1,10 +1,10 @@
 import { View } from 'react-native';
-import { Icon, Text } from 'react-native-paper';
+import { Button, Icon, Text } from 'react-native-paper';
 import TransactionCard from '../reusables/transaction-card';
 
 export default function TransactionHistory() {
 	return (
-		<View style={{ marginTop: 24, gap: 16 }}>
+		<View style={{ marginTop: 24, gap: 12 }}>
 			<View
 				style={{
 					flexDirection: 'row',
@@ -14,13 +14,19 @@ export default function TransactionHistory() {
 				}}
 			>
 				<Text variant="titleLarge" style={{ fontWeight: 'bold' }}>
-					Transaction history
+					Transactions history
 				</Text>
 
-				<Text variant="titleSmall" style={{ opacity: 0.8 }}>
+				<Button
+					mode="text"
+					icon="chevron-right"
+					contentStyle={{
+						flexDirection: 'row-reverse',
+					}}
+					compact
+				>
 					See all
-					<Icon size={16} source="chevron-right" />
-				</Text>
+				</Button>
 			</View>
 
 			<View>
