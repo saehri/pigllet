@@ -7,11 +7,6 @@ export default function TransactionScreen() {
 		<View>
 			<Appbar.Header>
 				<Appbar.Content title="Wallet" titleStyle={{ fontWeight: 'bold' }} />
-
-				<Appbar.Action
-					icon="cog-outline"
-					onPress={() => router.push('/setting-screen')}
-				/>
 			</Appbar.Header>
 
 			<Text>Hello from home wallet</Text>

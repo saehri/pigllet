@@ -29,7 +29,11 @@ export default function TodayTransaction() {
 
 			<View>
 				<TransactionCard type="expense" />
+				<TransactionCard type="expense" />
+				<TransactionCard type="expense" />
+				<TransactionCard type="expense" />
 				<TransactionCard type="income" />
+				<TransactionCard type="transfer" />
 				<TransactionCard type="transfer" />
 			</View>
 		</View>

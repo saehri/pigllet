@@ -1,14 +1,13 @@
 import { useState } from 'react';
-import { useColorScheme } from 'react-native';
-import { BottomNavigation } from 'react-native-paper';
+import { BottomNavigation, useTheme } from 'react-native-paper';
 
-import HomeScreen from './main/home-screen';
-import WalletScreen from './main/wallet-screen';
-import TransactionScreen from './main/transaction-screen';
-import SubscriptionScreen from './main/subscription-screen';
+import HomeScreen from '@/src/components/screen/home';
+import TransactionScreen from '@/src/components/screen/transaction';
+import SubscriptionScreen from '@/src/components/screen/subscription';
+import WalletScreen from '@/src/components/screen/wallet';
 
-export default function MainScreen() {
-	const colorScheme = useColorScheme();
+export default function Layout() {
+	const theme = useTheme();
 
 	const [index, setIndex] = useState(0);
 	const [routes] = useState([
@@ -47,9 +46,8 @@ export default function MainScreen() {
 			sceneAnimationEnabled
 			sceneAnimationType="shifting"
 			labelMaxFontSizeMultiplier={3}
-			barStyle={{
-				backgroundColor: colorScheme === 'dark' ? '#111' : '#fff',
-			}}
+			compact
+			barStyle={{ backgroundColor: theme.colors.background }}
 		/>
 	);
 }
