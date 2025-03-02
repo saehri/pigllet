@@ -1,54 +1,37 @@
-import { View } from 'react-native';
+import { PropsWithChildren } from 'react';
+import { StyleSheet, View } from 'react-native';
 import {
-	Icon,
 	Surface,
-	SurfaceProps,
 	Text,
 	useTheme,
 } from 'react-native-paper';
 
-interface WidgetWrapper extends SurfaceProps {
-	icon: string;
+type Props = PropsWithChildren<{
 	title: string;
 	customStyle?: any;
-}
+}>
 
-export default function WidgetWrapper(props: WidgetWrapper) {
+export default function WidgetWrapper({ title, customStyle, children }: Props) {
 	const theme = useTheme();
 
 	return (
-		<Surface
-			mode="flat"
-			elevation={2}
-			style={{
-				borderRadius: 16,
-				padding: 16,
-				...props.customStyle,
-			}}
+		<View
+			style={{ ...customStyle }}
 		>
-			<View style={{ flexDirection: 'row', gap: 10, marginBottom: 24 }}>
-				<View
-					style={{
-						width: 26,
-						height: 26,
-						borderRadius: 100,
-						backgroundColor: theme.colors.secondary,
-						alignItems: 'center',
-						justifyContent: 'center',
-					}}
-				>
-					<Icon source={props.icon} size={20} color={theme.colors.background} />
-				</View>
+			<Text variant="titleMedium" style={[styles.title, { color: theme.colors.primary }]}
+			>
+				{title}
+			</Text>
 
-				<Text
-					variant="bodyLarge"
-					style={{ fontWeight: 'bold', color: theme.colors.primary }}
-				>
-					{props.title}
-				</Text>
-			</View>
-
-			{props.children}
-		</Surface>
+			<Surface elevation={2} mode='flat' style={{ padding: 10, borderRadius: 12 }}>
+				{children}
+			</Surface>
+		</View>
 	);
 }
+
+const styles = StyleSheet.create({
+	title: {
+		fontFamily: 'Inter-Black', marginBottom: 8
+	}
+})

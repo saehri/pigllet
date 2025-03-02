@@ -1,26 +1,22 @@
 import { useState } from 'react';
-
-import { View } from 'react-native';
 import { Text } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+
 import TransactionCard from '../reusables/transaction-card';
 
 export default function TodayTransaction() {
 	const [todayDate] = useState(new Date());
 
 	return (
-		<View style={{ marginTop: 36, gap: 16 }}>
+		<View style={styles.container}>
 			<View
-				style={{
-					flexDirection: 'row',
-					justifyContent: 'space-between',
-					alignItems: 'center',
-					paddingHorizontal: 16,
-				}}
+				style={styles.headerContainer}
 			>
-				<Text variant="titleLarge" style={{ fontWeight: 'bold' }}>
+				<Text variant="titleLarge" style={styles.title}>
 					Today transactions
 				</Text>
-				<Text variant="titleSmall" style={{ opacity: 0.8 }}>
+
+				<Text variant="titleSmall" style={styles.subtitle}>
 					{todayDate.toLocaleDateString('id-ID', {
 						dateStyle: 'medium',
 					})}
@@ -39,3 +35,23 @@ export default function TodayTransaction() {
 		</View>
 	);
 }
+
+
+const styles = StyleSheet.create({
+	container: {
+		marginTop: 28, gap: 10
+	},
+	headerContainer: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'center',
+		paddingHorizontal: 16,
+	},
+	title: {
+		fontFamily: 'Inter-Black'
+	},
+	subtitle: {
+		fontFamily: 'Inter-Regular',
+		opacity: 0.8
+	}
+})

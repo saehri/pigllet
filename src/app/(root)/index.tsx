@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BottomNavigation, useTheme } from 'react-native-paper';
+import { BottomNavigation, Text, useTheme } from 'react-native-paper';
 
 import HomeScreen from '@/src/components/screen/home';
 import TransactionScreen from '@/src/components/screen/transaction';
@@ -24,8 +24,8 @@ export default function Layout() {
 			focusedIcon: 'autorenew',
 		},
 		{
-			key: 'wallets',
-			title: 'Wallets',
+			key: 'budgets',
+			title: 'Budgets',
 			focusedIcon: 'wallet',
 			unfocusedIcon: 'wallet-outline',
 		},
@@ -35,7 +35,7 @@ export default function Layout() {
 		home: HomeScreen,
 		transactions: TransactionScreen,
 		subscriptions: SubscriptionScreen,
-		wallets: WalletScreen,
+		budgets: WalletScreen,
 	});
 
 	return (
@@ -45,9 +45,9 @@ export default function Layout() {
 			renderScene={renderScene}
 			sceneAnimationEnabled
 			sceneAnimationType="shifting"
-			labelMaxFontSizeMultiplier={3}
-			compact
+			activeColor={theme.colors.primary}
 			barStyle={{ backgroundColor: theme.colors.background }}
+			renderLabel={(props) => <Text style={{ fontFamily: 'Inter-Regular', textAlign: 'center', fontSize: 14, marginBottom: -4 }}>{props.route.title}</Text>}
 		/>
 	);
 }

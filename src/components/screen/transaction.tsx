@@ -74,46 +74,33 @@ export default function TransactionScreen(props: any) {
 	};
 
 	return (
-		<SafeAreaView>
-			<ScrollView
-				stickyHeaderIndices={[0]}
-				showsVerticalScrollIndicator={false}
-			>
-				<Appbar>
-					<Appbar.Content
-						title="Transactions"
-						titleStyle={{ fontWeight: 'bold' }}
-					/>
+		<ScrollView showsVerticalScrollIndicator={false}>
 
-					<Appbar.Action icon="plus" onPress={() => {}} />
-					<Appbar.Action icon="calendar" onPress={() => {}} />
-				</Appbar>
+			<SegmentedButtons
+				value={value}
+				onValueChange={setValue}
+				style={{
+					paddingHorizontal: 16,
+					backgroundColor: theme.colors.background,
+				}}
+				density='small'
+				buttons={[
+					{
+						icon: 'arrow-top-right-thin',
+						value: 'expense',
+						label: 'Expense',
+					},
+					{
+						icon: 'arrow-bottom-left-thin',
+						value: 'income',
+						label: 'Income',
+					},
+					{ icon: 'bank-transfer', value: 'transfer', label: 'Transfer' },
+				]}
+			/>
 
-				<SegmentedButtons
-					value={value}
-					onValueChange={setValue}
-					style={{
-						paddingHorizontal: 16,
-						backgroundColor: theme.colors.background,
-					}}
-					buttons={[
-						{
-							icon: 'arrow-top-right-thin',
-							value: 'expense',
-							label: 'Expense',
-						},
-						{
-							icon: 'arrow-bottom-left-thin',
-							value: 'income',
-							label: 'Income',
-						},
-						{ icon: 'bank-transfer', value: 'transfer', label: 'Transfer' },
-					]}
-				/>
-
-				<SectionRender data={dataDummy[value]} />
-			</ScrollView>
-		</SafeAreaView>
+			<SectionRender data={dataDummy[value]} />
+		</ScrollView>
 	);
 }
 
@@ -125,8 +112,8 @@ function SectionRender(props: {
 			{props.data.map((data, index) => (
 				<View key={index}>
 					<Text
-						variant="labelMedium"
-						style={{ marginHorizontal: 16, opacity: 0.8 }}
+						variant="titleMedium"
+						style={{ marginHorizontal: 16, fontFamily: 'Inter-Black' }}
 					>
 						{data.title}
 					</Text>
