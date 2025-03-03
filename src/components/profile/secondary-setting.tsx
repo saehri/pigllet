@@ -1,4 +1,5 @@
 import { List } from 'react-native-paper';
+import { BadgeInfo, FlaskRound, Heart, Mail, Star, User } from 'lucide-react-native'
 
 export default function SecondarySetting() {
 	return (
@@ -9,11 +10,7 @@ export default function SecondarySetting() {
 				title="Premium"
 				description="Get the premium version of the app in Play Store"
 				left={(props) => (
-					<List.Icon
-						{...props}
-						style={{ ...props.style, alignSelf: 'center' }}
-						icon="star-outline"
-					/>
+					<Star style={{ ...props.style, alignSelf: 'center' }} size={24} strokeWidth={1.5} color={props.color} />
 				)}
 			/>
 
@@ -21,10 +18,10 @@ export default function SecondarySetting() {
 				title="Write a review"
 				description="if you are enjoying Pigllet please leave a review on the Play Store"
 				left={(props) => (
-					<List.Icon
+					<Heart
 						{...props}
 						style={{ ...props.style, alignSelf: 'center' }}
-						icon="heart-outline"
+						size={24} strokeWidth={1.5} color={props.color}
 					/>
 				)}
 			/>
@@ -32,24 +29,24 @@ export default function SecondarySetting() {
 			<List.Item
 				title="Contact us"
 				description="If you need help or have some advice"
-				left={(props) => <List.Icon {...props} icon="email-outline" />}
+				left={(props) => <Mail {...props} size={24} strokeWidth={1.5} color={props.color} />}
 			/>
 
 			<List.Item
 				title="Become a tester"
 				description="Access to early builds to get new feature faster"
 				left={(props) => (
-					<List.Icon
+					<FlaskRound
 						{...props}
 						style={{ ...props.style, alignSelf: 'center' }}
-						icon="test-tube"
+						size={24} strokeWidth={1.5} color={props.color}
 					/>
 				)}
 			/>
 
 			<List.Item
 				title="About"
-				left={(props) => <List.Icon {...props} icon="information-outline" />}
+				left={(props) => <BadgeInfo {...props} size={24} strokeWidth={1.5} color={props.color} />}
 			/>
 		</List.Section>
 	);
