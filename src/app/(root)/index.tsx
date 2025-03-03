@@ -1,14 +1,13 @@
 import { useState } from 'react';
-import { useColorScheme } from 'react-native';
-import { BottomNavigation } from 'react-native-paper';
+import { BottomNavigation, Text, useTheme } from 'react-native-paper';
 
-import HomeScreen from './main/home-screen';
-import WalletScreen from './main/wallet-screen';
-import TransactionScreen from './main/transaction-screen';
-import SubscriptionScreen from './main/subscription-screen';
+import HomeScreen from '@/src/components/screen/home';
+import TransactionScreen from '@/src/components/screen/transaction';
+import SubscriptionScreen from '@/src/components/screen/subscription';
+import WalletScreen from '@/src/components/screen/wallet';
 
-export default function MainScreen() {
-	const colorScheme = useColorScheme();
+export default function Layout() {
+	const theme = useTheme();
 
 	const [index, setIndex] = useState(0);
 	const [routes] = useState([
@@ -25,8 +24,8 @@ export default function MainScreen() {
 			focusedIcon: 'autorenew',
 		},
 		{
-			key: 'wallets',
-			title: 'Wallets',
+			key: 'budgets',
+			title: 'Budgets',
 			focusedIcon: 'wallet',
 			unfocusedIcon: 'wallet-outline',
 		},
@@ -36,7 +35,7 @@ export default function MainScreen() {
 		home: HomeScreen,
 		transactions: TransactionScreen,
 		subscriptions: SubscriptionScreen,
-		wallets: WalletScreen,
+		budgets: WalletScreen,
 	});
 
 	return (
@@ -46,10 +45,9 @@ export default function MainScreen() {
 			renderScene={renderScene}
 			sceneAnimationEnabled
 			sceneAnimationType="shifting"
-			labelMaxFontSizeMultiplier={3}
-			barStyle={{
-				backgroundColor: colorScheme === 'dark' ? '#111' : '#fff',
-			}}
+			activeColor={theme.colors.primary}
+			barStyle={{ backgroundColor: theme.colors.background }}
+			renderLabel={(props) => <Text style={{ fontFamily: 'Inter-Regular', textAlign: 'center', fontSize: 14, marginBottom: -4 }}>{props.route.title}</Text>}
 		/>
 	);
 }

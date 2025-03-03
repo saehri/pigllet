@@ -1,4 +1,3 @@
-import { StyleSheet } from 'react-native';
 import { List } from 'react-native-paper';
 
 export default function SecondarySetting() {
@@ -16,8 +15,6 @@ export default function SecondarySetting() {
 						icon="star-outline"
 					/>
 				)}
-				titleStyle={style.listTitle}
-				style={style.listItemStyle}
 			/>
 
 			<List.Item
@@ -30,16 +27,12 @@ export default function SecondarySetting() {
 						icon="heart-outline"
 					/>
 				)}
-				titleStyle={style.listTitle}
-				style={style.listItemStyle}
 			/>
 
 			<List.Item
 				title="Contact us"
 				description="If you need help or have some advice"
 				left={(props) => <List.Icon {...props} icon="email-outline" />}
-				titleStyle={style.listTitle}
-				style={style.listItemStyle}
 			/>
 
 			<List.Item
@@ -52,25 +45,12 @@ export default function SecondarySetting() {
 						icon="test-tube"
 					/>
 				)}
-				titleStyle={style.listTitle}
-				style={style.listItemStyle}
 			/>
 
 			<List.Item
 				title="About"
 				left={(props) => <List.Icon {...props} icon="information-outline" />}
-				titleStyle={style.listTitle}
-				style={style.listItemStyle}
 			/>
 		</List.Section>
 	);
 }
-
-const style = StyleSheet.create({
-	listTitle: {
-		fontSize: 20,
-	},
-	listItemStyle: {
-		paddingVertical: 10,
-	},
-});
