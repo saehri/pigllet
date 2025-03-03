@@ -1,6 +1,6 @@
 import { View, StyleSheet } from 'react-native';
 import { Icon, Text, useTheme } from 'react-native-paper';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons'
+import { ArrowLeftRight, Pizza, MoveRight } from 'lucide-react-native'
 
 interface TransactionCard {
 	type: 'expense' | 'income' | 'transfer';
@@ -8,11 +8,7 @@ interface TransactionCard {
 
 export default function TransactionCard(props: TransactionCard) {
 	const theme = useTheme();
-	const iconName = {
-		expense: 'food',
-		income: 'arrow-bottom-left-thin',
-		transfer: 'bank-transfer',
-	};
+
 	const cardLabel = {
 		expense: 'Mie ayam',
 		income: 'Bank to Cash',
@@ -22,7 +18,13 @@ export default function TransactionCard(props: TransactionCard) {
 	return (
 		<View style={styles.container}>
 			<View style={styles.iconContainer}>
-				<MaterialIcons name="fastfood" size={20} color={theme.colors.onBackground} />
+				{props.type === 'expense' ? (
+					<Pizza color={theme.colors.onBackground} size={20} strokeWidth={1.5} />
+				) : props.type === 'income' ? (
+					<ArrowLeftRight color={theme.colors.onBackground} size={20} strokeWidth={1.5} />
+				) : (
+					<ArrowLeftRight color={theme.colors.onBackground} size={20} strokeWidth={1.5} />
+				)}
 			</View>
 
 			<View style={styles.contentContainer}>
@@ -33,7 +35,7 @@ export default function TransactionCard(props: TransactionCard) {
 								<Text variant="bodyLarge" style={styles.bodyLarge}>
 									Bank
 								</Text>
-								<Icon source="arrow-right" size={16} />
+								<MoveRight color={theme.colors.onBackground} size={20} strokeWidth={1.5} />
 								<Text variant="bodyLarge" style={styles.bodyLarge}>
 									Cash
 								</Text>

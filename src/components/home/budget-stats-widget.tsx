@@ -14,12 +14,11 @@ export default function BudgetStatsWidget() {
 
 				<Button
 					mode="contained"
-					icon="plus"
 					contentStyle={{ flexDirection: 'row-reverse' }}
-					labelStyle={{ fontFamily: 'Inter-SemiBold', fontSize: 16 }}
+					labelStyle={{ fontFamily: 'Inter-Regular', fontSize: 16 }}
 					style={{ borderRadius: 10 }}
 				>
-					Set one now
+					Add budget
 				</Button>
 			</View>
 		</WidgetWrapper>

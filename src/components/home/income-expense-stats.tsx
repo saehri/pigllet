@@ -1,5 +1,6 @@
 import { StyleSheet, View } from "react-native";
-import { Icon, Surface, Text, useTheme } from "react-native-paper";
+import { Surface, Text, useTheme } from "react-native-paper";
+import { MoveUpRight } from "lucide-react-native";
 
 interface Props {
 	label: 'Income' | 'Expense'
@@ -17,10 +18,9 @@ export default function IncomeExpenseStats({ label }: Props) {
 			<View
 				style={styles.headerContainer}
 			>
-				<Icon
+				<MoveUpRight
 					size={14}
 					color={theme.colors.primary}
-					source="arrow-top-right-thin"
 				/>
 
 				<Text style={[styles.headerText, { color: theme.colors.primary, }]}>{label}</Text>

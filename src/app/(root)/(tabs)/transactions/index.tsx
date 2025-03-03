@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScrollView, View } from 'react-native';
-import { Appbar, SegmentedButtons, Text, useTheme } from 'react-native-paper';
+import { Text, useTheme } from 'react-native-paper';
 
 import TransactionCard from '@/src/components/reusables/transaction-card';
 
@@ -74,32 +73,8 @@ export default function TransactionScreen(props: any) {
 	};
 
 	return (
-		<ScrollView showsVerticalScrollIndicator={false}>
-
-			<SegmentedButtons
-				value={value}
-				onValueChange={setValue}
-				style={{
-					paddingHorizontal: 16,
-					backgroundColor: theme.colors.background,
-				}}
-				density='small'
-				buttons={[
-					{
-						icon: 'arrow-top-right-thin',
-						value: 'expense',
-						label: 'Expense',
-					},
-					{
-						icon: 'arrow-bottom-left-thin',
-						value: 'income',
-						label: 'Income',
-					},
-					{ icon: 'bank-transfer', value: 'transfer', label: 'Transfer' },
-				]}
-			/>
-
-			<SectionRender data={dataDummy[value]} />
+		<ScrollView showsVerticalScrollIndicator={false} style={{ backgroundColor: theme.colors.background }}>
+			<SectionRender data={dataDummy['expense']} />
 		</ScrollView>
 	);
 }
@@ -108,7 +83,7 @@ function SectionRender(props: {
 	data: { title: string; data: { type: any }[] }[];
 }) {
 	return (
-		<View style={{ gap: 16, marginTop: 32 }}>
+		<View style={{ gap: 16, marginTop: 75 }}>
 			{props.data.map((data, index) => (
 				<View key={index}>
 					<Text

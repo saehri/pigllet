@@ -78,7 +78,7 @@ const DARK_COLOR_SCHEME = {
 		"onError": "rgb(105, 0, 5)",
 		"errorContainer": "rgb(147, 0, 10)",
 		"onErrorContainer": "rgb(255, 180, 171)",
-		"background": "rgb(32, 26, 26)",
+		"background": "rgb(17, 17, 17)",
 		"onBackground": "rgb(236, 224, 223)",
 		"surface": "rgb(32, 26, 26)",
 		"onSurface": "rgb(236, 224, 223)",
