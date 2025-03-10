@@ -3,6 +3,8 @@ import { StyleSheet, View } from 'react-native'
 import { Button, Text, useTheme } from 'react-native-paper'
 import { CalendarSync, House, Plus, Receipt, ScrollText, Settings } from 'lucide-react-native'
 
+import AddBudgetModal from '@/src/components/modals/add-budget-modal'
+
 export default function Layout() {
     const theme = useTheme()
     const router = useRouter()
@@ -94,9 +96,7 @@ export default function Layout() {
                 headerTitle: (props) => <Text variant='titleLarge' style={{ fontFamily: 'Inter-Black' }}>Budgets</Text>,
                 headerRight: (props) => (
                     <View style={{ backgroundColor: theme.colors.background, flexDirection: 'row', alignItems: 'center' }}>
-                        <Button>
-                            <Plus strokeWidth={1.5} color={theme.colors.onBackground} size={24} />
-                        </Button>
+                        <AddBudgetModal />
                         <Button onPress={() => router.push('/(root)/settings')}>
                             <Settings strokeWidth={1.5} color={theme.colors.onBackground} size={24} />
                         </Button>

@@ -1,6 +1,6 @@
 import { View, StyleSheet } from 'react-native';
 import { Icon, Text, useTheme } from 'react-native-paper';
-import { ArrowLeftRight, Pizza, MoveRight } from 'lucide-react-native'
+import { ArrowLeftRight, Pizza, MoveRight } from 'lucide-react-native';
 
 interface TransactionCard {
 	type: 'expense' | 'income' | 'transfer';
@@ -19,11 +19,23 @@ export default function TransactionCard(props: TransactionCard) {
 		<View style={styles.container}>
 			<View style={styles.iconContainer}>
 				{props.type === 'expense' ? (
-					<Pizza color={theme.colors.onBackground} size={20} strokeWidth={1.5} />
+					<Pizza
+						color={theme.colors.onBackground}
+						size={20}
+						strokeWidth={1.5}
+					/>
 				) : props.type === 'income' ? (
-					<ArrowLeftRight color={theme.colors.onBackground} size={20} strokeWidth={1.5} />
+					<ArrowLeftRight
+						color={theme.colors.onBackground}
+						size={20}
+						strokeWidth={1.5}
+					/>
 				) : (
-					<ArrowLeftRight color={theme.colors.onBackground} size={20} strokeWidth={1.5} />
+					<ArrowLeftRight
+						color={theme.colors.onBackground}
+						size={20}
+						strokeWidth={1.5}
+					/>
 				)}
 			</View>
 
@@ -35,7 +47,11 @@ export default function TransactionCard(props: TransactionCard) {
 								<Text variant="bodyLarge" style={styles.bodyLarge}>
 									Bank
 								</Text>
-								<MoveRight color={theme.colors.onBackground} size={20} strokeWidth={1.5} />
+								<MoveRight
+									color={theme.colors.onBackground}
+									size={20}
+									strokeWidth={1.5}
+								/>
 								<Text variant="bodyLarge" style={styles.bodyLarge}>
 									Cash
 								</Text>
@@ -74,7 +90,7 @@ const styles = StyleSheet.create({
 		borderRadius: 100,
 		alignItems: 'center',
 		justifyContent: 'center',
-		backgroundColor: 'rgba(110, 110, 110, 0.1)'
+		backgroundColor: 'rgba(153, 153, 153, 0.3)',
 	},
 	contentContainer: {
 		flex: 1,
