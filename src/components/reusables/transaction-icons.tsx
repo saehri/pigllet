@@ -30,45 +30,14 @@ import {
 	type LucideIcon,
 } from 'lucide-react-native';
 
-type IconCatalog = {
-	other: LucideIcon;
-	advertising: LucideIcon;
-	airlines: LucideIcon;
-	'alcohol-and-bars': LucideIcon;
-	'books-and-newspaper': LucideIcon;
-	'car-rental': LucideIcon;
-	charity: LucideIcon;
-	clothing: LucideIcon;
-	conferences: LucideIcon;
-	education: LucideIcon;
-	entertainment: LucideIcon;
-	'facilities-expense': LucideIcon;
-	'financial-institution-and-fees': LucideIcon;
-	'fuel-and-gas': LucideIcon;
-	'government-service': LucideIcon;
-	grocery: LucideIcon;
-	'food-delivery': LucideIcon;
-	transportation: LucideIcon;
-	insurance: LucideIcon;
-	medical: LucideIcon;
-	internet: LucideIcon;
-	parking: LucideIcon;
-	'office-supplies': LucideIcon;
-	restaurant: LucideIcon;
-	software: LucideIcon;
-	taxes: LucideIcon;
-	utilities: LucideIcon;
-	'vehicle-expenses': LucideIcon;
-};
-
 type Props = {
-	icon: keyof IconCatalog;
+	icon: keyof ExpenseCategoryIconCatalog;
 };
 
 export default function TransactionIcons({ icon }: Props) {
 	const theme = useTheme();
 
-	const icons: Record<keyof IconCatalog, JSX.Element> = {
+	const icons: Record<keyof ExpenseCategoryIconCatalog, JSX.Element> = {
 		other: (
 			<CircleDot
 				size={20}

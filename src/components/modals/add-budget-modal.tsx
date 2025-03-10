@@ -1,23 +1,29 @@
-import { expenseCategories } from '@/constants/expense-category';
-import { Cross, Plus, X } from 'lucide-react-native';
-import { useState } from 'react';
-import { Dimensions, View, StyleSheet, ScrollView } from 'react-native';
+import { Alert, Dimensions, StyleSheet, View } from 'react-native';
 import {
 	Button,
 	Modal,
 	Portal,
-	Searchbar,
 	Text,
+	TextInput,
 	useTheme,
 } from 'react-native-paper';
-import TransactionIcons from '../reusables/transaction-icons';
+import { useCallback, useState } from 'react';
 
-export default function AddBudgetModal() {
+import { Plus, X } from 'lucide-react-native';
+import SelectInput from '../reusables/SelectInput';
+
+import { expenseCategories } from '@/constants/expense-category';
+const selectableExpenseCategories = expenseCategories.map((cat) => ({
+	value: cat.category,
+	label: cat.category,
+}));
+
+export default function BudgetFormModal() {
 	const theme = useTheme();
 	const [visible, setVisible] = useState<boolean>(false);
 
-	const showModal = () => setVisible(true);
-	const hideModal = () => setVisible(false);
+	const showModal = useCallback(() => setVisible(true), []);
+	const hideModal = useCallback(() => setVisible(false), []);
 
 	return (
 		<>
@@ -41,12 +47,13 @@ export default function AddBudgetModal() {
 							<Text variant="titleMedium" style={styles.title}>
 								Add budget
 							</Text>
+
 							<Button onPress={hideModal} compact>
 								<X size={20} color={theme.colors.onBackground} />
 							</Button>
 						</View>
 
-						<ModalContent />
+						<Form />
 					</View>
 				</Modal>
 			</Portal>
@@ -58,65 +65,86 @@ export default function AddBudgetModal() {
 	);
 }
 
-function ModalContent() {
-	const [searchQuery, setSearchQuery] = useState<string>('');
-	const itemToRender = expenseCategories.filter((item) =>
-		item.icon.includes(searchQuery.toLocaleLowerCase())
-	);
+type FormProps = {
+	category: keyof ExpenseCategoryIconCatalog;
+};
+
+function Form() {
+	const [selectedPeriod, setSelectedPeriod] = useState('other');
+	const [selectedCategory, setSelectedCategory] = useState('other');
+	const [amount, setAmount] = useState('');
+	const [note, selectedNote] = useState('');
+
+	function handleSubmit() {
+		Alert.alert(
+			'Budget created successfully!',
+			'You now can see your budget on the homescreen.'
+		);
+		console.log({ selectedPeriod, selectedCategory, amount, note });
+	}
 
 	return (
-		<ScrollView
-			showsVerticalScrollIndicator={false}
-			style={styles.searchContainer}
-		>
-			<View style={{ paddingHorizontal: 16, marginBottom: 12 }}>
-				<Searchbar
-					mode="bar"
-					placeholder="Search"
-					value={searchQuery}
-					onChangeText={setSearchQuery}
-					style={{
-						height: 45,
-						padding: 0,
-					}}
-					inputStyle={{
-						height: 40,
-						padding: 0,
-						margin: 0,
-						bottom: 6,
-					}}
+		<View style={{ padding: 16, gap: 12 }}>
+			<View style={{ flexDirection: 'row', gap: 16 }}>
+				<View style={{ flex: 1, gap: 12 }}>
+					<Text variant="bodyLarge" style={{ fontFamily: 'Inter-Regular' }}>
+						Period
+					</Text>
+					<SelectInput
+						data={[
+							{ label: 'Monthly', value: 'monthly' },
+							{ label: 'Weekly', value: 'weekly' },
+							{ label: 'Other', value: 'other' },
+						]}
+						placeholder="Other"
+						value={selectedPeriod}
+						handleSelect={setSelectedPeriod}
+						closeAfterSelect
+					/>
+				</View>
+
+				<View style={{ flex: 1, gap: 12 }}>
+					<Text variant="bodyLarge" style={{ fontFamily: 'Inter-Regular' }}>
+						Amount
+					</Text>
+					<TextInput
+						keyboardType="number-pad"
+						contentStyle={{ fontFamily: 'Inter-Regular' }}
+						onChangeText={setAmount}
+						value={amount}
+					/>
+				</View>
+			</View>
+
+			<View style={{ gap: 12 }}>
+				<Text variant="bodyLarge">Category</Text>
+				<SelectInput
+					data={selectableExpenseCategories}
+					placeholder="Category"
+					value={selectedCategory}
+					handleSelect={setSelectedCategory}
+					closeAfterSelect
 				/>
 			</View>
 
-			<View style={{ paddingBottom: 24 }}>
-				{itemToRender.length ? (
-					itemToRender.map((item) => (
-						<View
-							key={item.icon}
-							style={{
-								flexDirection: 'row',
-								alignItems: 'center',
-								gap: 16,
-								padding: 16,
-							}}
-						>
-							<TransactionIcons icon={item.icon} />
-
-							<Text variant="bodyLarge" style={{ fontFamily: 'Inter-Regular' }}>
-								{item.category}
-							</Text>
-						</View>
-					))
-				) : (
-					<Text
-						variant="bodyLarge"
-						style={{ fontFamily: 'Inter-Regular', textAlign: 'center' }}
-					>
-						No category found.
-					</Text>
-				)}
+			<View style={{ gap: 12, marginBottom: 24 }}>
+				<Text variant="bodyLarge">Note</Text>
+				<TextInput
+					contentStyle={{ fontFamily: 'Inter-Regular' }}
+					onChangeText={selectedNote}
+				/>
 			</View>
-		</ScrollView>
+
+			<Button
+				mode="contained"
+				disabled={!amount.length}
+				onPress={handleSubmit}
+				labelStyle={{ fontFamily: 'Inter-Regular', fontSize: 16 }}
+				style={{ borderRadius: 10 }}
+			>
+				Create budget
+			</Button>
+		</View>
 	);
 }
 
@@ -132,8 +160,7 @@ const styles = StyleSheet.create({
 		borderTopRightRadius: 24,
 		borderWidth: 1,
 		borderBottomWidth: 0,
-		maxHeight: '95%',
-		bottom: -20,
+		bottom: -4,
 	},
 	modalHeader: {
 		paddingLeft: 16,
@@ -147,8 +174,6 @@ const styles = StyleSheet.create({
 	},
 	title: {
 		fontFamily: 'Inter-Regular',
-	},
-	searchContainer: {
-		paddingVertical: 16,
+		textTransform: 'capitalize',
 	},
 });
