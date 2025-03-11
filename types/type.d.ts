@@ -28,3 +28,10 @@ declare interface ExpenseCategoryIconCatalog {
 	utilities: LucideIcon;
 	'vehicle-expenses': LucideIcon;
 }
+
+declare interface Expense {
+	id: number;
+	category: string;
+	amount: number;
+	note: string;
+}
