@@ -34,7 +34,7 @@ export default function SelectInput({
 			<Portal>
 				<Dialog visible={visible} onDismiss={hideDialog}>
 					<Dialog.Content>
-						<ScrollView>
+						<ScrollView showsVerticalScrollIndicator={false}>
 							<View style={{ gap: 10 }}>
 								{data.map((item) => (
 									<Pressable
@@ -103,11 +103,16 @@ export default function SelectInput({
 						color: '#fff',
 						textTransform: 'capitalize',
 					}}
+					numberOfLines={1}
 				>
-					{value || placeholder}
+					{value.replaceAll('-', ' ').replaceAll('and', '&') || placeholder}
 				</Text>
 
-				<ChevronDown size={20} color={theme.colors.onSurface} />
+				<ChevronDown
+					style={{ position: 'absolute', right: 8 }}
+					size={20}
+					color={theme.colors.onSurface}
+				/>
 			</Pressable>
 		</>
 	);
