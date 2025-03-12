@@ -52,6 +52,12 @@ export default function Layout() {
 					title: 'Transaction category',
 				}}
 			/>
+			<Stack.Screen
+				name="wallets"
+				options={{
+					title: 'Wallet',
+				}}
+			/>
 		</Stack>
 	);
 }

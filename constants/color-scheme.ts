@@ -221,7 +221,7 @@ const ONYX_DARK = {
 		},
 		surfaceDisabled: 'rgba(255, 255, 255, 0.12)',
 		onSurfaceDisabled: 'rgba(255, 255, 255, 0.38)',
-		backdrop: 'rgba(0, 0, 0, 0.4)',
+		backdrop: 'rgba(0, 0, 0, 0.5)',
 	},
 };
 
@@ -266,7 +266,7 @@ const ONYX_LIGHT = {
 		},
 		surfaceDisabled: 'rgba(0, 0, 0, 0.12)',
 		onSurfaceDisabled: 'rgba(0, 0, 0, 0.38)',
-		backdrop: 'rgba(255, 255, 255, 0.4)',
+		backdrop: 'rgba(255, 255, 255, 0.5)',
 	},
 };
 
@@ -311,7 +311,7 @@ const CITRINE_DARK = {
 		},
 		surfaceDisabled: 'rgba(233, 225, 216, 0.12)',
 		onSurfaceDisabled: 'rgba(233, 225, 216, 0.38)',
-		backdrop: 'rgba(54, 48, 36, 0.4)',
+		backdrop: 'rgba(0, 0, 0, 0.4)',
 	},
 };
 
@@ -356,7 +356,7 @@ const CITRINE_LIGHT = {
 		},
 		surfaceDisabled: 'rgba(30, 27, 22, 0.12)',
 		onSurfaceDisabled: 'rgba(30, 27, 22, 0.38)',
-		backdrop: 'rgba(54, 48, 36, 0.4)',
+		backdrop: 'rgba(0, 0, 0, 0.4)',
 	},
 };
 
@@ -401,7 +401,7 @@ const ROSE_QUARTZ_DARK = {
 		},
 		surfaceDisabled: 'rgba(236, 224, 223, 0.12)',
 		onSurfaceDisabled: 'rgba(236, 224, 223, 0.38)',
-		backdrop: 'rgba(59, 45, 45, 0.4)',
+		backdrop: 'rgba(0, 0, 0, 0.5)',
 	},
 };
 
@@ -446,7 +446,7 @@ const ROSE_QUARTZ_LIGHT = {
 		},
 		surfaceDisabled: 'rgba(32, 26, 26, 0.12)',
 		onSurfaceDisabled: 'rgba(32, 26, 26, 0.38)',
-		backdrop: 'rgba(59, 45, 45, 0.4)',
+		backdrop: 'rgba(0, 0, 0, 0.5)',
 	},
 };
 

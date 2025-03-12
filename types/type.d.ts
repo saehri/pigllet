@@ -40,6 +40,7 @@ declare interface UserPreference {
 	currentAppTheme: AppTheme;
 	currentAppColor: AppColor;
 	currentCurrencySymbol: CurrencySymbols;
+	firstTimer: boolean;
 }
 
 // from left to right: usd, idr, yen, gbp,
