@@ -37,7 +37,10 @@ export default function SelectInputItem({
 				></View>
 			</View>
 
-			<Text variant="bodyLarge" style={{ textTransform: 'capitalize' }}>
+			<Text
+				variant="bodyLarge"
+				style={{ textTransform: 'capitalize', fontFamily: 'Inter-Regular' }}
+			>
 				{label}
 			</Text>
 		</Pressable>

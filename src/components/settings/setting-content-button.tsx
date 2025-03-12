@@ -19,13 +19,17 @@ export default function SettingContentButtonModal({
 
 	return (
 		<Pressable style={styles.container} onPress={onPress}>
-			<Text variant="bodyLarge">{label}</Text>
+			<Text variant="bodyLarge" style={{ fontFamily: 'Inter-Regular' }}>
+				{label}
+			</Text>
 
 			{buttonRight ? (
 				buttonRight
 			) : (
 				<View style={styles.buttonRight}>
-					<Text variant="bodyLarge">{buttonRightTitle}</Text>
+					<Text variant="bodyLarge" style={{ fontFamily: 'Inter-Light' }}>
+						{buttonRightTitle}
+					</Text>
 					<ChevronsUpDown
 						strokeWidth={1.5}
 						size={18}
@@ -48,7 +52,7 @@ const styles = StyleSheet.create({
 	buttonRight: {
 		flexDirection: 'row',
 		gap: 2,
-		opacity: 0.8,
+		opacity: 0.6,
 		alignItems: 'center',
 	},
 });

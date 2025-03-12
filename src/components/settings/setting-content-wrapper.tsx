@@ -12,7 +12,10 @@ export default function SettingContentWrapper({
 }: Props) {
 	return (
 		<View style={{ gap: 12 }}>
-			<Text variant="bodyMedium" style={{ opacity: 0.8, marginLeft: 16 }}>
+			<Text
+				variant="bodyMedium"
+				style={{ opacity: 0.8, marginLeft: 16, fontFamily: 'Inter-Regular' }}
+			>
 				{headerTitle}
 			</Text>
 

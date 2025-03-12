@@ -35,3 +35,12 @@ declare interface Expense {
 	amount: number;
 	note: string;
 }
+
+declare interface UserPreference {
+	currentAppTheme: AppTheme;
+	currentAppColor: AppColor;
+}
+
+declare type AppTheme = 'Light' | 'Dark' | 'Device';
+
+declare type AppColor = 'Default' | 'Emerald' | 'Onyx' | 'Citrine';

@@ -28,7 +28,7 @@ export default function MainSetting() {
 
 			<List.Item
 				title="Customizations"
-				description="Theme, color"
+				description="Theme, color, language, motion"
 				titleStyle={{ fontFamily: 'Inter-Regular' }}
 				descriptionStyle={{ fontFamily: 'Inter-Light' }}
 				onPress={() => router.push('/(root)/settings/customization')}

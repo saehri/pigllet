@@ -1,10 +1,16 @@
-import { useState } from 'react';
+import { useContext } from 'react';
+import { ScrollView, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
-import { ScrollView } from 'react-native';
 
 import SelectInput from '@/src/components/forms/select-input';
 import SettingContentWrapper from '@/src/components/settings/setting-content-wrapper';
 import SettingContentButtonModal from '@/src/components/settings/setting-content-button';
+import {
+	UserPreferenceContext,
+	UserPreferenceContextTypes,
+} from '@/context/UserPreferenceContext';
+
+import { appThemes, appColors } from '@/constants/theme-and-color';
 
 export default function Customization() {
 	const theme = useTheme();
@@ -16,36 +22,47 @@ export default function Customization() {
 				padding: 16,
 			}}
 		>
-			<SettingContentWrapper headerTitle="Color and theme">
-				<ColorSelector />
-				<ThemeSelector />
-			</SettingContentWrapper>
+			<View style={{ gap: 24 }}>
+				<SettingContentWrapper headerTitle="Theme and color">
+					<ThemeSelector />
+					<ColorSelector />
+				</SettingContentWrapper>
+
+				<SettingContentWrapper headerTitle="Other">
+					<SettingContentButtonModal
+						label="Language (Coming soon)"
+						buttonRightTitle="English"
+					/>
+					<SettingContentButtonModal
+						label="Wallpaper (Coming soon)"
+						buttonRightTitle="Default"
+					/>
+					<SettingContentButtonModal
+						label="Reduce motion (Coming soon)"
+						buttonRightTitle="Off"
+					/>
+				</SettingContentWrapper>
+			</View>
 		</ScrollView>
 	);
 }
 
 function ColorSelector() {
-	const [selectedColor, setSelectedColor] = useState('default');
-
-	const colors = [
-		{ label: 'Default', value: 'default' },
-		{ label: 'Emerald', value: 'emerald' },
-		{ label: 'Onyx', value: 'onyx' },
-	];
+	const { setAppColor, currentAppColor } = useContext(
+		UserPreferenceContext
+	) as UserPreferenceContextTypes;
 
 	return (
 		<SelectInput
-			data={colors}
-			handleSelect={setSelectedColor}
-			value={selectedColor}
+			data={appColors}
+			handleSelect={setAppColor}
+			value={currentAppColor}
 			closeAfterSelect
 			triggerButton={({ showDialog }) => (
 				<SettingContentButtonModal
 					onPress={showDialog}
 					label="App color"
-					buttonRightTitle={
-						colors.filter((t) => t.value === selectedColor)[0].label
-					}
+					buttonRightTitle={currentAppColor}
 				/>
 			)}
 		/>
@@ -53,27 +70,21 @@ function ColorSelector() {
 }
 
 function ThemeSelector() {
-	const [selectedTheme, setSelectedTheme] = useState('device');
-
-	const themes = [
-		{ label: 'Device theme', value: 'device' },
-		{ label: 'Dark', value: 'dark' },
-		{ label: 'Light', value: 'light' },
-	];
+	const { currentAppTheme, setAppTheme } = useContext(
+		UserPreferenceContext
+	) as UserPreferenceContextTypes;
 
 	return (
 		<SelectInput
-			data={themes}
-			handleSelect={setSelectedTheme}
-			value={selectedTheme}
+			data={appThemes}
+			handleSelect={setAppTheme}
+			value={currentAppTheme}
 			closeAfterSelect
 			triggerButton={({ showDialog }) => (
 				<SettingContentButtonModal
 					onPress={showDialog}
 					label="Theme"
-					buttonRightTitle={
-						themes.filter((t) => t.value === selectedTheme)[0].label
-					}
+					buttonRightTitle={currentAppTheme}
 				/>
 			)}
 		/>
