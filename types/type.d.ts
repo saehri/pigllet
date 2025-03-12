@@ -35,3 +35,21 @@ declare interface Expense {
 	amount: number;
 	note: string;
 }
+
+declare interface UserPreference {
+	currentAppTheme: AppTheme;
+	currentAppColor: AppColor;
+	currentCurrencySymbol: CurrencySymbols;
+}
+
+// from left to right: usd, idr, yen, gbp,
+declare type CurrencySymbols = '$' | 'Rp' | '¥' | '£';
+
+declare type AppTheme = 'Light' | 'Dark' | 'Device';
+
+declare type AppColor =
+	| 'Default'
+	| 'Emerald'
+	| 'Onyx'
+	| 'Citrine'
+	| 'Rose Quartz';

@@ -10,7 +10,7 @@ import {
 import { useCallback, useState } from 'react';
 
 import { Plus, X } from 'lucide-react-native';
-import SelectInput from '../reusables/SelectInput';
+import SelectInput from '../forms/select-input';
 
 import { expenseCategories } from '@/constants/expense-category';
 const selectableExpenseCategories = expenseCategories.map((cat) => ({

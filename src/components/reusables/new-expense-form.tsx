@@ -3,7 +3,7 @@ import { expenseCategories } from '@/constants/expense-category';
 import { ToastAndroid, View } from 'react-native';
 import { Button, Text, TextInput } from 'react-native-paper';
 
-import SelectInput from './SelectInput';
+import SelectInput from '../forms/select-input';
 
 const selectableExpenseCategories = expenseCategories.map((cat) => ({
 	value: cat.category,
