@@ -27,10 +27,11 @@ export default function MainSetting() {
 			/>
 
 			<List.Item
-				title="Theming"
+				title="Customizations"
 				description="Theme, color"
 				titleStyle={{ fontFamily: 'Inter-Regular' }}
 				descriptionStyle={{ fontFamily: 'Inter-Light' }}
+				onPress={() => router.push('/(root)/settings/customization')}
 				left={(props) => (
 					<SwatchBook
 						{...props}
@@ -46,6 +47,7 @@ export default function MainSetting() {
 				description="Income, expense, transfer"
 				titleStyle={{ fontFamily: 'Inter-Regular' }}
 				descriptionStyle={{ fontFamily: 'Inter-Light' }}
+				onPress={() => router.push('/(root)/settings/transaction-categories')}
 				left={(props) => (
 					<Notebook
 						{...props}
@@ -76,6 +78,7 @@ export default function MainSetting() {
 				description="App lock, fingerprint"
 				titleStyle={{ fontFamily: 'Inter-Regular' }}
 				descriptionStyle={{ fontFamily: 'Inter-Light' }}
+				onPress={() => router.push('/(root)/settings/security')}
 				left={(props) => (
 					<LockKeyhole
 						{...props}
@@ -90,6 +93,7 @@ export default function MainSetting() {
 				title="Wallets"
 				titleStyle={{ fontFamily: 'Inter-Regular' }}
 				descriptionStyle={{ fontFamily: 'Inter-Light' }}
+				onPress={() => router.push('/(root)/settings/wallets')}
 				left={(props) => (
 					<Wallet2 {...props} size={24} strokeWidth={1.5} color={props.color} />
 				)}
@@ -99,6 +103,7 @@ export default function MainSetting() {
 				title="Currency"
 				titleStyle={{ fontFamily: 'Inter-Regular' }}
 				descriptionStyle={{ fontFamily: 'Inter-Light' }}
+				onPress={() => router.push('/(root)/settings/currency')}
 				left={(props) => (
 					<CurrencyIcon
 						{...props}

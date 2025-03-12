@@ -10,7 +10,7 @@ export default function TransactionCard(props: TransactionCard) {
 	const theme = useTheme();
 
 	const cardLabel = {
-		expense: 'Mie ayam',
+		expense: 'Category name',
 		income: 'Bank to Cash',
 		transfer: 'Bank to Cash',
 	};
@@ -64,7 +64,7 @@ export default function TransactionCard(props: TransactionCard) {
 					</View>
 
 					<Text variant="labelLarge" style={styles.bodyMedium}>
-						Transaction category
+						Transaction detail
 					</Text>
 				</View>
 

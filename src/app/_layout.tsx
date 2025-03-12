@@ -56,7 +56,7 @@ const LIGHT_COLOR_SCHEME = {
 		},
 		surfaceDisabled: 'rgba(32, 26, 26, 0.12)',
 		onSurfaceDisabled: 'rgba(32, 26, 26, 0.38)',
-		backdrop: 'rgba(59, 45, 46, 0.4)',
+		backdrop: 'rgba(59, 45, 46, 0.5)',
 	},
 };
 
@@ -101,7 +101,7 @@ const DARK_COLOR_SCHEME = {
 		},
 		surfaceDisabled: 'rgba(236, 224, 223, 0.12)',
 		onSurfaceDisabled: 'rgba(236, 224, 223, 0.38)',
-		backdrop: 'rgba(59, 45, 46, 0.4)',
+		backdrop: 'rgba(0, 0, 0, 0.5)',
 	},
 };
 

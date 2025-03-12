@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ToastAndroid, View } from 'react-native';
 import { Button, Text, TextInput } from 'react-native-paper';
 
-import SelectInput from './SelectInput';
+import SelectInput from '../forms/select-input';
 
 const transferCategories = [
 	{ value: 'other', label: 'Other' },

@@ -1,11 +1,8 @@
-import { Stack, useRouter } from 'expo-router';
-import { Plus, Settings } from 'lucide-react-native';
-import { View } from 'react-native';
-import { Button, Text, useTheme } from 'react-native-paper';
+import { Stack } from 'expo-router';
+import { useTheme } from 'react-native-paper';
 
 export default function Layout() {
 	const theme = useTheme();
-	const router = useRouter();
 
 	return (
 		<Stack
@@ -30,19 +27,7 @@ export default function Layout() {
 			<Stack.Screen
 				name="settings"
 				options={{
-					title: 'Settings',
-					headerTintColor: theme.colors.onBackground,
-					statusBarColor: theme.colors.background,
-					headerShadowVisible: false,
-					statusBarStyle: 'dark',
-					statusBarTranslucent: true,
-					headerStyle: {
-						backgroundColor: theme.colors.background,
-					},
-					headerTitleStyle: {
-						fontFamily: 'Inter-Black',
-						fontSize: 20,
-					},
+					headerShown: false,
 				}}
 			/>
 			<Stack.Screen
