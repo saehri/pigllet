@@ -19,7 +19,11 @@ export default function SettingContentWrapper({
 				{headerTitle}
 			</Text>
 
-			<Surface mode="flat" elevation={2} style={{ borderRadius: 24 }}>
+			<Surface
+				mode="flat"
+				elevation={2}
+				style={{ borderRadius: 24, overflow: 'hidden' }}
+			>
 				{children}
 			</Surface>
 		</View>

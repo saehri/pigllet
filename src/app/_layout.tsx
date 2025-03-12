@@ -1,7 +1,7 @@
 import { Stack } from 'expo-router';
 import { useFonts } from 'expo-font';
 import { useContext, useEffect } from 'react';
-import { StatusBar, useColorScheme } from 'react-native';
+import { ColorSchemeName, StatusBar, useColorScheme } from 'react-native';
 import { DefaultTheme, PaperProvider, ThemeProvider } from 'react-native-paper';
 
 import * as SplashScreen from 'expo-splash-screen';
@@ -20,6 +20,7 @@ import {
 	EMERALD_LIGHT,
 	ONYX_DARK,
 	ONYX_LIGHT,
+	selectColorScheme,
 } from '@/constants/color-scheme';
 
 // Prevent splash screen auto-hide
@@ -37,77 +38,9 @@ function App() {
 		UserPreferenceContext
 	) as UserPreferenceContextTypes;
 
-	console.log({ currentAppColor, currentAppTheme });
-
-	function selectColorScheme(theme: AppTheme, color: AppColor) {
-		if (theme === 'Dark') {
-			if (color === 'Default') {
-				return DEFAULT_DARK.colors;
-			}
-			if (color === 'Emerald') {
-				return EMERALD_DARK.colors;
-			}
-			if (color === 'Onyx') {
-				return ONYX_DARK.colors;
-			}
-			if (color === 'Citrine') {
-				return CITRINE_DARK.colors;
-			}
-		}
-
-		if (theme === 'Light') {
-			if (color === 'Default') {
-				return DEFAULT_LIGHT.colors;
-			}
-			if (color === 'Emerald') {
-				return EMERALD_LIGHT.colors;
-			}
-			if (color === 'Onyx') {
-				return ONYX_LIGHT.colors;
-			}
-			if (color === 'Citrine') {
-				return CITRINE_LIGHT.colors;
-			}
-		}
-
-		if (theme === 'Device') {
-			if (colorScheme === 'dark') {
-				if (color === 'Default') {
-					return DEFAULT_DARK.colors;
-				}
-				if (color === 'Emerald') {
-					return EMERALD_DARK.colors;
-				}
-				if (color === 'Onyx') {
-					return ONYX_DARK.colors;
-				}
-				if (color === 'Citrine') {
-					return CITRINE_DARK.colors;
-				}
-			}
-
-			if (colorScheme === 'light') {
-				if (color === 'Default') {
-					return DEFAULT_LIGHT.colors;
-				}
-				if (color === 'Emerald') {
-					return EMERALD_LIGHT.colors;
-				}
-				if (color === 'Onyx') {
-					return ONYX_LIGHT.colors;
-				}
-				if (color === 'Citrine') {
-					return CITRINE_LIGHT.colors;
-				}
-			}
-		}
-
-		return DEFAULT_LIGHT.colors;
-	}
-
 	const theme = {
 		...DefaultTheme,
-		colors: selectColorScheme(currentAppTheme, currentAppColor),
+		colors: selectColorScheme(currentAppTheme, currentAppColor, colorScheme),
 	};
 
 	return (

@@ -1,6 +1,11 @@
 import { View, StyleSheet } from 'react-native';
 import { Icon, Text, useTheme } from 'react-native-paper';
 import { ArrowLeftRight, Pizza, MoveRight } from 'lucide-react-native';
+import { useContext } from 'react';
+import {
+	UserPreferenceContext,
+	UserPreferenceContextTypes,
+} from '@/context/UserPreferenceContext';
 
 interface TransactionCard {
 	type: 'expense' | 'income' | 'transfer';
@@ -8,6 +13,10 @@ interface TransactionCard {
 
 export default function TransactionCard(props: TransactionCard) {
 	const theme = useTheme();
+
+	const { currentCurrencySymbol } = useContext(
+		UserPreferenceContext
+	) as UserPreferenceContextTypes;
 
 	const cardLabel = {
 		expense: 'Category name',
@@ -69,7 +78,7 @@ export default function TransactionCard(props: TransactionCard) {
 				</View>
 
 				<Text variant="bodyLarge" style={styles.bodyLarge}>
-					Rp 15.000
+					{currentCurrencySymbol} 15.000
 				</Text>
 			</View>
 		</View>

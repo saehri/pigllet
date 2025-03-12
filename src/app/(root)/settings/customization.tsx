@@ -4,7 +4,7 @@ import { useTheme } from 'react-native-paper';
 
 import SelectInput from '@/src/components/forms/select-input';
 import SettingContentWrapper from '@/src/components/settings/setting-content-wrapper';
-import SettingContentButtonModal from '@/src/components/settings/setting-content-button';
+import SettingContentButton from '@/src/components/settings/setting-content-button';
 import {
 	UserPreferenceContext,
 	UserPreferenceContextTypes,
@@ -29,15 +29,15 @@ export default function Customization() {
 				</SettingContentWrapper>
 
 				<SettingContentWrapper headerTitle="Other">
-					<SettingContentButtonModal
+					<SettingContentButton
 						label="Language (Coming soon)"
 						buttonRightTitle="English"
 					/>
-					<SettingContentButtonModal
+					<SettingContentButton
 						label="Wallpaper (Coming soon)"
 						buttonRightTitle="Default"
 					/>
-					<SettingContentButtonModal
+					<SettingContentButton
 						label="Reduce motion (Coming soon)"
 						buttonRightTitle="Off"
 					/>
@@ -59,7 +59,7 @@ function ColorSelector() {
 			value={currentAppColor}
 			closeAfterSelect
 			triggerButton={({ showDialog }) => (
-				<SettingContentButtonModal
+				<SettingContentButton
 					onPress={showDialog}
 					label="App color"
 					buttonRightTitle={currentAppColor}
@@ -81,7 +81,7 @@ function ThemeSelector() {
 			value={currentAppTheme}
 			closeAfterSelect
 			triggerButton={({ showDialog }) => (
-				<SettingContentButtonModal
+				<SettingContentButton
 					onPress={showDialog}
 					label="Theme"
 					buttonRightTitle={currentAppTheme}

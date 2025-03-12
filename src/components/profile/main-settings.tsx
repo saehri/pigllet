@@ -17,7 +17,7 @@ export default function MainSetting() {
 	return (
 		<View>
 			<List.Item
-				title="Account (Coming Soon)"
+				title="Account (coming soon)"
 				description="Avatar, email, password"
 				titleStyle={{ fontFamily: 'Inter-Regular' }}
 				descriptionStyle={{ fontFamily: 'Inter-Light' }}
@@ -59,7 +59,7 @@ export default function MainSetting() {
 			/>
 
 			<List.Item
-				title="Cloud Sync (Coming Soon)"
+				title="Cloud sync (coming soon)"
 				description="You are up to date"
 				titleStyle={{ fontFamily: 'Inter-Regular' }}
 				descriptionStyle={{ fontFamily: 'Inter-Light' }}
@@ -100,7 +100,7 @@ export default function MainSetting() {
 			/>
 
 			<List.Item
-				title="Currency"
+				title="Currency symbols"
 				titleStyle={{ fontFamily: 'Inter-Regular' }}
 				descriptionStyle={{ fontFamily: 'Inter-Light' }}
 				onPress={() => router.push('/(root)/settings/currency')}

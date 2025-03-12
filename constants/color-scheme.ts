@@ -1,3 +1,5 @@
+import { ColorSchemeName } from 'react-native';
+
 const DEFAULT_LIGHT = {
 	colors: {
 		primary: 'hsl(348, 60.60%, 42.70%)',
@@ -358,7 +360,180 @@ const CITRINE_LIGHT = {
 	},
 };
 
+const ROSE_QUARTZ_DARK = {
+	colors: {
+		primary: 'rgb(243, 178, 179)',
+		onPrimary: 'rgb(95, 19, 28)',
+		primaryContainer: 'rgb(126, 42, 48)',
+		onPrimaryContainer: 'rgb(255, 218, 217)',
+		secondary: 'rgb(255, 179, 180)',
+		onSecondary: 'rgb(95, 19, 28)',
+		secondaryContainer: 'rgb(126, 42, 48)',
+		onSecondaryContainer: 'rgb(255, 218, 217)',
+		tertiary: 'rgb(255, 179, 180)',
+		onTertiary: 'rgb(95, 19, 28)',
+		tertiaryContainer: 'rgb(126, 42, 48)',
+		onTertiaryContainer: 'rgb(255, 218, 217)',
+		error: 'rgb(255, 180, 171)',
+		onError: 'rgb(105, 0, 5)',
+		errorContainer: 'rgb(147, 0, 10)',
+		onErrorContainer: 'rgb(255, 180, 171)',
+		background: 'rgb(32, 26, 26)',
+		onBackground: 'rgb(236, 224, 223)',
+		surface: 'rgb(32, 26, 26)',
+		onSurface: 'rgb(236, 224, 223)',
+		surfaceVariant: 'rgb(82, 67, 67)',
+		onSurfaceVariant: 'rgb(215, 193, 193)',
+		outline: 'rgb(160, 140, 140)',
+		outlineVariant: 'rgb(82, 67, 67)',
+		shadow: 'rgb(0, 0, 0)',
+		scrim: 'rgb(0, 0, 0)',
+		inverseSurface: 'rgb(236, 224, 223)',
+		inverseOnSurface: 'rgb(54, 47, 47)',
+		inversePrimary: 'rgb(156, 65, 70)',
+		elevation: {
+			level0: 'transparent',
+			level1: 'rgb(43, 34, 34)',
+			level2: 'rgb(50, 38, 38)',
+			level3: 'rgb(57, 43, 43)',
+			level4: 'rgb(59, 44, 45)',
+			level5: 'rgb(63, 47, 48)',
+		},
+		surfaceDisabled: 'rgba(236, 224, 223, 0.12)',
+		onSurfaceDisabled: 'rgba(236, 224, 223, 0.38)',
+		backdrop: 'rgba(59, 45, 45, 0.4)',
+	},
+};
+
+const ROSE_QUARTZ_LIGHT = {
+	colors: {
+		primary: 'rgb(226, 128, 132)',
+		onPrimary: 'rgb(255, 255, 255)',
+		primaryContainer: 'rgb(255, 218, 217)',
+		onPrimaryContainer: 'rgb(64, 0, 10)',
+		secondary: 'rgb(226, 113, 119)',
+		onSecondary: 'rgb(255, 255, 255)',
+		secondaryContainer: 'rgb(255, 218, 217)',
+		onSecondaryContainer: 'rgb(64, 0, 10)',
+		tertiary: 'rgb(173, 78, 83)',
+		onTertiary: 'rgb(255, 255, 255)',
+		tertiaryContainer: 'rgb(255, 218, 217)',
+		onTertiaryContainer: 'rgb(64, 0, 10)',
+		error: 'rgb(186, 26, 26)',
+		onError: 'rgb(255, 255, 255)',
+		errorContainer: 'rgb(255, 218, 214)',
+		onErrorContainer: 'rgb(65, 0, 2)',
+		background: 'rgb(255, 251, 255)',
+		onBackground: 'rgb(32, 26, 26)',
+		surface: 'rgb(255, 251, 255)',
+		onSurface: 'rgb(32, 26, 26)',
+		surfaceVariant: 'rgb(244, 221, 221)',
+		onSurfaceVariant: 'rgb(82, 67, 67)',
+		outline: 'rgb(133, 115, 115)',
+		outlineVariant: 'rgb(215, 193, 193)',
+		shadow: 'rgb(0, 0, 0)',
+		scrim: 'rgb(0, 0, 0)',
+		inverseSurface: 'rgb(54, 47, 47)',
+		inverseOnSurface: 'rgb(251, 238, 237)',
+		inversePrimary: 'rgb(255, 179, 180)',
+		elevation: {
+			level0: 'transparent',
+			level1: 'rgb(250, 242, 246)',
+			level2: 'rgb(247, 236, 240)',
+			level3: 'rgb(244, 231, 235)',
+			level4: 'rgb(243, 229, 233)',
+			level5: 'rgb(241, 225, 229)',
+		},
+		surfaceDisabled: 'rgba(32, 26, 26, 0.12)',
+		onSurfaceDisabled: 'rgba(32, 26, 26, 0.38)',
+		backdrop: 'rgba(59, 45, 45, 0.4)',
+	},
+};
+
+function selectColorScheme(
+	theme: AppTheme,
+	color: AppColor,
+	colorScheme: ColorSchemeName
+) {
+	if (theme === 'Dark') {
+		if (color === 'Default') {
+			return DEFAULT_DARK.colors;
+		}
+		if (color === 'Emerald') {
+			return EMERALD_DARK.colors;
+		}
+		if (color === 'Onyx') {
+			return ONYX_DARK.colors;
+		}
+		if (color === 'Citrine') {
+			return CITRINE_DARK.colors;
+		}
+		if (color === 'Rose Quartz') {
+			return ROSE_QUARTZ_DARK.colors;
+		}
+	}
+
+	if (theme === 'Light') {
+		if (color === 'Default') {
+			return DEFAULT_LIGHT.colors;
+		}
+		if (color === 'Emerald') {
+			return EMERALD_LIGHT.colors;
+		}
+		if (color === 'Onyx') {
+			return ONYX_LIGHT.colors;
+		}
+		if (color === 'Citrine') {
+			return CITRINE_LIGHT.colors;
+		}
+		if (color === 'Rose Quartz') {
+			return ROSE_QUARTZ_LIGHT.colors;
+		}
+	}
+
+	if (theme === 'Device') {
+		if (colorScheme === 'dark') {
+			if (color === 'Default') {
+				return DEFAULT_DARK.colors;
+			}
+			if (color === 'Emerald') {
+				return EMERALD_DARK.colors;
+			}
+			if (color === 'Onyx') {
+				return ONYX_DARK.colors;
+			}
+			if (color === 'Citrine') {
+				return CITRINE_DARK.colors;
+			}
+			if (color === 'Rose Quartz') {
+				return ROSE_QUARTZ_DARK.colors;
+			}
+		}
+
+		if (colorScheme === 'light') {
+			if (color === 'Default') {
+				return DEFAULT_LIGHT.colors;
+			}
+			if (color === 'Emerald') {
+				return EMERALD_LIGHT.colors;
+			}
+			if (color === 'Onyx') {
+				return ONYX_LIGHT.colors;
+			}
+			if (color === 'Citrine') {
+				return CITRINE_LIGHT.colors;
+			}
+			if (color === 'Rose Quartz') {
+				return ROSE_QUARTZ_LIGHT.colors;
+			}
+		}
+	}
+
+	return DEFAULT_LIGHT.colors;
+}
+
 export {
+	selectColorScheme,
 	DEFAULT_DARK,
 	DEFAULT_LIGHT,
 	EMERALD_DARK,

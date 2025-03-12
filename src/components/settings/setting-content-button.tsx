@@ -4,9 +4,10 @@ import { Text, useTheme } from 'react-native-paper';
 
 type Props = {
 	label: string;
-	buttonRightTitle: string;
+	buttonRightTitle?: string;
 	buttonRight?: React.ReactNode;
 	onPress?: () => void;
+	higlight?: boolean;
 };
 
 export default function SettingContentButtonModal({
@@ -14,11 +15,22 @@ export default function SettingContentButtonModal({
 	label,
 	buttonRight,
 	onPress,
+	higlight,
 }: Props) {
 	const theme = useTheme();
 
 	return (
-		<Pressable style={styles.container} onPress={onPress}>
+		<Pressable
+			style={[
+				styles.container,
+				{
+					backgroundColor: higlight
+						? theme.colors.elevation.level1
+						: theme.colors.elevation.level3,
+				},
+			]}
+			onPress={onPress}
+		>
 			<Text variant="bodyLarge" style={{ fontFamily: 'Inter-Regular' }}>
 				{label}
 			</Text>

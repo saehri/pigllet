@@ -9,6 +9,7 @@ const appColors = [
 	{ label: 'Emerald', value: 'Emerald' },
 	{ label: 'Onyx', value: 'Onyx' },
 	{ label: 'Citrine', value: 'Citrine' },
+	{ label: 'Rose Quartz', value: 'Rose Quartz' },
 ];
 
 export { appThemes, appColors };
