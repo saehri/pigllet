@@ -1,7 +1,7 @@
 import { Stack } from 'expo-router';
 import { useFonts } from 'expo-font';
 import { useContext, useEffect } from 'react';
-import { ColorSchemeName, StatusBar, useColorScheme } from 'react-native';
+import { StatusBar, useColorScheme } from 'react-native';
 import { DefaultTheme, PaperProvider, ThemeProvider } from 'react-native-paper';
 
 import * as SplashScreen from 'expo-splash-screen';
@@ -11,17 +11,7 @@ import UserPreferenceProvider, {
 	UserPreferenceContextTypes,
 } from '@/context/UserPreferenceContext';
 
-import {
-	CITRINE_DARK,
-	CITRINE_LIGHT,
-	DEFAULT_DARK,
-	DEFAULT_LIGHT,
-	EMERALD_DARK,
-	EMERALD_LIGHT,
-	ONYX_DARK,
-	ONYX_LIGHT,
-	selectColorScheme,
-} from '@/constants/color-scheme';
+import { selectColorScheme } from '@/constants/color-scheme';
 
 // Prevent splash screen auto-hide
 SplashScreen.preventAutoHideAsync();

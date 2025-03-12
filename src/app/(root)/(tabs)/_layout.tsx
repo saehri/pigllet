@@ -24,8 +24,9 @@ export default function Layout() {
 				tabBarStyle: {
 					backgroundColor: theme.colors.background,
 					height: 65,
-					paddingBottom: 10,
 					borderTopWidth: 0,
+					paddingVertical: 8,
+					paddingBottom: 10,
 				},
 				headerTitleStyle: {
 					fontFamily: 'Inter-Black',

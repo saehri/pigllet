@@ -10,9 +10,11 @@ export interface UserPreferenceContextTypes {
 	currentAppTheme: AppTheme;
 	currentAppColor: AppColor;
 	currentCurrencySymbol: CurrencySymbols;
+	firstTimer: boolean;
 	setAppColor: (selectedColor: AppColor) => void;
 	setAppTheme: (selectedTheme: AppTheme) => void;
 	setAppCurrencySymbol: (selectedSymbol: CurrencySymbols) => void;
+	setFirstTimer: (newState: boolean) => void;
 }
 
 export const UserPreferenceContext = createContext<
@@ -24,6 +26,7 @@ const UserPreferenceProvider = ({ children }: { children: ReactNode }) => {
 		currentCurrencySymbol: 'Rp',
 		currentAppColor: 'Default',
 		currentAppTheme: 'Dark',
+		firstTimer: true,
 	});
 	const [loading, setLoading] = useState<boolean>(true);
 
@@ -48,11 +51,11 @@ const UserPreferenceProvider = ({ children }: { children: ReactNode }) => {
 		try {
 			setLoading(true);
 			const newData = { ...userPreference, currentAppColor: selectedColor };
-			await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newData));
 			setUserPreference((prevData) => ({
 				...prevData,
 				currentAppColor: selectedColor,
 			}));
+			await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newData));
 		} catch (error: any) {
 			ToastAndroid.show(error.message, ToastAndroid.CENTER);
 		} finally {
@@ -67,11 +70,11 @@ const UserPreferenceProvider = ({ children }: { children: ReactNode }) => {
 				...userPreference,
 				currentCurrencySymbol: selectedSymbol,
 			};
-			await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newData));
 			setUserPreference((prevData) => ({
 				...prevData,
 				currentCurrencySymbol: selectedSymbol,
 			}));
+			await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newData));
 		} catch (error: any) {
 			ToastAndroid.show(error.message, ToastAndroid.CENTER);
 		} finally {
@@ -83,11 +86,27 @@ const UserPreferenceProvider = ({ children }: { children: ReactNode }) => {
 		try {
 			setLoading(true);
 			const newData = { ...userPreference, currentAppTheme: selectedTheme };
-			await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newData));
 			setUserPreference((prevData) => ({
 				...prevData,
 				currentAppTheme: selectedTheme,
 			}));
+			await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newData));
+		} catch (error: any) {
+			ToastAndroid.show(error.message, ToastAndroid.SHORT);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const setFirstTimer = async (newState: boolean) => {
+		try {
+			setLoading(true);
+			const newData = { ...userPreference, firstTimer: newState };
+			setUserPreference((prevData) => ({
+				...prevData,
+				firstTimer: newState,
+			}));
+			await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newData));
 		} catch (error: any) {
 			ToastAndroid.show(error.message, ToastAndroid.SHORT);
 		} finally {
@@ -100,12 +119,14 @@ const UserPreferenceProvider = ({ children }: { children: ReactNode }) => {
 			value={{
 				userPreference,
 				loading,
+				firstTimer: userPreference.firstTimer,
 				currentAppTheme: userPreference.currentAppTheme,
 				currentAppColor: userPreference.currentAppColor,
 				currentCurrencySymbol: userPreference.currentCurrencySymbol,
 				setAppColor,
 				setAppTheme,
 				setAppCurrencySymbol,
+				setFirstTimer,
 			}}
 		>
 			{children}
