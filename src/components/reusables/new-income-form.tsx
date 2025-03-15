@@ -91,19 +91,6 @@ export default function NewIncomeForm({ initialFormValue }: Props) {
 
 			<View style={{ flexDirection: 'row', gap: 16 }}>
 				<View style={{ flex: 1, gap: 12 }}>
-					<Text variant="bodyLarge">From</Text>
-					<SelectInput
-						data={[
-							{ label: 'Bank', value: 'bank' },
-							{ label: 'Cash', value: 'cash' },
-						]}
-						placeholder="Bank"
-						value={from}
-						handleSelect={setFrom}
-						closeAfterSelect
-					/>
-				</View>
-				<View style={{ flex: 1, gap: 12 }}>
 					<Text variant="bodyLarge">To</Text>
 					<SelectInput
 						data={[

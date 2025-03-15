@@ -1,5 +1,12 @@
 import { ChevronsUpDown } from 'lucide-react-native';
-import { Pressable, StyleSheet, View } from 'react-native';
+import {
+	Pressable,
+	StyleProp,
+	StyleSheet,
+	TextStyle,
+	View,
+	ViewStyle,
+} from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 
 type Props = {
@@ -8,14 +15,18 @@ type Props = {
 	buttonRight?: React.ReactNode;
 	onPress?: () => void;
 	higlight?: boolean;
+	labelStyle?: StyleProp<TextStyle>;
+	contentStyle?: StyleProp<ViewStyle>;
 };
 
-export default function SettingContentButtonModal({
+export default function SettingContentButton({
 	buttonRightTitle,
 	label,
 	buttonRight,
 	onPress,
 	higlight,
+	contentStyle = {},
+	labelStyle = {},
 }: Props) {
 	const theme = useTheme();
 
@@ -24,6 +35,7 @@ export default function SettingContentButtonModal({
 			style={[
 				styles.container,
 				{
+					...(contentStyle as object),
 					backgroundColor: higlight
 						? theme.colors.elevation.level1
 						: theme.colors.elevation.level3,
@@ -31,7 +43,10 @@ export default function SettingContentButtonModal({
 			]}
 			onPress={onPress}
 		>
-			<Text variant="bodyLarge" style={{ fontFamily: 'Inter-Regular' }}>
+			<Text
+				variant="bodyLarge"
+				style={{ fontFamily: 'Inter-Regular', ...(labelStyle as object) }}
+			>
 				{label}
 			</Text>
 
