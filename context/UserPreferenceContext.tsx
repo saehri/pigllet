@@ -15,6 +15,7 @@ export interface UserPreferenceContextTypes {
 	setAppTheme: (selectedTheme: AppTheme) => void;
 	setAppCurrencySymbol: (selectedSymbol: CurrencySymbols) => void;
 	setFirstTimer: (newState: boolean) => void;
+	resetUserPreferenceData: () => void;
 }
 
 export const UserPreferenceContext = createContext<
@@ -44,6 +45,27 @@ const UserPreferenceProvider = ({ children }: { children: ReactNode }) => {
 			ToastAndroid.show(error.message, ToastAndroid.SHORT);
 		} finally {
 			setLoading(false);
+		}
+	};
+
+	const resetUserPreferenceData = async () => {
+		try {
+			setLoading(true);
+
+			const resettedData: UserPreference = {
+				currentAppColor: 'Default',
+				currentAppTheme: 'Device',
+				currentCurrencySymbol: 'Rp',
+				firstTimer: true,
+			};
+			await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(resettedData));
+			setUserPreference(resettedData);
+		} catch (error: any) {
+			ToastAndroid.show(error.message, ToastAndroid.SHORT);
+		} finally {
+			setTimeout(() => {
+				setLoading(false);
+			}, 1500);
 		}
 	};
 
@@ -127,6 +149,7 @@ const UserPreferenceProvider = ({ children }: { children: ReactNode }) => {
 				setAppTheme,
 				setAppCurrencySymbol,
 				setFirstTimer,
+				resetUserPreferenceData,
 			}}
 		>
 			{children}

@@ -29,6 +29,12 @@ export default function Layout() {
 				}}
 			/>
 			<Stack.Screen
+				name="account"
+				options={{
+					title: 'Account',
+				}}
+			/>
+			<Stack.Screen
 				name="customization"
 				options={{
 					title: 'Customizations',
