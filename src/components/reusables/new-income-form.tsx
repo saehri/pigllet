@@ -1,61 +1,55 @@
 import { useState } from 'react';
 import { ToastAndroid, View } from 'react-native';
-import { Button, Text, TextInput } from 'react-native-paper';
+import {
+	ActivityIndicator,
+	Button,
+	Text,
+	TextInput,
+	useTheme,
+} from 'react-native-paper';
 
-import SelectInput from '../forms/select-input';
+import * as schema from '@/db/schema';
+import { useSQLiteContext } from 'expo-sqlite';
+import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
 
-const incomeCategories = [
-	{ value: 'other', label: 'Other' },
-	{ value: 'salary', label: 'Salary' },
-	{ value: 'freelance', label: 'Freelance' },
-	{ value: 'business-income', label: 'Business Income' },
-	{ value: 'bonuses-and-commission', label: 'Bonuses & Commissions' },
-	{ value: 'overtime-pay', label: 'Overtime Pay' },
-	{ value: 'dividens', label: 'Dividens' },
-	{ value: 'interest-income', label: 'Interest Income' },
-	{ value: 'capital-gains', label: 'Capital Gains' },
-	{ value: 'rental-income', label: 'Rental Income' },
-	{ value: 'royalties', label: 'Royalties' },
-	{ value: 'affiliate-marketing', label: 'Affiliate Marketing' },
-	{ value: 'advertising', label: 'Advertising' },
-	{ value: 'dropshipping', label: 'Dropshipping' },
-	{ value: 'pension', label: 'Pension' },
-	{ value: 'unemployment-benefits', label: 'Unemployment Benefits' },
-	{ value: 'child-support', label: 'Child Support' },
-	{ value: 'alimony', label: 'Alimony' },
-	{ value: 'gifts-and-donations', label: 'Gifts & Donations' },
-	{ value: 'lottery-and-gambling', label: 'Lottery & Gambling' },
-	{ value: 'side-hustles', label: 'Side Hustles' },
-];
+import SelectInputWithIcon from '../forms/select-input-with-icon';
+import AccountSelector from '../forms/account-selector';
 
 type Props = {
-	initialFormValue?: {
-		selectedCategory: string;
-		amount: string;
-		note: string;
-		from: string;
-		to: string;
-	};
+	initialFormValue?: schema.Income;
 };
 
 export default function NewIncomeForm({ initialFormValue }: Props) {
-	const [selectedCategory, setSelectedCategory] = useState(
-		initialFormValue?.selectedCategory || 'other'
-	);
-	const [amount, setAmount] = useState(initialFormValue?.amount || '');
-	const [note, setNote] = useState(initialFormValue?.note || '');
-	const [from, setFrom] = useState(initialFormValue?.from || 'bank');
-	const [to, setTo] = useState(initialFormValue?.from || 'cash');
+	const theme = useTheme();
 
-	function handleSubmit() {
+	const [isLoading, setIsLoading] = useState(false);
+	const [selectedCategory, setSelectedCategory] = useState(1);
+	const [amount, setAmount] = useState(String(initialFormValue?.amount || ''));
+	const [note, setNote] = useState(initialFormValue?.note || '');
+	const [accountId, setAccountId] = useState(
+		initialFormValue?.to_account_id || 1
+	);
+
+	const db = useSQLiteContext();
+	const drizzleDb = drizzle(db, { schema });
+
+	const { data: incomeCategories } = useLiveQuery(
+		drizzleDb
+			.select({
+				id: schema.incomeCategories.id,
+				icon_name: schema.incomeCategories.icon_name,
+				label: schema.incomeCategories.label,
+			})
+			.from(schema.incomeCategories)
+	);
+	const { data: accounts } = useLiveQuery(
+		drizzleDb.select().from(schema.accounts)
+	);
+
+	async function handleSubmit() {
 		if (Number(amount)) {
 			console.log({ selectedCategory, amount, note });
 			ToastAndroid.show('Record saved', ToastAndroid.CENTER);
-
-			setSelectedCategory('other');
-			setAmount('');
-			setNote('');
-			setFrom('bank');
 		} else {
 			ToastAndroid.show('Invalid amount', ToastAndroid.CENTER);
 		}
@@ -66,12 +60,11 @@ export default function NewIncomeForm({ initialFormValue }: Props) {
 			<View style={{ flexDirection: 'row', gap: 16 }}>
 				<View style={{ flex: 1, gap: 12 }}>
 					<Text variant="bodyLarge">Category</Text>
-					<SelectInput
+
+					<SelectInputWithIcon
+						selectedCategory={selectedCategory}
 						data={incomeCategories}
-						placeholder="Category"
-						value={selectedCategory}
 						handleSelect={setSelectedCategory}
-						closeAfterSelect
 					/>
 				</View>
 
@@ -89,20 +82,14 @@ export default function NewIncomeForm({ initialFormValue }: Props) {
 				</View>
 			</View>
 
-			<View style={{ flexDirection: 'row', gap: 16 }}>
-				<View style={{ flex: 1, gap: 12 }}>
-					<Text variant="bodyLarge">To</Text>
-					<SelectInput
-						data={[
-							{ label: 'Bank', value: 'bank' },
-							{ label: 'Cash', value: 'cash' },
-						]}
-						placeholder="Cash"
-						value={to}
-						handleSelect={setTo}
-						closeAfterSelect
-					/>
-				</View>
+			<View style={{ flex: 1, gap: 12 }}>
+				<Text variant="bodyLarge">From</Text>
+
+				<AccountSelector
+					accounts={accounts}
+					handleSelect={setAccountId}
+					selectedAccount={accountId}
+				/>
 			</View>
 
 			<View style={{ gap: 12, marginBottom: 24 }}>
@@ -121,7 +108,11 @@ export default function NewIncomeForm({ initialFormValue }: Props) {
 				labelStyle={{ fontFamily: 'Inter-Regular', fontSize: 16 }}
 				style={{ borderRadius: 10 }}
 			>
-				Save record
+				{isLoading ? (
+					<ActivityIndicator size={20} color={theme.colors.onPrimary} />
+				) : (
+					'Save record'
+				)}
 			</Button>
 		</View>
 	);

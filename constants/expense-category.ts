@@ -15,6 +15,7 @@ export const expenseCategories = [
 		label: 'Financial Institution & Fees',
 		icon: 'financial-institution-and-fees',
 	},
+	{ label: 'Foods & Drinks', icon: 'foods-and-drinks' },
 	{ label: 'Fuel & Gas', icon: 'fuel-and-gas' },
 	{ label: 'Government Service', icon: 'government-service' },
 	{ label: 'Grocery', icon: 'grocery' },

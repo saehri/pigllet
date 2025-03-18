@@ -4,6 +4,7 @@ import {
 	CircleArrowOutUpRight,
 	CircleArrowOutDownLeft,
 	ArrowRightLeft,
+	ShoppingBasket,
 } from 'lucide-react-native';
 
 export default function Layout() {
@@ -38,11 +39,7 @@ export default function Layout() {
 				options={{
 					title: 'Expense',
 					tabBarIcon: (props) => (
-						<CircleArrowOutUpRight
-							color={props.color}
-							size={14}
-							strokeWidth={1.5}
-						/>
+						<ShoppingBasket color={props.color} size={14} strokeWidth={1.5} />
 					),
 				}}
 			/>
@@ -64,7 +61,11 @@ export default function Layout() {
 				options={{
 					title: 'Transfer',
 					tabBarIcon: (props) => (
-						<ArrowRightLeft color={props.color} size={14} strokeWidth={1.5} />
+						<CircleArrowOutUpRight
+							color={props.color}
+							size={14}
+							strokeWidth={1.5}
+						/>
 					),
 				}}
 			/>

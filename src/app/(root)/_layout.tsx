@@ -1,5 +1,7 @@
 import { Stack } from 'expo-router';
-import { useTheme } from 'react-native-paper';
+import { Calculator } from 'lucide-react-native';
+import { View } from 'react-native';
+import { useTheme, Button } from 'react-native-paper';
 
 export default function Layout() {
 	const theme = useTheme();
@@ -40,6 +42,23 @@ export default function Layout() {
 						fontFamily: 'Inter-Black',
 						fontSize: 20,
 					},
+					headerRight: (props) => (
+						<View
+							style={{
+								backgroundColor: theme.colors.background,
+								flexDirection: 'row',
+								alignItems: 'center',
+							}}
+						>
+							<Button>
+								<Calculator
+									strokeWidth={1.5}
+									color={theme.colors.onBackground}
+									size={24}
+								/>
+							</Button>
+						</View>
+					),
 				}}
 			/>
 		</Stack>

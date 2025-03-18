@@ -51,7 +51,7 @@ export default function NewExpenseForm({ initialFormValue }: Props) {
 
 			const createdAt = new Date();
 
-			const response = await drizzleDb.insert(schema.expenses).values({
+			await drizzleDb.insert(schema.expenses).values({
 				account_id: accountId,
 				amount: Number(amount),
 				category_id: selectedCategory,

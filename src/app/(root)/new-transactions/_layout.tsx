@@ -1,8 +1,8 @@
 import { Tabs } from 'expo-router';
 import {
-	ArrowRightLeft,
 	CircleArrowOutDownLeft,
 	CircleArrowOutUpRight,
+	ShoppingBasket,
 } from 'lucide-react-native';
 import { useTheme } from 'react-native-paper';
 
@@ -19,7 +19,7 @@ export default function Layout() {
 					backgroundColor: theme.colors.elevation.level2,
 					height: 40,
 					position: 'absolute',
-					top: 0,
+					top: 8,
 					borderWidth: 0,
 					borderTopWidth: 0,
 					borderRadius: 1000,
@@ -37,11 +37,7 @@ export default function Layout() {
 				options={{
 					title: 'Expense',
 					tabBarIcon: (props) => (
-						<CircleArrowOutUpRight
-							color={props.color}
-							size={14}
-							strokeWidth={1.5}
-						/>
+						<ShoppingBasket color={props.color} size={14} strokeWidth={1.5} />
 					),
 				}}
 			/>
@@ -63,7 +59,11 @@ export default function Layout() {
 				options={{
 					title: 'Transfer',
 					tabBarIcon: (props) => (
-						<ArrowRightLeft color={props.color} size={14} strokeWidth={1.5} />
+						<CircleArrowOutUpRight
+							color={props.color}
+							size={14}
+							strokeWidth={1.5}
+						/>
 					),
 				}}
 			/>
