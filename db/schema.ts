@@ -11,6 +11,7 @@ export const expenses = sqliteTable('expenses', {
 		.notNull()
 		.references(() => accounts.id),
 	budget_id: integer('budget_id').references(() => budget.id),
+	image: text('image'),
 	created_date: text('created_date').notNull(),
 	created_month: integer('created_month').notNull(),
 	created_year: integer('created_year').notNull(),
@@ -27,6 +28,7 @@ export const incomes = sqliteTable('incomes', {
 	to_account_id: integer('to_account_id')
 		.notNull()
 		.references(() => accounts.id),
+	image: text('image'),
 	created_date: text('created_date').notNull(),
 	created_month: integer('created_month').notNull(),
 	created_year: integer('created_year').notNull(),
@@ -46,6 +48,7 @@ export const transfers = sqliteTable('transfers', {
 	to_account_id: integer('to_account_id')
 		.notNull()
 		.references(() => accounts.id),
+	image: text('image'),
 	created_date: text('created_date').notNull(),
 	created_month: integer('created_month').notNull(),
 	created_year: integer('created_year').notNull(),
