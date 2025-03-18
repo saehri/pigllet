@@ -3,36 +3,88 @@ import {
 	UserPreferenceContextTypes,
 } from '@/context/UserPreferenceContext';
 import { useRouter } from 'expo-router';
-import { useContext } from 'react';
-import { Image, View } from 'react-native';
-import { Button, Text, useTheme } from 'react-native-paper';
+import { useContext, useState } from 'react';
+import { Image, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Button, Text, useTheme } from 'react-native-paper';
+
+import * as schema from '@/db/schema';
+
+import { useSQLiteContext } from 'expo-sqlite';
+import { drizzle } from 'drizzle-orm/expo-sqlite';
+
+import { expenseCategories } from '@/constants/expense-category';
+import { incomeCategories } from '@/constants/income-category';
+import { transferCategories } from '@/constants/transfer-category';
 
 export default function WelcomeScreen() {
 	const theme = useTheme();
+	const router = useRouter();
+
+	const [isSettingUp, setIsSettingUp] = useState<boolean>(false);
 
 	const { setFirstTimer } = useContext(
 		UserPreferenceContext
 	) as UserPreferenceContextTypes;
 
-	const router = useRouter();
+	const db = useSQLiteContext();
+	const drizzleDb = drizzle(db, { schema });
 
-	function skipAction() {
+	async function setMyApp() {
+		try {
+			setIsSettingUp(true);
+			const createdAt = new Date().toISOString();
+
+			// Insert default expense categories
+			await drizzleDb
+				.insert(schema.expenseCategories)
+				.values(
+					expenseCategories.map((category) => ({
+						label: category.label, // Use category name
+						icon_name: category.icon, // Use icon name
+						budget_id: null, // If budget_id is optional, set it to null
+						created_at: createdAt, // Set the timestamp
+					}))
+				)
+				.onConflictDoNothing();
+
+			await drizzleDb
+				.insert(schema.incomeCategories)
+				.values(
+					incomeCategories.map((category) => ({
+						label: category.label,
+						icon_name: category.icon,
+						created_at: createdAt,
+					}))
+				)
+				.onConflictDoNothing();
+
+			await drizzleDb
+				.insert(schema.transferCategories)
+				.values(
+					transferCategories.map((category) => ({
+						label: category.label,
+						icon_name: category.icon,
+						created_at: createdAt,
+					}))
+				)
+				.onConflictDoNothing();
+		} catch (error) {
+			setIsSettingUp(false);
+		} finally {
+			setTimeout(() => {
+				setIsSettingUp(false);
+			}, 1500);
+		}
+
 		setFirstTimer(false);
-		router.push('/(root)/(tabs)/home');
+		router.push('/(auth)/wallet-setup');
 	}
 
 	return (
 		<View
-			style={{
-				flex: 1,
-				padding: 24,
-				paddingVertical: 36,
-				justifyContent: 'flex-end',
-				gap: 36,
-				backgroundColor: theme.colors.background,
-			}}
+			style={[styles.container, { backgroundColor: theme.colors.background }]}
 		>
-			<View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
+			<View style={styles.imageContainer}>
 				<Image
 					source={require('@/assets/images/welcome image.png')}
 					style={{ width: 264, height: 302 }}
@@ -66,18 +118,13 @@ export default function WelcomeScreen() {
 					mode="contained"
 					style={{ borderRadius: 10 }}
 					labelStyle={{ fontFamily: 'Inter-Regular', fontSize: 16 }}
-					onPress={() => router.push('/(auth)/sign-up')}
+					onPress={setMyApp}
 				>
-					Create an account
-				</Button>
-
-				<Button
-					mode="outlined"
-					style={{ borderRadius: 10 }}
-					labelStyle={{ fontFamily: 'Inter-Regular', fontSize: 16 }}
-					onPress={skipAction}
-				>
-					Skip for now
+					{isSettingUp ? (
+						<ActivityIndicator size={20} color={theme.colors.onPrimary} />
+					) : (
+						'Next'
+					)}
 				</Button>
 
 				<View>
@@ -109,3 +156,18 @@ export default function WelcomeScreen() {
 		</View>
 	);
 }
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		padding: 24,
+		paddingVertical: 36,
+		justifyContent: 'flex-end',
+		gap: 36,
+	},
+	imageContainer: {
+		alignItems: 'center',
+		flex: 1,
+		justifyContent: 'center',
+	},
+});

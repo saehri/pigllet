@@ -9,11 +9,7 @@
 		"newArchEnabled": true,
 		"ios": {
 			"supportsTablet": true,
-			"icon": {
-				"dark": "./assets/icons/ios-dark.png",
-				"light": "./assets/icons/ios-light.png",
-				"tinted": "./assets/icons/ios-tinted.png"
-			}
+			"icon": "./assets/icons/ios-light.png"
 		},
 		"android": {
 			"adaptiveIcon": {
@@ -24,7 +20,7 @@
 		},
 		"web": {
 			"bundler": "metro",
-			"output": "static",
+			"output": "single",
 			"favicon": "./assets/icons/adaptive-icon.png"
 		},
 		"plugins": [
@@ -38,8 +34,7 @@
 					"dark": {
 						"image": "./assets/icons/splash-icon-dark.png",
 						"backgroundColor": "#000000"
-					},
-					"imageWidth": 200
+					}
 				}
 			]
 		],

@@ -1,43 +1,75 @@
 import { useState } from 'react';
-import { expenseCategories } from '@/constants/expense-category';
 import { ToastAndroid, View } from 'react-native';
-import { Button, Text, TextInput } from 'react-native-paper';
+import {
+	ActivityIndicator,
+	Button,
+	Text,
+	TextInput,
+	useTheme,
+} from 'react-native-paper';
 
-import SelectInput from '../forms/select-input';
+import * as schema from '@/db/schema';
 
-const selectableExpenseCategories = expenseCategories.map((cat) => ({
-	value: cat.category,
-	label: cat.category,
-}));
+import { useSQLiteContext } from 'expo-sqlite';
+import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
+
+import SelectInputWithIcon from '../forms/select-input-with-icon';
+import AccountSelector from '../forms/account-selector';
 
 type Props = {
-	initialFormValue?: {
-		selectedCategory: string;
-		amount: string;
-		note: string;
-		from: string;
-	};
+	initialFormValue?: schema.Expense;
 };
 
 export default function NewExpenseForm({ initialFormValue }: Props) {
-	const [selectedCategory, setSelectedCategory] = useState(
-		initialFormValue?.selectedCategory || 'other'
+	const theme = useTheme();
+	const [isLoading, setLoading] = useState(false);
+
+	const db = useSQLiteContext();
+	const drizzleDb = drizzle(db, { schema });
+
+	const { data: expenseCategories } = useLiveQuery(
+		drizzleDb.select().from(schema.expenseCategories)
 	);
-	const [amount, setAmount] = useState(initialFormValue?.amount || '');
+	const { data: accounts } = useLiveQuery(
+		drizzleDb.select().from(schema.accounts)
+	);
+
+	const [selectedCategory, setSelectedCategory] = useState(1);
+	const [accountId, setAccountId] = useState(1);
+	const [amount, setAmount] = useState(String(initialFormValue?.amount || ''));
 	const [note, setNote] = useState(initialFormValue?.note || '');
-	const [from, setFrom] = useState(initialFormValue?.from || 'cash');
 
-	function handleSubmit() {
-		if (Number(amount)) {
-			console.log({ selectedCategory, amount, note });
+	async function handleSubmit() {
+		try {
+			if (!amount.length || !Boolean(Number(amount)))
+				return ToastAndroid.show(
+					'Please enter a valid amount',
+					ToastAndroid.SHORT
+				);
+
+			setLoading(true);
+
+			const createdAt = new Date();
+
+			const response = await drizzleDb.insert(schema.expenses).values({
+				account_id: accountId,
+				amount: Number(amount),
+				category_id: selectedCategory,
+				created_date: createdAt.toISOString(),
+				note: note,
+				budget_id: null,
+				created_day: createdAt.getDay(),
+				created_month: createdAt.getMonth(),
+				created_year: createdAt.getFullYear(),
+			});
+
 			ToastAndroid.show('Record saved', ToastAndroid.CENTER);
-
-			setSelectedCategory('other');
-			setAmount('');
-			setNote('');
-			setFrom('cash');
-		} else {
+		} catch (error) {
 			ToastAndroid.show('Invalid amount', ToastAndroid.CENTER);
+		} finally {
+			setTimeout(() => {
+				setLoading(false);
+			}, 800);
 		}
 	}
 
@@ -46,12 +78,11 @@ export default function NewExpenseForm({ initialFormValue }: Props) {
 			<View style={{ flexDirection: 'row', gap: 16 }}>
 				<View style={{ flex: 1, gap: 12 }}>
 					<Text variant="bodyLarge">Category</Text>
-					<SelectInput
-						data={selectableExpenseCategories}
-						placeholder="Category"
-						value={selectedCategory}
+
+					<SelectInputWithIcon
+						selectedCategory={selectedCategory}
+						data={expenseCategories}
 						handleSelect={setSelectedCategory}
-						closeAfterSelect
 					/>
 				</View>
 
@@ -71,12 +102,11 @@ export default function NewExpenseForm({ initialFormValue }: Props) {
 
 			<View style={{ flex: 1, gap: 12 }}>
 				<Text variant="bodyLarge">From</Text>
-				<SelectInput
-					data={[{ label: 'Cash', value: 'cash' }]}
-					placeholder="Wallet"
-					value={from}
-					handleSelect={setFrom}
-					closeAfterSelect
+
+				<AccountSelector
+					accounts={accounts}
+					handleSelect={setAccountId}
+					selectedAccount={accountId}
 				/>
 			</View>
 
@@ -96,7 +126,11 @@ export default function NewExpenseForm({ initialFormValue }: Props) {
 				labelStyle={{ fontFamily: 'Inter-Regular', fontSize: 16 }}
 				style={{ borderRadius: 10 }}
 			>
-				Save record
+				{isLoading ? (
+					<ActivityIndicator size={20} color={theme.colors.onPrimary} />
+				) : (
+					'Save record'
+				)}
 			</Button>
 		</View>
 	);

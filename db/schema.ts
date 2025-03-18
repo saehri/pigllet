@@ -7,7 +7,7 @@ export const expenses = sqliteTable('expenses', {
 		.references(() => expenseCategories.id),
 	amount: integer('amount').notNull(),
 	note: text('note'),
-	wallet_id: integer('wallet_id')
+	account_id: integer('account_id')
 		.notNull()
 		.references(() => accounts.id),
 	budget_id: integer('budget_id').references(() => budget.id),
@@ -24,7 +24,7 @@ export const incomes = sqliteTable('incomes', {
 	category_id: integer('category_id')
 		.notNull()
 		.references(() => incomeCategories.id),
-	to_wallet_id: integer('to_wallet_id')
+	to_account_id: integer('to_account_id')
 		.notNull()
 		.references(() => accounts.id),
 	created_date: text('created_date').notNull(),
@@ -40,10 +40,10 @@ export const transfers = sqliteTable('transfers', {
 	category_id: integer('category_id')
 		.notNull()
 		.references(() => transferCategories.id),
-	from_wallet_id: integer('from_wallet_id')
+	from_account_id: integer('from_account_id')
 		.notNull()
 		.references(() => accounts.id),
-	to_wallet_id: integer('to_wallet_id')
+	to_account_id: integer('to_account_id')
 		.notNull()
 		.references(() => accounts.id),
 	created_date: text('created_date').notNull(),
@@ -52,29 +52,34 @@ export const transfers = sqliteTable('transfers', {
 	created_day: integer('created_date').notNull(),
 });
 
-export const expenseCategories = sqliteTable('categories', {
+export const expenseCategories = sqliteTable('expense_categories', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
-	label: text('label').notNull(),
+	label: text('label').notNull().unique(),
+	icon_name: text('icon_name').notNull(),
 	budget_id: integer('budget_id').references(() => budget.id),
 	created_at: text('created_at').notNull(),
 });
 
-export const incomeCategories = sqliteTable('categories', {
+export const incomeCategories = sqliteTable('income_categories', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
-	label: text('label').notNull(),
+	label: text('label').notNull().unique(),
+	icon_name: text('icon_name').notNull().unique(),
 	created_at: text('created_at').notNull(),
 });
 
-export const transferCategories = sqliteTable('categories', {
+export const transferCategories = sqliteTable('transfer_categories', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
-	label: text('label').notNull(),
+	label: text('label').notNull().unique(),
+	icon_name: text('icon_name').notNull().unique(),
 	created_at: text('created_at').notNull(),
 });
 
 export const accounts = sqliteTable('accounts', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
 	name: text('name').notNull(),
-	number: text('number').notNull(),
+	number: text('number').notNull().unique(),
+	balance: integer('balance').notNull(),
+	is_cash: integer('is_cash').default(0),
 	image: text('image'),
 	created_at: text('created_at').notNull(),
 });
@@ -90,7 +95,7 @@ export const budget = sqliteTable('budgets', {
 
 export const subscriptions = sqliteTable('subscriptions', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
-	name: text('name').notNull(),
+	name: text('name').notNull().unique(),
 	amount: integer('amount').notNull(),
 	billed: text('billed').notNull(), // --> once, weekly, monthly, yearly
 	due_date: text('due_date').notNull(),
@@ -107,6 +112,6 @@ export type Income = typeof incomes.$inferInsert;
 export type IncomeCategory = typeof incomeCategories.$inferInsert;
 export type Transfer = typeof transfers.$inferInsert;
 export type TransferCategory = typeof transferCategories.$inferInsert;
-export type Wallet = typeof accounts.$inferInsert;
+export type Accounts = typeof accounts.$inferInsert;
 export type Budget = typeof budget.$inferInsert;
 export type Subscription = typeof subscriptions.$inferInsert;

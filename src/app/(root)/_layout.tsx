@@ -8,11 +8,12 @@ export default function Layout() {
 		<Stack
 			initialRouteName="(tabs)"
 			screenOptions={{
-				animation: 'ios_from_right',
-				animationDuration: 400,
+				statusBarBackgroundColor: theme.colors.background,
+				statusBarTranslucent: false,
 				contentStyle: {
 					backgroundColor: theme.colors.background,
 				},
+				headerShadowVisible: false,
 			}}
 		>
 			<Stack.Screen
@@ -20,7 +21,6 @@ export default function Layout() {
 				options={{
 					headerShown: false,
 					statusBarStyle: 'dark',
-					statusBarColor: theme.colors.background,
 					statusBarTranslucent: true,
 				}}
 			/>
@@ -36,10 +36,6 @@ export default function Layout() {
 					title: 'New transaction',
 					headerTintColor: theme.colors.onBackground,
 					headerStyle: { backgroundColor: theme.colors.background },
-					statusBarColor: theme.colors.background,
-					headerShadowVisible: false,
-					statusBarStyle: 'dark',
-					statusBarTranslucent: true,
 					headerTitleStyle: {
 						fontFamily: 'Inter-Black',
 						fontSize: 20,

@@ -60,7 +60,7 @@ function ResetUserPreference() {
 	const showDialog = () => setVisible(true);
 	const hideDialog = () => setVisible(false);
 	const handleReset = () => {
-		resetUserPreferenceData();
+		// resetUserPreferenceData();
 		hideDialog();
 		router.push('/(auth)/welcome');
 	};

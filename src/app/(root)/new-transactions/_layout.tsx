@@ -13,37 +13,23 @@ export default function Layout() {
 		<Tabs
 			screenOptions={{
 				headerShown: false,
-				tabBarActiveTintColor: theme.colors.background,
+				tabBarActiveTintColor: theme.colors.onPrimary,
 				tabBarActiveBackgroundColor: theme.colors.primary,
 				tabBarStyle: {
-					position: 'absolute',
-					top: 4,
-					left: 16,
-					right: 16,
-					borderRadius: 1000,
-					overflow: 'hidden',
 					backgroundColor: theme.colors.elevation.level2,
 					height: 40,
-					borderWidth: 1,
-					borderColor: theme.colors.outline,
-					borderTopWidth: 1,
-				},
-				tabBarItemStyle: {
-					flexDirection: 'row',
-					alignItems: 'center',
-					justifyContent: 'center',
-					gap: 4,
-				},
-				tabBarIconStyle: {
-					width: 20,
-					height: 20,
-					alignItems: 'center',
-					flex: 0,
+					position: 'absolute',
+					top: 0,
+					borderWidth: 0,
+					borderTopWidth: 0,
+					borderRadius: 1000,
+					marginHorizontal: 16,
 				},
 				tabBarLabelStyle: {
 					fontFamily: 'Inter-Regular',
-					fontSize: 14,
+					fontSize: 15,
 				},
+				tabBarLabelPosition: 'beside-icon',
 			}}
 		>
 			<Tabs.Screen

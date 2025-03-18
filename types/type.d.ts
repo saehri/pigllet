@@ -29,13 +29,6 @@ declare interface ExpenseCategoryIconCatalog {
 	'vehicle-expenses': LucideIcon;
 }
 
-declare interface Expense {
-	id: number;
-	category: string;
-	amount: number;
-	note: string;
-}
-
 declare interface UserPreference {
 	currentAppTheme: AppTheme;
 	currentAppColor: AppColor;

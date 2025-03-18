@@ -1,6 +1,11 @@
-import { View, StyleSheet } from 'react-native';
-import { Icon, Text, useTheme } from 'react-native-paper';
-import { ArrowLeftRight, Pizza, MoveRight } from 'lucide-react-native';
+import { View, StyleSheet, Pressable } from 'react-native';
+import { Text, useTheme } from 'react-native-paper';
+import {
+	ArrowLeftRight,
+	Pizza,
+	MoveRight,
+	ArrowLeft,
+} from 'lucide-react-native';
 import { useContext } from 'react';
 import {
 	UserPreferenceContext,
@@ -25,7 +30,7 @@ export default function TransactionCard(props: TransactionCard) {
 	};
 
 	return (
-		<View style={styles.container}>
+		<Pressable onPress={() => console.log('Pressed')} style={styles.container}>
 			<View style={styles.iconContainer}>
 				{props.type === 'expense' ? (
 					<Pizza
@@ -34,7 +39,7 @@ export default function TransactionCard(props: TransactionCard) {
 						strokeWidth={1.5}
 					/>
 				) : props.type === 'income' ? (
-					<ArrowLeftRight
+					<ArrowLeft
 						color={theme.colors.onBackground}
 						size={20}
 						strokeWidth={1.5}
@@ -81,7 +86,7 @@ export default function TransactionCard(props: TransactionCard) {
 					{currentCurrencySymbol} 15.000
 				</Text>
 			</View>
-		</View>
+		</Pressable>
 	);
 }
 

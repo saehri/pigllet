@@ -9,10 +9,17 @@ export default function Layout() {
 			screenOptions={{
 				headerShown: false,
 				contentStyle: { backgroundColor: theme.colors.background },
-				statusBarColor: theme.colors.background,
+				statusBarBackgroundColor: theme.colors.background,
+				headerShadowVisible: false,
 			}}
 		>
 			<Stack.Screen name="welcome" options={{ headerShown: false }} />
+			<Stack.Screen
+				name="wallet-setup"
+				options={{
+					headerShown: false,
+				}}
+			/>
 			<Stack.Screen name="sign-up" options={{ headerShown: false }} />
 			<Stack.Screen name="sign-in" options={{ headerShown: false }} />
 		</Stack>
