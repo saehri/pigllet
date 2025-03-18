@@ -3,10 +3,13 @@ import { Text, useTheme } from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
 
 import TransactionCard from '../reusables/transaction-card';
+import NoItemNotice from '../reusables/no-items-notice';
 
 export default function TodayTransaction() {
 	const theme = useTheme();
 	const [todayDate] = useState(new Date());
+
+	const data = [];
 
 	return (
 		<View style={styles.container}>
@@ -27,16 +30,18 @@ export default function TodayTransaction() {
 					})}
 				</Text>
 			</View>
-
-			<View>
-				<TransactionCard type="expense" />
-				<TransactionCard type="income" />
-				<TransactionCard type="transfer" />
-				<TransactionCard type="expense" />
-				<TransactionCard type="expense" />
-				<TransactionCard type="expense" />
-				<TransactionCard type="transfer" />
-			</View>
+			{data.length ? (
+				<View>
+					<TransactionCard
+						transactionType="expense"
+						account={'' as any}
+						category={'' as any}
+						data={'' as any}
+					/>
+				</View>
+			) : (
+				<NoItemNotice />
+			)}
 		</View>
 	);
 }

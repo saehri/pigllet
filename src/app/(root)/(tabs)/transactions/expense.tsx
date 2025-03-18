@@ -8,8 +8,9 @@ import { and, eq } from 'drizzle-orm';
 import * as schema from '@/db/schema';
 
 import ExpenseCard from '@/src/components/reusables/expense-card';
+import NoItemNotice from '@/src/components/reusables/no-items-notice';
 
-export default function TransactionScreen(props: any) {
+export default function ExpensesScreen() {
 	const theme = useTheme();
 	const [date] = useState(new Date());
 
@@ -36,28 +37,16 @@ export default function TransactionScreen(props: any) {
 			)
 	);
 
-	if (!data.length)
-		return (
-			<View
-				style={{
-					paddingHorizontal: 16,
-					paddingTop: 60,
-					backgroundColor: theme.colors.background,
-				}}
-			>
-				<Text
-					variant="bodyLarge"
-					style={{ fontFamily: 'Inter-Regular', textAlign: 'center' }}
-				>
-					There are no records of expense yet.
-				</Text>
-			</View>
-		);
-
 	return (
 		<FlatList
 			style={{ paddingTop: 60, backgroundColor: theme.colors.background }}
-			data={data}
+			data={data.reverse()}
+			ListHeaderComponent={
+				<View style={{ padding: 16 }}>
+					<Text style={{ textAlign: 'center' }}>Analytics will be here</Text>
+				</View>
+			}
+			ListEmptyComponent={<NoItemNotice />}
 			renderItem={({ item }) => (
 				<ExpenseCard
 					key={item.expenses.id}

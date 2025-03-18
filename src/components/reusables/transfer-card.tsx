@@ -1,23 +1,23 @@
 import { useContext } from 'react';
 import { Text } from 'react-native-paper';
-import { View, StyleSheet, Pressable } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import {
 	UserPreferenceContext,
 	UserPreferenceContextTypes,
 } from '@/context/UserPreferenceContext';
 
-import { type Expense, type ExpenseCategory, type Accounts } from '@/db/schema';
+import { Accounts, Transfer, TransferCategory } from '@/db/schema';
 
 import TransactionIcons from './transaction-icons';
 import getLocaleByCurrencySymbol from '@/utils/locale-getter';
 
 interface Props {
-	category: ExpenseCategory;
-	data: Expense;
+	category: TransferCategory;
+	data: Transfer;
 	account: Accounts;
 }
 
-export default function ExpenseCard({ account, category, data }: Props) {
+export default function TransferCard({ account, category, data }: Props) {
 	const { currentCurrencySymbol } = useContext(
 		UserPreferenceContext
 	) as UserPreferenceContextTypes;
@@ -29,17 +29,11 @@ export default function ExpenseCard({ account, category, data }: Props) {
 
 	return (
 		<View style={styles.container}>
-			<Pressable
-				style={styles.iconContainer}
-				onPress={() => console.log('Go to category analytics')}
-			>
+			<View style={styles.iconContainer}>
 				<TransactionIcons icon={category.icon_name as any} />
-			</Pressable>
+			</View>
 
-			<Pressable
-				style={styles.contentContainer}
-				onPress={() => console.log('Go to item edit form')}
-			>
+			<View style={styles.contentContainer}>
 				<View>
 					<View style={styles.row}>
 						<Text variant="bodyLarge" style={{ fontFamily: 'Inter-Regular' }}>
@@ -67,7 +61,7 @@ export default function ExpenseCard({ account, category, data }: Props) {
 						{formattedDate}
 					</Text>
 				</View>
-			</Pressable>
+			</View>
 		</View>
 	);
 }

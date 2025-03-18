@@ -37,6 +37,7 @@ export default function Layout() {
 					fontFamily: 'Inter-Regular',
 					fontSize: 14,
 				},
+				headerShadowVisible: false,
 			}}
 		>
 			<Tabs.Screen
