@@ -202,7 +202,7 @@ const ONYX_DARK = {
 		onBackground: 'rgb(255, 255, 255)',
 		surface: 'rgb(10, 10, 10)',
 		onSurface: 'rgb(240, 240, 240)',
-		surfaceVariant: 'rgb(20, 20, 20)',
+		surfaceVariant: 'rgb(37, 37, 37)',
 		onSurfaceVariant: 'rgb(200, 200, 200)',
 		outline: 'rgb(100, 100, 100)',
 		outlineVariant: 'rgb(60, 60, 60)',
