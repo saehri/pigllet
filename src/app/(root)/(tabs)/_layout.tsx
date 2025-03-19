@@ -25,8 +25,9 @@ export default function Layout() {
 					backgroundColor: theme.colors.background,
 					height: 65,
 					borderTopWidth: 0,
-					paddingVertical: 8,
 					paddingBottom: 10,
+					position: 'absolute',
+					bottom: 0,
 				},
 				headerTitleStyle: {
 					fontFamily: 'Inter-Black',
@@ -38,6 +39,9 @@ export default function Layout() {
 					fontSize: 14,
 				},
 				headerShadowVisible: false,
+				sceneStyle: {
+					backgroundColor: theme.colors.background,
+				},
 			}}
 		>
 			<Tabs.Screen
@@ -107,7 +111,9 @@ export default function Layout() {
 								alignItems: 'center',
 							}}
 						>
-							<Button onPress={() => router.push('/(root)/new-transactions')}>
+							<Button
+								onPress={() => router.push('/(root)/new-transactions/expense')}
+							>
 								<Plus
 									strokeWidth={1.5}
 									color={theme.colors.onBackground}

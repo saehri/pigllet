@@ -11,7 +11,6 @@ export default function Layout() {
 			initialRouteName="(tabs)"
 			screenOptions={{
 				statusBarBackgroundColor: theme.colors.background,
-				statusBarTranslucent: false,
 				contentStyle: {
 					backgroundColor: theme.colors.background,
 				},

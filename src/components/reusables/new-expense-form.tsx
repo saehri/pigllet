@@ -15,6 +15,7 @@ import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
 
 import SelectInputWithIcon from '../forms/select-input-with-icon';
 import AccountSelector from '../forms/account-selector';
+import ImageSelectorInput from '../forms/image-select-input';
 
 type Props = {
 	initialFormValue?: schema.Expense;
@@ -38,6 +39,8 @@ export default function NewExpenseForm({ initialFormValue }: Props) {
 	const [accountId, setAccountId] = useState(1);
 	const [amount, setAmount] = useState(String(initialFormValue?.amount || ''));
 	const [note, setNote] = useState(initialFormValue?.note || '');
+	const [image, setImage] = useState(initialFormValue?.image || '');
+	const [datePicked, setDatePicked] = useState(new Date());
 
 	async function handleSubmit() {
 		try {
@@ -49,18 +52,17 @@ export default function NewExpenseForm({ initialFormValue }: Props) {
 
 			setLoading(true);
 
-			const createdAt = new Date();
-
 			await drizzleDb.insert(schema.expenses).values({
 				account_id: accountId,
 				amount: Number(amount),
 				category_id: selectedCategory,
-				created_date: createdAt.toISOString(),
+				created_date: datePicked.toISOString(),
 				note: note,
 				budget_id: null,
-				created_day: createdAt.getDay(),
-				created_month: createdAt.getMonth(),
-				created_year: createdAt.getFullYear(),
+				created_day: datePicked.getDay(),
+				created_month: datePicked.getMonth(),
+				created_year: datePicked.getFullYear(),
+				image,
 			});
 
 			ToastAndroid.show('Record saved', ToastAndroid.CENTER);
@@ -74,7 +76,7 @@ export default function NewExpenseForm({ initialFormValue }: Props) {
 	}
 
 	return (
-		<View style={{ padding: 16, gap: 12 }}>
+		<View style={{ padding: 16, gap: 12, paddingTop: 59 }}>
 			<View style={{ flexDirection: 'row', gap: 16 }}>
 				<View style={{ flex: 1, gap: 12 }}>
 					<Text variant="bodyLarge">Category</Text>
@@ -110,13 +112,18 @@ export default function NewExpenseForm({ initialFormValue }: Props) {
 				/>
 			</View>
 
-			<View style={{ gap: 12, marginBottom: 24 }}>
+			<View style={{ gap: 12 }}>
 				<Text variant="bodyLarge">Note</Text>
 				<TextInput
 					contentStyle={{ fontFamily: 'Inter-Regular' }}
 					onChangeText={setNote}
 					value={note}
 				/>
+			</View>
+
+			<View style={{ gap: 12, marginBottom: 24 }}>
+				<Text variant="bodyLarge">Pick an image</Text>
+				<ImageSelectorInput handleSelect={setImage} selectedImage={image} />
 			</View>
 
 			<Button

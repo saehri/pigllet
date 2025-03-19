@@ -11,6 +11,7 @@ export default function Layout() {
 
 	return (
 		<Tabs
+			initialRouteName="expense"
 			screenOptions={{
 				headerShown: false,
 				tabBarActiveTintColor: theme.colors.onPrimary,
@@ -33,7 +34,7 @@ export default function Layout() {
 			}}
 		>
 			<Tabs.Screen
-				name="index"
+				name="expense"
 				options={{
 					title: 'Expense',
 					tabBarIcon: (props) => (
