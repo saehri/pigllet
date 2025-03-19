@@ -17,10 +17,11 @@ export default function MainSetting() {
 	return (
 		<View>
 			<List.Item
-				title="Account (coming soon)"
-				description="Avatar, email, password"
+				title="Account"
+				description="Email, password, delete data"
 				titleStyle={{ fontFamily: 'Inter-Regular' }}
 				descriptionStyle={{ fontFamily: 'Inter-Light' }}
+				onPress={() => router.push('/(root)/settings/account')}
 				left={(props) => (
 					<User {...props} size={24} strokeWidth={1.5} color={props.color} />
 				)}

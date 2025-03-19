@@ -6,7 +6,7 @@ import BudgetStatsWidget from '@/src/components/home/budget-stats-widget';
 import AccountOverviewWidget from '@/src/components/home/account-overview-widget';
 
 export default function TransactionScreen() {
-	const theme = useTheme()
+	const theme = useTheme();
 
 	return (
 		<ScrollView

@@ -18,14 +18,16 @@ export default function Layout() {
 
 	return (
 		<Tabs
-			initialRouteName="index"
+			initialRouteName="home"
 			screenOptions={{
 				tabBarActiveTintColor: theme.colors.primary,
 				tabBarStyle: {
 					backgroundColor: theme.colors.background,
 					height: 65,
-					paddingBottom: 10,
 					borderTopWidth: 0,
+					paddingBottom: 10,
+					position: 'absolute',
+					bottom: 0,
 				},
 				headerTitleStyle: {
 					fontFamily: 'Inter-Black',
@@ -35,6 +37,10 @@ export default function Layout() {
 				tabBarLabelStyle: {
 					fontFamily: 'Inter-Regular',
 					fontSize: 14,
+				},
+				headerShadowVisible: false,
+				sceneStyle: {
+					backgroundColor: theme.colors.background,
 				},
 			}}
 		>
@@ -105,7 +111,9 @@ export default function Layout() {
 								alignItems: 'center',
 							}}
 						>
-							<Button onPress={() => router.push('/(root)/new-transactions')}>
+							<Button
+								onPress={() => router.push('/(root)/new-transactions/expense')}
+							>
 								<Plus
 									strokeWidth={1.5}
 									color={theme.colors.onBackground}

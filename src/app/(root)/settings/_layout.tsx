@@ -8,11 +8,10 @@ export default function Layout() {
 		<Stack
 			initialRouteName="index"
 			screenOptions={{
+				statusBarBackgroundColor: theme.colors.background,
 				headerTintColor: theme.colors.onBackground,
-				statusBarColor: theme.colors.background,
 				headerShadowVisible: false,
 				statusBarStyle: 'dark',
-				statusBarTranslucent: true,
 				headerStyle: {
 					backgroundColor: theme.colors.background,
 				},
@@ -26,6 +25,12 @@ export default function Layout() {
 				name="index"
 				options={{
 					title: 'Settings',
+				}}
+			/>
+			<Stack.Screen
+				name="account"
+				options={{
+					title: 'Account',
 				}}
 			/>
 			<Stack.Screen
@@ -50,6 +55,12 @@ export default function Layout() {
 				name="transaction-categories"
 				options={{
 					title: 'Transaction category',
+				}}
+			/>
+			<Stack.Screen
+				name="wallets"
+				options={{
+					title: 'Wallet',
 				}}
 			/>
 		</Stack>

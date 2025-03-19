@@ -1,103 +1,55 @@
 import { useState } from 'react';
-import { ScrollView, View } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { FlatList } from 'react-native';
+import { useTheme } from 'react-native-paper';
+import { useSQLiteContext } from 'expo-sqlite';
+import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
+import { and, eq } from 'drizzle-orm';
 
-import TransactionCard from '@/src/components/reusables/transaction-card';
+import * as schema from '@/db/schema';
 
-export default function IncomeScreen(props: any) {
-    const theme = useTheme();
+import IncomeCard from '@/src/components/reusables/income-card';
+import NoItemNotice from '@/src/components/reusables/no-items-notice';
 
-    const [value, setValue] = useState<string>('expense');
+export default function IncomesScreen() {
+	const theme = useTheme();
+	const [date] = useState(new Date());
 
-    const dataDummy = {
-        income: [
-            { title: '12 Feb 2025', data: [{ type: 'income' }, { type: 'income' }] },
-            { title: '11 Feb 2025', data: [{ type: 'income' }, { type: 'income' }] },
-            { title: '6 Feb 2025', data: [{ type: 'income' }, { type: 'income' }] },
-            { title: '5 Feb 2025', data: [{ type: 'income' }, { type: 'income' }] },
-            { title: '4 Feb 2025', data: [{ type: 'income' }, { type: 'income' }] },
-            { title: '1 Feb 2025', data: [{ type: 'income' }, { type: 'income' }] },
-        ],
-        transfer: [
-            {
-                title: '4 Feb 2025',
-                data: [{ type: 'transfer' }, { type: 'transfer' }],
-            },
-            {
-                title: '1 Feb 2025',
-                data: [{ type: 'transfer' }, { type: 'transfer' }],
-            },
-        ],
-        expense: [
-            {
-                title: '13 Feb 2025',
-                data: [
-                    { type: 'expense' },
-                    { type: 'expense' },
-                    { type: 'expense' },
-                    { type: 'expense' },
-                    { type: 'expense' },
-                    { type: 'expense' },
-                    { type: 'expense' },
-                    { type: 'expense' },
-                    { type: 'expense' },
-                ],
-            },
-            {
-                title: '12 Feb 2025',
-                data: [
-                    { type: 'expense' },
-                    { type: 'expense' },
-                    { type: 'expense' },
-                    { type: 'expense' },
-                ],
-            },
-            {
-                title: '11 Feb 2025',
-                data: [{ type: 'expense' }, { type: 'expense' }],
-            },
-            {
-                title: '10 Feb 2025',
-                data: [{ type: 'expense' }, { type: 'expense' }, { type: 'expense' }],
-            },
-            { title: '9 Feb 2025', data: [{ type: 'expense' }, { type: 'expense' }] },
-            { title: '8 Feb 2025', data: [{ type: 'expense' }, { type: 'expense' }] },
-            { title: '7 Feb 2025', data: [{ type: 'expense' }, { type: 'expense' }] },
-            { title: '6 Feb 2025', data: [{ type: 'expense' }, { type: 'expense' }] },
-            { title: '5 Feb 2025', data: [{ type: 'expense' }, { type: 'expense' }] },
-            { title: '4 Feb 2025', data: [{ type: 'expense' }, { type: 'expense' }] },
-            { title: '3 Feb 2025', data: [{ type: 'expense' }, { type: 'expense' }] },
-            { title: '2 Feb 2025', data: [{ type: 'expense' }, { type: 'expense' }] },
-            { title: '1 Feb 2025', data: [{ type: 'expense' }, { type: 'expense' }] },
-        ],
-    };
+	const db = useSQLiteContext();
+	const drizzleDb = drizzle(db, { schema });
 
-    return (
-        <ScrollView showsVerticalScrollIndicator={false} style={{ backgroundColor: theme.colors.background }}>
-            <SectionRender data={dataDummy['income']} />
-        </ScrollView>
-    );
-}
+	const { data } = useLiveQuery(
+		drizzleDb
+			.select()
+			.from(schema.incomes)
+			.where(
+				and(
+					eq(schema.incomes.created_month, date.getMonth()),
+					eq(schema.incomes.created_year, date.getFullYear())
+				)
+			)
+			.innerJoin(
+				schema.incomeCategories,
+				eq(schema.incomes.category_id, schema.incomeCategories.id)
+			)
+			.innerJoin(
+				schema.accounts,
+				eq(schema.incomes.to_account_id, schema.accounts.id)
+			)
+	);
 
-function SectionRender(props: {
-    data: { title: string; data: { type: any }[] }[];
-}) {
-    return (
-        <View style={{ gap: 16, marginTop: 75 }}>
-            {props.data.map((data, index) => (
-                <View key={index}>
-                    <Text
-                        variant="titleMedium"
-                        style={{ marginHorizontal: 16, fontFamily: 'Inter-Black' }}
-                    >
-                        {data.title}
-                    </Text>
-
-                    {data.data.map((data, index) => (
-                        <TransactionCard key={index + data.type} type={data.type} />
-                    ))}
-                </View>
-            ))}
-        </View>
-    );
+	return (
+		<FlatList
+			style={{ paddingTop: 60, backgroundColor: theme.colors.background }}
+			data={data}
+			ListEmptyComponent={<NoItemNotice />}
+			renderItem={({ item }) => (
+				<IncomeCard
+					key={item.incomes.id}
+					data={item.incomes}
+					account={item.accounts}
+					category={item.income_categories}
+				/>
+			)}
+		/>
+	);
 }

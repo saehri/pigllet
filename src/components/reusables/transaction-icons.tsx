@@ -1,43 +1,62 @@
 import { useTheme } from 'react-native-paper';
 import {
+	ArrowDownLeft,
+	Baby,
+	Blend,
 	Book,
+	BookUser,
+	BriefcaseBusiness,
 	Car,
 	CarFront,
+	ChartCandlestick,
+	CircleDollarSign,
 	CircleDot,
 	Clapperboard,
+	Clock10,
 	Coins,
 	Computer,
+	CreditCard,
+	Dices,
 	Drill,
 	Fuel,
+	Gift,
 	GraduationCap,
 	HandCoins,
+	HandHelping,
 	Hospital,
 	KeySquare,
 	LampDesk,
 	Landmark,
+	Laptop,
 	LaptopMinimalCheck,
 	Martini,
 	Megaphone,
+	PersonStanding,
+	PiggyBank,
 	Plane,
 	RailSymbol,
+	Salad,
 	ShieldPlus,
 	Shirt,
 	ShoppingBasket,
 	ShoppingCart,
 	SquareParking,
+	Store,
 	Utensils,
+	Vault,
+	Waypoints,
 	Wifi,
-	type LucideIcon,
 } from 'lucide-react-native';
+import { TransactionIconsCatalogue } from '@/types/type';
 
 type Props = {
-	icon: keyof ExpenseCategoryIconCatalog;
+	icon: keyof TransactionIconsCatalogue;
 };
 
 export default function TransactionIcons({ icon }: Props) {
 	const theme = useTheme();
 
-	const icons: Record<keyof ExpenseCategoryIconCatalog, JSX.Element> = {
+	const icons: Record<keyof TransactionIconsCatalogue, JSX.Element> = {
 		other: (
 			<CircleDot
 				size={20}
@@ -169,6 +188,161 @@ export default function TransactionIcons({ icon }: Props) {
 		),
 		'vehicle-expenses': (
 			<CarFront size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+		),
+		salary: (
+			<CircleDollarSign
+				size={20}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+			/>
+		),
+		royalties: (
+			<Megaphone
+				size={20}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+			/>
+		),
+		'affiliate-marketing': (
+			<Store size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+		),
+		'bank-transfer': (
+			<Landmark size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+		),
+		'bonusses-and-commision': (
+			<HandCoins
+				size={20}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+			/>
+		),
+		'business-income': (
+			<BriefcaseBusiness
+				size={20}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+			/>
+		),
+		'capital-gains': (
+			<ChartCandlestick
+				size={20}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+			/>
+		),
+		'cash-deposit': (
+			<Vault size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+		),
+		'cash-withdrawal': (
+			<ArrowDownLeft
+				size={20}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+			/>
+		),
+		'child-support': (
+			<Baby size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+		),
+		'credit-card-payment': (
+			<CreditCard
+				size={20}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+			/>
+		),
+		'gifts-and-donations': (
+			<Gift size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+		),
+		'interest-income': (
+			<Blend size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+		),
+		'loan-payment': (
+			<HandHelping
+				size={20}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+			/>
+		),
+		'loan-received': (
+			<HandHelping
+				size={20}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+			/>
+		),
+		'lottery-and-gambling': (
+			<Dices size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+		),
+		'overtime-pay': (
+			<Clock10 size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+		),
+		'received-from-family': (
+			<BookUser size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+		),
+		pension: (
+			<PiggyBank
+				size={20}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+			/>
+		),
+		dropshipping: (
+			<Store size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+		),
+		freelance: (
+			<Laptop size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+		),
+		dividens: (
+			<Waypoints
+				size={20}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+			/>
+		),
+		alimony: (
+			<PersonStanding
+				size={20}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+			/>
+		),
+		'rental-income': (
+			<CircleDot
+				size={20}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+			/>
+		),
+		'savings-contribution': (
+			<CircleDot
+				size={20}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+			/>
+		),
+		'sent-to-family': (
+			<CircleDot
+				size={20}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+			/>
+		),
+		'side-hustles': (
+			<CircleDot
+				size={20}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+			/>
+		),
+		'unemployment-benefits': (
+			<CircleDot
+				size={20}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+			/>
+		),
+		'foods-and-drinks': (
+			<Salad size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
 		),
 	};
 

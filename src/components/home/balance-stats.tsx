@@ -1,32 +1,47 @@
-import { StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
+import { useContext } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { Text } from 'react-native-paper';
 
-export default function BalanceStats() {
-    return (
-        <View>
-            <Text variant="bodyMedium" style={styles.title}>Your balance</Text>
-            <Text
-                variant="headlineLarge"
-                style={styles.mainText}
-            >
-                Rp 5.500.000
-            </Text>
-            <Text variant="labelSmall" style={styles.caption}>
-                This is the total money in all your wallets
-            </Text>
-        </View>
-    );
+import getLocaleByCurrencySymbol from '@/utils/locale-getter';
+import {
+	UserPreferenceContext,
+	UserPreferenceContextTypes,
+} from '@/context/UserPreferenceContext';
+
+type Props = {
+	balance: number;
+};
+
+export default function BalanceStats({ balance }: Props) {
+	const { currentCurrencySymbol } = useContext(
+		UserPreferenceContext
+	) as UserPreferenceContextTypes;
+
+	return (
+		<View>
+			<Text variant="bodyMedium" style={styles.title}>
+				Your balance
+			</Text>
+			<Text variant="headlineLarge" style={styles.mainText}>
+				{`${currentCurrencySymbol} ${balance.toLocaleString(
+					getLocaleByCurrencySymbol(currentCurrencySymbol)
+				)}`}
+			</Text>
+			<Text variant="labelSmall" style={styles.caption}>
+				This is the total balance across all your accounts.
+			</Text>
+		</View>
+	);
 }
 
-
 const styles = StyleSheet.create({
-    title: {
-        fontFamily: 'Inter-Regular'
-    },
-    mainText: {
-        fontFamily: 'Inter-Black'
-    },
-    caption: {
-        fontFamily: 'Inter-Light'
-    }
-})
+	title: {
+		fontFamily: 'Inter-Regular',
+	},
+	mainText: {
+		fontFamily: 'Inter-Black',
+	},
+	caption: {
+		fontFamily: 'Inter-Light',
+	},
+});

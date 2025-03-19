@@ -1,5 +1,7 @@
 import { Stack } from 'expo-router';
-import { useTheme } from 'react-native-paper';
+import { Calculator } from 'lucide-react-native';
+import { View } from 'react-native';
+import { useTheme, Button } from 'react-native-paper';
 
 export default function Layout() {
 	const theme = useTheme();
@@ -8,11 +10,11 @@ export default function Layout() {
 		<Stack
 			initialRouteName="(tabs)"
 			screenOptions={{
-				animation: 'ios_from_right',
-				animationDuration: 400,
+				statusBarBackgroundColor: theme.colors.background,
 				contentStyle: {
 					backgroundColor: theme.colors.background,
 				},
+				headerShadowVisible: false,
 			}}
 		>
 			<Stack.Screen
@@ -20,7 +22,6 @@ export default function Layout() {
 				options={{
 					headerShown: false,
 					statusBarStyle: 'dark',
-					statusBarColor: theme.colors.background,
 					statusBarTranslucent: true,
 				}}
 			/>
@@ -36,14 +37,27 @@ export default function Layout() {
 					title: 'New transaction',
 					headerTintColor: theme.colors.onBackground,
 					headerStyle: { backgroundColor: theme.colors.background },
-					statusBarColor: theme.colors.background,
-					headerShadowVisible: false,
-					statusBarStyle: 'dark',
-					statusBarTranslucent: true,
 					headerTitleStyle: {
 						fontFamily: 'Inter-Black',
 						fontSize: 20,
 					},
+					headerRight: (props) => (
+						<View
+							style={{
+								backgroundColor: theme.colors.background,
+								flexDirection: 'row',
+								alignItems: 'center',
+							}}
+						>
+							<Button>
+								<Calculator
+									strokeWidth={1.5}
+									color={theme.colors.onBackground}
+									size={24}
+								/>
+							</Button>
+						</View>
+					),
 				}}
 			/>
 		</Stack>

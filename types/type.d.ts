@@ -1,4 +1,6 @@
-declare interface ExpenseCategoryIconCatalog {
+import { LucideIcon } from 'lucide-react-native';
+
+declare interface TransactionIconsCatalogue {
 	other: LucideIcon;
 	advertising: LucideIcon;
 	airlines: LucideIcon;
@@ -27,19 +29,43 @@ declare interface ExpenseCategoryIconCatalog {
 	taxes: LucideIcon;
 	utilities: LucideIcon;
 	'vehicle-expenses': LucideIcon;
-}
-
-declare interface Expense {
-	id: number;
-	category: string;
-	amount: number;
-	note: string;
+	salary: LucideIcon;
+	freelance: LucideIcon;
+	'business-income': LucideIcon;
+	'bonusses-and-commision': LucideIcon;
+	'overtime-pay': LucideIcon;
+	dividens: LucideIcon;
+	'interest-income': LucideIcon;
+	'capital-gains': LucideIcon;
+	'rental-income': LucideIcon;
+	royalties: LucideIcon;
+	'affiliate-marketing': LucideIcon;
+	advertising: LucideIcon;
+	dropshipping: LucideIcon;
+	pension: LucideIcon;
+	'unemployment-benefits': LucideIcon;
+	'child-support': LucideIcon;
+	alimony: LucideIcon;
+	'gifts-and-donations': LucideIcon;
+	'lottery-and-gambling': LucideIcon;
+	'side-hustles': LucideIcon;
+	'bank-transfer': LucideIcon;
+	'cash-deposit': LucideIcon;
+	'cash-withdrawal': LucideIcon;
+	'credit-card-payment': LucideIcon;
+	'savings-contribution': LucideIcon;
+	'received-from-family': LucideIcon;
+	'sent-to-family': LucideIcon;
+	'loan-received': LucideIcon;
+	'loan-payment': LucideIcon;
+	'foods-and-drinks': LucideIcon;
 }
 
 declare interface UserPreference {
 	currentAppTheme: AppTheme;
 	currentAppColor: AppColor;
 	currentCurrencySymbol: CurrencySymbols;
+	firstTimer: boolean;
 }
 
 // from left to right: usd, idr, yen, gbp,

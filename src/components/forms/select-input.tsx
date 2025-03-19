@@ -15,7 +15,7 @@ type Props = {
 	}: {
 		showDialog: () => void;
 	}) => React.ReactNode;
-	data: { value: string; label: string }[];
+	data: { value: any; label: string }[];
 };
 
 export default function SelectInput({

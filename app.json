@@ -1,64 +1,59 @@
 {
-  "expo": {
-    "name": "Pigllet",
-    "slug": "pigllet-mobile",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "scheme": "myapp",
-    "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
-    "ios": {
-      "supportsTablet": true,
-      "icon": {
-        "dark": "./assets/icons/ios-dark.png",
-        "light": "./assets/icons/ios-light.png",
-        "tinted": "./assets/icons/ios-tinted.png"
-      }
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/icons/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "package": "com.bahree36.piglletmobile"
-    },
-    "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/icons/adaptive-icon.png"
-    },
-    "plugins": [
-      "expo-router",
-      "expo-sqlite",
-      [
-        "expo-splash-screen",
-        {
-          "backgroundColor": "#ECEDEE",
-          "image": "./assets/icons/splash-icon-light.png",
-          "dark": {
-            "image": "./assets/icons/splash-icon-dark.png",
-            "backgroundColor": "#000000"
-          },
-          "imageWidth": 200
-        }
-      ],
-      [
-        "expo-font",
-        {
-          "fonts": ["./assets/fonts/Geist-Medium.ttf", "./assets/fonts/Geist-Regular.ttf", "./assets/fonts/Geist-SemiBold.ttf"]
-        }
-      ]
-    ],
-    "experiments": {
-      "typedRoutes": true
-    },
-    "extra": {
-      "router": {
-        "origin": false
-      },
-      "eas": {
-        "projectId": "9d3984a6-d0cb-493b-8719-055ed18d673a"
-      }
-    }
-  }
+	"expo": {
+		"name": "Pigllet",
+		"slug": "pigllet-mobile",
+		"version": "1.0.0",
+		"orientation": "portrait",
+		"scheme": "myapp",
+		"userInterfaceStyle": "automatic",
+		"newArchEnabled": true,
+		"ios": {
+			"supportsTablet": true,
+			"icon": "./assets/icons/ios-light.png"
+		},
+		"android": {
+			"adaptiveIcon": {
+				"foregroundImage": "./assets/icons/adaptive-icon.png",
+				"backgroundColor": "#ffffff"
+			},
+			"package": "com.bahree36.piglletmobile"
+		},
+		"web": {
+			"bundler": "metro",
+			"output": "single",
+			"favicon": "./assets/icons/adaptive-icon.png"
+		},
+		"plugins": [
+			"expo-router",
+			"expo-sqlite",
+			[
+				"expo-splash-screen",
+				{
+					"backgroundColor": "#ECEDEE",
+					"image": "./assets/icons/splash-icon-light.png",
+					"dark": {
+						"image": "./assets/icons/splash-icon-dark.png",
+						"backgroundColor": "#000000"
+					}
+				}
+			],
+			[
+				"expo-image-picker",
+				{
+					"photosPermission": "The app accesses your photos to let you share them with your friends."
+				}
+			]
+		],
+		"experiments": {
+			"typedRoutes": true
+		},
+		"extra": {
+			"router": {
+				"origin": false
+			},
+			"eas": {
+				"projectId": "9d3984a6-d0cb-493b-8719-055ed18d673a"
+			}
+		}
+	}
 }

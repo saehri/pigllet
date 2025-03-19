@@ -1,9 +1,23 @@
+import {
+	UserPreferenceContext,
+	UserPreferenceContextTypes,
+} from '@/context/UserPreferenceContext';
 import { Redirect } from 'expo-router';
+import { useContext } from 'react';
+
+import * as schema from '@/db/schema';
+import { useSQLiteContext } from 'expo-sqlite';
+import { drizzle } from 'drizzle-orm/expo-sqlite';
 
 export default function Page() {
-	const isSignedIn = true;
+	const { firstTimer } = useContext(
+		UserPreferenceContext
+	) as UserPreferenceContextTypes;
 
-	if (isSignedIn) return <Redirect href="/(root)/(tabs)/home" />;
+	const db = useSQLiteContext();
+	const drizzleDb = drizzle(db, { schema });
 
-	return <Redirect href="/(auth)/welcome" />;
+	if (!firstTimer) return <Redirect href="/(auth)/welcome" />;
+
+	return <Redirect href="/(root)/(tabs)/home" />;
 }

@@ -1,8 +1,8 @@
 import { Tabs } from 'expo-router';
 import {
-	ArrowRightLeft,
 	CircleArrowOutDownLeft,
 	CircleArrowOutUpRight,
+	ShoppingBasket,
 } from 'lucide-react-native';
 import { useTheme } from 'react-native-paper';
 
@@ -11,51 +11,34 @@ export default function Layout() {
 
 	return (
 		<Tabs
+			initialRouteName="expense"
 			screenOptions={{
 				headerShown: false,
-				tabBarActiveTintColor: theme.colors.background,
+				tabBarActiveTintColor: theme.colors.onPrimary,
 				tabBarActiveBackgroundColor: theme.colors.primary,
 				tabBarStyle: {
-					position: 'absolute',
-					top: 4,
-					left: 16,
-					right: 16,
-					borderRadius: 1000,
-					overflow: 'hidden',
 					backgroundColor: theme.colors.elevation.level2,
 					height: 40,
-					borderWidth: 1,
-					borderColor: theme.colors.outline,
-					borderTopWidth: 1,
-				},
-				tabBarItemStyle: {
-					flexDirection: 'row',
-					alignItems: 'center',
-					justifyContent: 'center',
-					gap: 4,
-				},
-				tabBarIconStyle: {
-					width: 20,
-					height: 20,
-					alignItems: 'center',
-					flex: 0,
+					position: 'absolute',
+					top: 8,
+					borderWidth: 0,
+					borderTopWidth: 0,
+					borderRadius: 1000,
+					marginHorizontal: 16,
 				},
 				tabBarLabelStyle: {
 					fontFamily: 'Inter-Regular',
-					fontSize: 14,
+					fontSize: 15,
 				},
+				tabBarLabelPosition: 'beside-icon',
 			}}
 		>
 			<Tabs.Screen
-				name="index"
+				name="expense"
 				options={{
 					title: 'Expense',
 					tabBarIcon: (props) => (
-						<CircleArrowOutUpRight
-							color={props.color}
-							size={14}
-							strokeWidth={1.5}
-						/>
+						<ShoppingBasket color={props.color} size={14} strokeWidth={1.5} />
 					),
 				}}
 			/>
@@ -77,7 +60,11 @@ export default function Layout() {
 				options={{
 					title: 'Transfer',
 					tabBarIcon: (props) => (
-						<ArrowRightLeft color={props.color} size={14} strokeWidth={1.5} />
+						<CircleArrowOutUpRight
+							color={props.color}
+							size={14}
+							strokeWidth={1.5}
+						/>
 					),
 				}}
 			/>
