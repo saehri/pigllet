@@ -28,7 +28,7 @@ export default function Layout() {
 				},
 				tabBarLabelStyle: {
 					fontFamily: 'Inter-Regular',
-					fontSize: 15,
+					fontSize: 13,
 				},
 				tabBarLabelPosition: 'beside-icon',
 			}}

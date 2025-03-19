@@ -16,6 +16,7 @@ import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import SelectInputWithIcon from '../forms/select-input-with-icon';
 import AccountSelector from '../forms/account-selector';
 import ImageSelectorInput from '../forms/image-select-input';
+import DatePicker from '../forms/date-picker';
 
 type Props = {
 	initialFormValue?: schema.Expense;
@@ -40,7 +41,7 @@ export default function NewExpenseForm({ initialFormValue }: Props) {
 	const [amount, setAmount] = useState(String(initialFormValue?.amount || ''));
 	const [note, setNote] = useState(initialFormValue?.note || '');
 	const [image, setImage] = useState(initialFormValue?.image || '');
-	const [datePicked, setDatePicked] = useState(new Date());
+	const [selectedDate, setSelectedDate] = useState(new Date());
 
 	async function handleSubmit() {
 		try {
@@ -50,20 +51,36 @@ export default function NewExpenseForm({ initialFormValue }: Props) {
 					ToastAndroid.SHORT
 				);
 
+			// Make sure user have enough balance
+			const selectedAccountBalance = accounts.filter(
+				(acc) => acc.id === accountId
+			)[0].balance;
+			if (selectedAccountBalance - Number(amount) < 0) {
+				return ToastAndroid.show(
+					'You don’t have enough balance for this transaction',
+					ToastAndroid.SHORT
+				);
+			}
+
 			setLoading(true);
 
 			await drizzleDb.insert(schema.expenses).values({
 				account_id: accountId,
 				amount: Number(amount),
 				category_id: selectedCategory,
-				created_date: datePicked.toISOString(),
+				created_date: selectedDate.toISOString(),
 				note: note,
 				budget_id: null,
-				created_day: datePicked.getDay(),
-				created_month: datePicked.getMonth(),
-				created_year: datePicked.getFullYear(),
+				created_day: selectedDate.getDay(),
+				created_month: selectedDate.getMonth(),
+				created_year: selectedDate.getFullYear(),
 				image,
 			});
+
+			// Update selected account balance
+			await drizzleDb
+				.update(schema.accounts)
+				.set({ balance: selectedAccountBalance - Number(amount) });
 
 			ToastAndroid.show('Record saved', ToastAndroid.CENTER);
 		} catch (error) {
@@ -113,6 +130,14 @@ export default function NewExpenseForm({ initialFormValue }: Props) {
 			</View>
 
 			<View style={{ gap: 12 }}>
+				<Text variant="bodyLarge">Date</Text>
+				<DatePicker
+					selectedDate={selectedDate}
+					setSelectedDate={setSelectedDate}
+				/>
+			</View>
+
+			<View style={{ gap: 12 }}>
 				<Text variant="bodyLarge">Note</Text>
 				<TextInput
 					contentStyle={{ fontFamily: 'Inter-Regular' }}
@@ -122,7 +147,7 @@ export default function NewExpenseForm({ initialFormValue }: Props) {
 			</View>
 
 			<View style={{ gap: 12, marginBottom: 24 }}>
-				<Text variant="bodyLarge">Pick an image</Text>
+				<Text variant="bodyLarge">Add image</Text>
 				<ImageSelectorInput handleSelect={setImage} selectedImage={image} />
 			</View>
 

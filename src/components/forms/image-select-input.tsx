@@ -39,6 +39,8 @@ export default function ImageSelectorInput({
 							width: Dimensions.get('screen').width - 32,
 							height: 300,
 							borderRadius: 20,
+							objectFit: 'contain',
+							backgroundColor: theme.colors.elevation.level3,
 						}}
 					/>
 
