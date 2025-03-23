@@ -1,12 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { MD3Theme, Text, useTheme } from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
 import { useSQLiteContext } from 'expo-sqlite';
+
 import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import * as schema from '@/db/schema';
+import { and, asc, eq } from 'drizzle-orm';
 
 import NoItemNotice from '../reusables/no-items-notice';
-import { and, asc, eq } from 'drizzle-orm';
 import TransactionCard from '../reusables/transaction-card';
 
 export default function TodayTransaction() {
@@ -20,7 +21,13 @@ export default function TodayTransaction() {
 		drizzleDb
 			.select()
 			.from(schema.transactions)
-			.where(eq(schema.transactions.created_date, todayDate.getDate()))
+			.where(
+				and(
+					eq(schema.transactions.created_date, todayDate.getDate()),
+					eq(schema.transactions.created_month, todayDate.getMonth()),
+					eq(schema.transactions.created_year, todayDate.getFullYear())
+				)
+			)
 			.innerJoin(
 				schema.categories,
 				eq(schema.transactions.category_id, schema.categories.id)
@@ -31,8 +38,6 @@ export default function TodayTransaction() {
 			)
 			.orderBy(asc(schema.transactions.created_date))
 	);
-
-	console.log({ data });
 
 	if (!data.length) {
 		return (

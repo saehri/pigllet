@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useContext } from 'react';
 import { useEffect, useState } from 'react';
 import { Dimensions, ToastAndroid, View } from 'react-native';
 import {
@@ -8,9 +8,11 @@ import {
 	TextInput,
 	useTheme,
 } from 'react-native-paper';
+import { useRouter } from 'expo-router';
 
 import * as schema from '@/db/schema';
 import { TransactionCategories, Accounts } from '@/db/schema';
+import { eq } from 'drizzle-orm';
 
 import { SQLiteDatabase, useSQLiteContext } from 'expo-sqlite';
 import { drizzle, ExpoSQLiteDatabase } from 'drizzle-orm/expo-sqlite';
@@ -19,7 +21,10 @@ import SelectInputWithIcon from '../forms/select-input-with-icon';
 import AccountSelector from '../forms/account-selector';
 import ImageSelectorInput from '../forms/image-select-input';
 import DatePicker from '../forms/date-picker';
-import { eq } from 'drizzle-orm';
+import {
+	UserPreferenceContext,
+	UserPreferenceContextTypes,
+} from '@/context/UserPreferenceContext';
 
 type Props = {
 	initialFormValue: schema.Transaction;
@@ -107,6 +112,10 @@ const Form = memo(function Form({
 	initialAccount,
 }: FormProps) {
 	const theme = useTheme();
+	const router = useRouter();
+	const { currentCurrencySymbol } = useContext(
+		UserPreferenceContext
+	) as UserPreferenceContextTypes;
 
 	// form state
 	const [isLoading, setLoading] = useState(false);
@@ -172,8 +181,12 @@ const Form = memo(function Form({
 	async function handleDelete() {
 		try {
 			setLoading(true);
+			await drizzleDb
+				.delete(schema.transactions)
+				.where(eq(schema.transactions.id, initialFormValue.id as number));
 
 			ToastAndroid.show('Record deleted!', ToastAndroid.CENTER);
+			router.back();
 		} catch (error) {
 			ToastAndroid.show('Error when updating expense', ToastAndroid.CENTER);
 		} finally {
@@ -194,7 +207,8 @@ const Form = memo(function Form({
 				</View>
 
 				<View style={{ gap: 8, flex: 1 }}>
-					<Text variant="bodyLarge">Amount</Text>
+					<Text variant="bodyLarge">Amount ({currentCurrencySymbol})</Text>
+
 					<TextInput
 						keyboardType="number-pad"
 						onChangeText={setAmount}

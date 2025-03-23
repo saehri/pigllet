@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useContext } from 'react';
 import { useEffect, useState } from 'react';
 import { Dimensions, ToastAndroid, View } from 'react-native';
 import {
@@ -20,6 +20,10 @@ import SelectInputWithIcon from '../forms/select-input-with-icon';
 import AccountSelector from '../forms/account-selector';
 import ImageSelectorInput from '../forms/image-select-input';
 import DatePicker from '../forms/date-picker';
+import {
+	UserPreferenceContext,
+	UserPreferenceContextTypes,
+} from '@/context/UserPreferenceContext';
 
 export default function CreateExpenseForm() {
 	const theme = useTheme();
@@ -88,6 +92,9 @@ const Form = memo(function Form({
 	drizzleDb,
 }: FormProps) {
 	const theme = useTheme();
+	const { currentCurrencySymbol } = useContext(
+		UserPreferenceContext
+	) as UserPreferenceContextTypes;
 
 	// form state
 	const [isLoading, setLoading] = useState(false);
@@ -160,7 +167,7 @@ const Form = memo(function Form({
 				</View>
 
 				<View style={{ gap: 8, flex: 1 }}>
-					<Text variant="bodyLarge">Amount</Text>
+					<Text variant="bodyLarge">Amount ({currentCurrencySymbol})</Text>
 					<TextInput
 						keyboardType="number-pad"
 						onChangeText={setAmount}

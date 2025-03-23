@@ -15,7 +15,7 @@ export default function NoItemNotice() {
 				minHeight: 300,
 			}}
 		>
-			<SearchX size={56} color={theme.colors.primary} strokeWidth={1} />
+			<SearchX size={64} color={theme.colors.primary} strokeWidth={0.5} />
 
 			<Text
 				variant="bodyLarge"
