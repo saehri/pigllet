@@ -29,7 +29,7 @@ export default function Layout() {
 				},
 				tabBarLabelStyle: {
 					fontFamily: 'Inter-Regular',
-					fontSize: 13,
+					fontSize: 14,
 				},
 				tabBarLabelPosition: 'beside-icon',
 			}}

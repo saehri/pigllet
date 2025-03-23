@@ -1,6 +1,12 @@
 import React, { createContext, ReactNode, useEffect, useState } from 'react';
 import { ToastAndroid } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+	AppColor,
+	AppTheme,
+	CurrencySymbols,
+	UserPreference,
+} from '@/types/type';
 
 const STORAGE_KEY = 'USER_PREFERENCE';
 

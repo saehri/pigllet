@@ -6,14 +6,14 @@ import {
 	UserPreferenceContextTypes,
 } from '@/context/UserPreferenceContext';
 
-import { Accounts, Transfer, TransferCategory } from '@/db/schema';
+import { Accounts, Transaction, TransactionCategories } from '@/db/schema';
 
 import TransactionIcons from './transaction-icons';
 import getLocaleByCurrencySymbol from '@/utils/locale-getter';
 
 interface Props {
-	category: TransferCategory;
-	data: Transfer;
+	category: TransactionCategories;
+	data: Transaction;
 	account: Accounts;
 }
 

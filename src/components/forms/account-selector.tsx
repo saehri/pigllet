@@ -11,8 +11,8 @@ import getLocaleByCurrencySymbol from '@/utils/locale-getter';
 
 interface AccountSelector {
 	accounts: schema.Accounts[];
-	selectedAccount: number;
-	handleSelect: (selected: number) => void;
+	selectedAccount: schema.Accounts;
+	handleSelect: (selected: schema.Accounts) => void;
 }
 
 export default function AccountSelector({
@@ -21,7 +21,6 @@ export default function AccountSelector({
 	selectedAccount,
 }: AccountSelector) {
 	const theme = useTheme();
-	const [label, setLabel] = useState('Cash');
 	const [visible, setVisible] = useState<boolean>(false);
 
 	const { currentCurrencySymbol } = useContext(
@@ -32,8 +31,7 @@ export default function AccountSelector({
 	const hideDialog = () => setVisible(false);
 
 	function selectItem(selected: schema.Accounts) {
-		setLabel(selected.name);
-		handleSelect(selected.id as number);
+		handleSelect(selected);
 		hideDialog();
 	}
 
@@ -51,7 +49,7 @@ export default function AccountSelector({
 											padding: 16,
 											borderRadius: 20,
 											backgroundColor:
-												c.id === selectedAccount
+												c.id === selectedAccount.id
 													? theme.colors.elevation.level5
 													: theme.colors.elevation.level3,
 										}}
@@ -73,7 +71,7 @@ export default function AccountSelector({
 											)}`}
 										</Text>
 
-										{c.id === selectedAccount && (
+										{c.id === selectedAccount.id && (
 											<CheckCircle
 												size={18}
 												color={theme.colors.onSurface}
@@ -111,7 +109,7 @@ export default function AccountSelector({
 					}}
 					numberOfLines={1}
 				>
-					{label}
+					{selectedAccount.name}
 				</Text>
 
 				<ChevronDown

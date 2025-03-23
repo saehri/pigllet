@@ -10,7 +10,7 @@ export default function NewIncome() {
 		<ScrollView
 			style={{ backgroundColor: theme.colors.background, paddingTop: 59 }}
 		>
-			<NewTransferForm />
+			{/* <NewTransferForm /> */}
 		</ScrollView>
 	);
 }

@@ -6,18 +6,20 @@ import {
 	UserPreferenceContextTypes,
 } from '@/context/UserPreferenceContext';
 
-import { type Expense, type ExpenseCategory, type Accounts } from '@/db/schema';
+import { Transaction, Accounts, TransactionCategories } from '@/db/schema';
 
 import TransactionIcons from './transaction-icons';
 import getLocaleByCurrencySymbol from '@/utils/locale-getter';
+import { useRouter } from 'expo-router';
 
 interface Props {
-	category: ExpenseCategory;
-	data: Expense;
+	category: TransactionCategories;
+	data: Transaction;
 	account: Accounts;
 }
 
 export default function ExpenseCard({ account, category, data }: Props) {
+	const router = useRouter();
 	const { currentCurrencySymbol } = useContext(
 		UserPreferenceContext
 	) as UserPreferenceContextTypes;
@@ -37,8 +39,13 @@ export default function ExpenseCard({ account, category, data }: Props) {
 			</Pressable>
 
 			<Pressable
+				onPress={() =>
+					router.push({
+						pathname: '/(root)/expense-detail/[id]',
+						params: { id: data.id },
+					})
+				}
 				style={styles.contentContainer}
-				onPress={() => console.log('Go to item edit form')}
 			>
 				<View>
 					<View style={styles.row}>

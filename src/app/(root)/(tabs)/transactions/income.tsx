@@ -20,20 +20,20 @@ export default function IncomesScreen() {
 	const { data } = useLiveQuery(
 		drizzleDb
 			.select()
-			.from(schema.incomes)
+			.from(schema.transactions)
 			.where(
 				and(
-					eq(schema.incomes.created_month, date.getMonth()),
-					eq(schema.incomes.created_year, date.getFullYear())
+					eq(schema.transactions.created_month, date.getMonth()),
+					eq(schema.transactions.created_year, date.getFullYear())
 				)
 			)
 			.innerJoin(
-				schema.incomeCategories,
-				eq(schema.incomes.category_id, schema.incomeCategories.id)
+				schema.categories,
+				eq(schema.transactions.category_id, schema.categories.id)
 			)
 			.innerJoin(
 				schema.accounts,
-				eq(schema.incomes.to_account_id, schema.accounts.id)
+				eq(schema.transactions.related_account_id, schema.accounts.id)
 			)
 	);
 
@@ -44,10 +44,10 @@ export default function IncomesScreen() {
 			ListEmptyComponent={<NoItemNotice />}
 			renderItem={({ item }) => (
 				<IncomeCard
-					key={item.incomes.id}
-					data={item.incomes}
+					key={item.transactions.id}
+					data={item.transactions}
 					account={item.accounts}
-					category={item.income_categories}
+					category={item.categories}
 				/>
 			)}
 		/>

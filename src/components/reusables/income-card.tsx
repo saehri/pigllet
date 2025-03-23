@@ -6,14 +6,14 @@ import {
 	UserPreferenceContextTypes,
 } from '@/context/UserPreferenceContext';
 
-import { Accounts, Income, type IncomeCategory } from '@/db/schema';
+import { Accounts, Transaction, TransactionCategories } from '@/db/schema';
 
 import TransactionIcons from './transaction-icons';
 import getLocaleByCurrencySymbol from '@/utils/locale-getter';
 
 interface Props {
-	category: IncomeCategory;
-	data: Income;
+	category: TransactionCategories;
+	data: Transaction;
 	account: Accounts;
 }
 
