@@ -39,7 +39,7 @@ export default function ExpenseCard({ category, data }: Props) {
 			<Pressable
 				onPress={() =>
 					router.push({
-						pathname: '/(root)/expense-detail/[id]',
+						pathname: '/(root)/transaction-detail',
 						params: { id: data.id as any },
 					})
 				}
