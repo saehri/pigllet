@@ -24,7 +24,7 @@ export const transactions = sqliteTable('transactions', {
 export const categories = sqliteTable('categories', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
 	label: text('label').notNull().unique(),
-	icon_name: text('icon_name').notNull().unique(),
+	icon_name: text('icon_name').notNull(),
 	type: text('type').notNull(), // 'expense', 'income', or 'transfer'
 	budget_id: integer('budget_id').references(() => budget.id), // Only for expense categories
 });

@@ -23,10 +23,9 @@ export default function Currency() {
 		<ScrollView
 			style={{
 				backgroundColor: theme.colors.background,
-				padding: 16,
 			}}
 		>
-			<View style={{ gap: 24 }}>
+			<View style={{ gap: 24, padding: 16 }}>
 				<SettingContentWrapper headerTitle="Currency symbol">
 					{currencySymbols.map((c) => (
 						<SettingContentButtonModal

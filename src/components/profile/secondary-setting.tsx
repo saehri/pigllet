@@ -11,7 +11,7 @@ import {
 export default function SecondarySetting() {
 	return (
 		<List.Section>
-			<List.Subheader style={{ fontFamily: 'Inter-Black' }}>
+			<List.Subheader style={{ fontFamily: 'Inter-SemiBold' }}>
 				Billing and support
 			</List.Subheader>
 

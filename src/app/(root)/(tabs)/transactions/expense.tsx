@@ -19,7 +19,22 @@ export default function ExpensesScreen() {
 
 	const { data } = useLiveQuery(
 		drizzleDb
-			.select()
+			.select({
+				categories: schema.categories,
+				transactions: {
+					id: schema.transactions.id,
+					amount: schema.transactions.amount,
+					note: schema.transactions.note,
+					account_id: schema.transactions.account_id,
+					related_account_id: schema.transactions.related_account_id,
+					category_id: schema.transactions.category_id,
+					type: schema.transactions.type,
+					created_date: schema.transactions.created_date,
+					created_month: schema.transactions.created_month,
+					created_year: schema.transactions.created_year,
+					budget_id: schema.transactions.budget_id,
+				},
+			})
 			.from(schema.transactions)
 			.where(
 				and(
@@ -35,6 +50,8 @@ export default function ExpensesScreen() {
 			.orderBy(asc(schema.transactions.created_date))
 	);
 
+	console.log(data);
+
 	return (
 		<FlatList
 			style={{ paddingTop: 60, backgroundColor: theme.colors.background }}
@@ -43,7 +60,7 @@ export default function ExpensesScreen() {
 			renderItem={({ item }) => (
 				<ExpenseCard
 					key={item.transactions.id}
-					data={item.transactions}
+					data={item.transactions as any}
 					category={item.categories as schema.TransactionCategories}
 				/>
 			)}

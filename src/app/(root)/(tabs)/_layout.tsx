@@ -28,7 +28,7 @@ export default function Layout() {
 					paddingBottom: 10,
 				},
 				headerTitleStyle: {
-					fontFamily: 'Inter-Black',
+					fontFamily: 'Inter-Regular',
 					color: theme.colors.onBackground,
 					textTransform: 'capitalize',
 				},
@@ -61,7 +61,7 @@ export default function Layout() {
 						backgroundColor: theme.colors.background,
 					},
 					headerTitle: (props) => (
-						<Text variant="titleLarge" style={{ fontFamily: 'Inter-Black' }}>
+						<Text variant="titleLarge" style={{ fontFamily: 'Inter-Bold' }}>
 							Pigllet
 						</Text>
 					),
@@ -96,11 +96,6 @@ export default function Layout() {
 					headerStyle: {
 						backgroundColor: theme.colors.background,
 					},
-					headerTitle: (props) => (
-						<Text variant="titleLarge" style={{ fontFamily: 'Inter-Black' }}>
-							Transactions
-						</Text>
-					),
 					headerRight: (props) => (
 						<View
 							style={{
@@ -147,11 +142,6 @@ export default function Layout() {
 					headerStyle: {
 						backgroundColor: theme.colors.background,
 					},
-					headerTitle: (props) => (
-						<Text variant="titleLarge" style={{ fontFamily: 'Inter-Black' }}>
-							Subscriptions
-						</Text>
-					),
 					headerRight: (props) => (
 						<View
 							style={{
@@ -196,11 +186,6 @@ export default function Layout() {
 					headerStyle: {
 						backgroundColor: theme.colors.background,
 					},
-					headerTitle: (props) => (
-						<Text variant="titleLarge" style={{ fontFamily: 'Inter-Black' }}>
-							Budgets
-						</Text>
-					),
 					headerRight: (props) => (
 						<View
 							style={{

@@ -1,7 +1,7 @@
 import { Stack } from 'expo-router';
 import { Calculator } from 'lucide-react-native';
 import { View } from 'react-native';
-import { useTheme, Button, Text } from 'react-native-paper';
+import { useTheme, Button } from 'react-native-paper';
 
 export default function Layout() {
 	const theme = useTheme();
@@ -17,7 +17,7 @@ export default function Layout() {
 				headerShadowVisible: false,
 				headerTintColor: theme.colors.onBackground,
 				headerTitleStyle: {
-					fontFamily: 'Inter-Black',
+					fontFamily: 'Inter-Regular',
 					fontSize: 20,
 				},
 				headerStyle: { backgroundColor: theme.colors.background },
@@ -27,7 +27,6 @@ export default function Layout() {
 				name="(tabs)"
 				options={{
 					headerShown: false,
-					statusBarStyle: 'dark',
 				}}
 			/>
 			<Stack.Screen
@@ -59,8 +58,11 @@ export default function Layout() {
 					),
 				}}
 			/>
-			<Stack.Screen name="transaction-detail/index"  options={{title: '',
-				headerRight: (props) => (
+			<Stack.Screen
+				name="transaction-detail"
+				options={{
+					title: '',
+					headerRight: (props) => (
 						<View
 							style={{
 								backgroundColor: theme.colors.background,
@@ -77,7 +79,9 @@ export default function Layout() {
 							</Button>
 						</View>
 					),
-			}}/>
+				}}
+			/>
+			<Stack.Screen name="transaction-by-category" />
 		</Stack>
 	);
 }

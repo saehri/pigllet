@@ -1,8 +1,11 @@
-import { Stack } from 'expo-router';
-import { useTheme } from 'react-native-paper';
+import { Stack, useRouter } from 'expo-router';
+import { Plus } from 'lucide-react-native';
+import { View } from 'react-native';
+import { Button, useTheme } from 'react-native-paper';
 
 export default function Layout() {
 	const theme = useTheme();
+	const router = useRouter();
 
 	return (
 		<Stack
@@ -28,9 +31,9 @@ export default function Layout() {
 				}}
 			/>
 			<Stack.Screen
-				name="account"
+				name="user"
 				options={{
-					title: 'Account',
+					title: 'User',
 				}}
 			/>
 			<Stack.Screen
@@ -58,9 +61,26 @@ export default function Layout() {
 				}}
 			/>
 			<Stack.Screen
-				name="wallets"
+				name="accounts"
 				options={{
-					title: 'Wallet',
+					title: 'Accounts',
+					headerRight: (props) => (
+						<View
+							style={{
+								backgroundColor: theme.colors.background,
+								flexDirection: 'row',
+								alignItems: 'center',
+							}}
+						>
+							<Button>
+								<Plus
+									strokeWidth={1.5}
+									color={theme.colors.onBackground}
+									size={24}
+								/>
+							</Button>
+						</View>
+					),
 				}}
 			/>
 		</Stack>

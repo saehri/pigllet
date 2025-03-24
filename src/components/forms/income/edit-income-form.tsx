@@ -269,7 +269,7 @@ const Form = memo(function Form({
 				onPress={handleDelete}
 			>
 				{isLoading ? (
-					<ActivityIndicator size={20} color={theme.colors.onPrimary} />
+					<ActivityIndicator size={20} color={theme.colors.onSurface} />
 				) : (
 					'Delete income record'
 				)}
