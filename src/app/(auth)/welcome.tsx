@@ -36,9 +36,10 @@ export default function WelcomeScreen() {
 
 			// Insert default expense categories
 			await drizzleDb
-				.insert(schema.expenseCategories)
+				.insert(schema.categories)
 				.values(
 					expenseCategories.map((category) => ({
+						type: 'expense',
 						label: category.label, // Use category name
 						icon_name: category.icon, // Use icon name
 						budget_id: null, // If budget_id is optional, set it to null
@@ -48,23 +49,25 @@ export default function WelcomeScreen() {
 				.onConflictDoNothing();
 
 			await drizzleDb
-				.insert(schema.incomeCategories)
+				.insert(schema.categories)
 				.values(
 					incomeCategories.map((category) => ({
 						label: category.label,
 						icon_name: category.icon,
 						created_at: createdAt,
+						type: 'incomes',
 					}))
 				)
 				.onConflictDoNothing();
 
 			await drizzleDb
-				.insert(schema.transferCategories)
+				.insert(schema.categories)
 				.values(
 					transferCategories.map((category) => ({
 						label: category.label,
 						icon_name: category.icon,
 						created_at: createdAt,
+						type: 'transfer',
 					}))
 				)
 				.onConflictDoNothing();

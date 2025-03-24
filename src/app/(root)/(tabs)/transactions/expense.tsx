@@ -3,7 +3,7 @@ import { FlatList, View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
-import { and, eq } from 'drizzle-orm';
+import { and, asc, eq } from 'drizzle-orm';
 
 import * as schema from '@/db/schema';
 
@@ -20,39 +20,31 @@ export default function ExpensesScreen() {
 	const { data } = useLiveQuery(
 		drizzleDb
 			.select()
-			.from(schema.expenses)
+			.from(schema.transactions)
 			.where(
 				and(
-					eq(schema.expenses.created_month, date.getMonth()),
-					eq(schema.expenses.created_year, date.getFullYear())
+					eq(schema.transactions.type, 'expense'),
+					eq(schema.transactions.created_month, date.getMonth() + 1),
+					eq(schema.transactions.created_year, date.getFullYear())
 				)
 			)
 			.innerJoin(
-				schema.expenseCategories,
-				eq(schema.expenses.category_id, schema.expenseCategories.id)
+				schema.categories,
+				eq(schema.transactions.category_id, schema.categories.id)
 			)
-			.innerJoin(
-				schema.accounts,
-				eq(schema.expenses.account_id, schema.accounts.id)
-			)
+			.orderBy(asc(schema.transactions.created_date))
 	);
 
 	return (
 		<FlatList
 			style={{ paddingTop: 60, backgroundColor: theme.colors.background }}
-			data={data.reverse()}
-			ListHeaderComponent={
-				<View style={{ padding: 16 }}>
-					<Text style={{ textAlign: 'center' }}>Analytics will be here</Text>
-				</View>
-			}
+			data={data}
 			ListEmptyComponent={<NoItemNotice />}
 			renderItem={({ item }) => (
 				<ExpenseCard
-					key={item.expenses.id}
-					data={item.expenses as schema.Expense}
-					account={item.accounts as schema.Accounts}
-					category={item.expense_categories as schema.ExpenseCategory}
+					key={item.transactions.id}
+					data={item.transactions}
+					category={item.categories as schema.TransactionCategories}
 				/>
 			)}
 		/>

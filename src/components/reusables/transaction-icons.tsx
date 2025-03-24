@@ -209,7 +209,7 @@ export default function TransactionIcons({ icon }: Props) {
 		'bank-transfer': (
 			<Landmark size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
 		),
-		'bonusses-and-commision': (
+		'bonuses-and-commission': (
 			<HandCoins
 				size={20}
 				strokeWidth={1.5}

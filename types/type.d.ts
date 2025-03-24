@@ -32,7 +32,7 @@ declare interface TransactionIconsCatalogue {
 	salary: LucideIcon;
 	freelance: LucideIcon;
 	'business-income': LucideIcon;
-	'bonusses-and-commision': LucideIcon;
+	'bonuses-and-commission': LucideIcon;
 	'overtime-pay': LucideIcon;
 	dividens: LucideIcon;
 	'interest-income': LucideIcon;

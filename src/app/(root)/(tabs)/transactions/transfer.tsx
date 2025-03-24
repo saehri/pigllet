@@ -20,20 +20,20 @@ export default function TransfersScreen() {
 	const { data } = useLiveQuery(
 		drizzleDb
 			.select()
-			.from(schema.transfers)
+			.from(schema.transactions)
 			.where(
 				and(
-					eq(schema.transfers.created_month, date.getMonth()),
-					eq(schema.transfers.created_year, date.getFullYear())
+					eq(schema.transactions.created_month, date.getMonth()),
+					eq(schema.transactions.created_year, date.getFullYear())
 				)
 			)
 			.innerJoin(
-				schema.transferCategories,
-				eq(schema.transfers.category_id, schema.transferCategories.id)
+				schema.categories,
+				eq(schema.transactions.category_id, schema.categories.id)
 			)
 			.innerJoin(
 				schema.accounts,
-				eq(schema.transfers.to_account_id, schema.accounts.id)
+				eq(schema.transactions.related_account_id, schema.accounts.id)
 			)
 	);
 
@@ -44,10 +44,10 @@ export default function TransfersScreen() {
 			ListEmptyComponent={<NoItemNotice />}
 			renderItem={({ item }) => (
 				<TransferCard
-					key={item.transfers.id}
-					data={item.transfers}
+					key={item.transactions.id}
+					data={item.transactions}
 					account={item.accounts}
-					category={item.transfer_categories}
+					category={item.categories}
 				/>
 			)}
 		/>

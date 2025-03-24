@@ -1,21 +1,13 @@
 import IncomeCard from './income-card';
 import ExpenseCard from './expense-card';
 import TransferCard from './transfer-card';
-import {
-	Accounts,
-	Expense,
-	ExpenseCategory,
-	Income,
-	IncomeCategory,
-	Transfer,
-	TransferCategory,
-} from '@/db/schema';
+import { Accounts, Transaction, TransactionCategories } from '@/db/schema';
 
 interface TransactionCard {
 	transactionType: 'expense' | 'income' | 'transfer';
-	data: Expense | Income | Transfer;
+	data: Transaction;
 	account: Accounts;
-	category: ExpenseCategory | IncomeCategory | TransferCategory;
+	category: TransactionCategories;
 }
 
 export default function TransactionCard({
@@ -25,23 +17,9 @@ export default function TransactionCard({
 	category,
 }: TransactionCard) {
 	if (transactionType === 'expense')
-		return (
-			<ExpenseCard
-				account={account}
-				category={category}
-				data={data as Expense}
-			/>
-		);
+		return <ExpenseCard category={category} data={data} />;
 	if (transactionType === 'income')
-		return (
-			<IncomeCard account={account} category={category} data={data as Income} />
-		);
-	else
-		return (
-			<TransferCard
-				account={account}
-				category={category}
-				data={data as Transfer}
-			/>
-		);
+		return <IncomeCard accounts={account} category={category} data={data} />;
+
+	return <TransferCard account={account} category={category} data={data} />;
 }

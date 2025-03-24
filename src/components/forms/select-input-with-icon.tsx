@@ -7,8 +7,8 @@ import TransactionIcons from '../reusables/transaction-icons';
 
 interface SelectInputWithIcon {
 	data: any;
-	selectedCategory: number;
-	handleSelect: (selected: number) => void;
+	selectedCategory: any;
+	handleSelect: (selected: any) => void;
 }
 
 export default function SelectInputWithIcon({
@@ -17,15 +17,13 @@ export default function SelectInputWithIcon({
 	selectedCategory,
 }: SelectInputWithIcon) {
 	const theme = useTheme();
-	const [label, setLabel] = useState('Other');
 	const [visible, setVisible] = useState<boolean>(false);
 
 	const showDialog = () => setVisible(true);
 	const hideDialog = () => setVisible(false);
 
 	function selectItem(selected: any) {
-		setLabel(selected.label);
-		handleSelect(selected.id as number);
+		handleSelect(selected);
 		hideDialog();
 	}
 
@@ -46,7 +44,7 @@ export default function SelectInputWithIcon({
 											gap: 16,
 											alignItems: 'center',
 											backgroundColor:
-												c.id === selectedCategory
+												c.id === selectedCategory.id
 													? theme.colors.elevation.level5
 													: theme.colors.elevation.level3,
 										}}
@@ -61,7 +59,7 @@ export default function SelectInputWithIcon({
 											{c.label}
 										</Text>
 
-										{c.id === selectedCategory && (
+										{c.id === selectedCategory.id && (
 											<Check
 												size={16}
 												color={theme.colors.onSurface}
@@ -99,7 +97,7 @@ export default function SelectInputWithIcon({
 					}}
 					numberOfLines={1}
 				>
-					{label}
+					{selectedCategory ? selectedCategory.label : 'Other'}
 				</Text>
 
 				<ChevronDown

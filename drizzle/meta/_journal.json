@@ -43,6 +43,41 @@
       "when": 1742305091053,
       "tag": "0005_shallow_mystique",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1742714855271,
+      "tag": "0006_jittery_azazel",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1742716759005,
+      "tag": "0007_nostalgic_red_wolf",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1742721228770,
+      "tag": "0008_outgoing_lethal_legion",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1742722103983,
+      "tag": "0009_cool_zzzax",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1742722370819,
+      "tag": "0010_mature_venus",
+      "breakpoints": true
     }
   ]
 }

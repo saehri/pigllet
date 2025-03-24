@@ -1,7 +1,7 @@
 import { Stack } from 'expo-router';
 import { Calculator } from 'lucide-react-native';
 import { View } from 'react-native';
-import { useTheme, Button } from 'react-native-paper';
+import { useTheme, Button, Text } from 'react-native-paper';
 
 export default function Layout() {
 	const theme = useTheme();
@@ -15,6 +15,12 @@ export default function Layout() {
 					backgroundColor: theme.colors.background,
 				},
 				headerShadowVisible: false,
+				headerTintColor: theme.colors.onBackground,
+				headerTitleStyle: {
+					fontFamily: 'Inter-Black',
+					fontSize: 20,
+				},
+				headerStyle: { backgroundColor: theme.colors.background },
 			}}
 		>
 			<Stack.Screen
@@ -22,7 +28,6 @@ export default function Layout() {
 				options={{
 					headerShown: false,
 					statusBarStyle: 'dark',
-					statusBarTranslucent: true,
 				}}
 			/>
 			<Stack.Screen
@@ -35,12 +40,6 @@ export default function Layout() {
 				name="new-transactions"
 				options={{
 					title: 'New transaction',
-					headerTintColor: theme.colors.onBackground,
-					headerStyle: { backgroundColor: theme.colors.background },
-					headerTitleStyle: {
-						fontFamily: 'Inter-Black',
-						fontSize: 20,
-					},
 					headerRight: (props) => (
 						<View
 							style={{
@@ -60,6 +59,7 @@ export default function Layout() {
 					),
 				}}
 			/>
+			<Stack.Screen name="transaction-detail" />
 		</Stack>
 	);
 }

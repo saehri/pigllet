@@ -1,7 +1,7 @@
 import { useTheme } from 'react-native-paper';
 import { ScrollView } from 'react-native';
 
-import NewIncomeForm from '@/src/components/reusables/new-income-form';
+import CreateIncomeForm from '@/src/components/forms/income/new-income-form';
 
 export default function NewIncome() {
 	const theme = useTheme();
@@ -10,7 +10,7 @@ export default function NewIncome() {
 		<ScrollView
 			style={{ backgroundColor: theme.colors.background, paddingTop: 59 }}
 		>
-			<NewIncomeForm />
+			<CreateIncomeForm />
 		</ScrollView>
 	);
 }

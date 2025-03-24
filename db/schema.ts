@@ -1,80 +1,32 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 
-export const expenses = sqliteTable('expenses', {
+export const transactions = sqliteTable('transactions', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
-	category_id: integer('category_id')
-		.notNull()
-		.references(() => expenseCategories.id),
 	amount: integer('amount').notNull(),
 	note: text('note'),
 	account_id: integer('account_id')
 		.notNull()
 		.references(() => accounts.id),
-	budget_id: integer('budget_id').references(() => budget.id),
-	image: text('image'),
-	created_date: text('created_date').notNull(),
-	created_month: integer('created_month').notNull(),
-	created_year: integer('created_year').notNull(),
-	created_day: integer('created_date').notNull(),
-});
-
-export const incomes = sqliteTable('incomes', {
-	id: integer('id').primaryKey({ autoIncrement: true }),
-	amount: integer('amount').notNull(),
-	note: text('note'),
+	related_account_id: integer('related_account_id').references(
+		() => accounts.id
+	),
 	category_id: integer('category_id')
 		.notNull()
-		.references(() => incomeCategories.id),
-	to_account_id: integer('to_account_id')
-		.notNull()
-		.references(() => accounts.id),
+		.references(() => categories.id), // Now references the unified categories table
+	type: text('type').notNull(), // 'expense', 'income', or 'transfer'
 	image: text('image'),
-	created_date: text('created_date').notNull(),
+	created_date: integer('created_date').notNull(),
 	created_month: integer('created_month').notNull(),
 	created_year: integer('created_year').notNull(),
-	created_day: integer('created_date').notNull(),
-});
-
-export const transfers = sqliteTable('transfers', {
-	id: integer('id').primaryKey({ autoIncrement: true }),
-	amount: integer('amount').notNull(),
-	note: text('note'),
-	category_id: integer('category_id')
-		.notNull()
-		.references(() => transferCategories.id),
-	from_account_id: integer('from_account_id')
-		.notNull()
-		.references(() => accounts.id),
-	to_account_id: integer('to_account_id')
-		.notNull()
-		.references(() => accounts.id),
-	image: text('image'),
-	created_date: text('created_date').notNull(),
-	created_month: integer('created_month').notNull(),
-	created_year: integer('created_year').notNull(),
-	created_day: integer('created_date').notNull(),
-});
-
-export const expenseCategories = sqliteTable('expense_categories', {
-	id: integer('id').primaryKey({ autoIncrement: true }),
-	label: text('label').notNull().unique(),
-	icon_name: text('icon_name').notNull(),
 	budget_id: integer('budget_id').references(() => budget.id),
-	created_at: text('created_at').notNull(),
 });
 
-export const incomeCategories = sqliteTable('income_categories', {
+export const categories = sqliteTable('categories', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
 	label: text('label').notNull().unique(),
 	icon_name: text('icon_name').notNull().unique(),
-	created_at: text('created_at').notNull(),
-});
-
-export const transferCategories = sqliteTable('transfer_categories', {
-	id: integer('id').primaryKey({ autoIncrement: true }),
-	label: text('label').notNull().unique(),
-	icon_name: text('icon_name').notNull().unique(),
-	created_at: text('created_at').notNull(),
+	type: text('type').notNull(), // 'expense', 'income', or 'transfer'
+	budget_id: integer('budget_id').references(() => budget.id), // Only for expense categories
 });
 
 export const accounts = sqliteTable('accounts', {
@@ -105,16 +57,12 @@ export const subscriptions = sqliteTable('subscriptions', {
 	created_date: text('created_date').notNull(),
 	created_month: integer('created_month').notNull(),
 	created_year: integer('created_year').notNull(),
-	created_day: integer('created_date').notNull(),
+	created_day: integer('created_day').notNull(),
 });
 
 // Export Task to use as an interface in your app
-export type Expense = typeof expenses.$inferSelect;
-export type ExpenseCategory = typeof expenseCategories.$inferInsert;
-export type Income = typeof incomes.$inferInsert;
-export type IncomeCategory = typeof incomeCategories.$inferInsert;
-export type Transfer = typeof transfers.$inferInsert;
-export type TransferCategory = typeof transferCategories.$inferInsert;
 export type Accounts = typeof accounts.$inferInsert;
 export type Budget = typeof budget.$inferInsert;
 export type Subscription = typeof subscriptions.$inferInsert;
+export type Transaction = typeof transactions.$inferInsert;
+export type TransactionCategories = typeof categories.$inferInsert;
