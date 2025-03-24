@@ -23,7 +23,7 @@ export default function IncomesScreen() {
 			.from(schema.transactions)
 			.where(
 				and(
-					eq(schema.transactions.created_month, date.getMonth()),
+					eq(schema.transactions.created_month, date.getMonth() + 1),
 					eq(schema.transactions.created_year, date.getFullYear())
 				)
 			)
@@ -46,7 +46,7 @@ export default function IncomesScreen() {
 				<IncomeCard
 					key={item.transactions.id}
 					data={item.transactions}
-					account={item.accounts}
+					accounts={item.accounts}
 					category={item.categories}
 				/>
 			)}

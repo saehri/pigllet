@@ -17,14 +17,15 @@ import { eq } from 'drizzle-orm';
 import { SQLiteDatabase, useSQLiteContext } from 'expo-sqlite';
 import { drizzle, ExpoSQLiteDatabase } from 'drizzle-orm/expo-sqlite';
 
-import SelectInputWithIcon from '../forms/select-input-with-icon';
-import AccountSelector from '../forms/account-selector';
-import ImageSelectorInput from '../forms/image-select-input';
-import DatePicker from '../forms/date-picker';
 import {
 	UserPreferenceContext,
 	UserPreferenceContextTypes,
 } from '@/context/UserPreferenceContext';
+
+import AccountSelector from '../account-selector';
+import SelectInputWithIcon from '../select-input-with-icon';
+import DatePicker from '../date-picker';
+import ImageSelectorInput from '../image-select-input';
 
 type Props = {
 	initialFormValue: schema.Transaction;
@@ -128,7 +129,9 @@ const Form = memo(function Form({
 		initialFormValue.amount.toString()
 	);
 	const [selectedDate, setSelectedDate] = useState<Date>(
-		new Date(initialFormValue.created_date)
+		new Date(
+			`${initialFormValue.created_year}-${initialFormValue.created_month}-${initialFormValue.created_date}`
+		)
 	);
 	const [note, setNote] = useState<string>(initialFormValue.note || '');
 	const [image, setImage] = useState<string>(initialFormValue.image || '');
@@ -184,6 +187,13 @@ const Form = memo(function Form({
 			await drizzleDb
 				.delete(schema.transactions)
 				.where(eq(schema.transactions.id, initialFormValue.id as number));
+
+			await drizzleDb
+				.update(schema.accounts)
+				.set({
+					balance: initialAccount.balance + initialFormValue.amount,
+				})
+				.where(eq(schema.accounts.id, selectedAccount.id as number));
 
 			ToastAndroid.show('Record deleted!', ToastAndroid.CENTER);
 			router.back();

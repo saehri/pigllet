@@ -24,7 +24,7 @@ export default function TodayTransaction() {
 			.where(
 				and(
 					eq(schema.transactions.created_date, todayDate.getDate()),
-					eq(schema.transactions.created_month, todayDate.getMonth()),
+					eq(schema.transactions.created_month, todayDate.getMonth() + 1),
 					eq(schema.transactions.created_year, todayDate.getFullYear())
 				)
 			)

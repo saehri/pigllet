@@ -1,13 +1,13 @@
-import { useLocalSearchParams } from 'expo-router';
 import { ScrollView, View } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
+
 import * as schema from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
 
-import NewExpenseForm from '@/src/components/reusables/new-expense-form';
-import EditExpenseForm from '@/src/components/reusables/edit-expense-form';
+import EditExpenseForm from '@/src/components/forms/expense/edit-expense-form';
 
 export default function ExpenseDetail() {
 	const theme = useTheme();

@@ -59,12 +59,7 @@ export default function Layout() {
 					),
 				}}
 			/>
-			<Stack.Screen
-				name="expense-detail/[id]"
-				options={{
-					title: 'Expense detail',
-				}}
-			/>
+			<Stack.Screen name="transaction-detail" />
 		</Stack>
 	);
 }

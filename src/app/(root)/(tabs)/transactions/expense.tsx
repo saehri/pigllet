@@ -24,17 +24,13 @@ export default function ExpensesScreen() {
 			.where(
 				and(
 					eq(schema.transactions.type, 'expense'),
-					eq(schema.transactions.created_month, date.getMonth()),
+					eq(schema.transactions.created_month, date.getMonth() + 1),
 					eq(schema.transactions.created_year, date.getFullYear())
 				)
 			)
 			.innerJoin(
 				schema.categories,
 				eq(schema.transactions.category_id, schema.categories.id)
-			)
-			.innerJoin(
-				schema.accounts,
-				eq(schema.transactions.account_id, schema.accounts.id)
 			)
 			.orderBy(asc(schema.transactions.created_date))
 	);
@@ -43,17 +39,11 @@ export default function ExpensesScreen() {
 		<FlatList
 			style={{ paddingTop: 60, backgroundColor: theme.colors.background }}
 			data={data}
-			ListHeaderComponent={
-				<View style={{ padding: 16 }}>
-					<Text style={{ textAlign: 'center' }}>Analytics will be here</Text>
-				</View>
-			}
 			ListEmptyComponent={<NoItemNotice />}
 			renderItem={({ item }) => (
 				<ExpenseCard
 					key={item.transactions.id}
 					data={item.transactions}
-					account={item.accounts as schema.Accounts}
 					category={item.categories as schema.TransactionCategories}
 				/>
 			)}

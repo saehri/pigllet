@@ -10,22 +10,22 @@ import {
 } from 'react-native-paper';
 
 import { eq } from 'drizzle-orm';
-
 import * as schema from '@/db/schema';
 import { TransactionCategories, Accounts } from '@/db/schema';
 import { SQLiteDatabase, useSQLiteContext } from 'expo-sqlite';
 import { drizzle, ExpoSQLiteDatabase } from 'drizzle-orm/expo-sqlite';
 
-import SelectInputWithIcon from '../forms/select-input-with-icon';
-import AccountSelector from '../forms/account-selector';
-import ImageSelectorInput from '../forms/image-select-input';
-import DatePicker from '../forms/date-picker';
 import {
 	UserPreferenceContext,
 	UserPreferenceContextTypes,
 } from '@/context/UserPreferenceContext';
 
-export default function CreateExpenseForm() {
+import DatePicker from '../date-picker';
+import AccountSelector from '../account-selector';
+import ImageSelectorInput from '../image-select-input';
+import SelectInputWithIcon from '../select-input-with-icon';
+
+export default function CreateIncomeForm() {
 	const theme = useTheme();
 
 	const db = useSQLiteContext();
@@ -43,7 +43,7 @@ export default function CreateExpenseForm() {
 				const categories = await drizzleDb
 					.select()
 					.from(schema.categories)
-					.where(eq(schema.categories.type, 'expense'));
+					.where(eq(schema.categories.type, 'incomes'));
 
 				setUserAccounts(accounts as Accounts[]);
 				setUserExpensesCategories(categories as TransactionCategories[]);
@@ -118,20 +118,16 @@ const Form = memo(function Form({
 				return;
 			}
 
-			if (selectedAccount.balance - Number(amount) < 0) {
-				ToastAndroid.show('Please enter a valid amount', ToastAndroid.SHORT);
-				return;
-			}
-
 			await drizzleDb
 				.insert(schema.transactions)
 				.values({
-					type: 'expense',
+					type: 'income',
 					account_id: selectedAccount.id,
 					amount: Number(amount),
+					related_account_id: selectedAccount.id,
 					category_id: selectedCategory.id,
 					created_date: selectedDate.getDate(),
-					created_month: selectedDate.getMonth(),
+					created_month: selectedDate.getMonth() + 1,
 					created_year: selectedDate.getFullYear(),
 					image,
 					note,
@@ -142,13 +138,13 @@ const Form = memo(function Form({
 			await drizzleDb
 				.update(schema.accounts)
 				.set({
-					balance: selectedAccount.balance - Number(amount),
+					balance: selectedAccount.balance + Number(amount),
 				})
 				.where(eq(schema.accounts.id, selectedAccount.id as number));
 
-			ToastAndroid.show('Expense added!', ToastAndroid.CENTER);
+			ToastAndroid.show('Income record added!', ToastAndroid.CENTER);
 		} catch (error) {
-			ToastAndroid.show('Error adding expense', ToastAndroid.CENTER);
+			ToastAndroid.show('Error adding income record', ToastAndroid.CENTER);
 		} finally {
 			setLoading(false);
 		}
@@ -158,20 +154,20 @@ const Form = memo(function Form({
 		<View style={{ padding: 16, gap: 16 }}>
 			<View style={{ flexDirection: 'row', gap: 8 }}>
 				<View style={{ gap: 8, flex: 1 }}>
-					<Text variant="bodyLarge">From</Text>
-					<AccountSelector
-						accounts={userAccounts}
-						handleSelect={setSelectedAccount}
-						selectedAccount={selectedAccount}
-					/>
-				</View>
-
-				<View style={{ gap: 8, flex: 1 }}>
 					<Text variant="bodyLarge">Amount ({currentCurrencySymbol})</Text>
 					<TextInput
 						keyboardType="number-pad"
 						onChangeText={setAmount}
 						value={amount}
+					/>
+				</View>
+
+				<View style={{ gap: 8, flex: 1 }}>
+					<Text variant="bodyLarge">To account</Text>
+					<AccountSelector
+						accounts={userAccounts}
+						handleSelect={setSelectedAccount}
+						selectedAccount={selectedAccount}
 					/>
 				</View>
 			</View>

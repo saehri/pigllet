@@ -6,7 +6,7 @@ import {
 	UserPreferenceContextTypes,
 } from '@/context/UserPreferenceContext';
 
-import { Transaction, Accounts, TransactionCategories } from '@/db/schema';
+import { Transaction, TransactionCategories } from '@/db/schema';
 
 import TransactionIcons from './transaction-icons';
 import getLocaleByCurrencySymbol from '@/utils/locale-getter';
@@ -15,19 +15,17 @@ import { useRouter } from 'expo-router';
 interface Props {
 	category: TransactionCategories;
 	data: Transaction;
-	account: Accounts;
 }
 
-export default function ExpenseCard({ account, category, data }: Props) {
+export default function ExpenseCard({ category, data }: Props) {
 	const router = useRouter();
 	const { currentCurrencySymbol } = useContext(
 		UserPreferenceContext
 	) as UserPreferenceContextTypes;
 
-	const formattedDate = new Date(data.created_date).toLocaleDateString(
-		'en-US',
-		{ dateStyle: 'long', month: 'short' }
-	);
+	const formattedDate = new Date(
+		`${data.created_year}-${data.created_month}-${data.created_date}`
+	).toLocaleDateString('en-US', { dateStyle: 'long', month: 'short' });
 
 	return (
 		<View style={styles.container}>
@@ -42,7 +40,7 @@ export default function ExpenseCard({ account, category, data }: Props) {
 				onPress={() =>
 					router.push({
 						pathname: '/(root)/expense-detail/[id]',
-						params: { id: data.id },
+						params: { id: data.id as any },
 					})
 				}
 				style={styles.contentContainer}

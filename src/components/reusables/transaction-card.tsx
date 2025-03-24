@@ -17,9 +17,9 @@ export default function TransactionCard({
 	category,
 }: TransactionCard) {
 	if (transactionType === 'expense')
-		return <ExpenseCard account={account} category={category} data={data} />;
+		return <ExpenseCard category={category} data={data} />;
 	if (transactionType === 'income')
-		return <IncomeCard account={account} category={category} data={data} />;
+		return <IncomeCard accounts={account} category={category} data={data} />;
 
 	return <TransferCard account={account} category={category} data={data} />;
 }
