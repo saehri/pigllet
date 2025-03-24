@@ -121,7 +121,7 @@ const Form = memo(function Form({
 			await drizzleDb
 				.insert(schema.transactions)
 				.values({
-					type: 'income',
+					type: 'incomes',
 					account_id: selectedAccount.id,
 					amount: Number(amount),
 					related_account_id: selectedAccount.id,
@@ -209,7 +209,7 @@ const Form = memo(function Form({
 				{isLoading ? (
 					<ActivityIndicator size={20} color={theme.colors.onPrimary} />
 				) : (
-					'Save Expense'
+					'Save income record'
 				)}
 			</Button>
 		</View>

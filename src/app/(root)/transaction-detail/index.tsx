@@ -8,10 +8,11 @@ import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
 
 import EditExpenseForm from '@/src/components/forms/expense/edit-expense-form';
+import EditIncomeForm from '@/src/components/forms/income/edit-income-form';
 
 export default function ExpenseDetail() {
 	const theme = useTheme();
-	const { id } = useLocalSearchParams();
+	const { id, type } = useLocalSearchParams();
 
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
@@ -45,6 +46,17 @@ export default function ExpenseDetail() {
 				<ActivityIndicator size={20} color={theme.colors.onSurface} />
 			</View>
 		);
+
+
+	if (type === 'incomes') return (
+		<ScrollView style={{ backgroundColor: theme.colors.background }}>
+			<EditIncomeForm
+				initialAccount={data[0].accounts}
+				initialCategory={data[0].categories}
+				initialFormValue={data[0].transactions}
+			/>
+		</ScrollView>
+	)
 
 	return (
 		<ScrollView style={{ backgroundColor: theme.colors.background }}>

@@ -3,7 +3,6 @@ import { useTheme } from 'react-native-paper';
 import {
 	CircleArrowOutUpRight,
 	CircleArrowOutDownLeft,
-	ArrowRightLeft,
 	ShoppingBasket,
 } from 'lucide-react-native';
 

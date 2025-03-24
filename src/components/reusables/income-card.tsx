@@ -10,6 +10,7 @@ import { Accounts, Transaction, TransactionCategories } from '@/db/schema';
 
 import getLocaleByCurrencySymbol from '@/utils/locale-getter';
 import { ArrowDownLeft } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
 
 interface Props {
 	category: TransactionCategories;
@@ -22,6 +23,7 @@ export default function IncomeCard({ category, data, accounts }: Props) {
 		UserPreferenceContext
 	) as UserPreferenceContextTypes;
 	const theme = useTheme();
+	const router = useRouter()
 
 	const formattedDate = new Date(
 		`${data.created_year}-${data.created_month}-${data.created_date}`
@@ -37,7 +39,7 @@ export default function IncomeCard({ category, data, accounts }: Props) {
 				/>
 			</Pressable>
 
-			<Pressable style={styles.contentContainer}>
+			<Pressable style={styles.contentContainer} onPress={() => router.push({pathname: '/transaction-detail',params: {id: data.id, type: data.type}} )}>
 				<View>
 					<View style={styles.row}>
 						<Text variant="bodyLarge" style={{ fontFamily: 'Inter-Regular' }}>

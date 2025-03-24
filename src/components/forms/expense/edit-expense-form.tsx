@@ -158,7 +158,7 @@ const Form = memo(function Form({
 					amount: Number(amount),
 					category_id: selectedCategory.id,
 					created_date: selectedDate.getDate(),
-					created_month: selectedDate.getMonth(),
+					created_month: selectedDate.getMonth() + 1,
 					created_year: selectedDate.getFullYear(),
 					image,
 					note,
@@ -169,7 +169,7 @@ const Form = memo(function Form({
 				.update(schema.accounts)
 				.set({
 					balance:
-						initialAccount.balance + initialFormValue.amount - Number(amount),
+						initialAccount.balance - initialFormValue.amount + Number(amount),
 				})
 				.where(eq(schema.accounts.id, selectedAccount.id as number));
 
@@ -277,7 +277,7 @@ const Form = memo(function Form({
 				{isLoading ? (
 					<ActivityIndicator size={20} color={theme.colors.onPrimary} />
 				) : (
-					'Delete Record'
+					'Delete expense record'
 				)}
 			</Button>
 		</View>

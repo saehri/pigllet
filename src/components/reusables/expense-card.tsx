@@ -40,7 +40,7 @@ export default function ExpenseCard({ category, data }: Props) {
 				onPress={() =>
 					router.push({
 						pathname: '/(root)/transaction-detail',
-						params: { id: data.id as any },
+						params: { id: data.id as any, type: data.type },
 					})
 				}
 				style={styles.contentContainer}
