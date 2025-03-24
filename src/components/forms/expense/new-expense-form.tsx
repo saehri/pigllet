@@ -123,19 +123,21 @@ const Form = memo(function Form({
 				return;
 			}
 
+			const payload: schema.Transaction = {
+				type: 'expense',
+				account_id: selectedAccount.id as number,
+				amount: Number(amount),
+				category_id: selectedCategory.id as number,
+				created_date: selectedDate.getDate(),
+				created_month: selectedDate.getMonth() + 1,
+				created_year: selectedDate.getFullYear(),
+				image,
+				note,
+			};
+
 			await drizzleDb
 				.insert(schema.transactions)
-				.values({
-					type: 'expense',
-					account_id: selectedAccount.id,
-					amount: Number(amount),
-					category_id: selectedCategory.id,
-					created_date: selectedDate.getDate(),
-					created_month: selectedDate.getMonth() + 1,
-					created_year: selectedDate.getFullYear(),
-					image,
-					note,
-				})
+				.values(payload)
 				.onConflictDoNothing();
 
 			// also update the selected account balance

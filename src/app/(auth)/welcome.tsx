@@ -55,7 +55,7 @@ export default function WelcomeScreen() {
 						label: category.label,
 						icon_name: category.icon,
 						created_at: createdAt,
-						type: 'incomes',
+						type: 'income',
 					}))
 				)
 				.onConflictDoNothing();

@@ -8,12 +8,10 @@ import {
 	TextInput,
 	useTheme,
 } from 'react-native-paper';
-import { useRouter } from 'expo-router';
 
+import { eq } from 'drizzle-orm';
 import * as schema from '@/db/schema';
 import { TransactionCategories, Accounts } from '@/db/schema';
-import { eq } from 'drizzle-orm';
-
 import { SQLiteDatabase, useSQLiteContext } from 'expo-sqlite';
 import { drizzle, ExpoSQLiteDatabase } from 'drizzle-orm/expo-sqlite';
 
@@ -22,22 +20,12 @@ import {
 	UserPreferenceContextTypes,
 } from '@/context/UserPreferenceContext';
 
-import AccountSelector from '../account-selector';
-import SelectInputWithIcon from '../select-input-with-icon';
 import DatePicker from '../date-picker';
+import AccountSelector from '../account-selector';
 import ImageSelectorInput from '../image-select-input';
+import SelectInputWithIcon from '../select-input-with-icon';
 
-type Props = {
-	initialFormValue: schema.Transaction;
-	initialCategory: schema.TransactionCategories;
-	initialAccount: schema.Accounts;
-};
-
-export default function EditIncomeForm({
-	initialFormValue,
-	initialCategory,
-	initialAccount,
-}: Props) {
+export default function NewTransferForm() {
 	const theme = useTheme();
 
 	const db = useSQLiteContext();
@@ -55,7 +43,7 @@ export default function EditIncomeForm({
 				const categories = await drizzleDb
 					.select()
 					.from(schema.categories)
-					.where(eq(schema.categories.type, 'income'));
+					.where(eq(schema.categories.type, 'transfer'));
 
 				setUserAccounts(accounts as Accounts[]);
 				setUserExpensesCategories(categories as TransactionCategories[]);
@@ -85,9 +73,6 @@ export default function EditIncomeForm({
 		<Form
 			userAccounts={userAccounts}
 			userExpenseCategories={userExpenseCategories}
-			initialCategory={initialCategory}
-			initialFormValue={initialFormValue}
-			initialAccount={initialAccount}
 			drizzleDb={drizzleDb}
 		/>
 	);
@@ -99,21 +84,14 @@ type FormProps = {
 	drizzleDb: ExpoSQLiteDatabase<typeof schema> & {
 		$client: SQLiteDatabase;
 	};
-	initialFormValue: schema.Transaction;
-	initialCategory: schema.TransactionCategories;
-	initialAccount: schema.Accounts;
 };
 
 const Form = memo(function Form({
 	userAccounts,
 	userExpenseCategories,
 	drizzleDb,
-	initialFormValue,
-	initialCategory,
-	initialAccount,
 }: FormProps) {
 	const theme = useTheme();
-	const router = useRouter();
 	const { currentCurrencySymbol } = useContext(
 		UserPreferenceContext
 	) as UserPreferenceContextTypes;
@@ -122,19 +100,17 @@ const Form = memo(function Form({
 	const [isLoading, setLoading] = useState(false);
 
 	const [selectedCategory, setSelectedCategory] =
-		useState<TransactionCategories>(initialCategory);
-	const [selectedAccount, setSelectedAccount] =
-		useState<Accounts>(initialAccount);
-	const [amount, setAmount] = useState<string>(
-		initialFormValue.amount.toString()
+		useState<TransactionCategories>(userExpenseCategories[0]);
+	const [selectedAccount, setSelectedAccount] = useState<Accounts>(
+		userAccounts[0]
 	);
-	const [selectedDate, setSelectedDate] = useState<Date>(
-		new Date(
-			`${initialFormValue.created_year}-${initialFormValue.created_month}-${initialFormValue.created_date}`
-		)
+	const [relatedAccount, setRelatedAccount] = useState<Accounts>(
+		userAccounts[0]
 	);
-	const [note, setNote] = useState<string>(initialFormValue.note || '');
-	const [image, setImage] = useState<string>(initialFormValue.image || '');
+	const [amount, setAmount] = useState<string>('');
+	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+	const [note, setNote] = useState<string>('');
+	const [image, setImage] = useState<string>('');
 
 	async function handleSubmit() {
 		try {
@@ -145,54 +121,36 @@ const Form = memo(function Form({
 				return;
 			}
 
-			await drizzleDb
-				.update(schema.transactions)
-				.set({
-					account_id: selectedAccount.id,
-					amount: Number(amount),
-					category_id: selectedCategory.id,
-					created_date: selectedDate.getDate(),
-					created_month: selectedDate.getMonth() + 1,
-					created_year: selectedDate.getFullYear(),
-					image,
-					note,
-				})
-				.where(eq(schema.transactions.id, initialFormValue.id as number));
+			// moved the payload into its own variable because the little shit keep screaming the types is invalid
+			const payload: schema.Transaction = {
+				type: 'transfer',
+				account_id: selectedAccount.id as number,
+				amount: Number(amount),
+				related_account_id: selectedAccount.id,
+				category_id: selectedCategory.id as number,
+				created_date: selectedDate.getDate(),
+				created_month: selectedDate.getMonth() + 1,
+				created_year: selectedDate.getFullYear(),
+				image,
+				note,
+			};
 
 			await drizzleDb
-				.update(schema.accounts)
-				.set({
-					balance:
-						initialAccount.balance - initialFormValue.amount + Number(amount),
-				})
-				.where(eq(schema.accounts.id, selectedAccount.id as number));
+				.insert(schema.transactions)
+				.values(payload)
+				.onConflictDoNothing();
 
-			ToastAndroid.show('Changes saved!', ToastAndroid.CENTER);
-		} catch (error) {
-			ToastAndroid.show('Error when updating expense', ToastAndroid.CENTER);
-		} finally {
-			setLoading(false);
-		}
-	}
-
-	async function handleDelete() {
-		try {
-			setLoading(true);
-			await drizzleDb
-				.delete(schema.transactions)
-				.where(eq(schema.transactions.id, initialFormValue.id as number));
-
+			// also update the selected account balance
 			await drizzleDb
 				.update(schema.accounts)
 				.set({
-					balance: initialAccount.balance - initialFormValue.amount,
+					balance: selectedAccount.balance + Number(amount),
 				})
 				.where(eq(schema.accounts.id, selectedAccount.id as number));
 
-			ToastAndroid.show('Record deleted!', ToastAndroid.CENTER);
-			router.back();
+			ToastAndroid.show('Income record added!', ToastAndroid.CENTER);
 		} catch (error) {
-			ToastAndroid.show('Error when updating expense', ToastAndroid.CENTER);
+			ToastAndroid.show('Error adding income record', ToastAndroid.CENTER);
 		} finally {
 			setLoading(false);
 		}
@@ -202,27 +160,35 @@ const Form = memo(function Form({
 		<View style={{ padding: 16, gap: 16 }}>
 			<View style={{ flexDirection: 'row', gap: 8 }}>
 				<View style={{ gap: 8, flex: 1 }}>
-					<Text variant="bodyLarge">From</Text>
+					<Text variant="bodyLarge">From account</Text>
+					<AccountSelector
+						accounts={userAccounts}
+						handleSelect={setRelatedAccount}
+						selectedAccount={relatedAccount}
+					/>
+				</View>
+
+				<View style={{ gap: 8, flex: 1 }}>
+					<Text variant="bodyLarge">To account</Text>
 					<AccountSelector
 						accounts={userAccounts}
 						handleSelect={setSelectedAccount}
 						selectedAccount={selectedAccount}
 					/>
 				</View>
+			</View>
 
-				<View style={{ gap: 8, flex: 1 }}>
-					<Text variant="bodyLarge">Amount ({currentCurrencySymbol})</Text>
-
-					<TextInput
-						keyboardType="number-pad"
-						onChangeText={setAmount}
-						value={amount}
-					/>
-				</View>
+			<View style={{ gap: 8, flex: 1 }}>
+				<Text variant="bodyLarge">Amount ({currentCurrencySymbol})</Text>
+				<TextInput
+					keyboardType="number-pad"
+					onChangeText={setAmount}
+					value={amount}
+				/>
 			</View>
 
 			<View style={{ gap: 8 }}>
-				<Text variant="bodyLarge">Expense category</Text>
+				<Text variant="bodyLarge">Transfer category</Text>
 				<SelectInputWithIcon
 					data={userExpenseCategories}
 					handleSelect={setSelectedCategory}
@@ -258,20 +224,7 @@ const Form = memo(function Form({
 				{isLoading ? (
 					<ActivityIndicator size={20} color={theme.colors.onPrimary} />
 				) : (
-					'Save Changes'
-				)}
-			</Button>
-
-			<Button
-				mode="outlined"
-				style={{ borderRadius: 10 }}
-				labelStyle={{ fontFamily: 'Inter-Regular', fontSize: 16 }}
-				onPress={handleDelete}
-			>
-				{isLoading ? (
-					<ActivityIndicator size={20} color={theme.colors.onPrimary} />
-				) : (
-					'Delete income record'
+					'Save income record'
 				)}
 			</Button>
 		</View>

@@ -47,16 +47,16 @@ export default function ExpenseDetail() {
 			</View>
 		);
 
-
-	if (type === 'incomes') return (
-		<ScrollView style={{ backgroundColor: theme.colors.background }}>
-			<EditIncomeForm
-				initialAccount={data[0].accounts}
-				initialCategory={data[0].categories}
-				initialFormValue={data[0].transactions}
-			/>
-		</ScrollView>
-	)
+	if (type === 'income')
+		return (
+			<ScrollView style={{ backgroundColor: theme.colors.background }}>
+				<EditIncomeForm
+					initialAccount={data[0].accounts}
+					initialCategory={data[0].categories}
+					initialFormValue={data[0].transactions}
+				/>
+			</ScrollView>
+		);
 
 	return (
 		<ScrollView style={{ backgroundColor: theme.colors.background }}>
