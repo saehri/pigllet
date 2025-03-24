@@ -1,5 +1,5 @@
 import { Tabs, useRouter } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { Button, Text, useTheme } from 'react-native-paper';
 import {
 	CalendarSync,
@@ -224,10 +224,3 @@ export default function Layout() {
 		</Tabs>
 	);
 }
-
-const styles = StyleSheet.create({
-	appbarTitle: {
-		fontFamily: 'Inter-Black',
-		letterSpacing: -0.5,
-	},
-});
