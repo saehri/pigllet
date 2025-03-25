@@ -46,7 +46,10 @@ export default function AccountCard({
 				}}
 			>
 				<View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-					<Text style={{ fontFamily: 'Inter-Regular' }} variant="headlineSmall">
+					<Text
+						style={{ fontFamily: 'Inter-Regular' }}
+						variant={compact ? 'bodyLarge' : 'headlineSmall'}
+					>
 						{`${currentCurrencySymbol} ${balance.toLocaleString(
 							getLocaleByCurrencySymbol(currentCurrencySymbol)
 						)}`}
@@ -54,11 +57,17 @@ export default function AccountCard({
 				</View>
 
 				<View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-					<Text style={{ fontFamily: 'Inter-Regular' }} variant="bodyLarge">
+					<Text
+						style={{ fontFamily: 'Inter-Regular' }}
+						variant={compact ? 'bodyMedium' : 'bodyLarge'}
+					>
 						{name}
 					</Text>
 
-					<Text style={{ fontFamily: 'Inter-Regular' }} variant="bodyLarge">
+					<Text
+						style={{ fontFamily: 'Inter-Regular' }}
+						variant={compact ? 'bodyMedium' : 'bodyLarge'}
+					>
 						{number}
 					</Text>
 				</View>
@@ -66,8 +75,8 @@ export default function AccountCard({
 				<Image
 					source={require('@/assets/icons/adaptive-icon.png')}
 					style={{
-						width: 80,
-						height: 80,
+						width: compact ? 60 : 80,
+						height: compact ? 60 : 80,
 						position: 'absolute',
 						top: 0,
 						right: 0,

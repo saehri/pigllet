@@ -23,7 +23,7 @@ export default function IncomeCard({ category, data, accounts }: Props) {
 		UserPreferenceContext
 	) as UserPreferenceContextTypes;
 	const theme = useTheme();
-	const router = useRouter()
+	const router = useRouter();
 
 	const formattedDate = new Date(
 		`${data.created_year}-${data.created_month}-${data.created_date}`
@@ -31,7 +31,15 @@ export default function IncomeCard({ category, data, accounts }: Props) {
 
 	return (
 		<View style={styles.container}>
-			<Pressable style={styles.iconContainer}>
+			<Pressable
+				style={styles.iconContainer}
+				onPress={() =>
+					router.push({
+						pathname: '/(root)/transaction-by-category',
+						params: { categoryId: category.id, categoryName: category.label },
+					})
+				}
+			>
 				<ArrowDownLeft
 					size={20}
 					strokeWidth={1.5}
@@ -39,7 +47,15 @@ export default function IncomeCard({ category, data, accounts }: Props) {
 				/>
 			</Pressable>
 
-			<Pressable style={styles.contentContainer} onPress={() => router.push({pathname: '/transaction-detail',params: {id: data.id, type: data.type}} )}>
+			<Pressable
+				style={styles.contentContainer}
+				onPress={() =>
+					router.push({
+						pathname: '/transaction-detail',
+						params: { id: data.id, type: data.type },
+					})
+				}
+			>
 				<View>
 					<View style={styles.row}>
 						<Text variant="bodyLarge" style={{ fontFamily: 'Inter-Regular' }}>

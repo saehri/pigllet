@@ -18,6 +18,7 @@ export default function NewIncome() {
 					alignItems: 'center',
 					justifyContent: 'center',
 					padding: 16,
+					paddingTop: 59,
 				}}
 			>
 				<Workflow
