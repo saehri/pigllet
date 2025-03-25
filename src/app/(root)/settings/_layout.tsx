@@ -1,11 +1,8 @@
-import { Stack, useRouter } from 'expo-router';
-import { Plus } from 'lucide-react-native';
-import { View } from 'react-native';
-import { Button, useTheme } from 'react-native-paper';
+import { Stack } from 'expo-router';
+import { useTheme } from 'react-native-paper';
 
 export default function Layout() {
 	const theme = useTheme();
-	const router = useRouter();
 
 	return (
 		<Stack
@@ -21,6 +18,9 @@ export default function Layout() {
 				headerTitleStyle: {
 					fontFamily: 'Inter-Regular',
 					fontSize: 20,
+				},
+				contentStyle: {
+					backgroundColor: theme.colors.background,
 				},
 			}}
 		>
@@ -60,29 +60,7 @@ export default function Layout() {
 					title: 'Transaction category',
 				}}
 			/>
-			<Stack.Screen
-				name="accounts"
-				options={{
-					title: 'Accounts',
-					headerRight: (props) => (
-						<View
-							style={{
-								backgroundColor: theme.colors.background,
-								flexDirection: 'row',
-								alignItems: 'center',
-							}}
-						>
-							<Button>
-								<Plus
-									strokeWidth={1.5}
-									color={theme.colors.onBackground}
-									size={24}
-								/>
-							</Button>
-						</View>
-					),
-				}}
-			/>
+			<Stack.Screen name="accounts" options={{ headerShown: false }} />
 		</Stack>
 	);
 }

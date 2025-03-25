@@ -122,6 +122,7 @@ function AddWalletForm({ theme }: AddWalletFormProps) {
 					number: '',
 					balance: Number(amount),
 					image: '',
+					is_cash: 1,
 				})
 				.onConflictDoNothing();
 		} catch (error: any) {

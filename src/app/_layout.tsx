@@ -28,7 +28,6 @@ import UserPreferenceProvider, {
 } from '@/context/UserPreferenceContext';
 
 import { selectColorScheme } from '@/constants/color-scheme';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 // Prevent splash screen auto-hide
 SplashScreen.preventAutoHideAsync();

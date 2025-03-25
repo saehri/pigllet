@@ -80,7 +80,6 @@ function Form() {
 			'Budget created successfully!',
 			'You now can see your budget on the homescreen.'
 		);
-		console.log({ selectedPeriod, selectedCategory, amount, note });
 	}
 
 	return (

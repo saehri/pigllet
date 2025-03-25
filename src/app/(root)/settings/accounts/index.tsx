@@ -26,7 +26,7 @@ function AccountCards() {
 	if (!data.length) return <NoItemNotice />;
 
 	return (
-		<View style={{ padding: 16 }}>
+		<View style={{ padding: 16, gap: 16 }}>
 			{data.map((card) => (
 				<AccountCard
 					balance={card.balance}

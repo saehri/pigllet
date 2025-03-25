@@ -3,7 +3,7 @@ import { FlatList } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
-import { and, eq } from 'drizzle-orm';
+import { and, asc, eq } from 'drizzle-orm';
 
 import * as schema from '@/db/schema';
 
@@ -19,22 +19,30 @@ export default function IncomesScreen() {
 
 	const { data } = useLiveQuery(
 		drizzleDb
-			.select()
+			.select({
+				accounts: schema.accounts,
+				categories: schema.categories,
+				transactions: {
+					id: schema.transactions.id,
+					amount: schema.transactions.amount,
+					note: schema.transactions.note,
+					account_id: schema.transactions.account_id,
+					related_account_id: schema.transactions.related_account_id,
+					category_id: schema.transactions.category_id,
+					type: schema.transactions.type,
+					created_date: schema.transactions.created_date,
+					created_month: schema.transactions.created_month,
+					created_year: schema.transactions.created_year,
+					budget_id: schema.transactions.budget_id,
+				},
+			})
 			.from(schema.transactions)
-			.where(
-				and(
-					eq(schema.transactions.created_month, date.getMonth() + 1),
-					eq(schema.transactions.created_year, date.getFullYear())
-				)
-			)
+			.where(and(eq(schema.transactions.type, 'income')))
 			.innerJoin(
 				schema.categories,
 				eq(schema.transactions.category_id, schema.categories.id)
 			)
-			.innerJoin(
-				schema.accounts,
-				eq(schema.transactions.related_account_id, schema.accounts.id)
-			)
+			.orderBy(asc(schema.transactions.created_date))
 	);
 
 	return (

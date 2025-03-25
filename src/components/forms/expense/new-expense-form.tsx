@@ -9,8 +9,8 @@ import {
 	useTheme,
 } from 'react-native-paper';
 
-import { eq } from 'drizzle-orm';
 import * as schema from '@/db/schema';
+import { eq } from 'drizzle-orm';
 import { TransactionCategories, Accounts } from '@/db/schema';
 import { SQLiteDatabase, useSQLiteContext } from 'expo-sqlite';
 import { drizzle, ExpoSQLiteDatabase } from 'drizzle-orm/expo-sqlite';
@@ -149,6 +149,10 @@ const Form = memo(function Form({
 				.where(eq(schema.accounts.id, selectedAccount.id as number));
 
 			ToastAndroid.show('Expense added!', ToastAndroid.CENTER);
+
+			setAmount('');
+			setNote('');
+			setImage('');
 		} catch (error) {
 			ToastAndroid.show('Error adding expense', ToastAndroid.CENTER);
 		} finally {

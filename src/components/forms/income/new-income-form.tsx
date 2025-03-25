@@ -141,6 +141,10 @@ const Form = memo(function Form({
 				.where(eq(schema.accounts.id, selectedAccount.id as number));
 
 			ToastAndroid.show('Income record added!', ToastAndroid.CENTER);
+
+			setAmount('');
+			setNote('');
+			setImage('');
 		} catch (error: any) {
 			ToastAndroid.show(error.message, ToastAndroid.CENTER);
 		} finally {

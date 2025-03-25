@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { FlatList, View } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { FlatList } from 'react-native';
+import { useTheme } from 'react-native-paper';
 import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { and, asc, eq } from 'drizzle-orm';
@@ -36,21 +36,13 @@ export default function ExpensesScreen() {
 				},
 			})
 			.from(schema.transactions)
-			.where(
-				and(
-					eq(schema.transactions.type, 'expense'),
-					eq(schema.transactions.created_month, date.getMonth() + 1),
-					eq(schema.transactions.created_year, date.getFullYear())
-				)
-			)
+			.where(and(eq(schema.transactions.type, 'expense')))
 			.innerJoin(
 				schema.categories,
 				eq(schema.transactions.category_id, schema.categories.id)
 			)
 			.orderBy(asc(schema.transactions.created_date))
 	);
-
-	console.log(data);
 
 	return (
 		<FlatList

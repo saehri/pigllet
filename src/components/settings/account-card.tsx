@@ -50,7 +50,7 @@ export default function AccountCard({
 				</Text>
 
 				<Text style={{ fontFamily: 'Inter-Regular' }} variant="bodyLarge">
-					{is_cash === 1 ? '********' : number}
+					{number}
 				</Text>
 			</View>
 
