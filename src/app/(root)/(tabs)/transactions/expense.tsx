@@ -1,10 +1,12 @@
-import { FlatList } from 'react-native';
-import { useTheme } from 'react-native-paper';
+import { useState } from 'react';
+import { FlatList, View } from 'react-native';
+import { Text, useTheme } from 'react-native-paper';
 import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { and, desc, eq } from 'drizzle-orm';
-
 import * as schema from '@/db/schema';
+
+import groupedTransactions from '@/utils/group-transactions';
 
 import ExpenseCard from '@/src/components/reusables/expense-card';
 import NoItemNotice from '@/src/components/reusables/no-items-notice';
@@ -15,26 +17,32 @@ export default function ExpensesScreen() {
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
 
-	const { data } = useLiveQuery(
+	const [todayDate] = useState<Date>(new Date());
+
+	const { data: transactions } = useLiveQuery(
 		drizzleDb
 			.select({
-				categories: schema.categories,
-				transactions: {
-					id: schema.transactions.id,
-					amount: schema.transactions.amount,
-					note: schema.transactions.note,
-					account_id: schema.transactions.account_id,
-					related_account_id: schema.transactions.related_account_id,
-					category_id: schema.transactions.category_id,
-					type: schema.transactions.type,
-					created_date: schema.transactions.created_date,
-					created_month: schema.transactions.created_month,
-					created_year: schema.transactions.created_year,
-					budget_id: schema.transactions.budget_id,
-				},
+				id: schema.transactions.id,
+				amount: schema.transactions.amount,
+				note: schema.transactions.note,
+				account_id: schema.transactions.account_id,
+				related_account_id: schema.transactions.related_account_id,
+				category_id: schema.transactions.category_id,
+				type: schema.transactions.type,
+				created_date: schema.transactions.created_date,
+				created_month: schema.transactions.created_month,
+				created_year: schema.transactions.created_year,
+				budget_id: schema.transactions.budget_id,
+				category: schema.categories,
 			})
 			.from(schema.transactions)
-			.where(and(eq(schema.transactions.type, 'expense')))
+			.where(
+				and(
+					eq(schema.transactions.type, 'expense'),
+					eq(schema.transactions.created_month, todayDate.getMonth() + 1),
+					eq(schema.transactions.created_year, todayDate.getFullYear())
+				)
+			)
 			.innerJoin(
 				schema.categories,
 				eq(schema.transactions.category_id, schema.categories.id)
@@ -45,14 +53,36 @@ export default function ExpensesScreen() {
 	return (
 		<FlatList
 			style={{ paddingTop: 60, backgroundColor: theme.colors.background }}
-			data={data}
+			data={groupedTransactions(transactions)}
 			ListEmptyComponent={<NoItemNotice />}
 			renderItem={({ item }) => (
-				<ExpenseCard
-					key={item.transactions.id}
-					data={item.transactions as any}
-					category={item.categories as schema.TransactionCategories}
-				/>
+				<View style={{ paddingBottom: 24, gap: 8 }}>
+					<Text
+						style={{
+							fontFamily: 'Inter-Regular',
+							paddingHorizontal: 16,
+							fontSize: 18,
+						}}
+					>
+						{new Date(
+							`${todayDate.getFullYear()}-${todayDate.getMonth() + 1}-${item.created_date}`
+						).toLocaleDateString('en-US', {
+							dateStyle: 'long',
+							month: 'short',
+						})}
+					</Text>
+
+					<View>
+						{item.transactions.map((transaction: any) => (
+							<ExpenseCard
+								key={transaction.id}
+								data={transaction as any}
+								category={transaction.category as schema.TransactionCategories}
+								showsDate={false}
+							/>
+						))}
+					</View>
+				</View>
 			)}
 		/>
 	);
