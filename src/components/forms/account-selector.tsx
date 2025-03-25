@@ -3,16 +3,7 @@ import { Dialog, Portal, Text, useTheme } from 'react-native-paper';
 import * as schema from '@/db/schema';
 import { useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
-<<<<<<< HEAD
 import { ChevronDown } from 'lucide-react-native';
-=======
-import { CheckCircle, ChevronDown } from 'lucide-react-native';
-import {
-	UserPreferenceContext,
-	UserPreferenceContextTypes,
-} from '@/context/UserPreferenceContext';
-import getLocaleByCurrencySymbol from '@/utils/locale-getter';
->>>>>>> 72dce75984ad184115573262f2eb3a594db1ca3b
 import AccountCard from '../settings/account-card';
 
 interface AccountSelector {
