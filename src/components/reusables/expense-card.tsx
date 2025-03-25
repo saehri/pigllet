@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import { useContext } from 'react';
 import { Text } from 'react-native-paper';
 import { View, StyleSheet, Pressable } from 'react-native';
@@ -10,16 +11,20 @@ import { Transaction, TransactionCategories } from '@/db/schema';
 
 import TransactionIcons from './transaction-icons';
 import getLocaleByCurrencySymbol from '@/utils/locale-getter';
-import { useRouter } from 'expo-router';
 
 type TransactionWithoutImage = Omit<Transaction, 'image'>;
 
 interface Props {
 	category: TransactionCategories;
 	data: TransactionWithoutImage;
+	showsDate?: boolean;
 }
 
-export default function ExpenseCard({ category, data }: Props) {
+export default function ExpenseCard({
+	category,
+	data,
+	showsDate = true,
+}: Props) {
 	const router = useRouter();
 	const { currentCurrencySymbol } = useContext(
 		UserPreferenceContext
@@ -50,7 +55,7 @@ export default function ExpenseCard({ category, data }: Props) {
 						params: { id: data.id as any, type: data.type },
 					})
 				}
-				style={styles.contentContainer}
+				style={[styles.contentContainer]}
 			>
 				<View>
 					<View style={styles.row}>
@@ -69,15 +74,17 @@ export default function ExpenseCard({ category, data }: Props) {
 				</View>
 
 				<View style={{ alignItems: 'flex-end' }}>
-					<Text variant="bodyLarge" style={styles.bodyLarge}>
+					<Text style={[styles.bodyLarge, { fontSize: showsDate ? 16 : 18 }]}>
 						{`${currentCurrencySymbol} ${data.amount.toLocaleString(
 							getLocaleByCurrencySymbol(currentCurrencySymbol)
 						)}`}
 					</Text>
 
-					<Text variant="labelLarge" style={styles.bodyMedium}>
-						{formattedDate}
-					</Text>
+					{showsDate && (
+						<Text variant="labelLarge" style={styles.bodyMedium}>
+							{formattedDate}
+						</Text>
+					)}
 				</View>
 			</Pressable>
 		</View>
@@ -104,6 +111,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		flexDirection: 'row',
 		justifyContent: 'space-between',
+		alignItems: 'center',
 	},
 	labelContainer: {
 		backgroundColor: '#ff0000',
