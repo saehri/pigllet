@@ -20,7 +20,7 @@ export default function WidgetWrapper({ title, customStyle, children }: Props) {
 			</Text>
 
 			<Surface
-				elevation={2}
+				elevation={3}
 				mode="flat"
 				style={{ padding: 16, borderRadius: 20 }}
 			>

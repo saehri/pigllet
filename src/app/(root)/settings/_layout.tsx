@@ -19,7 +19,7 @@ export default function Layout() {
 					backgroundColor: theme.colors.background,
 				},
 				headerTitleStyle: {
-					fontFamily: 'Inter-Black',
+					fontFamily: 'Inter-Regular',
 					fontSize: 20,
 				},
 			}}
