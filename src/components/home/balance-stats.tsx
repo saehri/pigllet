@@ -27,6 +27,7 @@ export default function BalanceStats({ balance }: Props) {
 					getLocaleByCurrencySymbol(currentCurrencySymbol)
 				)}`}
 			</Text>
+
 			<Text variant="labelSmall" style={styles.caption}>
 				This is the total balance across all your accounts.
 			</Text>
@@ -37,11 +38,14 @@ export default function BalanceStats({ balance }: Props) {
 const styles = StyleSheet.create({
 	title: {
 		fontFamily: 'Inter-Regular',
+		opacity: 0.8,
 	},
 	mainText: {
-		fontFamily: 'Inter-Black',
+		fontFamily: 'Inter-Regular',
 	},
 	caption: {
 		fontFamily: 'Inter-Light',
+		opacity: 0.8,
+		marginTop: 10,
 	},
 });

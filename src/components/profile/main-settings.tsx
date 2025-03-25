@@ -17,11 +17,11 @@ export default function MainSetting() {
 	return (
 		<View>
 			<List.Item
-				title="Account"
+				title="User"
 				description="Email, password, delete data"
 				titleStyle={{ fontFamily: 'Inter-Regular' }}
 				descriptionStyle={{ fontFamily: 'Inter-Light' }}
-				onPress={() => router.push('/(root)/settings/account')}
+				onPress={() => router.push('/(root)/settings/user')}
 				left={(props) => (
 					<User {...props} size={24} strokeWidth={1.5} color={props.color} />
 				)}
@@ -91,10 +91,10 @@ export default function MainSetting() {
 			/>
 
 			<List.Item
-				title="Wallets"
+				title="Accounts"
 				titleStyle={{ fontFamily: 'Inter-Regular' }}
 				descriptionStyle={{ fontFamily: 'Inter-Light' }}
-				onPress={() => router.push('/(root)/settings/wallets')}
+				onPress={() => router.push('/(root)/settings/accounts')}
 				left={(props) => (
 					<Wallet2 {...props} size={24} strokeWidth={1.5} color={props.color} />
 				)}

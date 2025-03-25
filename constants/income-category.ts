@@ -1,5 +1,5 @@
 export const incomeCategories = [
-	{ icon: 'other', label: 'Other' },
+	{ icon: 'other', label: 'Other Income' },
 	{ icon: 'salary', label: 'Salary' },
 	{ icon: 'freelance', label: 'Freelance' },
 	{ icon: 'business-income', label: 'Business Income' },

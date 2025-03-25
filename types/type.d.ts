@@ -68,8 +68,36 @@ declare interface UserPreference {
 	firstTimer: boolean;
 }
 
-// from left to right: usd, idr, yen, gbp,
-declare type CurrencySymbols = '$' | 'Rp' | '¥' | '£';
+declare type CurrencySymbols =
+	| 'Rp'
+	| '$'
+	| '¥'
+	| '£'
+	| '€'
+	| '₩'
+	| '₹'
+	| '₱'
+	| '₦'
+	| '₴'
+	| '₿'
+	| '₽'
+	| 'R$'
+	| 'CHF'
+	| '฿'
+	| 'د.إ'
+	| '﷼'
+	| '₡'
+	| 'Kč'
+	| 'Ft'
+	| '₪'
+	| 'ден'
+	| 'RM'
+	| '₨'
+	| '₸'
+	| 'лв'
+	| 'zł'
+	| 'kr'
+	| 'ƒ';
 
 declare type AppTheme = 'Light' | 'Dark' | 'Device';
 

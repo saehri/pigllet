@@ -1,5 +1,5 @@
-import { Tabs, useRouter } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
+import { Tabs, usePathname, useRouter } from 'expo-router';
+import { View } from 'react-native';
 import { Button, Text, useTheme } from 'react-native-paper';
 import {
 	CalendarSync,
@@ -15,6 +15,16 @@ import AddBudgetModal from '@/src/components/modals/add-budget-modal';
 export default function Layout() {
 	const theme = useTheme();
 	const router = useRouter();
+	const pathname = usePathname();
+
+	function navigateTo(): any {
+		if (pathname === '/transactions/expense')
+			return '/(root)/new-transactions/expense';
+		if (pathname === '/transactions/income')
+			return '/(root)/new-transactions/income';
+		if (pathname === '/transactions/transfer')
+			return '/(root)/new-transactions/transfer';
+	}
 
 	return (
 		<Tabs
@@ -28,7 +38,7 @@ export default function Layout() {
 					paddingBottom: 10,
 				},
 				headerTitleStyle: {
-					fontFamily: 'Inter-Black',
+					fontFamily: 'Inter-Regular',
 					color: theme.colors.onBackground,
 					textTransform: 'capitalize',
 				},
@@ -61,7 +71,7 @@ export default function Layout() {
 						backgroundColor: theme.colors.background,
 					},
 					headerTitle: (props) => (
-						<Text variant="titleLarge" style={{ fontFamily: 'Inter-Black' }}>
+						<Text variant="titleLarge" style={{ fontFamily: 'Inter-Bold' }}>
 							Pigllet
 						</Text>
 					),
@@ -96,11 +106,6 @@ export default function Layout() {
 					headerStyle: {
 						backgroundColor: theme.colors.background,
 					},
-					headerTitle: (props) => (
-						<Text variant="titleLarge" style={{ fontFamily: 'Inter-Black' }}>
-							Transactions
-						</Text>
-					),
 					headerRight: (props) => (
 						<View
 							style={{
@@ -109,9 +114,7 @@ export default function Layout() {
 								alignItems: 'center',
 							}}
 						>
-							<Button
-								onPress={() => router.push('/(root)/new-transactions/expense')}
-							>
+							<Button onPress={() => router.push(navigateTo())}>
 								<Plus
 									strokeWidth={1.5}
 									color={theme.colors.onBackground}
@@ -147,11 +150,6 @@ export default function Layout() {
 					headerStyle: {
 						backgroundColor: theme.colors.background,
 					},
-					headerTitle: (props) => (
-						<Text variant="titleLarge" style={{ fontFamily: 'Inter-Black' }}>
-							Subscriptions
-						</Text>
-					),
 					headerRight: (props) => (
 						<View
 							style={{
@@ -196,11 +194,6 @@ export default function Layout() {
 					headerStyle: {
 						backgroundColor: theme.colors.background,
 					},
-					headerTitle: (props) => (
-						<Text variant="titleLarge" style={{ fontFamily: 'Inter-Black' }}>
-							Budgets
-						</Text>
-					),
 					headerRight: (props) => (
 						<View
 							style={{
@@ -224,10 +217,3 @@ export default function Layout() {
 		</Tabs>
 	);
 }
-
-const styles = StyleSheet.create({
-	appbarTitle: {
-		fontFamily: 'Inter-Black',
-		letterSpacing: -0.5,
-	},
-});

@@ -1,13 +1,10 @@
+import React from 'react';
 import { Dialog, Portal, Text, useTheme } from 'react-native-paper';
 import * as schema from '@/db/schema';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
-import { Check, CheckCircle, ChevronDown } from 'lucide-react-native';
-import {
-	UserPreferenceContext,
-	UserPreferenceContextTypes,
-} from '@/context/UserPreferenceContext';
-import getLocaleByCurrencySymbol from '@/utils/locale-getter';
+import { ChevronDown } from 'lucide-react-native';
+import AccountCard from '../settings/account-card';
 
 interface AccountSelector {
 	accounts: schema.Accounts[];
@@ -23,10 +20,6 @@ export default function AccountSelector({
 	const theme = useTheme();
 	const [visible, setVisible] = useState<boolean>(false);
 
-	const { currentCurrencySymbol } = useContext(
-		UserPreferenceContext
-	) as UserPreferenceContextTypes;
-
 	const showDialog = () => setVisible(true);
 	const hideDialog = () => setVisible(false);
 
@@ -41,43 +34,36 @@ export default function AccountSelector({
 				<Dialog visible={visible} onDismiss={hideDialog}>
 					<Dialog.Content>
 						<ScrollView showsVerticalScrollIndicator={false}>
-							<View>
+							<View style={{ gap: 12 }}>
 								{accounts.map((c) => (
 									<Pressable
 										key={c.id}
 										style={{
-											padding: 16,
 											borderRadius: 20,
 											backgroundColor:
 												c.id === selectedAccount.id
 													? theme.colors.elevation.level5
 													: theme.colors.elevation.level3,
+											borderWidth: 1,
+											borderColor:
+												c.id === selectedAccount.id
+													? theme.colors.primary
+													: theme.colors.elevation.level3,
+											opacity: c.id === selectedAccount.id ? 1 : 0.5,
 										}}
 										onPress={() => selectItem(c)}
 									>
-										<Text
-											variant="bodyLarge"
-											style={{ fontFamily: 'Inter-Regular' }}
-										>
-											{c.name}
-										</Text>
-
-										<Text
-											variant="bodyLarge"
-											style={{ fontFamily: 'Inter-Regular' }}
-										>
-											{`${currentCurrencySymbol} ${c.balance.toLocaleString(
-												getLocaleByCurrencySymbol(currentCurrencySymbol)
-											)}`}
-										</Text>
-
-										{c.id === selectedAccount.id && (
-											<CheckCircle
-												size={18}
-												color={theme.colors.onSurface}
-												style={{ position: 'absolute', right: 16, top: 16 }}
-											/>
-										)}
+										<AccountCard
+											balance={c.balance}
+											created_at={c.created_at}
+											name={c.name}
+											number={c.number}
+											image={c.image}
+											id={c.id}
+											is_cash={c.is_cash}
+											compact
+											clickable={false}
+										/>
 									</Pressable>
 								))}
 							</View>

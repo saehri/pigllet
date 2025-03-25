@@ -12,9 +12,11 @@ import TransactionIcons from './transaction-icons';
 import getLocaleByCurrencySymbol from '@/utils/locale-getter';
 import { useRouter } from 'expo-router';
 
+type TransactionWithoutImage = Omit<Transaction, 'image'>;
+
 interface Props {
 	category: TransactionCategories;
-	data: Transaction;
+	data: TransactionWithoutImage;
 }
 
 export default function ExpenseCard({ category, data }: Props) {
@@ -31,7 +33,12 @@ export default function ExpenseCard({ category, data }: Props) {
 		<View style={styles.container}>
 			<Pressable
 				style={styles.iconContainer}
-				onPress={() => console.log('Go to category analytics')}
+				onPress={() =>
+					router.push({
+						pathname: '/(root)/transaction-by-category',
+						params: { categoryId: category.id, categoryName: category.label },
+					})
+				}
 			>
 				<TransactionIcons icon={category.icon_name as any} />
 			</Pressable>
@@ -40,7 +47,7 @@ export default function ExpenseCard({ category, data }: Props) {
 				onPress={() =>
 					router.push({
 						pathname: '/(root)/transaction-detail',
-						params: { id: data.id as any },
+						params: { id: data.id as any, type: data.type },
 					})
 				}
 				style={styles.contentContainer}

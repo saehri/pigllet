@@ -1,5 +1,5 @@
 export const expenseCategories = [
-	{ label: 'Other', icon: 'other' },
+	{ icon: 'other', label: 'Other Expense' },
 	{ label: 'Advertising', icon: 'advertising' },
 	{ label: 'Airlines', icon: 'airlines' },
 	{ label: 'Alcohol & Bars', icon: 'alcohol-and-bars' },

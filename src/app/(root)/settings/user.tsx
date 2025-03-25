@@ -1,15 +1,20 @@
+import React from 'react';
 import { Button, Dialog, Portal, Text, useTheme } from 'react-native-paper';
 import { useContext, useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import { ScrollView, ToastAndroid, View } from 'react-native';
 import { ChevronRight } from 'lucide-react-native';
 import {
 	UserPreferenceContext,
 	UserPreferenceContextTypes,
 } from '@/context/UserPreferenceContext';
 
+import { useRouter } from 'expo-router';
+import { useSQLiteContext } from 'expo-sqlite';
+import { drizzle } from 'drizzle-orm/expo-sqlite';
+import * as schema from '@/db/schema';
+
 import SettingContentButton from '@/src/components/settings/setting-content-button';
 import SettingContentWrapper from '@/src/components/settings/setting-content-wrapper';
-import { useRouter } from 'expo-router';
 
 export default function AccountSettingScreen() {
 	const theme = useTheme();
@@ -59,11 +64,32 @@ function ResetUserPreference() {
 
 	const showDialog = () => setVisible(true);
 	const hideDialog = () => setVisible(false);
-	const handleReset = () => {
-		// resetUserPreferenceData();
-		hideDialog();
-		router.push('/(auth)/welcome');
-	};
+
+	const db = useSQLiteContext();
+	const drizzleDb = drizzle(db, { schema });
+
+	async function resetUserData() {
+		try {
+			resetUserPreferenceData();
+			await drizzleDb.delete(schema.accounts);
+			await drizzleDb.delete(schema.budget);
+			await drizzleDb.delete(schema.categories);
+			await drizzleDb.delete(schema.subscriptions);
+			await drizzleDb.delete(schema.transactions);
+
+			hideDialog();
+
+			ToastAndroid.show(
+				'Your data deleted successfully! Redirecting you to the welcome page',
+				ToastAndroid.SHORT
+			);
+			setTimeout(() => {
+				router.push('/(auth)/welcome');
+			}, 1500);
+		} catch (error: any) {
+			ToastAndroid.show('Failed to delete your data', ToastAndroid.SHORT);
+		}
+	}
 
 	return (
 		<>
@@ -81,12 +107,13 @@ function ResetUserPreference() {
 			<Portal>
 				<Dialog visible={visible} onDismiss={hideDialog}>
 					<Dialog.Title style={{ fontFamily: 'Inter-Regular' }}>
-						Alert
+						Warning
 					</Dialog.Title>
 
 					<Dialog.Content>
 						<Text variant="bodyLarge" style={{ fontFamily: 'Inter-Regular' }}>
-							This action cannot be undone.
+							This will erase all your data, giving you a fresh start. This
+							action cannot be undone.
 						</Text>
 					</Dialog.Content>
 
@@ -99,7 +126,7 @@ function ResetUserPreference() {
 						</Button>
 
 						<Button
-							onPress={handleReset}
+							onPress={resetUserData}
 							labelStyle={{ fontFamily: 'Inter-Regular', fontSize: 16 }}
 						>
 							Ok

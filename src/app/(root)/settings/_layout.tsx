@@ -16,8 +16,11 @@ export default function Layout() {
 					backgroundColor: theme.colors.background,
 				},
 				headerTitleStyle: {
-					fontFamily: 'Inter-Black',
+					fontFamily: 'Inter-Regular',
 					fontSize: 20,
+				},
+				contentStyle: {
+					backgroundColor: theme.colors.background,
 				},
 			}}
 		>
@@ -28,9 +31,9 @@ export default function Layout() {
 				}}
 			/>
 			<Stack.Screen
-				name="account"
+				name="user"
 				options={{
-					title: 'Account',
+					title: 'User',
 				}}
 			/>
 			<Stack.Screen
@@ -57,12 +60,7 @@ export default function Layout() {
 					title: 'Transaction category',
 				}}
 			/>
-			<Stack.Screen
-				name="wallets"
-				options={{
-					title: 'Wallet',
-				}}
-			/>
+			<Stack.Screen name="accounts" options={{ headerShown: false }} />
 		</Stack>
 	);
 }

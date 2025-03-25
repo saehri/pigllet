@@ -1,6 +1,6 @@
 import { memo, useContext } from 'react';
 import { useEffect, useState } from 'react';
-import { Dimensions, ToastAndroid, View } from 'react-native';
+import { ToastAndroid, View } from 'react-native';
 import {
 	ActivityIndicator,
 	Button,
@@ -73,7 +73,7 @@ export default function EditExpenseForm({
 				style={{
 					alignItems: 'center',
 					justifyContent: 'center',
-					height: Dimensions.get('screen').height - 150,
+					height: 300,
 				}}
 			>
 				<ActivityIndicator size={20} color={theme.colors.onSurface} />
@@ -158,7 +158,7 @@ const Form = memo(function Form({
 					amount: Number(amount),
 					category_id: selectedCategory.id,
 					created_date: selectedDate.getDate(),
-					created_month: selectedDate.getMonth(),
+					created_month: selectedDate.getMonth() + 1,
 					created_year: selectedDate.getFullYear(),
 					image,
 					note,
@@ -169,7 +169,7 @@ const Form = memo(function Form({
 				.update(schema.accounts)
 				.set({
 					balance:
-						initialAccount.balance + initialFormValue.amount - Number(amount),
+						initialAccount.balance - initialFormValue.amount + Number(amount),
 				})
 				.where(eq(schema.accounts.id, selectedAccount.id as number));
 
@@ -275,9 +275,9 @@ const Form = memo(function Form({
 				onPress={handleDelete}
 			>
 				{isLoading ? (
-					<ActivityIndicator size={20} color={theme.colors.onPrimary} />
+					<ActivityIndicator size={20} color={theme.colors.onSurface} />
 				) : (
-					'Delete Record'
+					'Delete expense record'
 				)}
 			</Button>
 		</View>

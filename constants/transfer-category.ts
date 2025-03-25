@@ -1,5 +1,5 @@
 export const transferCategories = [
-	{ icon: 'other', label: 'Other' },
+	{ icon: 'other', label: 'Other Transfer' },
 	{ icon: 'bank-transfer', label: 'Bank Transfer (Own Accounts)' },
 	{ icon: 'cash-deposit', label: 'Cash Deposit' },
 	{ icon: 'cash-withdrawal', label: 'Cash Withdrawal' },

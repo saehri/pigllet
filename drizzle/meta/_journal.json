@@ -78,6 +78,20 @@
       "when": 1742722370819,
       "tag": "0010_mature_venus",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "6",
+      "when": 1742804743864,
+      "tag": "0011_little_hellcat",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "6",
+      "when": 1742870586545,
+      "tag": "0012_faulty_mystique",
+      "breakpoints": true
     }
   ]
 }

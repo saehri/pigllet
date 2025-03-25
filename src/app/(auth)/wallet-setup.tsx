@@ -1,6 +1,6 @@
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 import { useSQLiteContext } from 'expo-sqlite';
-import { Image, StyleSheet, ToastAndroid, View } from 'react-native';
+import { Image, Keyboard, StyleSheet, ToastAndroid, View } from 'react-native';
 import {
 	ActivityIndicator,
 	Button,
@@ -104,6 +104,8 @@ function AddWalletForm({ theme }: AddWalletFormProps) {
 
 	async function setMyWallet() {
 		try {
+			Keyboard.dismiss();
+
 			if (!amount.length || !Boolean(Number(amount)))
 				return ToastAndroid.show(
 					'Please enter a valid amount',
@@ -120,6 +122,7 @@ function AddWalletForm({ theme }: AddWalletFormProps) {
 					number: '',
 					balance: Number(amount),
 					image: '',
+					is_cash: 1,
 				})
 				.onConflictDoNothing();
 		} catch (error: any) {
@@ -134,7 +137,7 @@ function AddWalletForm({ theme }: AddWalletFormProps) {
 	}
 
 	return (
-		<>
+		<View style={{ gap: 16 }}>
 			<TextInput inputMode="numeric" value={amount} onChangeText={setAmount} />
 
 			<Button
@@ -149,7 +152,7 @@ function AddWalletForm({ theme }: AddWalletFormProps) {
 					'Set up my wallet'
 				)}
 			</Button>
-		</>
+		</View>
 	);
 }
 

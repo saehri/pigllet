@@ -9,8 +9,8 @@ import {
 	useTheme,
 } from 'react-native-paper';
 
-import * as schema from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import * as schema from '@/db/schema';
 import { TransactionCategories, Accounts } from '@/db/schema';
 import { SQLiteDatabase, useSQLiteContext } from 'expo-sqlite';
 import { drizzle, ExpoSQLiteDatabase } from 'drizzle-orm/expo-sqlite';
@@ -25,7 +25,7 @@ import AccountSelector from '../account-selector';
 import ImageSelectorInput from '../image-select-input';
 import SelectInputWithIcon from '../select-input-with-icon';
 
-export default function CreateExpenseForm() {
+export default function NewTransferForm() {
 	const theme = useTheme();
 
 	const db = useSQLiteContext();
@@ -43,7 +43,7 @@ export default function CreateExpenseForm() {
 				const categories = await drizzleDb
 					.select()
 					.from(schema.categories)
-					.where(eq(schema.categories.type, 'expense'));
+					.where(eq(schema.categories.type, 'transfer'));
 
 				setUserAccounts(accounts as Accounts[]);
 				setUserExpensesCategories(categories as TransactionCategories[]);
@@ -104,6 +104,9 @@ const Form = memo(function Form({
 	const [selectedAccount, setSelectedAccount] = useState<Accounts>(
 		userAccounts[0]
 	);
+	const [relatedAccount, setRelatedAccount] = useState<Accounts>(
+		userAccounts[0]
+	);
 	const [amount, setAmount] = useState<string>('');
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 	const [note, setNote] = useState<string>('');
@@ -118,15 +121,12 @@ const Form = memo(function Form({
 				return;
 			}
 
-			if (selectedAccount.balance - Number(amount) < 0) {
-				ToastAndroid.show('Please enter a valid amount', ToastAndroid.SHORT);
-				return;
-			}
-
+			// moved the payload into its own variable because the little shit keep screaming the types is invalid
 			const payload: schema.Transaction = {
-				type: 'expense',
+				type: 'transfer',
 				account_id: selectedAccount.id as number,
 				amount: Number(amount),
+				related_account_id: selectedAccount.id,
 				category_id: selectedCategory.id as number,
 				created_date: selectedDate.getDate(),
 				created_month: selectedDate.getMonth() + 1,
@@ -144,17 +144,13 @@ const Form = memo(function Form({
 			await drizzleDb
 				.update(schema.accounts)
 				.set({
-					balance: selectedAccount.balance - Number(amount),
+					balance: selectedAccount.balance + Number(amount),
 				})
 				.where(eq(schema.accounts.id, selectedAccount.id as number));
 
-			ToastAndroid.show('Expense added!', ToastAndroid.CENTER);
-
-			setAmount('');
-			setNote('');
-			setImage('');
+			ToastAndroid.show('Income record added!', ToastAndroid.CENTER);
 		} catch (error) {
-			ToastAndroid.show('Error adding expense', ToastAndroid.CENTER);
+			ToastAndroid.show('Error adding income record', ToastAndroid.CENTER);
 		} finally {
 			setLoading(false);
 		}
@@ -164,26 +160,35 @@ const Form = memo(function Form({
 		<View style={{ padding: 16, gap: 16 }}>
 			<View style={{ flexDirection: 'row', gap: 8 }}>
 				<View style={{ gap: 8, flex: 1 }}>
-					<Text variant="bodyLarge">From</Text>
+					<Text variant="bodyLarge">From account</Text>
+					<AccountSelector
+						accounts={userAccounts}
+						handleSelect={setRelatedAccount}
+						selectedAccount={relatedAccount}
+					/>
+				</View>
+
+				<View style={{ gap: 8, flex: 1 }}>
+					<Text variant="bodyLarge">To account</Text>
 					<AccountSelector
 						accounts={userAccounts}
 						handleSelect={setSelectedAccount}
 						selectedAccount={selectedAccount}
 					/>
 				</View>
+			</View>
 
-				<View style={{ gap: 8, flex: 1 }}>
-					<Text variant="bodyLarge">Amount ({currentCurrencySymbol})</Text>
-					<TextInput
-						keyboardType="number-pad"
-						onChangeText={setAmount}
-						value={amount}
-					/>
-				</View>
+			<View style={{ gap: 8, flex: 1 }}>
+				<Text variant="bodyLarge">Amount ({currentCurrencySymbol})</Text>
+				<TextInput
+					keyboardType="number-pad"
+					onChangeText={setAmount}
+					value={amount}
+				/>
 			</View>
 
 			<View style={{ gap: 8 }}>
-				<Text variant="bodyLarge">Expense category</Text>
+				<Text variant="bodyLarge">Transfer category</Text>
 				<SelectInputWithIcon
 					data={userExpenseCategories}
 					handleSelect={setSelectedCategory}
@@ -219,7 +224,7 @@ const Form = memo(function Form({
 				{isLoading ? (
 					<ActivityIndicator size={20} color={theme.colors.onPrimary} />
 				) : (
-					'Save expense record'
+					'Save income record'
 				)}
 			</Button>
 		</View>

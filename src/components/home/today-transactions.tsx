@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
 		paddingRight: 13,
 	},
 	title: {
-		fontFamily: 'Inter-Black',
+		fontFamily: 'Inter-Regular',
 		lineHeight: 23,
 	},
 	subtitle: {

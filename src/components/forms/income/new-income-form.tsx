@@ -43,7 +43,7 @@ export default function CreateIncomeForm() {
 				const categories = await drizzleDb
 					.select()
 					.from(schema.categories)
-					.where(eq(schema.categories.type, 'incomes'));
+					.where(eq(schema.categories.type, 'income'));
 
 				setUserAccounts(accounts as Accounts[]);
 				setUserExpensesCategories(categories as TransactionCategories[]);
@@ -118,21 +118,19 @@ const Form = memo(function Form({
 				return;
 			}
 
-			await drizzleDb
-				.insert(schema.transactions)
-				.values({
-					type: 'income',
-					account_id: selectedAccount.id,
-					amount: Number(amount),
-					related_account_id: selectedAccount.id,
-					category_id: selectedCategory.id,
-					created_date: selectedDate.getDate(),
-					created_month: selectedDate.getMonth() + 1,
-					created_year: selectedDate.getFullYear(),
-					image,
-					note,
-				})
-				.onConflictDoNothing();
+			const payload: schema.Transaction = {
+				amount: Number(amount),
+				account_id: selectedAccount.id as number,
+				category_id: selectedCategory.id as number,
+				created_date: selectedDate.getDate(),
+				created_month: selectedDate.getMonth() + 1,
+				created_year: selectedDate.getFullYear(),
+				image,
+				note,
+				type: 'income',
+			};
+
+			await drizzleDb.insert(schema.transactions).values(payload);
 
 			// also update the selected account balance
 			await drizzleDb
@@ -143,8 +141,12 @@ const Form = memo(function Form({
 				.where(eq(schema.accounts.id, selectedAccount.id as number));
 
 			ToastAndroid.show('Income record added!', ToastAndroid.CENTER);
-		} catch (error) {
-			ToastAndroid.show('Error adding income record', ToastAndroid.CENTER);
+
+			setAmount('');
+			setNote('');
+			setImage('');
+		} catch (error: any) {
+			ToastAndroid.show(error.message, ToastAndroid.CENTER);
 		} finally {
 			setLoading(false);
 		}
@@ -209,7 +211,7 @@ const Form = memo(function Form({
 				{isLoading ? (
 					<ActivityIndicator size={20} color={theme.colors.onPrimary} />
 				) : (
-					'Save Expense'
+					'Save income record'
 				)}
 			</Button>
 		</View>

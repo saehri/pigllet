@@ -1,20 +1,43 @@
 import { ScrollView, View } from 'react-native';
-import { useTheme } from 'react-native-paper';
+import { Text, useTheme } from 'react-native-paper';
 
-import BudgetCard from '@/src/components/budgets/budget-card';
+import { Workflow } from 'lucide-react-native';
 
 export default function BudgetScreen() {
 	const theme = useTheme();
 
 	return (
 		<ScrollView
+			showsVerticalScrollIndicator={false}
 			style={{
 				backgroundColor: theme.colors.background,
-				paddingHorizontal: 16,
 			}}
 		>
-			<View style={{ gap: 10 }}>
-				<BudgetCard />
+			<View
+				style={{
+					alignItems: 'center',
+					justifyContent: 'center',
+					padding: 16,
+				}}
+			>
+				<Workflow
+					size={120}
+					strokeWidth={0.5}
+					fillOpacity={0.3}
+					fill={theme.colors.primary}
+					color={theme.colors.onBackground}
+				/>
+				<Text
+					style={{
+						fontFamily: 'Inter-Regular',
+						textAlign: 'center',
+						maxWidth: 280,
+					}}
+					variant="bodyLarge"
+				>
+					This feature is in progress, and we’re working hard to deliver it
+					soon.
+				</Text>
 			</View>
 		</ScrollView>
 	);

@@ -32,6 +32,7 @@ export default function Layout() {
 				},
 				tabBarLabelPosition: 'beside-icon',
 			}}
+			backBehavior="none"
 		>
 			<Tabs.Screen
 				name="expense"
