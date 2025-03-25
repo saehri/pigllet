@@ -1,6 +1,6 @@
 import { memo, useContext } from 'react';
 import { useEffect, useState } from 'react';
-import { Dimensions, ToastAndroid, View } from 'react-native';
+import { ToastAndroid, View } from 'react-native';
 import {
 	ActivityIndicator,
 	Button,
@@ -73,7 +73,7 @@ export default function EditExpenseForm({
 				style={{
 					alignItems: 'center',
 					justifyContent: 'center',
-					height: Dimensions.get('screen').height - 150,
+					height: 300,
 				}}
 			>
 				<ActivityIndicator size={20} color={theme.colors.onSurface} />

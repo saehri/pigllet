@@ -29,6 +29,7 @@ function AccountCards() {
 		<View style={{ padding: 16, gap: 16 }}>
 			{data.map((card) => (
 				<AccountCard
+					clickable
 					balance={card.balance}
 					created_at={card.created_at}
 					name={card.name}

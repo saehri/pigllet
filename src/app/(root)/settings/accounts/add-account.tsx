@@ -36,6 +36,12 @@ export default function AddAccountScreen() {
 			if (!accountName.length || !accountBalance.length) {
 				return ToastAndroid.show('Invalid account data!', ToastAndroid.SHORT);
 			}
+			if (!accountNumber.length) {
+				return ToastAndroid.show(
+					'Please specify an unique account number!',
+					ToastAndroid.SHORT
+				);
+			}
 
 			await drizzleDb.insert(schema.accounts).values({
 				balance: Number(accountBalance),
@@ -47,7 +53,12 @@ export default function AddAccountScreen() {
 			});
 
 			ToastAndroid.show('Account successfully created!', ToastAndroid.SHORT);
+
+			setAccountName('');
+			setAccountNumber('');
+			setAccountBalance('');
 		} catch (error: any) {
+			console.log(error.message);
 			ToastAndroid.show('Failed to add an account', ToastAndroid.SHORT);
 		} finally {
 			setFormLoading(false);

@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm';
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 
 export const transactions = sqliteTable('transactions', {
@@ -6,14 +7,15 @@ export const transactions = sqliteTable('transactions', {
 	note: text('note'),
 	account_id: integer('account_id')
 		.notNull()
-		.references(() => accounts.id),
+		.references(() => accounts.id, { onDelete: 'cascade' }),
 	related_account_id: integer('related_account_id').references(
-		() => accounts.id
+		() => accounts.id,
+		{ onDelete: 'cascade' }
 	),
 	category_id: integer('category_id')
 		.notNull()
-		.references(() => categories.id), // Now references the unified categories table
-	type: text('type').notNull(), // 'expense', 'income', or 'transfer'
+		.references(() => categories.id),
+	type: text('type').notNull(), // 'expense', 'income', 'transfer'
 	image: text('image'),
 	created_date: integer('created_date').notNull(),
 	created_month: integer('created_month').notNull(),
@@ -59,6 +61,28 @@ export const subscriptions = sqliteTable('subscriptions', {
 	created_year: integer('created_year').notNull(),
 	created_day: integer('created_day').notNull(),
 });
+
+// Define relations for transactions
+export const transactionsRelations = relations(transactions, ({ one }) => ({
+	account: one(accounts, {
+		fields: [transactions.account_id],
+		references: [accounts.id],
+		relationName: 'accountTransactions',
+	}),
+	relatedAccount: one(accounts, {
+		fields: [transactions.related_account_id],
+		references: [accounts.id],
+		relationName: 'relatedAccountTransactions',
+	}),
+	category: one(categories, {
+		fields: [transactions.category_id],
+		references: [categories.id],
+	}),
+	budget: one(budget, {
+		fields: [transactions.budget_id],
+		references: [budget.id],
+	}),
+}));
 
 // Export Task to use as an interface in your app
 export type Accounts = typeof accounts.$inferInsert;

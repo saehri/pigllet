@@ -1,9 +1,8 @@
-import { useState } from 'react';
 import { FlatList } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
-import { and, asc, eq } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 
 import * as schema from '@/db/schema';
 
@@ -12,7 +11,6 @@ import NoItemNotice from '@/src/components/reusables/no-items-notice';
 
 export default function ExpensesScreen() {
 	const theme = useTheme();
-	const [date] = useState(new Date());
 
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
@@ -41,7 +39,7 @@ export default function ExpensesScreen() {
 				schema.categories,
 				eq(schema.transactions.category_id, schema.categories.id)
 			)
-			.orderBy(asc(schema.transactions.created_date))
+			.orderBy(desc(schema.transactions.created_date))
 	);
 
 	return (
