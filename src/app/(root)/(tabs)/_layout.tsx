@@ -1,4 +1,4 @@
-import { Tabs, useRouter } from 'expo-router';
+import { Tabs, usePathname, useRouter } from 'expo-router';
 import { View } from 'react-native';
 import { Button, Text, useTheme } from 'react-native-paper';
 import {
@@ -15,6 +15,16 @@ import AddBudgetModal from '@/src/components/modals/add-budget-modal';
 export default function Layout() {
 	const theme = useTheme();
 	const router = useRouter();
+	const pathname = usePathname();
+
+	function navigateTo(): any {
+		if (pathname === '/transactions/expense')
+			return '/(root)/new-transactions/expense';
+		if (pathname === '/transactions/income')
+			return '/(root)/new-transactions/income';
+		if (pathname === '/transactions/transfer')
+			return '/(root)/new-transactions/transfer';
+	}
 
 	return (
 		<Tabs
@@ -104,9 +114,7 @@ export default function Layout() {
 								alignItems: 'center',
 							}}
 						>
-							<Button
-								onPress={() => router.push('/(root)/new-transactions/expense')}
-							>
+							<Button onPress={() => router.push(navigateTo())}>
 								<Plus
 									strokeWidth={1.5}
 									color={theme.colors.onBackground}
