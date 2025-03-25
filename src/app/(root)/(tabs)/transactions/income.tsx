@@ -3,7 +3,7 @@ import { FlatList } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
-import { and, asc, eq } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 
 import * as schema from '@/db/schema';
 
@@ -20,8 +20,8 @@ export default function IncomesScreen() {
 	const { data } = useLiveQuery(
 		drizzleDb
 			.select({
-				accounts: schema.accounts,
 				categories: schema.categories,
+				accounts: schema.accounts,
 				transactions: {
 					id: schema.transactions.id,
 					amount: schema.transactions.amount,
@@ -42,7 +42,11 @@ export default function IncomesScreen() {
 				schema.categories,
 				eq(schema.transactions.category_id, schema.categories.id)
 			)
-			.orderBy(asc(schema.transactions.created_date))
+			.innerJoin(
+				schema.accounts,
+				eq(schema.transactions.account_id, schema.accounts.id)
+			)
+			.orderBy(desc(schema.transactions.created_date))
 	);
 
 	return (
