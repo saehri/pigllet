@@ -1,5 +1,5 @@
 import { List } from 'react-native-paper';
-import { BadgeInfo, Heart, Mail } from 'lucide-react-native';
+import { BadgeInfo, Heart, Mail, Smartphone } from 'lucide-react-native';
 
 export default function SecondarySetting() {
 	return (
@@ -40,6 +40,21 @@ export default function SecondarySetting() {
 				descriptionStyle={{ fontFamily: 'Inter-Light' }}
 				left={(props) => (
 					<BadgeInfo
+						{...props}
+						size={24}
+						strokeWidth={1.5}
+						color={props.color}
+					/>
+				)}
+			/>
+
+			<List.Item
+				title="App version"
+				description="1.0.0"
+				titleStyle={{ fontFamily: 'Inter-Regular' }}
+				descriptionStyle={{ fontFamily: 'Inter-Light' }}
+				left={(props) => (
+					<Smartphone
 						{...props}
 						size={24}
 						strokeWidth={1.5}
