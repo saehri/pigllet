@@ -9,7 +9,6 @@ export default function Layout() {
 			screenOptions={{
 				headerShown: false,
 				contentStyle: { backgroundColor: theme.colors.background },
-				statusBarBackgroundColor: theme.colors.background,
 				headerShadowVisible: false,
 			}}
 		>

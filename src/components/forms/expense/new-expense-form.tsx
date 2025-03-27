@@ -1,6 +1,6 @@
-import { memo, useContext } from 'react';
+import { useContext } from 'react';
 import { useEffect, useState } from 'react';
-import { Dimensions, ToastAndroid, View } from 'react-native';
+import { ToastAndroid, View } from 'react-native';
 import {
 	ActivityIndicator,
 	Button,
@@ -11,9 +11,8 @@ import {
 
 import * as schema from '@/db/schema';
 import { eq } from 'drizzle-orm';
-import { TransactionCategories, Accounts } from '@/db/schema';
-import { SQLiteDatabase, useSQLiteContext } from 'expo-sqlite';
-import { drizzle, ExpoSQLiteDatabase } from 'drizzle-orm/expo-sqlite';
+import { useSQLiteContext } from 'expo-sqlite';
+import { drizzle } from 'drizzle-orm/expo-sqlite';
 
 import {
 	UserPreferenceContext,
@@ -27,6 +26,20 @@ import SelectInputWithIcon from '../select-input-with-icon';
 
 export default function CreateExpenseForm() {
 	const theme = useTheme();
+	const { currentCurrencySymbol } = useContext(
+		UserPreferenceContext
+	) as UserPreferenceContextTypes;
+
+	// form state
+	const [isLoading, setLoading] = useState(false);
+
+	const [selectedCategory, setSelectedCategory] =
+		useState<schema.TransactionCategories>();
+	const [selectedAccount, setSelectedAccount] = useState<schema.Accounts>();
+	const [amount, setAmount] = useState<string>('');
+	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+	const [note, setNote] = useState<string>('');
+	const [image, setImage] = useState<string>('');
 
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
@@ -45,8 +58,10 @@ export default function CreateExpenseForm() {
 					.from(schema.categories)
 					.where(eq(schema.categories.type, 'expense'));
 
-				setUserAccounts(accounts as Accounts[]);
-				setUserExpensesCategories(categories as TransactionCategories[]);
+				setUserAccounts(accounts as schema.Accounts[]);
+				setSelectedAccount(accounts[0]);
+				setSelectedCategory(categories[0]);
+				setUserExpensesCategories(categories as schema.TransactionCategories[]);
 			} catch (error: any) {
 				ToastAndroid.show(error.message, ToastAndroid.CENTER);
 			}
@@ -54,60 +69,6 @@ export default function CreateExpenseForm() {
 
 		load();
 	}, []);
-
-	if (!userAccounts.length || !userExpenseCategories.length) {
-		return (
-			<View
-				style={{
-					alignItems: 'center',
-					justifyContent: 'center',
-					height: Dimensions.get('screen').height - 150,
-				}}
-			>
-				<ActivityIndicator size={20} color={theme.colors.onSurface} />
-			</View>
-		);
-	}
-
-	return (
-		<Form
-			userAccounts={userAccounts}
-			userExpenseCategories={userExpenseCategories}
-			drizzleDb={drizzleDb}
-		/>
-	);
-}
-
-type FormProps = {
-	userExpenseCategories: TransactionCategories[];
-	userAccounts: Accounts[];
-	drizzleDb: ExpoSQLiteDatabase<typeof schema> & {
-		$client: SQLiteDatabase;
-	};
-};
-
-const Form = memo(function Form({
-	userAccounts,
-	userExpenseCategories,
-	drizzleDb,
-}: FormProps) {
-	const theme = useTheme();
-	const { currentCurrencySymbol } = useContext(
-		UserPreferenceContext
-	) as UserPreferenceContextTypes;
-
-	// form state
-	const [isLoading, setLoading] = useState(false);
-
-	const [selectedCategory, setSelectedCategory] =
-		useState<TransactionCategories>(userExpenseCategories[0]);
-	const [selectedAccount, setSelectedAccount] = useState<Accounts>(
-		userAccounts[0]
-	);
-	const [amount, setAmount] = useState<string>('');
-	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-	const [note, setNote] = useState<string>('');
-	const [image, setImage] = useState<string>('');
 
 	async function handleSubmit() {
 		try {
@@ -224,4 +185,4 @@ const Form = memo(function Form({
 			</Button>
 		</View>
 	);
-});
+}
