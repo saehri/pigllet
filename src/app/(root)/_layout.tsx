@@ -10,7 +10,6 @@ export default function Layout() {
 		<Stack
 			initialRouteName="(tabs)"
 			screenOptions={{
-				statusBarBackgroundColor: theme.colors.background,
 				contentStyle: {
 					backgroundColor: theme.colors.background,
 				},
