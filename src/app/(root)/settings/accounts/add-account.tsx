@@ -58,7 +58,6 @@ export default function AddAccountScreen() {
 			setAccountNumber('');
 			setAccountBalance('');
 		} catch (error: any) {
-			console.log(error.message);
 			ToastAndroid.show('Failed to add an account', ToastAndroid.SHORT);
 		} finally {
 			setFormLoading(false);

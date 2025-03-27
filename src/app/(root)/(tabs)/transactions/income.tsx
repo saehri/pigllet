@@ -55,8 +55,6 @@ export default function IncomesScreen() {
 			.orderBy(desc(schema.transactions.created_date))
 	);
 
-	console.log(transactions);
-
 	return (
 		<FlatList
 			style={{ paddingTop: 60, backgroundColor: theme.colors.background }}
