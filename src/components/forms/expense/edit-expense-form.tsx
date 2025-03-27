@@ -48,6 +48,7 @@ export default function EditExpenseForm() {
 	// form state
 	const [isLoading, setLoading] = useState(false);
 
+	const [initialAccount, setInitialAccount] = useState<schema.Accounts>();
 	const [selectedCategory, setSelectedCategory] =
 		useState<TransactionCategories>();
 	const [selectedAccount, setSelectedAccount] = useState<Accounts>();
@@ -95,6 +96,8 @@ export default function EditExpenseForm() {
 				);
 				setNote(transactions.note || '');
 				setImage(transactions.image || '');
+
+				setInitialAccount(accounts);
 
 				setUserAccounts(allAccounts);
 				setUserExpensesCategories(allCategories);

@@ -118,20 +118,20 @@ export default function CreateIncomeForm() {
 		<View style={{ padding: 16, gap: 16 }}>
 			<View style={{ flexDirection: 'row', gap: 8 }}>
 				<View style={{ gap: 8, flex: 1 }}>
-					<Text variant="bodyLarge">Amount ({currentCurrencySymbol})</Text>
-					<TextInput
-						keyboardType="number-pad"
-						onChangeText={setAmount}
-						value={amount}
-					/>
-				</View>
-
-				<View style={{ gap: 8, flex: 1 }}>
 					<Text variant="bodyLarge">To account</Text>
 					<AccountSelector
 						accounts={userAccounts}
 						handleSelect={setSelectedAccount}
 						selectedAccount={selectedAccount}
+					/>
+				</View>
+
+				<View style={{ gap: 8, flex: 1 }}>
+					<Text variant="bodyLarge">Amount ({currentCurrencySymbol})</Text>
+					<TextInput
+						keyboardType="number-pad"
+						onChangeText={setAmount}
+						value={amount}
 					/>
 				</View>
 			</View>
