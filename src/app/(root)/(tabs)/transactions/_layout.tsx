@@ -14,7 +14,8 @@ export default function Layout() {
 			initialRouteName="expense"
 			screenOptions={{
 				headerShown: false,
-				tabBarActiveTintColor: theme.colors.primary,
+				tabBarActiveTintColor: theme.colors.onPrimary,
+				tabBarActiveBackgroundColor: theme.colors.primary,
 				tabBarStyle: {
 					backgroundColor: theme.colors.elevation.level1,
 					height: 40,
@@ -22,9 +23,13 @@ export default function Layout() {
 					top: 0,
 					borderWidth: 1,
 					borderTopWidth: 1,
-					borderColor: theme.colors.outlineVariant,
 					borderRadius: 1000,
+					borderColor: theme.colors.outlineVariant,
 					marginHorizontal: 16,
+					overflow: 'hidden',
+				},
+				tabBarItemStyle: {
+					overflow: 'hidden',
 				},
 				tabBarLabelStyle: {
 					fontFamily: 'Inter-Regular',
