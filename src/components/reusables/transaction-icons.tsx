@@ -23,6 +23,7 @@ import {
 	GraduationCap,
 	HandCoins,
 	HandHelping,
+	HandPlatter,
 	Hospital,
 	KeySquare,
 	LampDesk,
@@ -343,6 +344,13 @@ export default function TransactionIcons({ icon }: Props) {
 		),
 		'foods-and-drinks': (
 			<Salad size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+		),
+		takeout: (
+			<HandPlatter
+				size={20}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+			/>
 		),
 	};
 

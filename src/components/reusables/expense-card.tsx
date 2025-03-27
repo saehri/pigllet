@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useContext } from 'react';
-import { Text } from 'react-native-paper';
+import { Text, useTheme } from 'react-native-paper';
 import { View, StyleSheet, Pressable } from 'react-native';
 import {
 	UserPreferenceContext,
@@ -17,22 +17,19 @@ type TransactionWithoutImage = Omit<Transaction, 'image'>;
 interface Props {
 	category: TransactionCategories;
 	data: TransactionWithoutImage;
-	showsDate?: boolean;
+	accountName?: string;
 }
 
 export default function ExpenseCard({
 	category,
 	data,
-	showsDate = true,
+	accountName = '',
 }: Props) {
 	const router = useRouter();
+	const theme = useTheme();
 	const { currentCurrencySymbol } = useContext(
 		UserPreferenceContext
 	) as UserPreferenceContextTypes;
-
-	const formattedDate = new Date(
-		`${data.created_year}-${data.created_month}-${data.created_date}`
-	).toLocaleDateString('en-US', { dateStyle: 'long', month: 'short' });
 
 	return (
 		<View style={styles.container}>
@@ -57,7 +54,7 @@ export default function ExpenseCard({
 				}
 				style={[styles.contentContainer]}
 			>
-				<View>
+				<View style={{ flex: 1, paddingRight: 24 }}>
 					<View style={styles.row}>
 						<Text variant="bodyLarge" style={{ fontFamily: 'Inter-Regular' }}>
 							{category.label}
@@ -66,7 +63,7 @@ export default function ExpenseCard({
 
 					<Text
 						variant="labelLarge"
-						style={[styles.bodyMedium, { width: 150 }]}
+						style={[styles.bodyMedium, { flex: 1, maxWidth: 150 }]}
 						numberOfLines={1}
 					>
 						{data.note}
@@ -74,17 +71,26 @@ export default function ExpenseCard({
 				</View>
 
 				<View style={{ alignItems: 'flex-end' }}>
-					<Text style={[styles.bodyLarge, { fontSize: showsDate ? 16 : 18 }]}>
+					<Text style={styles.bodyLarge} variant="bodyLarge">
 						{`${currentCurrencySymbol} ${data.amount.toLocaleString(
 							getLocaleByCurrencySymbol(currentCurrencySymbol)
 						)}`}
 					</Text>
 
-					{showsDate && (
-						<Text variant="labelLarge" style={styles.bodyMedium}>
-							{formattedDate}
-						</Text>
-					)}
+					<Text
+						variant="labelLarge"
+						style={[
+							styles.bodyMedium,
+							{
+								backgroundColor: theme.colors.elevation.level3,
+								paddingHorizontal: 5,
+								borderRadius: 6,
+							},
+						]}
+						numberOfLines={1}
+					>
+						{accountName}
+					</Text>
 				</View>
 			</Pressable>
 		</View>
