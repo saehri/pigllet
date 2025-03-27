@@ -115,13 +115,7 @@ export default function RootLayout() {
 						alignItems: 'center',
 						justifyContent: 'center',
 					}}
-				>
-					<Image
-						source={require('@/assets/icons/adaptive-icon.png')}
-						style={{ width: 160, height: 160 }}
-					/>
-					<ActivityIndicator animating size={24} color="#af2b45" />
-				</View>
+				></View>
 			}
 		>
 			<SQLiteProvider

@@ -7,6 +7,13 @@
 		"scheme": "myapp",
 		"userInterfaceStyle": "automatic",
 		"newArchEnabled": true,
+		"backgroundColor": "#000000",
+		"notification": {
+			"color": "#000000",
+			"androidMode": "collapse",
+			"androidCollapsedTitle": "#{unread_notifications} new interactions"
+		},
+		"softwareKeyboardLayoutMode": "pan",
 		"ios": {
 			"supportsTablet": true,
 			"icon": "./assets/icons/ios-light.png"
@@ -34,7 +41,8 @@
 					"dark": {
 						"image": "./assets/icons/splash-icon-dark.png",
 						"backgroundColor": "#000000"
-					}
+					},
+					"imageWidth": 200
 				}
 			],
 			[
