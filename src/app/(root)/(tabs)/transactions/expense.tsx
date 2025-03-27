@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { FlatList, View } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { Surface, Text, useTheme } from 'react-native-paper';
 import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { and, desc, eq } from 'drizzle-orm';
 import * as schema from '@/db/schema';
 
 import groupedTransactions from '@/utils/group-transactions';
+
+import { BarChart, barDataItem } from 'react-native-gifted-charts';
 
 import ExpenseCard from '@/src/components/reusables/expense-card';
 import NoItemNotice from '@/src/components/reusables/no-items-notice';
@@ -54,6 +56,24 @@ export default function ExpensesScreen() {
 		<FlatList
 			style={{ paddingTop: 60, backgroundColor: theme.colors.background }}
 			data={groupedTransactions(transactions)}
+			ListHeaderComponent={() => (
+				<View style={{ paddingHorizontal: 16, paddingBottom: 24 }}>
+					<Surface
+						mode="flat"
+						elevation={4}
+						style={{
+							borderRadius: 20,
+							overflow: 'hidden',
+							padding: 16,
+							paddingBottom: 0,
+							paddingLeft: 12,
+							alignItems: 'center',
+						}}
+					>
+						<TransactionBasicChart />
+					</Surface>
+				</View>
+			)}
 			ListEmptyComponent={<NoItemNotice />}
 			renderItem={({ item }) => (
 				<View style={{ paddingBottom: 24, gap: 8 }}>
@@ -84,6 +104,47 @@ export default function ExpensesScreen() {
 					</View>
 				</View>
 			)}
+		/>
+	);
+}
+
+function TransactionBasicChart() {
+	const theme = useTheme();
+
+	const data: barDataItem[] = [
+		{ value: 400000, label: 'A' },
+		{ value: 30000, label: 'B' },
+		{ value: 200000, label: 'C' },
+		{ value: 10000, label: 'D' },
+	];
+
+	return (
+		<BarChart
+			data={data}
+			backgroundColor={theme.colors.elevation.level4} // Sets the chart background
+			frontColor={theme.colors.primary} // Main color for bars
+			rulesThickness={1} // Thin grid lines for subtlety
+			rulesColor={theme.colors.elevation.level5} // Grid color matching the theme
+			roundedTop // Adds rounded edges to the top of bars
+			barWidth={30} // Adjust bar width for proportionate spacing
+			barBorderRadius={6} // Smoothens edges for a modern look
+			indicatorColor={'default'} // White indicator line
+			capColor={'#FF0000'} // Red cap color (Top end of bars)
+			color={'#00FF00'} // Base color for bars (Green in this case)
+			lineBehindBars={false} // Keeps bars visually distinct
+			yAxisTextStyle={{
+				fontFamily: 'Inter-Regular',
+				fontSize: 11, // Adjust axis labels for clarity
+				color: theme.colors.onSurfaceVariant,
+			}}
+			xAxisLabelTextStyle={{
+				fontFamily: 'Inter-Regular',
+				fontSize: 12,
+				fontWeight: '500',
+				color: theme.colors.onSurfaceVariant,
+			}}
+			spacing={12} // Provides spacing between bars
+			isAnimated // Adds smooth animation for better UX
 		/>
 	);
 }
