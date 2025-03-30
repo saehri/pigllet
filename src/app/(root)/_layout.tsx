@@ -57,29 +57,7 @@ export default function Layout() {
 					),
 				}}
 			/>
-			<Stack.Screen
-				name="transaction-detail"
-				options={{
-					title: '',
-					headerRight: (props) => (
-						<View
-							style={{
-								backgroundColor: theme.colors.background,
-								flexDirection: 'row',
-								alignItems: 'center',
-							}}
-						>
-							<Button>
-								<Calculator
-									strokeWidth={1.5}
-									color={theme.colors.onBackground}
-									size={24}
-								/>
-							</Button>
-						</View>
-					),
-				}}
-			/>
+			<Stack.Screen name="edit-expense" />
 			<Stack.Screen name="transaction-by-category" />
 		</Stack>
 	);

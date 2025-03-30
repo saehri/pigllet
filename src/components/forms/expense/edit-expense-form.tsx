@@ -8,7 +8,7 @@ import {
 	TextInput,
 	useTheme,
 } from 'react-native-paper';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 
 import * as schema from '@/db/schema';
 import { TransactionCategories, Accounts } from '@/db/schema';
@@ -29,7 +29,6 @@ import ImageSelectorInput from '../image-select-input';
 
 export default function EditExpenseForm() {
 	const theme = useTheme();
-	const router = useRouter();
 	const { currentCurrencySymbol } = useContext(
 		UserPreferenceContext
 	) as UserPreferenceContextTypes;
@@ -154,29 +153,6 @@ export default function EditExpenseForm() {
 		}
 	}
 
-	async function handleDelete() {
-		try {
-			setLoading(true);
-			await drizzleDb
-				.delete(schema.transactions)
-				.where(eq(schema.transactions.id, initialFormValue.id as number));
-
-			await drizzleDb
-				.update(schema.accounts)
-				.set({
-					balance: initialAccount.balance + initialFormValue.amount,
-				})
-				.where(eq(schema.accounts.id, selectedAccount.id as number));
-
-			ToastAndroid.show('Record deleted!', ToastAndroid.CENTER);
-			router.back();
-		} catch (error) {
-			ToastAndroid.show('Error when updating expense', ToastAndroid.CENTER);
-		} finally {
-			setLoading(false);
-		}
-	}
-
 	return (
 		<View style={{ padding: 16, gap: 16 }}>
 			<View style={{ flexDirection: 'row', gap: 8 }}>
@@ -237,20 +213,7 @@ export default function EditExpenseForm() {
 				{isLoading ? (
 					<ActivityIndicator size={20} color={theme.colors.onPrimary} />
 				) : (
-					'Save Changes'
-				)}
-			</Button>
-
-			<Button
-				mode="outlined"
-				style={{ borderRadius: 10 }}
-				labelStyle={{ fontFamily: 'Inter-Regular', fontSize: 16 }}
-				onPress={handleDelete}
-			>
-				{isLoading ? (
-					<ActivityIndicator size={20} color={theme.colors.onSurface} />
-				) : (
-					'Delete expense record'
+					'Save changes'
 				)}
 			</Button>
 		</View>

@@ -21,7 +21,7 @@ export default function ImageSelectorInput({
 			allowsEditing: true,
 			allowsMultipleSelection: false,
 			base64: true,
-			quality: 0.5,
+			quality: 0.3,
 		});
 
 		if (!result.canceled) {

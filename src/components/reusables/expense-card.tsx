@@ -48,8 +48,11 @@ export default function ExpenseCard({
 			<Pressable
 				onPress={() =>
 					router.push({
-						pathname: '/(root)/transaction-detail',
-						params: { id: data.id as any, type: data.type },
+						pathname: '/(root)/edit-expense',
+						params: {
+							id: data.id as any,
+							type: data.type,
+						},
 					})
 				}
 				style={[styles.contentContainer]}
