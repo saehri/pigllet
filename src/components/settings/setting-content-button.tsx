@@ -45,7 +45,11 @@ export default function SettingContentButton({
 		>
 			<Text
 				variant="bodyLarge"
-				style={{ fontFamily: 'Inter-Regular', ...(labelStyle as object) }}
+				style={{
+					fontFamily: 'Inter-Regular',
+					...(labelStyle as object),
+					color: higlight ? theme.colors.primary : theme.colors.onSurface,
+				}}
 			>
 				{label}
 			</Text>

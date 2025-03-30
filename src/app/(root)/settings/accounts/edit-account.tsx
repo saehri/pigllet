@@ -124,7 +124,7 @@ function Form({ theme, drizzleDb, initialFormValue }: FormProps) {
 				})
 				.where(eq(schema.accounts.id, initialFormValue.id as number));
 
-			ToastAndroid.show('Account successfully created!', ToastAndroid.SHORT);
+			ToastAndroid.show('Account successfully updated!', ToastAndroid.SHORT);
 		} catch (error: any) {
 			ToastAndroid.show('Failed to add an account', ToastAndroid.SHORT);
 		} finally {
@@ -184,14 +184,16 @@ function Form({ theme, drizzleDb, initialFormValue }: FormProps) {
 				</View>
 			</View>
 
-			<View style={{ gap: 8 }}>
-				<Text variant="bodyLarge">Account number</Text>
-				<TextInput
-					keyboardType="default"
-					onChangeText={setAccountNumber}
-					value={accountNumber}
-				/>
-			</View>
+			{!initialFormValue.is_cash && (
+				<View style={{ gap: 8 }}>
+					<Text variant="bodyLarge">Account number</Text>
+					<TextInput
+						keyboardType="default"
+						onChangeText={setAccountNumber}
+						value={accountNumber}
+					/>
+				</View>
+			)}
 
 			<Button
 				mode="contained"

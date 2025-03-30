@@ -6,7 +6,7 @@ import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { and, desc, eq } from 'drizzle-orm';
 import * as schema from '@/db/schema';
 
-import groupedTransactions from '@/utils/group-transactions';
+import { groupedTransactionsByDate } from '@/utils/group-transactions';
 
 import IncomeCard from '@/src/components/reusables/income-card';
 import NoItemNotice from '@/src/components/reusables/no-items-notice';
@@ -55,12 +55,10 @@ export default function IncomesScreen() {
 			.orderBy(desc(schema.transactions.created_date))
 	);
 
-	console.log(transactions);
-
 	return (
 		<FlatList
 			style={{ paddingTop: 60, backgroundColor: theme.colors.background }}
-			data={groupedTransactions(transactions)}
+			data={groupedTransactionsByDate(transactions)}
 			ListEmptyComponent={<NoItemNotice />}
 			renderItem={({ item }) => (
 				<View style={{ paddingBottom: 24, gap: 8 }}>

@@ -2,7 +2,7 @@ import { Check } from 'lucide-react-native';
 import { ScrollView, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
-import SettingContentButtonModal from '@/src/components/settings/setting-content-button';
+import SettingContentButton from '@/src/components/settings/setting-content-button';
 import SettingContentWrapper from '@/src/components/settings/setting-content-wrapper';
 
 import { currencySymbols } from '@/constants/currency-symbols';
@@ -28,7 +28,7 @@ export default function Currency() {
 			<View style={{ gap: 24, padding: 16 }}>
 				<SettingContentWrapper headerTitle="Currency symbol">
 					{currencySymbols.map((c) => (
-						<SettingContentButtonModal
+						<SettingContentButton
 							onPress={() => setAppCurrencySymbol(c.symbol)}
 							label={c.label}
 							key={c.code}
@@ -52,7 +52,7 @@ function RightButton({ selected }: { selected: boolean }) {
 			<Check
 				style={{ display: selected ? 'flex' : 'none' }}
 				size={20}
-				color={theme.colors.onSurface}
+				color={theme.colors.primary}
 			/>
 		</View>
 	);
