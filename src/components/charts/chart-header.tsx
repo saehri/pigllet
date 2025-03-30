@@ -1,33 +1,42 @@
-import { View } from 'lucide-react-native';
+import { View } from 'react-native';
 import { Text } from 'react-native-paper';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, memo } from 'react';
 
 import YearPicker from '../forms/year-picker';
 
 type Props = {
 	selectedYear: number;
 	setSelectedYear: Dispatch<SetStateAction<number>>;
+	selectedMonth: string;
 };
 
-export default function ChartHeader({ selectedYear, setSelectedYear }: Props) {
-	return (
-		<View
-			style={{
-				flexDirection: 'row',
-				justifyContent: 'space-between',
-				width: '100%',
-				alignItems: 'center',
-				marginBottom: 12,
-			}}
-		>
-			<Text style={{ fontFamily: 'Inter-Regular' }} variant="titleLarge">
-				March, {selectedYear}
-			</Text>
+const ChartHeader = memo(
+	({ selectedYear, setSelectedYear, selectedMonth }: Props) => {
+		return (
+			<View
+				style={{
+					flexDirection: 'row',
+					justifyContent: 'space-between',
+					width: '100%',
+					alignItems: 'center',
+					marginBottom: 12,
+					flex: 1,
+				}}
+			>
+				<Text
+					style={{ fontFamily: 'Inter-Regular', textTransform: 'capitalize' }}
+					variant="titleLarge"
+				>
+					{selectedMonth}, {selectedYear}
+				</Text>
 
-			<YearPicker
-				selectedYear={selectedYear}
-				setSelectedYear={setSelectedYear}
-			/>
-		</View>
-	);
-}
+				<YearPicker
+					selectedYear={selectedYear}
+					setSelectedYear={setSelectedYear}
+				/>
+			</View>
+		);
+	}
+);
+
+export default ChartHeader;

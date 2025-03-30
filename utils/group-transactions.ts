@@ -13,7 +13,7 @@ interface GroupedTransactionByCategory {
 }
 
 interface GroupedTransactionByDate {
-	created_date: number;
+	created_date: string;
 	transactions: Transaction[];
 }
 
@@ -21,7 +21,12 @@ export function groupedTransactionsByDate(
 	transactions: Transaction[]
 ): GroupedTransactionByDate[] {
 	return transactions.reduce((acc: GroupedTransactionByDate[], transaction) => {
-		const date = transaction.created_date;
+		const date = new Date(
+			`${transaction.created_year}-${transaction.created_month}-${transaction.created_date}`
+		).toLocaleDateString('en-US', {
+			dateStyle: 'long',
+			month: 'short',
+		});
 		const existingGroup = acc.find((group) => group.created_date === date);
 
 		if (existingGroup) {
@@ -37,9 +42,9 @@ export function groupedTransactionsByDate(
 	}, []);
 }
 
-export async function groupTransactionsByCategory(
+export function groupTransactionsByCategory(
 	transactions: Transaction[]
-): Promise<GroupedTransactionByCategory[]> {
+): GroupedTransactionByCategory[] {
 	return transactions.reduce<GroupedTransactionByCategory[]>(
 		(acc, transaction) => {
 			const categoryName = transaction.category?.label!;

@@ -1,67 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import {
-	ActivityIndicator,
-	MD3Theme,
-	Surface,
-	useTheme,
-} from 'react-native-paper';
+import { Text, useTheme } from 'react-native-paper';
+import { useEffect, useState } from 'react';
 import { BarChart, barDataItem } from 'react-native-gifted-charts';
-import { Transaction } from '@/db/schema';
 import { groupTransactionsByCategory } from '@/utils/group-transactions';
-import { ToastAndroid, View } from 'react-native';
+
+import { Transaction } from '@/db/schema';
+import { View } from 'react-native';
 
 type Props = {
 	transactions: Transaction[];
-	header?: React.ReactNode;
-	footer?: React.ReactNode;
 };
 
-export default function TransactionsSummaryChart({
-	transactions,
-	header,
-	footer,
-}: Props) {
+export default function TransactionsSummaryChart({ transactions }: Props) {
 	const theme = useTheme();
 
-	return (
-		<Wrapper theme={theme}>
-			{header}
-
-			<ChartBody transactions={transactions} theme={theme} />
-
-			{footer}
-		</Wrapper>
-	);
-}
-
-type ChartBodyProps = {
-	transactions: Transaction[];
-	theme: MD3Theme;
-};
-
-function ChartBody({ transactions, theme }: ChartBodyProps) {
 	const [chartData, setChartData] = useState<barDataItem[]>([]);
-	const [loading, setLoading] = useState<boolean>(false);
 
 	useEffect(() => {
-		async function load() {
-			try {
-				setLoading(true);
-
-				const data = await groupTransactionsByCategory(transactions);
-				setChartData(data);
-			} catch (error: any) {
-				ToastAndroid.show(error.message, ToastAndroid.SHORT);
-			} finally {
-				setLoading(false);
-			}
-		}
-
-		load();
+		const data = groupTransactionsByCategory(transactions);
+		setChartData(data);
 	}, []);
 
-	// loading indicator
-	if (loading) {
+	if (!chartData.length)
 		return (
 			<View
 				style={{
@@ -72,10 +31,11 @@ function ChartBody({ transactions, theme }: ChartBodyProps) {
 					height: 212, // 26 * 7 + 15 + 15 (stepHeight * number of step + top padding + bottom padding )
 				}}
 			>
-				<ActivityIndicator size={20} color={theme.colors.onSurface} />
+				<Text variant="bodyLarge" style={{ fontFamily: 'Inter-Regular' }}>
+					No data.
+				</Text>
 			</View>
 		);
-	}
 
 	return (
 		<BarChart
@@ -108,30 +68,5 @@ function ChartBody({ transactions, theme }: ChartBodyProps) {
 			noOfSections={7}
 			stepHeight={26}
 		/>
-	);
-}
-
-type WrapperProps = {
-	children: React.ReactNode;
-	theme: MD3Theme;
-};
-
-function Wrapper({ children, theme }: WrapperProps) {
-	return (
-		<Surface
-			mode="flat"
-			elevation={4}
-			style={{
-				borderRadius: 20,
-				overflow: 'hidden',
-				padding: 16,
-				paddingTop: 10,
-				alignItems: 'center',
-				borderWidth: 1,
-				borderColor: theme.colors.outlineVariant,
-			}}
-		>
-			{children}
-		</Surface>
 	);
 }

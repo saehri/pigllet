@@ -1,7 +1,11 @@
-import { Pressable, ScrollView, View } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { ChevronsLeft, ChevronsRight } from 'lucide-react-native';
+import { Dispatch, SetStateAction, memo, useCallback } from 'react';
+import { ScrollView, View } from 'react-native';
+import { Button, Text, useTheme } from 'react-native-paper';
 
-const MONTHS = [
+type MonthTypes = { value: number; label: string };
+
+const MONTHS: MonthTypes[] = [
 	{ value: 0, label: 'all' },
 	{ value: 1, label: 'january' },
 	{ value: 2, label: 'february' },
@@ -17,37 +21,69 @@ const MONTHS = [
 	{ value: 12, label: 'december' },
 ];
 
-type Props = {};
+type Props = {
+	selectedMonth: MonthTypes;
+	setSelectedMonth: Dispatch<SetStateAction<MonthTypes>>;
+};
 
-export default function ChartFooter({}: Props) {
+const ChartFooter = memo(({ selectedMonth, setSelectedMonth }: Props) => {
 	const theme = useTheme();
+
+	const selectPrevMonth = useCallback(() => {
+		const newIndex = selectedMonth.value - 1;
+		if (newIndex >= 0) {
+			setSelectedMonth(MONTHS[newIndex]);
+		}
+	}, [selectedMonth, setSelectedMonth]);
+
+	const selectNextMonth = useCallback(() => {
+		const newIndex = selectedMonth.value + 1;
+		if (newIndex <= MONTHS.length - 1) {
+			setSelectedMonth(MONTHS[newIndex]);
+		}
+	}, [selectedMonth, setSelectedMonth]);
 
 	return (
 		<ScrollView horizontal showsHorizontalScrollIndicator={false}>
-			<View style={{ flexDirection: 'row', gap: 9, paddingTop: 12 }}>
-				{MONTHS.map((month) => (
-					<Pressable
-						key={month.label}
-						style={{
-							padding: 4,
-							paddingHorizontal: 12,
-							borderRadius: 200,
-							backgroundColor: theme.colors.primary,
-						}}
+			<View
+				style={{
+					flexDirection: 'row',
+					gap: 9,
+					paddingTop: 12,
+					alignItems: 'center',
+				}}
+			>
+				<Button
+					onPress={selectPrevMonth}
+					mode="outlined"
+					style={{ borderColor: theme.colors.outlineVariant, borderRadius: 10 }}
+					contentStyle={{ height: 36 }}
+					disabled={selectedMonth.value === 0}
+				>
+					<ChevronsLeft color={theme.colors.primary} />
+				</Button>
+
+				<View style={{ width: 90 }}>
+					<Text
+						variant="bodyLarge"
+						style={{ textTransform: 'capitalize', textAlign: 'center' }}
 					>
-						<Text
-							style={{
-								fontFamily: 'Inter-Regular',
-								fontSize: 14,
-								textTransform: 'capitalize',
-								color: theme.colors.onPrimary,
-							}}
-						>
-							{month.label}
-						</Text>
-					</Pressable>
-				))}
+						{selectedMonth.label}
+					</Text>
+				</View>
+
+				<Button
+					onPress={selectNextMonth}
+					mode="outlined"
+					style={{ borderColor: theme.colors.outlineVariant, borderRadius: 10 }}
+					contentStyle={{ height: 36 }}
+					disabled={selectedMonth.value === MONTHS.length - 1}
+				>
+					<ChevronsRight color={theme.colors.primary} />
+				</Button>
 			</View>
 		</ScrollView>
 	);
-}
+});
+
+export default ChartFooter;

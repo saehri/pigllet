@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { FlatList, RefreshControl, View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 
@@ -14,6 +14,7 @@ import ChartHeader from '@/src/components/charts/chart-header';
 import ChartFooter from '@/src/components/charts/chart-footer';
 import NoItemNotice from '@/src/components/reusables/no-items-notice';
 import TransactionsSummaryChart from '@/src/components/charts/transactions-summary-chart';
+import ChartWrapper from '@/src/components/charts/chart-wrapper';
 
 export default function ExpensesScreen() {
 	const theme = useTheme();
@@ -24,48 +25,52 @@ export default function ExpensesScreen() {
 	const [selectedYear, setSelectedYear] = useState<number>(
 		new Date().getFullYear()
 	);
-	const [selectedMonth, setSelectedMonth] = useState<string>();
+	const [selectedMonth, setSelectedMonth] = useState<{
+		value: number;
+		label: string;
+	}>({ value: 3, label: 'march' });
 	const [refreshing, setRefreshing] = useState(false);
 
-	const loadExpenseData = (year: number, month: number) => {
-		return drizzleDb
-			.select({
-				id: schema.transactions.id,
-				amount: schema.transactions.amount,
-				note: schema.transactions.note,
-				account_id: schema.transactions.account_id,
-				related_account_id: schema.transactions.related_account_id,
-				category_id: schema.transactions.category_id,
-				type: schema.transactions.type,
-				created_date: schema.transactions.created_date,
-				created_month: schema.transactions.created_month,
-				created_year: schema.transactions.created_year,
-				budget_id: schema.transactions.budget_id,
-				category: schema.categories,
-				accountName: schema.accounts.name,
-			})
-			.from(schema.transactions)
-			.where(
-				and(
-					eq(schema.transactions.type, 'expense'),
-					eq(schema.transactions.created_month, month),
-					eq(schema.transactions.created_year, year)
+	const loadExpenseData = useCallback(
+		(year: number, month: number) => {
+			return drizzleDb
+				.select({
+					id: schema.transactions.id,
+					amount: schema.transactions.amount,
+					note: schema.transactions.note,
+					account_id: schema.transactions.account_id,
+					category_id: schema.transactions.category_id,
+					type: schema.transactions.type,
+					created_date: schema.transactions.created_date,
+					created_month: schema.transactions.created_month,
+					created_year: schema.transactions.created_year,
+					category: schema.categories,
+					accountName: schema.accounts.name,
+				})
+				.from(schema.transactions)
+				.where(
+					and(
+						eq(schema.transactions.type, 'expense'),
+						eq(schema.transactions.created_month, month),
+						eq(schema.transactions.created_year, year)
+					)
 				)
-			)
-			.innerJoin(
-				schema.categories,
-				eq(schema.transactions.category_id, schema.categories.id)
-			)
-			.innerJoin(
-				schema.accounts,
-				eq(schema.transactions.account_id, schema.accounts.id)
-			)
-			.orderBy(desc(schema.transactions.created_date));
-	};
+				.innerJoin(
+					schema.categories,
+					eq(schema.transactions.category_id, schema.categories.id)
+				)
+				.innerJoin(
+					schema.accounts,
+					eq(schema.transactions.account_id, schema.accounts.id)
+				)
+				.orderBy(desc(schema.transactions.created_date));
+		},
+		[drizzleDb]
+	);
 
 	const { data: transactions } = useLiveQuery(
-		loadExpenseData(selectedYear, 3),
-		[selectedYear]
+		loadExpenseData(selectedYear, selectedMonth.value),
+		[selectedYear, selectedMonth]
 	);
 
 	const onRefresh = async () => {
@@ -90,16 +95,18 @@ export default function ExpensesScreen() {
 						paddingTop: 60,
 					}}
 				>
-					<TransactionsSummaryChart
-						header={
-							<ChartHeader
-								selectedYear={selectedYear}
-								setSelectedYear={setSelectedYear}
-							/>
-						}
-						transactions={transactions as any}
-						footer={<ChartFooter />}
-					/>
+					<ChartWrapper>
+						<ChartHeader
+							selectedYear={selectedYear}
+							setSelectedYear={setSelectedYear}
+							selectedMonth={selectedMonth.label}
+						/>
+						<TransactionsSummaryChart transactions={transactions as any} />
+						<ChartFooter
+							selectedMonth={selectedMonth}
+							setSelectedMonth={setSelectedMonth}
+						/>
+					</ChartWrapper>
 				</View>
 			)}
 			keyExtractor={(item) => item.created_date.toString()}
@@ -112,10 +119,7 @@ export default function ExpensesScreen() {
 							fontSize: 18,
 						}}
 					>
-						{new Date(item.created_date).toLocaleDateString('en-US', {
-							dateStyle: 'long',
-							month: 'short',
-						})}
+						{item.created_date}
 					</Text>
 					<View>
 						{item.transactions.map((transaction: any) => (

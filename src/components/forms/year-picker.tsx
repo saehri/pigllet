@@ -17,16 +17,19 @@ type Props = {
 
 export default function YearPicker({ selectedYear, setSelectedYear }: Props) {
 	const theme = useTheme();
-	const years = getYearsBetween(2000, 2070);
+	const years = getYearsBetween(2000, new Date().getFullYear() + 10);
 	const buttonRef = useRef<View | null>(null);
 	const scrollViewRef = useRef<ScrollView | null>(null);
-	const initialScrollIndex = years.indexOf(selectedYear); // Keeps the selected year visible
 
 	const [visible, setVisible] = useState(false);
-	const [buttonPosition, setButtonPosition] = useState({ x: 0, y: 0 });
+	const [buttonPosition, setButtonPosition] = useState({
+		x: 0,
+		y: 0,
+	});
 
 	function shows() {
 		setVisible(true);
+		const toIndex = years.indexOf(selectedYear); // Keeps the selected year visible
 
 		buttonRef.current?.measure((x, y, width, height, pageX, pageY) => {
 			setButtonPosition({ x: x + 30, y: pageY + height + 1 });
@@ -35,9 +38,10 @@ export default function YearPicker({ selectedYear, setSelectedYear }: Props) {
 		// Scroll to the selected year
 		setTimeout(() => {
 			if (scrollViewRef.current) {
-				const index = initialScrollIndex < 0 ? 0 : initialScrollIndex;
+				const index = toIndex < 0 ? 0 : toIndex;
+
 				scrollViewRef.current.scrollTo({
-					y: index * 30, // Assuming each item is ~50px tall
+					y: index * 40 - 40, // Assuming each item is ~40px tall
 					animated: false,
 				});
 			}
@@ -86,7 +90,6 @@ export default function YearPicker({ selectedYear, setSelectedYear }: Props) {
 								zIndex: 2,
 								maxHeight: Dimensions.get('window').height * 0.5,
 								borderRadius: 16,
-								padding: 16,
 								borderWidth: 1,
 								borderColor: theme.colors.outlineVariant,
 							}}
@@ -94,32 +97,36 @@ export default function YearPicker({ selectedYear, setSelectedYear }: Props) {
 							<ScrollView
 								ref={scrollViewRef}
 								showsVerticalScrollIndicator={false}
+								style={{ margin: 16 }}
 							>
-								{years.map((year) => (
-									<Button
-										key={year}
-										style={{
-											backgroundColor:
-												selectedYear === year
-													? theme.colors.primary
-													: theme.colors.elevation.level3,
-										}}
-										labelStyle={{
-											fontFamily: 'Inter-Regular',
-											fontSize: 16,
-											color:
-												selectedYear === year
-													? theme.colors.onPrimary
-													: theme.colors.onSurface,
-										}}
-										onPress={() => {
-											setSelectedYear(year);
-											hide();
-										}}
-									>
-										{year}
-									</Button>
-								))}
+								<View>
+									{years.map((year) => (
+										<Button
+											key={year}
+											style={{
+												backgroundColor:
+													selectedYear === year
+														? theme.colors.primary
+														: theme.colors.elevation.level3,
+												borderRadius: 10,
+											}}
+											labelStyle={{
+												fontFamily: 'Inter-Regular',
+												fontSize: 16,
+												color:
+													selectedYear === year
+														? theme.colors.onPrimary
+														: theme.colors.onSurface,
+											}}
+											onPress={() => {
+												setSelectedYear(year);
+												hide();
+											}}
+										>
+											{year}
+										</Button>
+									))}
+								</View>
 							</ScrollView>
 						</Surface>
 
@@ -148,6 +155,7 @@ export default function YearPicker({ selectedYear, setSelectedYear }: Props) {
 					flexDirection: 'row-reverse',
 					alignItems: 'center',
 				}}
+				mode="outlined"
 				labelStyle={{ fontFamily: 'Inter-Regular', fontSize: 16 }}
 				icon={(props) => <ChevronDown size={props.size} color={props.color} />}
 			>
