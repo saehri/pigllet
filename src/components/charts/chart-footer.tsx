@@ -6,19 +6,18 @@ import { Button, Text, useTheme } from 'react-native-paper';
 type MonthTypes = { value: number; label: string };
 
 const MONTHS: MonthTypes[] = [
-	{ value: 0, label: 'all' },
-	{ value: 1, label: 'january' },
-	{ value: 2, label: 'february' },
-	{ value: 3, label: 'march' },
-	{ value: 4, label: 'april' },
-	{ value: 5, label: 'may' },
-	{ value: 6, label: 'june' },
-	{ value: 7, label: 'july' },
-	{ value: 8, label: 'august' },
-	{ value: 9, label: 'september' },
-	{ value: 10, label: 'october' },
-	{ value: 11, label: 'november' },
-	{ value: 12, label: 'december' },
+	{ value: 0, label: 'january' },
+	{ value: 1, label: 'february' },
+	{ value: 2, label: 'march' },
+	{ value: 3, label: 'april' },
+	{ value: 4, label: 'may' },
+	{ value: 5, label: 'june' },
+	{ value: 6, label: 'july' },
+	{ value: 7, label: 'august' },
+	{ value: 8, label: 'september' },
+	{ value: 9, label: 'october' },
+	{ value: 10, label: 'november' },
+	{ value: 11, label: 'december' },
 ];
 
 type Props = {
@@ -68,7 +67,7 @@ const ChartFooter = memo(({ selectedMonth, setSelectedMonth }: Props) => {
 						variant="bodyLarge"
 						style={{ textTransform: 'capitalize', textAlign: 'center' }}
 					>
-						{selectedMonth.label}
+						{MONTHS[selectedMonth.value].label}
 					</Text>
 				</View>
 

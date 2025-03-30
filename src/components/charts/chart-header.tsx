@@ -7,11 +7,15 @@ import YearPicker from '../forms/year-picker';
 type Props = {
 	selectedYear: number;
 	setSelectedYear: Dispatch<SetStateAction<number>>;
-	selectedMonth: string;
+	selectedMonth: number;
 };
 
 const ChartHeader = memo(
 	({ selectedYear, setSelectedYear, selectedMonth }: Props) => {
+		const date = new Date(
+			`${selectedYear}-${selectedMonth}-1`
+		).toLocaleDateString('us-US', { month: 'long', year: 'numeric' });
+
 		return (
 			<View
 				style={{
@@ -27,7 +31,7 @@ const ChartHeader = memo(
 					style={{ fontFamily: 'Inter-Regular', textTransform: 'capitalize' }}
 					variant="titleLarge"
 				>
-					{selectedMonth}, {selectedYear}
+					{date}
 				</Text>
 
 				<YearPicker

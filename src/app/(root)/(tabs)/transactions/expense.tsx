@@ -28,7 +28,7 @@ export default function ExpensesScreen() {
 	const [selectedMonth, setSelectedMonth] = useState<{
 		value: number;
 		label: string;
-	}>({ value: 3, label: 'march' });
+	}>({ value: new Date().getMonth(), label: '' });
 	const [refreshing, setRefreshing] = useState(false);
 
 	const loadExpenseData = useCallback(
@@ -69,20 +69,24 @@ export default function ExpensesScreen() {
 	);
 
 	const { data: transactions } = useLiveQuery(
-		loadExpenseData(selectedYear, selectedMonth.value),
+		loadExpenseData(selectedYear, selectedMonth.value + 1),
 		[selectedYear, selectedMonth]
 	);
 
 	const onRefresh = async () => {
 		setRefreshing(true);
-		await loadExpenseData(selectedYear, 3);
+		await loadExpenseData(selectedYear, selectedMonth.value + 1);
 		setRefreshing(false);
 	};
 
 	return (
 		<FlatList
 			refreshControl={
-				<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+				<RefreshControl
+					refreshing={refreshing}
+					onRefresh={onRefresh}
+					progressViewOffset={20}
+				/>
 			}
 			ListEmptyComponent={<NoItemNotice />}
 			style={{ backgroundColor: theme.colors.background }}
@@ -99,7 +103,7 @@ export default function ExpensesScreen() {
 						<ChartHeader
 							selectedYear={selectedYear}
 							setSelectedYear={setSelectedYear}
-							selectedMonth={selectedMonth.label}
+							selectedMonth={selectedMonth.value + 1}
 						/>
 						<TransactionsSummaryChart transactions={transactions as any} />
 						<ChartFooter
