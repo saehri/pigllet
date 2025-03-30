@@ -148,7 +148,7 @@ export default function YearPicker({ selectedYear, setSelectedYear }: Props) {
 				onPress={shows}
 				style={{
 					borderWidth: 1,
-					borderRadius: 200,
+					borderRadius: 10,
 					borderColor: theme.colors.outlineVariant,
 				}}
 				contentStyle={{
