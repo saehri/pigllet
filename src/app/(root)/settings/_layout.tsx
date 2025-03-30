@@ -8,10 +8,8 @@ export default function Layout() {
 		<Stack
 			initialRouteName="index"
 			screenOptions={{
-				statusBarBackgroundColor: theme.colors.background,
 				headerTintColor: theme.colors.onBackground,
 				headerShadowVisible: false,
-				statusBarStyle: 'dark',
 				headerStyle: {
 					backgroundColor: theme.colors.background,
 				},

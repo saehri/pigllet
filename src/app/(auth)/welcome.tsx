@@ -32,7 +32,10 @@ export default function WelcomeScreen() {
 	async function setMyApp() {
 		try {
 			setIsSettingUp(true);
+
 			const createdAt = new Date().toISOString();
+
+			setFirstTimer(false);
 
 			// Insert default expense categories
 			await drizzleDb
@@ -71,16 +74,13 @@ export default function WelcomeScreen() {
 					}))
 				)
 				.onConflictDoNothing();
+
+			router.push('/(auth)/wallet-setup');
 		} catch (error) {
 			setIsSettingUp(false);
 		} finally {
-			setTimeout(() => {
-				setIsSettingUp(false);
-			}, 1500);
+			setIsSettingUp(false);
 		}
-
-		setFirstTimer(false);
-		router.push('/(auth)/wallet-setup');
 	}
 
 	return (

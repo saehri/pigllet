@@ -1,6 +1,7 @@
+import React from 'react';
 import { useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
-import { Dialog, Portal, Text, useTheme } from 'react-native-paper';
+import { Dialog, MD3Theme, Portal, Text, useTheme } from 'react-native-paper';
 import { Check, ChevronDown } from 'lucide-react-native';
 
 import TransactionIcons from '../reusables/transaction-icons';
@@ -25,6 +26,17 @@ export default function SelectInputWithIcon({
 	function selectItem(selected: any) {
 		handleSelect(selected);
 		hideDialog();
+	}
+
+	if (!data.length || !selectedCategory) {
+		return (
+			<DialogTrigger
+				dialogVisible={visible}
+				selectedCategoryName={''}
+				showDialog={showDialog}
+				theme={theme}
+			/>
+		);
 	}
 
 	return (
@@ -74,41 +86,66 @@ export default function SelectInputWithIcon({
 				</Dialog>
 			</Portal>
 
-			<Pressable
-				onPress={showDialog}
-				style={{
-					padding: 16,
-					borderTopLeftRadius: 5,
-					borderTopRightRadius: 5,
-					borderBottomWidth: 1,
-					flexDirection: 'row',
-					alignItems: 'center',
-					justifyContent: 'space-between',
-					backgroundColor: theme.colors.surfaceVariant,
-					borderColor: visible ? theme.colors.primary : theme.colors.outline,
-				}}
-			>
-				<Text
-					style={{
-						fontFamily: 'Inter-Regular',
-						fontSize: 16,
-						color: '#fff',
-						textTransform: 'capitalize',
-					}}
-					numberOfLines={1}
-				>
-					{selectedCategory ? selectedCategory.label : 'Other'}
-				</Text>
-
-				<ChevronDown
-					style={{
-						position: 'absolute',
-						right: 8,
-					}}
-					size={20}
-					color={theme.colors.onSurface}
-				/>
-			</Pressable>
+			<DialogTrigger
+				dialogVisible={visible}
+				selectedCategoryName={selectedCategory.label}
+				showDialog={showDialog}
+				theme={theme}
+			/>
 		</>
+	);
+}
+
+type DialogTriggerProps = {
+	showDialog: () => void;
+	theme: MD3Theme;
+	dialogVisible: boolean;
+	selectedCategoryName: string;
+};
+
+function DialogTrigger({
+	dialogVisible,
+	selectedCategoryName,
+	showDialog,
+	theme,
+}: DialogTriggerProps) {
+	return (
+		<Pressable
+			onPress={showDialog}
+			style={{
+				padding: 16,
+				borderTopLeftRadius: 5,
+				borderTopRightRadius: 5,
+				borderBottomWidth: 1,
+				flexDirection: 'row',
+				alignItems: 'center',
+				justifyContent: 'space-between',
+				backgroundColor: theme.colors.surfaceVariant,
+				borderColor: dialogVisible
+					? theme.colors.primary
+					: theme.colors.outline,
+			}}
+		>
+			<Text
+				style={{
+					fontFamily: 'Inter-Regular',
+					fontSize: 16,
+					color: '#fff',
+					textTransform: 'capitalize',
+				}}
+				numberOfLines={1}
+			>
+				{selectedCategoryName}
+			</Text>
+
+			<ChevronDown
+				style={{
+					position: 'absolute',
+					right: 8,
+				}}
+				size={20}
+				color={theme.colors.onSurface}
+			/>
+		</Pressable>
 	);
 }

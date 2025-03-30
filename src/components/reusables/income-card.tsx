@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import { useContext } from 'react';
 import { Text, useTheme } from 'react-native-paper';
 import { View, StyleSheet, Pressable } from 'react-native';
@@ -10,15 +11,20 @@ import { Accounts, Transaction, TransactionCategories } from '@/db/schema';
 
 import getLocaleByCurrencySymbol from '@/utils/locale-getter';
 import { ArrowDownLeft } from 'lucide-react-native';
-import { useRouter } from 'expo-router';
 
 interface Props {
 	category: TransactionCategories;
 	data: Transaction;
 	accounts: Accounts;
+	showsDate?: boolean;
 }
 
-export default function IncomeCard({ category, data, accounts }: Props) {
+export default function IncomeCard({
+	category,
+	data,
+	accounts,
+	showsDate = true,
+}: Props) {
 	const { currentCurrencySymbol } = useContext(
 		UserPreferenceContext
 	) as UserPreferenceContextTypes;
@@ -96,15 +102,17 @@ export default function IncomeCard({ category, data, accounts }: Props) {
 				</View>
 
 				<View style={{ alignItems: 'flex-end' }}>
-					<Text variant="bodyLarge" style={styles.bodyLarge}>
+					<Text style={[styles.bodyLarge, { fontSize: showsDate ? 16 : 18 }]}>
 						{`${currentCurrencySymbol} ${data.amount.toLocaleString(
 							getLocaleByCurrencySymbol(currentCurrencySymbol)
 						)}`}
 					</Text>
 
-					<Text variant="labelLarge" style={styles.bodyMedium}>
-						{formattedDate}
-					</Text>
+					{showsDate && (
+						<Text variant="labelLarge" style={styles.bodyMedium}>
+							{formattedDate}
+						</Text>
+					)}
 				</View>
 			</Pressable>
 		</View>
@@ -131,6 +139,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		flexDirection: 'row',
 		justifyContent: 'space-between',
+		alignItems: 'center',
 	},
 	labelContainer: {
 		backgroundColor: '#ff0000',

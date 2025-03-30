@@ -1,9 +1,11 @@
 import React from 'react';
-import { Dialog, Portal, Text, useTheme } from 'react-native-paper';
-import * as schema from '@/db/schema';
 import { useState } from 'react';
+import { Dialog, MD3Theme, Portal, Text, useTheme } from 'react-native-paper';
 import { Pressable, ScrollView, View } from 'react-native';
 import { ChevronDown } from 'lucide-react-native';
+
+import * as schema from '@/db/schema';
+
 import AccountCard from '../settings/account-card';
 
 interface AccountSelector {
@@ -28,6 +30,17 @@ export default function AccountSelector({
 		hideDialog();
 	}
 
+	if (!accounts.length || !selectedAccount) {
+		return (
+			<DialogTrigger
+				dialogVisible={visible}
+				selectedAccountName={''}
+				showDialog={showDialog}
+				theme={theme}
+			/>
+		);
+	}
+
 	return (
 		<>
 			<Portal>
@@ -35,32 +48,31 @@ export default function AccountSelector({
 					<Dialog.Content>
 						<ScrollView showsVerticalScrollIndicator={false}>
 							<View style={{ gap: 12 }}>
-								{accounts.map((c) => (
+								{accounts.map((account) => (
 									<Pressable
-										key={c.id}
+										key={account.id}
 										style={{
 											borderRadius: 20,
 											backgroundColor:
-												c.id === selectedAccount.id
+												account.id === selectedAccount?.id
 													? theme.colors.elevation.level5
 													: theme.colors.elevation.level3,
 											borderWidth: 1,
 											borderColor:
-												c.id === selectedAccount.id
+												account.id === selectedAccount.id
 													? theme.colors.primary
 													: theme.colors.elevation.level3,
-											opacity: c.id === selectedAccount.id ? 1 : 0.5,
 										}}
-										onPress={() => selectItem(c)}
+										onPress={() => selectItem(account)}
 									>
 										<AccountCard
-											balance={c.balance}
-											created_at={c.created_at}
-											name={c.name}
-											number={c.number}
-											image={c.image}
-											id={c.id}
-											is_cash={c.is_cash}
+											balance={account.balance}
+											created_at={account.created_at}
+											name={account.name}
+											number={account.number}
+											image={account.image}
+											id={account.id}
+											is_cash={account.is_cash}
 											compact
 											clickable={false}
 										/>
@@ -72,41 +84,66 @@ export default function AccountSelector({
 				</Dialog>
 			</Portal>
 
-			<Pressable
-				onPress={showDialog}
-				style={{
-					padding: 16,
-					borderTopLeftRadius: 5,
-					borderTopRightRadius: 5,
-					borderBottomWidth: 1,
-					flexDirection: 'row',
-					alignItems: 'center',
-					justifyContent: 'space-between',
-					backgroundColor: theme.colors.surfaceVariant,
-					borderColor: visible ? theme.colors.primary : theme.colors.outline,
-				}}
-			>
-				<Text
-					style={{
-						fontFamily: 'Inter-Regular',
-						fontSize: 16,
-						color: '#fff',
-						textTransform: 'capitalize',
-					}}
-					numberOfLines={1}
-				>
-					{selectedAccount.name}
-				</Text>
-
-				<ChevronDown
-					style={{
-						position: 'absolute',
-						right: 8,
-					}}
-					size={20}
-					color={theme.colors.onSurface}
-				/>
-			</Pressable>
+			<DialogTrigger
+				dialogVisible={visible}
+				selectedAccountName={selectedAccount.name}
+				showDialog={showDialog}
+				theme={theme}
+			/>
 		</>
+	);
+}
+
+type DialogTriggerProps = {
+	showDialog: () => void;
+	theme: MD3Theme;
+	dialogVisible: boolean;
+	selectedAccountName: string;
+};
+
+function DialogTrigger({
+	dialogVisible,
+	selectedAccountName,
+	showDialog,
+	theme,
+}: DialogTriggerProps) {
+	return (
+		<Pressable
+			onPress={showDialog}
+			style={{
+				padding: 16,
+				borderTopLeftRadius: 5,
+				borderTopRightRadius: 5,
+				borderBottomWidth: 1,
+				flexDirection: 'row',
+				alignItems: 'center',
+				justifyContent: 'space-between',
+				backgroundColor: theme.colors.surfaceVariant,
+				borderColor: dialogVisible
+					? theme.colors.primary
+					: theme.colors.outline,
+			}}
+		>
+			<Text
+				style={{
+					fontFamily: 'Inter-Regular',
+					fontSize: 16,
+					color: '#fff',
+					textTransform: 'capitalize',
+				}}
+				numberOfLines={1}
+			>
+				{selectedAccountName}
+			</Text>
+
+			<ChevronDown
+				style={{
+					position: 'absolute',
+					right: 8,
+				}}
+				size={20}
+				color={theme.colors.onSurface}
+			/>
+		</Pressable>
 	);
 }

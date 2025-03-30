@@ -13,7 +13,6 @@ export default function Layout() {
 				headerTintColor: theme.colors.onBackground,
 				headerShadowVisible: false,
 				contentStyle: { backgroundColor: theme.colors.background },
-				statusBarBackgroundColor: theme.colors.background,
 				headerStyle: {
 					backgroundColor: theme.colors.background,
 				},

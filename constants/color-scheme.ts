@@ -1,3 +1,4 @@
+import { AppColor, AppTheme } from '@/types/type';
 import { ColorSchemeName } from 'react-native';
 
 const DEFAULT_LIGHT = {
@@ -131,7 +132,7 @@ const EMERALD_DARK = {
 		},
 		surfaceDisabled: 'rgba(227, 227, 220, 0.12)',
 		onSurfaceDisabled: 'rgba(227, 227, 220, 0.38)',
-		backdrop: 'rgba(45, 50, 40, 0.4)',
+		backdrop: 'rgba(0, 0, 0, 0.5)',
 	},
 };
 
@@ -176,7 +177,7 @@ const EMERALD_LIGHT = {
 		},
 		surfaceDisabled: 'rgba(26, 28, 24, 0.12)',
 		onSurfaceDisabled: 'rgba(26, 28, 24, 0.38)',
-		backdrop: 'rgba(45, 50, 40, 0.4)',
+		backdrop: 'rgba(0, 0, 0, 0.5)',
 	},
 };
 

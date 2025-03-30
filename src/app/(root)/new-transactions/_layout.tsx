@@ -17,14 +17,19 @@ export default function Layout() {
 				tabBarActiveTintColor: theme.colors.onPrimary,
 				tabBarActiveBackgroundColor: theme.colors.primary,
 				tabBarStyle: {
-					backgroundColor: theme.colors.elevation.level2,
+					backgroundColor: theme.colors.elevation.level1,
 					height: 40,
 					position: 'absolute',
 					top: 8,
-					borderWidth: 0,
-					borderTopWidth: 0,
+					borderWidth: 1,
+					borderTopWidth: 1,
 					borderRadius: 1000,
+					borderColor: theme.colors.outlineVariant,
 					marginHorizontal: 16,
+					overflow: 'hidden',
+				},
+				tabBarItemStyle: {
+					overflow: 'hidden',
 				},
 				tabBarLabelStyle: {
 					fontFamily: 'Inter-Regular',

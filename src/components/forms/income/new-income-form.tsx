@@ -1,6 +1,6 @@
-import { memo, useContext } from 'react';
+import { useContext } from 'react';
 import { useEffect, useState } from 'react';
-import { Dimensions, ToastAndroid, View } from 'react-native';
+import { ToastAndroid, View } from 'react-native';
 import {
 	ActivityIndicator,
 	Button,
@@ -12,8 +12,8 @@ import {
 import { eq } from 'drizzle-orm';
 import * as schema from '@/db/schema';
 import { TransactionCategories, Accounts } from '@/db/schema';
-import { SQLiteDatabase, useSQLiteContext } from 'expo-sqlite';
-import { drizzle, ExpoSQLiteDatabase } from 'drizzle-orm/expo-sqlite';
+import { useSQLiteContext } from 'expo-sqlite';
+import { drizzle } from 'drizzle-orm/expo-sqlite';
 
 import {
 	UserPreferenceContext,
@@ -27,6 +27,20 @@ import SelectInputWithIcon from '../select-input-with-icon';
 
 export default function CreateIncomeForm() {
 	const theme = useTheme();
+	const { currentCurrencySymbol } = useContext(
+		UserPreferenceContext
+	) as UserPreferenceContextTypes;
+
+	// form state
+	const [isLoading, setLoading] = useState(false);
+
+	const [selectedCategory, setSelectedCategory] =
+		useState<TransactionCategories>();
+	const [selectedAccount, setSelectedAccount] = useState<Accounts>();
+	const [amount, setAmount] = useState<string>('');
+	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+	const [note, setNote] = useState<string>('');
+	const [image, setImage] = useState<string>('');
 
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
@@ -46,6 +60,8 @@ export default function CreateIncomeForm() {
 					.where(eq(schema.categories.type, 'income'));
 
 				setUserAccounts(accounts as Accounts[]);
+				setSelectedAccount(accounts[0]);
+				setSelectedCategory(categories[0]);
 				setUserExpensesCategories(categories as TransactionCategories[]);
 			} catch (error: any) {
 				ToastAndroid.show(error.message, ToastAndroid.CENTER);
@@ -54,60 +70,6 @@ export default function CreateIncomeForm() {
 
 		load();
 	}, []);
-
-	if (!userAccounts.length || !userExpenseCategories.length) {
-		return (
-			<View
-				style={{
-					alignItems: 'center',
-					justifyContent: 'center',
-					height: Dimensions.get('screen').height - 150,
-				}}
-			>
-				<ActivityIndicator size={20} color={theme.colors.onSurface} />
-			</View>
-		);
-	}
-
-	return (
-		<Form
-			userAccounts={userAccounts}
-			userExpenseCategories={userExpenseCategories}
-			drizzleDb={drizzleDb}
-		/>
-	);
-}
-
-type FormProps = {
-	userExpenseCategories: TransactionCategories[];
-	userAccounts: Accounts[];
-	drizzleDb: ExpoSQLiteDatabase<typeof schema> & {
-		$client: SQLiteDatabase;
-	};
-};
-
-const Form = memo(function Form({
-	userAccounts,
-	userExpenseCategories,
-	drizzleDb,
-}: FormProps) {
-	const theme = useTheme();
-	const { currentCurrencySymbol } = useContext(
-		UserPreferenceContext
-	) as UserPreferenceContextTypes;
-
-	// form state
-	const [isLoading, setLoading] = useState(false);
-
-	const [selectedCategory, setSelectedCategory] =
-		useState<TransactionCategories>(userExpenseCategories[0]);
-	const [selectedAccount, setSelectedAccount] = useState<Accounts>(
-		userAccounts[0]
-	);
-	const [amount, setAmount] = useState<string>('');
-	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-	const [note, setNote] = useState<string>('');
-	const [image, setImage] = useState<string>('');
 
 	async function handleSubmit() {
 		try {
@@ -156,20 +118,20 @@ const Form = memo(function Form({
 		<View style={{ padding: 16, gap: 16 }}>
 			<View style={{ flexDirection: 'row', gap: 8 }}>
 				<View style={{ gap: 8, flex: 1 }}>
-					<Text variant="bodyLarge">Amount ({currentCurrencySymbol})</Text>
-					<TextInput
-						keyboardType="number-pad"
-						onChangeText={setAmount}
-						value={amount}
-					/>
-				</View>
-
-				<View style={{ gap: 8, flex: 1 }}>
 					<Text variant="bodyLarge">To account</Text>
 					<AccountSelector
 						accounts={userAccounts}
 						handleSelect={setSelectedAccount}
 						selectedAccount={selectedAccount}
+					/>
+				</View>
+
+				<View style={{ gap: 8, flex: 1 }}>
+					<Text variant="bodyLarge">Amount ({currentCurrencySymbol})</Text>
+					<TextInput
+						keyboardType="number-pad"
+						onChangeText={setAmount}
+						value={amount}
 					/>
 				</View>
 			</View>
@@ -216,4 +178,4 @@ const Form = memo(function Form({
 			</Button>
 		</View>
 	);
-});
+}

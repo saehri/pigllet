@@ -1,5 +1,6 @@
+import { useRouter } from 'expo-router';
 import { useContext } from 'react';
-import { Text } from 'react-native-paper';
+import { Text, useTheme } from 'react-native-paper';
 import { View, StyleSheet, Pressable } from 'react-native';
 import {
 	UserPreferenceContext,
@@ -10,24 +11,25 @@ import { Transaction, TransactionCategories } from '@/db/schema';
 
 import TransactionIcons from './transaction-icons';
 import getLocaleByCurrencySymbol from '@/utils/locale-getter';
-import { useRouter } from 'expo-router';
 
 type TransactionWithoutImage = Omit<Transaction, 'image'>;
 
 interface Props {
 	category: TransactionCategories;
 	data: TransactionWithoutImage;
+	accountName?: string;
 }
 
-export default function ExpenseCard({ category, data }: Props) {
+export default function ExpenseCard({
+	category,
+	data,
+	accountName = '',
+}: Props) {
 	const router = useRouter();
+	const theme = useTheme();
 	const { currentCurrencySymbol } = useContext(
 		UserPreferenceContext
 	) as UserPreferenceContextTypes;
-
-	const formattedDate = new Date(
-		`${data.created_year}-${data.created_month}-${data.created_date}`
-	).toLocaleDateString('en-US', { dateStyle: 'long', month: 'short' });
 
 	return (
 		<View style={styles.container}>
@@ -50,9 +52,9 @@ export default function ExpenseCard({ category, data }: Props) {
 						params: { id: data.id as any, type: data.type },
 					})
 				}
-				style={styles.contentContainer}
+				style={[styles.contentContainer]}
 			>
-				<View>
+				<View style={{ flex: 1, paddingRight: 24 }}>
 					<View style={styles.row}>
 						<Text variant="bodyLarge" style={{ fontFamily: 'Inter-Regular' }}>
 							{category.label}
@@ -61,7 +63,7 @@ export default function ExpenseCard({ category, data }: Props) {
 
 					<Text
 						variant="labelLarge"
-						style={[styles.bodyMedium, { width: 150 }]}
+						style={[styles.bodyMedium, { flex: 1, maxWidth: 150 }]}
 						numberOfLines={1}
 					>
 						{data.note}
@@ -69,14 +71,25 @@ export default function ExpenseCard({ category, data }: Props) {
 				</View>
 
 				<View style={{ alignItems: 'flex-end' }}>
-					<Text variant="bodyLarge" style={styles.bodyLarge}>
+					<Text style={styles.bodyLarge} variant="bodyLarge">
 						{`${currentCurrencySymbol} ${data.amount.toLocaleString(
 							getLocaleByCurrencySymbol(currentCurrencySymbol)
 						)}`}
 					</Text>
 
-					<Text variant="labelLarge" style={styles.bodyMedium}>
-						{formattedDate}
+					<Text
+						variant="labelLarge"
+						style={[
+							styles.bodyMedium,
+							{
+								backgroundColor: theme.colors.elevation.level3,
+								paddingHorizontal: 5,
+								borderRadius: 6,
+							},
+						]}
+						numberOfLines={1}
+					>
+						{accountName}
 					</Text>
 				</View>
 			</Pressable>
@@ -104,6 +117,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		flexDirection: 'row',
 		justifyContent: 'space-between',
+		alignItems: 'center',
 	},
 	labelContainer: {
 		backgroundColor: '#ff0000',

@@ -59,6 +59,7 @@ declare interface TransactionIconsCatalogue {
 	'loan-received': LucideIcon;
 	'loan-payment': LucideIcon;
 	'foods-and-drinks': LucideIcon;
+	takeout: LucideIcon;
 }
 
 declare interface UserPreference {

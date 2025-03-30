@@ -29,6 +29,7 @@ export const expenseCategories = [
 	{ label: 'Restaurant', icon: 'restaurant' },
 	{ label: 'Software', icon: 'software' },
 	{ label: 'Taxes', icon: 'taxes' },
+	{ label: 'Takeout', icon: 'takeout' },
 	{ label: 'Utilities', icon: 'utilities' },
 	{ label: 'Vehicle Expenses', icon: 'vehicle-expenses' },
 ] as const;
