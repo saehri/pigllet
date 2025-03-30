@@ -1,18 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FlatList, RefreshControl, View } from 'react-native';
-import { Button, Text, useTheme } from 'react-native-paper';
-import { Calendar } from 'lucide-react-native';
+import { Text, useTheme } from 'react-native-paper';
 
 import * as schema from '@/db/schema';
 import { and, desc, eq } from 'drizzle-orm';
-import { drizzle } from 'drizzle-orm/expo-sqlite';
+import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { useSQLiteContext } from 'expo-sqlite';
 
 import { groupedTransactionsByDate } from '@/utils/group-transactions';
 
 import ExpenseCard from '@/src/components/reusables/expense-card';
-import TransactionsSummaryChart from '@/src/components/transactions/transactions-summary-chart';
-import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
+import ChartHeader from '@/src/components/charts/chart-header';
+import ChartFooter from '@/src/components/charts/chart-footer';
+import NoItemNotice from '@/src/components/reusables/no-items-notice';
+import TransactionsSummaryChart from '@/src/components/charts/transactions-summary-chart';
 
 export default function ExpensesScreen() {
 	const theme = useTheme();
@@ -20,17 +21,14 @@ export default function ExpensesScreen() {
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
 
-	const [todayDate] = useState<Date>(new Date());
-	const [transactions, setTransactions] = useState<schema.Transaction>(
-		[] as any
+	const [selectedYear, setSelectedYear] = useState<number>(
+		new Date().getFullYear()
 	);
+	const [selectedMonth, setSelectedMonth] = useState<string>();
+	const [refreshing, setRefreshing] = useState(false);
 
-	useEffect(() => {
-		loadExpenseData();
-	}, []);
-
-	async function loadExpenseData() {
-		const data = await drizzleDb
+	const loadExpenseData = (year: number, month: number) => {
+		return drizzleDb
 			.select({
 				id: schema.transactions.id,
 				amount: schema.transactions.amount,
@@ -50,8 +48,8 @@ export default function ExpensesScreen() {
 			.where(
 				and(
 					eq(schema.transactions.type, 'expense'),
-					eq(schema.transactions.created_month, todayDate.getMonth() + 1),
-					eq(schema.transactions.created_year, todayDate.getFullYear())
+					eq(schema.transactions.created_month, month),
+					eq(schema.transactions.created_year, year)
 				)
 			)
 			.innerJoin(
@@ -63,39 +61,50 @@ export default function ExpensesScreen() {
 				eq(schema.transactions.account_id, schema.accounts.id)
 			)
 			.orderBy(desc(schema.transactions.created_date));
+	};
 
-		setTransactions(data as any);
-	}
+	const { data: transactions } = useLiveQuery(
+		loadExpenseData(selectedYear, 3),
+		[selectedYear]
+	);
+
+	const onRefresh = async () => {
+		setRefreshing(true);
+		await loadExpenseData(selectedYear, 3);
+		setRefreshing(false);
+	};
 
 	return (
 		<FlatList
 			refreshControl={
-				<RefreshControl
-					refreshing={false}
-					onRefresh={loadExpenseData}
-					progressViewOffset={50}
-				/>
+				<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
 			}
+			ListEmptyComponent={<NoItemNotice />}
 			style={{ backgroundColor: theme.colors.background }}
 			data={groupedTransactionsByDate(transactions as any)}
 			ListHeaderComponent={() => (
 				<View
-					style={{ paddingHorizontal: 16, paddingBottom: 32, paddingTop: 60 }}
+					style={{
+						paddingHorizontal: 16,
+						paddingBottom: 32,
+						paddingTop: 60,
+					}}
 				>
 					<TransactionsSummaryChart
-						header={<DatePicker />}
+						header={
+							<ChartHeader
+								selectedYear={selectedYear}
+								setSelectedYear={setSelectedYear}
+							/>
+						}
 						transactions={transactions as any}
+						footer={<ChartFooter />}
 					/>
 				</View>
 			)}
 			keyExtractor={(item) => item.created_date.toString()}
 			renderItem={({ item }) => (
-				<View
-					style={{
-						paddingBottom: 18,
-						gap: 8,
-					}}
-				>
+				<View style={{ paddingBottom: 18, gap: 8 }}>
 					<Text
 						style={{
 							fontFamily: 'Inter-Regular',
@@ -103,14 +112,11 @@ export default function ExpensesScreen() {
 							fontSize: 18,
 						}}
 					>
-						{new Date(
-							`${todayDate.getFullYear()}-${todayDate.getMonth() + 1}-${item.created_date}`
-						).toLocaleDateString('en-US', {
+						{new Date(item.created_date).toLocaleDateString('en-US', {
 							dateStyle: 'long',
 							month: 'short',
 						})}
 					</Text>
-
 					<View>
 						{item.transactions.map((transaction: any) => (
 							<ExpenseCard
@@ -124,51 +130,5 @@ export default function ExpensesScreen() {
 				</View>
 			)}
 		/>
-	);
-}
-
-function DatePicker() {
-	const theme = useTheme();
-	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-
-	const openDatePicker = () => {
-		DateTimePickerAndroid.open({
-			value: selectedDate,
-			mode: 'date',
-			display: 'spinner',
-			neutralButton: { textColor: theme.colors.onSurface },
-			negativeButton: { textColor: theme.colors.onSurface },
-			positiveButton: { textColor: theme.colors.onSurface },
-			onChange: (event, date) => {
-				if (date) {
-					setSelectedDate(date);
-				}
-			},
-		});
-	};
-
-	return (
-		<View
-			style={{
-				flexDirection: 'row',
-				justifyContent: 'space-between',
-				width: '100%',
-				alignItems: 'center',
-				marginBottom: 12,
-			}}
-		>
-			<Text style={{ fontFamily: 'Inter-Regular' }} variant="titleLarge">
-				March 2025
-			</Text>
-
-			<Button
-				onPress={openDatePicker}
-				contentStyle={{ flexDirection: 'row-reverse', gap: 8 }}
-				labelStyle={{ fontFamily: 'Inter-Regular', fontSize: 16 }}
-				compact
-			>
-				<Calendar size={20} color={theme.colors.onSurface} />
-			</Button>
-		</View>
 	);
 }

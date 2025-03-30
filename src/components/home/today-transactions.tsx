@@ -85,7 +85,7 @@ function Wrapper({ children, theme, todayDate }: WrapperProps) {
 						{ backgroundColor: theme.colors.elevation.level5 },
 					]}
 				>
-					{todayDate.toLocaleDateString('id-ID', {
+					{todayDate.toLocaleDateString('en-US', {
 						dateStyle: 'medium',
 					})}
 				</Text>
