@@ -19,7 +19,6 @@ import TransactionsSummaryChart from '@/src/components/charts/transactions-summa
 
 export default function ExpensesScreen() {
 	const theme = useTheme();
-	const router = useRouter();
 
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
@@ -93,7 +92,10 @@ export default function ExpensesScreen() {
 							setSelectedYear={setSelectedYear}
 							selectedMonth={selectedMonth.value + 1}
 						/>
-						<TransactionsSummaryChart transactions={transactions as any} />
+						<TransactionsSummaryChart
+							groupBy="category"
+							transactions={transactions as any}
+						/>
 						<ChartFooter
 							selectedMonth={selectedMonth}
 							setSelectedMonth={setSelectedMonth}

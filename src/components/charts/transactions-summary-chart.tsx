@@ -1,23 +1,35 @@
+import { View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import { useEffect, useState } from 'react';
 import { BarChart, barDataItem } from 'react-native-gifted-charts';
-import { groupTransactionsByCategory } from '@/utils/group-transactions';
+import {
+	getChartDataByCategory,
+	getChartDataByDate,
+} from '@/utils/group-transactions';
 
 import { Transaction } from '@/db/schema';
-import { View } from 'react-native';
 
 type Props = {
 	transactions: Transaction[];
+	groupBy: 'date' | 'category';
 };
 
-export default function TransactionsSummaryChart({ transactions }: Props) {
+export default function TransactionsSummaryChart({
+	transactions,
+	groupBy,
+}: Props) {
 	const theme = useTheme();
 
 	const [chartData, setChartData] = useState<barDataItem[]>([]);
 
 	useEffect(() => {
-		const data = groupTransactionsByCategory(transactions);
-		setChartData(data);
+		if (groupBy === 'category') {
+			const data = getChartDataByCategory(transactions);
+			setChartData(data);
+		} else {
+			const data = getChartDataByDate(transactions);
+			setChartData(data);
+		}
 	}, []);
 
 	if (!chartData.length)
@@ -40,7 +52,7 @@ export default function TransactionsSummaryChart({ transactions }: Props) {
 	return (
 		<BarChart
 			data={chartData}
-			frontColor={theme.colors.primary} // Main color for bars
+			frontColor={theme.colors.tertiaryContainer} // Main color for bars
 			rulesThickness={1} // Thin grid lines for subtlety
 			rulesColor={'rgba(255, 255, 255, .2)'} // Grid color matching the theme
 			barWidth={28} // Adjust bar width for proportionate spacing
@@ -61,12 +73,14 @@ export default function TransactionsSummaryChart({ transactions }: Props) {
 			}}
 			yAxisThickness={0}
 			xAxisThickness={0}
-			spacing={16} // Provides spacing between bars
+			spacing={groupBy === 'date' ? 42 : 25} // Provides spacing between bars
 			isAnimated // Adds smooth animation for better UX
 			barBorderTopLeftRadius={8}
 			barBorderTopRightRadius={8}
 			noOfSections={7}
 			stepHeight={26}
+			showGradient
+			gradientColor={theme.colors.primary}
 		/>
 	);
 }

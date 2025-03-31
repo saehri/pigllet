@@ -7,25 +7,21 @@ import {
 	useState,
 } from 'react';
 import { useSQLiteContext } from 'expo-sqlite';
-import {
-	useFocusEffect,
-	useLocalSearchParams,
-	useNavigation,
-} from 'expo-router';
-import { Button } from 'react-native-paper';
+import { useLocalSearchParams, useNavigation } from 'expo-router';
+import { Chip, Text } from 'react-native-paper';
 
 import * as schema from '@/db/schema';
-import { drizzle } from 'drizzle-orm/expo-sqlite';
-import { and, eq } from 'drizzle-orm';
+import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
+import { and, desc, eq } from 'drizzle-orm';
+
+import { groupedTransactionsByDate } from '@/utils/group-transactions';
 
 import NoItemNotice from '@/src/components/reusables/no-items-notice';
 import TransactionCard from '@/src/components/reusables/transaction-card';
+import ChartWrapper from '@/src/components/charts/chart-wrapper';
+import TransactionsSummaryChart from '@/src/components/charts/transactions-summary-chart';
 
-type Response = {
-	accounts: schema.Accounts;
-	categories: schema.TransactionCategories;
-	transactions: schema.Transaction;
-};
+type FilterTypes = 'all' | 'this-month' | 'this-year';
 
 export default function TransactionByCategoryScreen() {
 	const db = useSQLiteContext();
@@ -33,38 +29,25 @@ export default function TransactionByCategoryScreen() {
 	const navigation = useNavigation();
 	const { categoryId, categoryName } = useLocalSearchParams();
 
-	const [filter, setFilter] = useState<'all' | 'this-month'>('this-month');
-	const [todayDate] = useState(new Date());
-	const [transactions, setTransactions] = useState<Response[]>();
+	const [filter, setFilter] = useState<FilterTypes>('this-month');
 
-	function fetcher(filter: 'all' | 'this-month') {
-		if (filter === 'this-month') {
-			return drizzleDb
+	const loadExpenseData = useCallback(
+		(filter: FilterTypes, todayDate: Date) => {
+			let query = drizzleDb
 				.select({
-					accounts: schema.accounts,
-					categories: schema.categories,
-					transactions: {
-						id: schema.transactions.id,
-						amount: schema.transactions.amount,
-						note: schema.transactions.note,
-						account_id: schema.transactions.account_id,
-						related_account_id: schema.transactions.related_account_id,
-						category_id: schema.transactions.category_id,
-						type: schema.transactions.type,
-						created_date: schema.transactions.created_date,
-						created_month: schema.transactions.created_month,
-						created_year: schema.transactions.created_year,
-						budget_id: schema.transactions.budget_id,
-					},
+					id: schema.transactions.id,
+					amount: schema.transactions.amount,
+					note: schema.transactions.note,
+					account_id: schema.transactions.account_id,
+					category_id: schema.transactions.category_id,
+					type: schema.transactions.type,
+					created_date: schema.transactions.created_date,
+					created_month: schema.transactions.created_month,
+					created_year: schema.transactions.created_year,
+					category: schema.categories,
+					account: schema.accounts,
 				})
 				.from(schema.transactions)
-				.where(
-					and(
-						eq(schema.transactions.category_id, Number(categoryId)),
-						eq(schema.transactions.created_month, todayDate.getMonth() + 1),
-						eq(schema.transactions.created_year, todayDate.getFullYear())
-					)
-				)
 				.innerJoin(
 					schema.categories,
 					eq(schema.transactions.category_id, schema.categories.id)
@@ -72,48 +55,33 @@ export default function TransactionByCategoryScreen() {
 				.innerJoin(
 					schema.accounts,
 					eq(schema.transactions.account_id, schema.accounts.id)
+				)
+				.orderBy(desc(schema.transactions.created_month));
+
+			// Base filter by category ID
+			let conditions = [
+				eq(schema.transactions.category_id, Number(categoryId)),
+			];
+
+			if (filter === 'this-month') {
+				conditions.push(
+					eq(schema.transactions.created_month, todayDate.getMonth() + 1),
+					eq(schema.transactions.created_year, todayDate.getFullYear())
 				);
-		}
-
-		return drizzleDb
-			.select({
-				accounts: schema.accounts,
-				categories: schema.categories,
-				transactions: {
-					id: schema.transactions.id,
-					amount: schema.transactions.amount,
-					note: schema.transactions.note,
-					account_id: schema.transactions.account_id,
-					related_account_id: schema.transactions.related_account_id,
-					category_id: schema.transactions.category_id,
-					type: schema.transactions.type,
-					created_date: schema.transactions.created_date,
-					created_month: schema.transactions.created_month,
-					created_year: schema.transactions.created_year,
-					budget_id: schema.transactions.budget_id,
-				},
-			})
-			.from(schema.transactions)
-			.where(eq(schema.transactions.category_id, Number(categoryId)))
-			.innerJoin(
-				schema.categories,
-				eq(schema.transactions.category_id, schema.categories.id)
-			)
-			.innerJoin(
-				schema.accounts,
-				eq(schema.transactions.account_id, schema.accounts.id)
-			);
-	}
-
-	useFocusEffect(
-		useCallback(() => {
-			async function load() {
-				const data = await fetcher(filter);
-				setTransactions(data);
+			} else if (filter !== 'all') {
+				conditions.push(
+					eq(schema.transactions.created_year, todayDate.getFullYear())
+				);
 			}
 
-			load();
-		}, [categoryId, filter])
+			return query.where(and(...conditions));
+		},
+		[drizzleDb]
+	);
+
+	const { data: transactions } = useLiveQuery(
+		loadExpenseData(filter, new Date()),
+		[filter]
 	);
 
 	useEffect(() => {
@@ -125,25 +93,53 @@ export default function TransactionByCategoryScreen() {
 	return (
 		<FlatList
 			ListHeaderComponent={() => (
-				<ListHeader setFilter={setFilter} selectedFilter={filter} />
+				<View>
+					<ListHeader setFilter={setFilter} selectedFilter={filter} />
+
+					<View style={{ paddingHorizontal: 16, paddingBottom: 24 }}>
+						<ChartWrapper>
+							<TransactionsSummaryChart
+								groupBy="date"
+								transactions={transactions}
+							/>
+						</ChartWrapper>
+					</View>
+				</View>
 			)}
-			data={transactions}
+			data={groupedTransactionsByDate(transactions as any)}
 			ListEmptyComponent={<NoItemNotice />}
 			renderItem={({ item }) => (
-				<TransactionCard
-					account={item.accounts}
-					category={item.categories}
-					data={item.transactions}
-					transactionType={item.transactions.type as any}
-				/>
+				<View style={{ paddingBottom: 18, gap: 8 }}>
+					<Text
+						style={{
+							fontFamily: 'Inter-Regular',
+							paddingHorizontal: 16,
+							fontSize: 18,
+						}}
+					>
+						{item.created_date}
+					</Text>
+					<View>
+						{item.transactions.map((transaction) => (
+							<TransactionCard
+								key={transaction.id}
+								account={transaction.account}
+								category={transaction.category as any}
+								data={transaction}
+								transactionType={transaction.type as any}
+								disableFirstButton
+							/>
+						))}
+					</View>
+				</View>
 			)}
 		/>
 	);
 }
 
 type ListHeaderProps = {
-	setFilter: Dispatch<SetStateAction<'all' | 'this-month'>>;
-	selectedFilter: 'all' | 'this-month';
+	setFilter: Dispatch<SetStateAction<FilterTypes>>;
+	selectedFilter: FilterTypes;
 };
 
 function ListHeader({ setFilter, selectedFilter }: ListHeaderProps) {
@@ -158,20 +154,30 @@ function ListHeader({ setFilter, selectedFilter }: ListHeaderProps) {
 					paddingBottom: 24,
 				}}
 			>
-				<Button
+				<Chip
+					selected={selectedFilter === 'all'}
+					style={{ borderRadius: 100 }}
 					onPress={() => setFilter('all')}
-					mode={selectedFilter === 'all' ? 'contained' : 'outlined'}
-					labelStyle={{ fontFamily: 'Inter-Regular' }}
+					textStyle={{ fontFamily: 'Inter-Regular' }}
 				>
 					All
-				</Button>
-				<Button
+				</Chip>
+				<Chip
+					selected={selectedFilter === 'this-month'}
+					style={{ borderRadius: 100 }}
 					onPress={() => setFilter('this-month')}
-					mode={selectedFilter === 'this-month' ? 'contained' : 'outlined'}
-					labelStyle={{ fontFamily: 'Inter-Regular' }}
+					textStyle={{ fontFamily: 'Inter-Regular' }}
 				>
 					This month
-				</Button>
+				</Chip>
+				<Chip
+					selected={selectedFilter === 'this-year'}
+					style={{ borderRadius: 100 }}
+					onPress={() => setFilter('this-year')}
+					textStyle={{ fontFamily: 'Inter-Regular' }}
+				>
+					This year
+				</Chip>
 			</View>
 		</ScrollView>
 	);

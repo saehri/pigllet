@@ -42,7 +42,7 @@ export function groupedTransactionsByDate(
 	}, []);
 }
 
-export function groupTransactionsByCategory(
+export function getChartDataByCategory(
 	transactions: Transaction[]
 ): GroupedTransactionByCategory[] {
 	return transactions.reduce<GroupedTransactionByCategory[]>(
@@ -57,6 +57,34 @@ export function groupTransactionsByCategory(
 			} else {
 				acc.push({
 					label: categoryName,
+					value: transaction.amount,
+				});
+			}
+
+			return acc;
+		},
+		[]
+	);
+}
+
+export function getChartDataByDate(
+	transactions: Transaction[]
+): GroupedTransactionByCategory[] {
+	return transactions.reduce<GroupedTransactionByCategory[]>(
+		(acc, transaction) => {
+			const date = new Date(
+				`${transaction.created_year}-${transaction.created_month}-${transaction.created_date}`
+			).toLocaleDateString('en-US', {
+				dateStyle: 'medium',
+				// month: '',
+			});
+			const existingDate = acc.find((group) => group.label === date);
+
+			if (existingDate) {
+				existingDate.value += transaction.amount;
+			} else {
+				acc.push({
+					label: date,
 					value: transaction.amount,
 				});
 			}

@@ -18,12 +18,16 @@ interface Props {
 	category: TransactionCategories;
 	data: TransactionWithoutImage;
 	accountName?: string;
+	disableFirstButton?: boolean;
+	disableSecondButton?: boolean;
 }
 
 export default function ExpenseCard({
 	category,
 	data,
 	accountName = '',
+	disableFirstButton = false,
+	disableSecondButton = false,
 }: Props) {
 	const router = useRouter();
 	const theme = useTheme();
@@ -41,6 +45,7 @@ export default function ExpenseCard({
 						params: { categoryId: category.id, categoryName: category.label },
 					})
 				}
+				disabled={disableFirstButton}
 			>
 				<TransactionIcons icon={category.icon_name as any} />
 			</Pressable>
@@ -52,10 +57,12 @@ export default function ExpenseCard({
 						params: {
 							id: data.id as any,
 							type: data.type,
+							categoryId: data.category_id,
 						},
 					})
 				}
 				style={[styles.contentContainer]}
+				disabled={disableSecondButton}
 			>
 				<View style={{ flex: 1, paddingRight: 24 }}>
 					<View style={styles.row}>

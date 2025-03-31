@@ -10,6 +10,8 @@ interface TransactionCard {
 	account: Accounts;
 	category: TransactionCategories;
 	showsIncomeDate?: boolean;
+	disableFirstButton?: boolean;
+	disableSecondButton?: boolean;
 }
 
 export default function TransactionCard({
@@ -18,10 +20,18 @@ export default function TransactionCard({
 	account,
 	category,
 	showsIncomeDate = true,
+	disableSecondButton = false,
+	disableFirstButton = false,
 }: TransactionCard) {
 	if (transactionType === 'expense')
 		return (
-			<ExpenseCard category={category} data={data} accountName={account.name} />
+			<ExpenseCard
+				disableSecondButton={disableSecondButton}
+				disableFirstButton={disableFirstButton}
+				category={category}
+				data={data}
+				accountName={account.name}
+			/>
 		);
 	if (transactionType === 'income')
 		return (
