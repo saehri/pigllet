@@ -25,6 +25,7 @@ export default function YearPicker({ selectedYear, setSelectedYear }: Props) {
 	const [buttonPosition, setButtonPosition] = useState({
 		x: 0,
 		y: 0,
+		width: 0,
 	});
 
 	function shows() {
@@ -32,7 +33,7 @@ export default function YearPicker({ selectedYear, setSelectedYear }: Props) {
 		const toIndex = years.indexOf(selectedYear); // Keeps the selected year visible
 
 		buttonRef.current?.measure((x, y, width, height, pageX, pageY) => {
-			setButtonPosition({ x: x + 30, y: pageY + height + 1 });
+			setButtonPosition({ x: x + 32, y: pageY + height + 1, width });
 		});
 
 		// Scroll to the selected year
@@ -41,7 +42,7 @@ export default function YearPicker({ selectedYear, setSelectedYear }: Props) {
 				const index = toIndex < 0 ? 0 : toIndex;
 
 				scrollViewRef.current.scrollTo({
-					y: index * 40 - 40, // Assuming each item is ~40px tall
+					y: index * 40 - 50, // Assuming each item is ~40px tall
 					animated: false,
 				});
 			}
@@ -87,6 +88,7 @@ export default function YearPicker({ selectedYear, setSelectedYear }: Props) {
 								position: 'absolute',
 								top: buttonPosition.y,
 								left: buttonPosition.x,
+								minWidth: buttonPosition.width,
 								zIndex: 2,
 								maxHeight: Dimensions.get('window').height * 0.5,
 								borderRadius: 16,

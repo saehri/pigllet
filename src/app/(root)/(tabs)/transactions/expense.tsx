@@ -1,4 +1,3 @@
-import { useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { FlatList, View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
