@@ -41,6 +41,7 @@ export default function ExpensesScreen() {
 					account_id: schema.transactions.account_id,
 					category_id: schema.transactions.category_id,
 					type: schema.transactions.type,
+					image: schema.transactions.image,
 					created_date: schema.transactions.created_date,
 					created_month: schema.transactions.created_month,
 					created_year: schema.transactions.created_year,

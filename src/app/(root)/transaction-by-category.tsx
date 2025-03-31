@@ -46,6 +46,7 @@ export default function TransactionByCategoryScreen() {
 					created_year: schema.transactions.created_year,
 					category: schema.categories,
 					account: schema.accounts,
+					image: schema.transactions.image,
 				})
 				.from(schema.transactions)
 				.innerJoin(
