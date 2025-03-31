@@ -1,5 +1,6 @@
+import { useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { FlatList, RefreshControl, View } from 'react-native';
+import { FlatList, View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 
 import * as schema from '@/db/schema';
@@ -12,12 +13,13 @@ import { groupedTransactionsByDate } from '@/utils/group-transactions';
 import ExpenseCard from '@/src/components/reusables/expense-card';
 import ChartHeader from '@/src/components/charts/chart-header';
 import ChartFooter from '@/src/components/charts/chart-footer';
+import ChartWrapper from '@/src/components/charts/chart-wrapper';
 import NoItemNotice from '@/src/components/reusables/no-items-notice';
 import TransactionsSummaryChart from '@/src/components/charts/transactions-summary-chart';
-import ChartWrapper from '@/src/components/charts/chart-wrapper';
 
 export default function ExpensesScreen() {
 	const theme = useTheme();
+	const router = useRouter();
 
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
@@ -29,7 +31,6 @@ export default function ExpensesScreen() {
 		value: number;
 		label: string;
 	}>({ value: new Date().getMonth(), label: '' });
-	const [refreshing, setRefreshing] = useState(false);
 
 	const loadExpenseData = useCallback(
 		(year: number, month: number) => {
@@ -73,21 +74,8 @@ export default function ExpensesScreen() {
 		[selectedYear, selectedMonth]
 	);
 
-	const onRefresh = async () => {
-		setRefreshing(true);
-		await loadExpenseData(selectedYear, selectedMonth.value + 1);
-		setRefreshing(false);
-	};
-
 	return (
 		<FlatList
-			refreshControl={
-				<RefreshControl
-					refreshing={refreshing}
-					onRefresh={onRefresh}
-					progressViewOffset={20}
-				/>
-			}
 			ListEmptyComponent={<NoItemNotice />}
 			style={{ backgroundColor: theme.colors.background }}
 			data={groupedTransactionsByDate(transactions as any)}

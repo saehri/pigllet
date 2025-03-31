@@ -61,12 +61,7 @@ export default function DeleteTransactionsDialog({ transactionId }: Props) {
 	return (
 		<>
 			<Portal>
-				<Dialog
-					visible={visible}
-					dismissable={false}
-					dismissableBackButton={false}
-					onDismiss={closeDialog}
-				>
+				<Dialog visible={visible} onDismiss={closeDialog}>
 					<Dialog.Title>Delete transaction</Dialog.Title>
 					<Dialog.Content>
 						<Text style={{ fontFamily: 'Inter-Regular' }} variant="bodyLarge">

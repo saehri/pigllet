@@ -160,16 +160,14 @@ function ListHeader({ setFilter, selectedFilter }: ListHeaderProps) {
 			>
 				<Button
 					onPress={() => setFilter('all')}
-					mode={selectedFilter === 'all' ? 'contained' : 'contained-tonal'}
+					mode={selectedFilter === 'all' ? 'contained' : 'outlined'}
 					labelStyle={{ fontFamily: 'Inter-Regular' }}
 				>
 					All
 				</Button>
 				<Button
 					onPress={() => setFilter('this-month')}
-					mode={
-						selectedFilter === 'this-month' ? 'contained' : 'contained-tonal'
-					}
+					mode={selectedFilter === 'this-month' ? 'contained' : 'outlined'}
 					labelStyle={{ fontFamily: 'Inter-Regular' }}
 				>
 					This month
