@@ -103,7 +103,7 @@ export default function ExpensesScreen() {
 					</ChartWrapper>
 				</View>
 			)}
-			keyExtractor={(item) => item.created_date.toString()}
+			keyExtractor={(item) => item.created_date}
 			renderItem={({ item }) => (
 				<View style={{ paddingBottom: 18, gap: 8 }}>
 					<Text

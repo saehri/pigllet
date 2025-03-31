@@ -1,6 +1,6 @@
-import { memo, useContext } from 'react';
+import { useContext } from 'react';
 import { useEffect, useState } from 'react';
-import { Dimensions, ToastAndroid, View } from 'react-native';
+import { ToastAndroid, View } from 'react-native';
 import {
 	ActivityIndicator,
 	Button,
@@ -8,14 +8,14 @@ import {
 	TextInput,
 	useTheme,
 } from 'react-native-paper';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 
 import * as schema from '@/db/schema';
 import { TransactionCategories, Accounts } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 
-import { SQLiteDatabase, useSQLiteContext } from 'expo-sqlite';
-import { drizzle, ExpoSQLiteDatabase } from 'drizzle-orm/expo-sqlite';
+import { useSQLiteContext } from 'expo-sqlite';
+import { drizzle } from 'drizzle-orm/expo-sqlite';
 
 import {
 	UserPreferenceContext,
@@ -27,38 +27,79 @@ import SelectInputWithIcon from '../select-input-with-icon';
 import DatePicker from '../date-picker';
 import ImageSelectorInput from '../image-select-input';
 
-type Props = {
-	initialFormValue: schema.Transaction;
-	initialCategory: schema.TransactionCategories;
-	initialAccount: schema.Accounts;
-};
-
-export default function EditIncomeForm({
-	initialFormValue,
-	initialCategory,
-	initialAccount,
-}: Props) {
+export default function EditIncomeForm() {
 	const theme = useTheme();
+	const { currentCurrencySymbol } = useContext(
+		UserPreferenceContext
+	) as UserPreferenceContextTypes;
+	const { id, type } = useLocalSearchParams();
 
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
 
+	const [initialFormValue, setInitialFormValue] =
+		useState<schema.Transaction>();
 	const [userAccounts, setUserAccounts] = useState<schema.Accounts[]>([]);
 	const [userExpenseCategories, setUserExpensesCategories] = useState<
 		schema.TransactionCategories[]
 	>([]);
 
+	// form state
+	const [isLoading, setLoading] = useState(false);
+
+	const [initialAccount, setInitialAccount] = useState<schema.Accounts>();
+	const [selectedCategory, setSelectedCategory] =
+		useState<TransactionCategories>();
+	const [selectedAccount, setSelectedAccount] = useState<Accounts>();
+	const [amount, setAmount] = useState<string>('');
+	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+	const [note, setNote] = useState<string>('');
+	const [image, setImage] = useState<string>('');
+
 	useEffect(() => {
 		async function load() {
 			try {
-				const accounts = await drizzleDb.select().from(schema.accounts);
-				const categories = await drizzleDb
+				const data = await drizzleDb
+					.select({
+						transactions: schema.transactions,
+						accounts: schema.accounts,
+						categories: schema.categories,
+					})
+					.from(schema.transactions)
+					.where(eq(schema.transactions.id, Number(id)))
+					.innerJoin(
+						schema.categories,
+						eq(schema.transactions.category_id, schema.categories.id)
+					)
+					.innerJoin(
+						schema.accounts,
+						eq(schema.transactions.account_id, schema.accounts.id)
+					);
+
+				const allAccounts = await drizzleDb.select().from(schema.accounts);
+				const allCategories = await drizzleDb
 					.select()
 					.from(schema.categories)
-					.where(eq(schema.categories.type, 'income'));
+					.where(eq(schema.categories.type, type as string));
 
-				setUserAccounts(accounts as Accounts[]);
-				setUserExpensesCategories(categories as TransactionCategories[]);
+				const { accounts, categories, transactions } = data[0];
+
+				setInitialFormValue(transactions);
+				setSelectedAccount(accounts);
+				setAmount(transactions.amount.toString());
+				setSelectedCategory(categories);
+				setSelectedDate(
+					new Date(
+						`${transactions.created_year}-${transactions.created_month}-${transactions.created_date}`
+					)
+				);
+				setNote(transactions.note || '');
+				setImage(transactions.image || '');
+
+				setInitialAccount(accounts);
+
+				setUserAccounts(allAccounts);
+				setUserExpensesCategories(allCategories);
 			} catch (error: any) {
 				ToastAndroid.show(error.message, ToastAndroid.CENTER);
 			}
@@ -67,83 +108,17 @@ export default function EditIncomeForm({
 		load();
 	}, []);
 
-	if (!userAccounts.length || !userExpenseCategories.length) {
-		return (
-			<View
-				style={{
-					alignItems: 'center',
-					justifyContent: 'center',
-					height: Dimensions.get('screen').height - 150,
-				}}
-			>
-				<ActivityIndicator size={20} color={theme.colors.onSurface} />
-			</View>
-		);
-	}
-
-	return (
-		<Form
-			userAccounts={userAccounts}
-			userExpenseCategories={userExpenseCategories}
-			initialCategory={initialCategory}
-			initialFormValue={initialFormValue}
-			initialAccount={initialAccount}
-			drizzleDb={drizzleDb}
-		/>
-	);
-}
-
-type FormProps = {
-	userExpenseCategories: TransactionCategories[];
-	userAccounts: Accounts[];
-	drizzleDb: ExpoSQLiteDatabase<typeof schema> & {
-		$client: SQLiteDatabase;
-	};
-	initialFormValue: schema.Transaction;
-	initialCategory: schema.TransactionCategories;
-	initialAccount: schema.Accounts;
-};
-
-const Form = memo(function Form({
-	userAccounts,
-	userExpenseCategories,
-	drizzleDb,
-	initialFormValue,
-	initialCategory,
-	initialAccount,
-}: FormProps) {
-	const theme = useTheme();
-	const router = useRouter();
-	const { currentCurrencySymbol } = useContext(
-		UserPreferenceContext
-	) as UserPreferenceContextTypes;
-
-	// form state
-	const [isLoading, setLoading] = useState(false);
-
-	const [selectedCategory, setSelectedCategory] =
-		useState<TransactionCategories>(initialCategory);
-	const [selectedAccount, setSelectedAccount] =
-		useState<Accounts>(initialAccount);
-	const [amount, setAmount] = useState<string>(
-		initialFormValue.amount.toString()
-	);
-	const [selectedDate, setSelectedDate] = useState<Date>(
-		new Date(
-			`${initialFormValue.created_year}-${initialFormValue.created_month}-${initialFormValue.created_date}`
-		)
-	);
-	const [note, setNote] = useState<string>(initialFormValue.note || '');
-	const [image, setImage] = useState<string>(initialFormValue.image || '');
-
 	async function handleSubmit() {
 		try {
 			setLoading(true);
 
-			if (!amount.length || isNaN(Number(amount))) {
-				ToastAndroid.show('Please enter a valid amount', ToastAndroid.SHORT);
+			if (
+				!selectedAccount ||
+				!selectedCategory ||
+				!initialFormValue ||
+				!initialAccount
+			)
 				return;
-			}
 
 			await drizzleDb
 				.update(schema.transactions)
@@ -175,38 +150,15 @@ const Form = memo(function Form({
 		}
 	}
 
-	async function handleDelete() {
-		try {
-			setLoading(true);
-			await drizzleDb
-				.delete(schema.transactions)
-				.where(eq(schema.transactions.id, initialFormValue.id as number));
-
-			await drizzleDb
-				.update(schema.accounts)
-				.set({
-					balance: initialAccount.balance - initialFormValue.amount,
-				})
-				.where(eq(schema.accounts.id, selectedAccount.id as number));
-
-			ToastAndroid.show('Record deleted!', ToastAndroid.CENTER);
-			router.back();
-		} catch (error) {
-			ToastAndroid.show('Error when updating expense', ToastAndroid.CENTER);
-		} finally {
-			setLoading(false);
-		}
-	}
-
 	return (
 		<View style={{ padding: 16, gap: 16 }}>
 			<View style={{ flexDirection: 'row', gap: 8 }}>
 				<View style={{ gap: 8, flex: 1 }}>
-					<Text variant="bodyLarge">From</Text>
+					<Text variant="bodyLarge">To</Text>
 					<AccountSelector
 						accounts={userAccounts}
 						handleSelect={setSelectedAccount}
-						selectedAccount={selectedAccount}
+						selectedAccount={selectedAccount!}
 					/>
 				</View>
 
@@ -258,22 +210,9 @@ const Form = memo(function Form({
 				{isLoading ? (
 					<ActivityIndicator size={20} color={theme.colors.onPrimary} />
 				) : (
-					'Save Changes'
-				)}
-			</Button>
-
-			<Button
-				mode="outlined"
-				style={{ borderRadius: 10 }}
-				labelStyle={{ fontFamily: 'Inter-Regular', fontSize: 16 }}
-				onPress={handleDelete}
-			>
-				{isLoading ? (
-					<ActivityIndicator size={20} color={theme.colors.onSurface} />
-				) : (
-					'Delete income record'
+					'Save changes'
 				)}
 			</Button>
 		</View>
 	);
-});
+}

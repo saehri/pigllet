@@ -43,8 +43,15 @@ export default function DeleteTransactionsDialog({ transactionId }: Props) {
 				.delete(schema.transactions)
 				.where(eq(schema.transactions.id, transactionId));
 
+			let newBalance = 0;
+			if (transaction[0].type === 'expense') {
+				newBalance = account[0].balance + transaction[0].amount;
+			} else {
+				newBalance = account[0].balance - transaction[0].amount;
+			}
+
 			await drizzleDb.update(schema.accounts).set({
-				balance: account[0].balance + transaction[0].amount,
+				balance: newBalance,
 			});
 
 			ToastAndroid.show('Record deleted successfully!', ToastAndroid.SHORT);

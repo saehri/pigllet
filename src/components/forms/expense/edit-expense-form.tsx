@@ -111,13 +111,15 @@ export default function EditExpenseForm() {
 	async function handleSubmit() {
 		try {
 			setLoading(true);
+			if (
+				!selectedAccount ||
+				!selectedCategory ||
+				!initialFormValue ||
+				!initialAccount
+			)
+				return;
 
 			if (!amount.length || isNaN(Number(amount))) {
-				ToastAndroid.show('Please enter a valid amount', ToastAndroid.SHORT);
-				return;
-			}
-
-			if (selectedAccount.balance - Number(amount) < 0) {
 				ToastAndroid.show('Please enter a valid amount', ToastAndroid.SHORT);
 				return;
 			}
@@ -161,7 +163,7 @@ export default function EditExpenseForm() {
 					<AccountSelector
 						accounts={userAccounts}
 						handleSelect={setSelectedAccount}
-						selectedAccount={selectedAccount}
+						selectedAccount={selectedAccount!}
 					/>
 				</View>
 

@@ -10,30 +10,28 @@ import {
 import { Accounts, Transaction, TransactionCategories } from '@/db/schema';
 
 import getLocaleByCurrencySymbol from '@/utils/locale-getter';
-import { ArrowDownLeft } from 'lucide-react-native';
+import { ArrowDownLeft, Image } from 'lucide-react-native';
 
 interface Props {
 	category: TransactionCategories;
 	data: Transaction;
 	accounts: Accounts;
-	showsDate?: boolean;
+	disableFirstButton?: boolean;
+	disableSecondButton?: boolean;
 }
 
 export default function IncomeCard({
 	category,
 	data,
 	accounts,
-	showsDate = true,
+	disableFirstButton = false,
+	disableSecondButton = false,
 }: Props) {
 	const { currentCurrencySymbol } = useContext(
 		UserPreferenceContext
 	) as UserPreferenceContextTypes;
 	const theme = useTheme();
 	const router = useRouter();
-
-	const formattedDate = new Date(
-		`${data.created_year}-${data.created_month}-${data.created_date}`
-	).toLocaleDateString('en-US', { dateStyle: 'long', month: 'short' });
 
 	return (
 		<View style={styles.container}>
@@ -45,6 +43,7 @@ export default function IncomeCard({
 						params: { categoryId: category.id, categoryName: category.label },
 					})
 				}
+				disabled={disableFirstButton}
 			>
 				<ArrowDownLeft
 					size={20}
@@ -54,36 +53,71 @@ export default function IncomeCard({
 			</Pressable>
 
 			<Pressable
-				style={styles.contentContainer}
 				onPress={() =>
 					router.push({
-						pathname: '/transaction-detail',
-						params: { id: data.id, type: data.type },
+						pathname: '/(root)/edit-income',
+						params: {
+							id: data.id as any,
+							type: data.type,
+							categoryId: data.category_id,
+						},
 					})
 				}
+				style={[styles.contentContainer]}
+				disabled={disableSecondButton}
 			>
-				<View>
+				<View style={{ flex: 1, flexDirection: 'row' }}>
 					<View style={styles.row}>
 						<Text variant="bodyLarge" style={{ fontFamily: 'Inter-Regular' }}>
 							{category.label}
 						</Text>
 					</View>
 
+					<Text style={styles.bodyLarge} variant="bodyLarge">
+						{`${currentCurrencySymbol} ${data.amount.toLocaleString(
+							getLocaleByCurrencySymbol(currentCurrencySymbol)
+						)}`}
+					</Text>
+				</View>
+
+				<View
+					style={{
+						alignItems: 'flex-end',
+						flexDirection: 'row',
+						justifyContent: 'space-between',
+					}}
+				>
 					<View
 						style={{
 							flexDirection: 'row',
-							gap: 4,
+							gap: 8,
 							alignItems: 'center',
-							width: 150,
 						}}
 					>
-						<Text
-							variant="labelLarge"
-							style={[styles.bodyMedium]}
-							numberOfLines={1}
-						>
+						{data.image && (
+							<Image
+								size={14}
+								strokeWidth={1}
+								color={theme.colors.onBackground}
+							/>
+						)}
+
+						{data.note && (
+							<Text
+								variant="labelLarge"
+								style={[styles.bodyMedium, { flex: 1, maxWidth: 150 }]}
+								numberOfLines={1}
+							>
+								{data.note}
+							</Text>
+						)}
+					</View>
+
+					<View style={{ flexDirection: 'row', gap: 6, alignItems: 'center' }}>
+						<Text variant="labelLarge" style={styles.bodyMedium}>
 							Added to
 						</Text>
+
 						<Text
 							variant="labelLarge"
 							style={[
@@ -96,23 +130,9 @@ export default function IncomeCard({
 							]}
 							numberOfLines={1}
 						>
-							{accounts?.name}
+							{accounts.name}
 						</Text>
 					</View>
-				</View>
-
-				<View style={{ alignItems: 'flex-end' }}>
-					<Text style={[styles.bodyLarge, { fontSize: showsDate ? 16 : 18 }]}>
-						{`${currentCurrencySymbol} ${data.amount.toLocaleString(
-							getLocaleByCurrencySymbol(currentCurrencySymbol)
-						)}`}
-					</Text>
-
-					{showsDate && (
-						<Text variant="labelLarge" style={styles.bodyMedium}>
-							{formattedDate}
-						</Text>
-					)}
 				</View>
 			</Pressable>
 		</View>
@@ -137,9 +157,6 @@ const styles = StyleSheet.create({
 	},
 	contentContainer: {
 		flex: 1,
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
 	},
 	labelContainer: {
 		backgroundColor: '#ff0000',

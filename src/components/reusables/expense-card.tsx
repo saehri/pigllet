@@ -65,14 +65,34 @@ export default function ExpenseCard({
 				style={[styles.contentContainer]}
 				disabled={disableSecondButton}
 			>
-				<View style={{ flex: 1, paddingRight: 24 }}>
+				<View style={{ flex: 1, flexDirection: 'row' }}>
 					<View style={styles.row}>
 						<Text variant="bodyLarge" style={{ fontFamily: 'Inter-Regular' }}>
 							{category.label}
 						</Text>
 					</View>
 
-					<View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
+					<Text style={styles.bodyLarge} variant="bodyLarge">
+						{`${currentCurrencySymbol} ${data.amount.toLocaleString(
+							getLocaleByCurrencySymbol(currentCurrencySymbol)
+						)}`}
+					</Text>
+				</View>
+
+				<View
+					style={{
+						alignItems: 'flex-end',
+						flexDirection: 'row',
+						justifyContent: 'space-between',
+					}}
+				>
+					<View
+						style={{
+							flexDirection: 'row',
+							gap: 8,
+							alignItems: 'center',
+						}}
+					>
 						{data.image && (
 							<Image
 								size={14}
@@ -91,29 +111,27 @@ export default function ExpenseCard({
 							</Text>
 						)}
 					</View>
-				</View>
 
-				<View style={{ alignItems: 'flex-end' }}>
-					<Text style={styles.bodyLarge} variant="bodyLarge">
-						{`${currentCurrencySymbol} ${data.amount.toLocaleString(
-							getLocaleByCurrencySymbol(currentCurrencySymbol)
-						)}`}
-					</Text>
+					<View style={{ flexDirection: 'row', gap: 6, alignItems: 'center' }}>
+						<Text variant="labelLarge" style={styles.bodyMedium}>
+							Paid with
+						</Text>
 
-					<Text
-						variant="labelLarge"
-						style={[
-							styles.bodyMedium,
-							{
-								backgroundColor: theme.colors.elevation.level3,
-								paddingHorizontal: 5,
-								borderRadius: 6,
-							},
-						]}
-						numberOfLines={1}
-					>
-						{accountName}
-					</Text>
+						<Text
+							variant="labelLarge"
+							style={[
+								styles.bodyMedium,
+								{
+									backgroundColor: theme.colors.elevation.level3,
+									paddingHorizontal: 5,
+									borderRadius: 6,
+								},
+							]}
+							numberOfLines={1}
+						>
+							{accountName}
+						</Text>
+					</View>
 				</View>
 			</Pressable>
 		</View>
@@ -138,9 +156,6 @@ const styles = StyleSheet.create({
 	},
 	contentContainer: {
 		flex: 1,
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
 	},
 	labelContainer: {
 		backgroundColor: '#ff0000',
