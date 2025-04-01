@@ -38,21 +38,56 @@ export default function DeleteTransactionsDialog({ transactionId }: Props) {
 				.from(schema.accounts)
 				.where(eq(schema.accounts.id, transaction[0].account_id));
 
+			let relatedAccount: schema.Accounts | undefined = undefined;
+			if (transaction[0].related_account_id) {
+				const relAccount = await drizzleDb
+					.select()
+					.from(schema.accounts)
+					.where(eq(schema.accounts.id, transaction[0].related_account_id));
+				relatedAccount = relAccount[0];
+			}
+
 			// delete the transactions
 			await drizzleDb
 				.delete(schema.transactions)
 				.where(eq(schema.transactions.id, transactionId));
 
-			let newBalance = 0;
-			if (transaction[0].type === 'expense') {
-				newBalance = account[0].balance + transaction[0].amount;
-			} else {
-				newBalance = account[0].balance - transaction[0].amount;
-			}
+			// update the account balance
+			if (transaction[0].type === 'transfer') {
+				const mainAccountBalance = account[0].balance + transaction[0].amount;
+				const relatedAccountBalance =
+					account[0].balance - transaction[0].amount;
 
-			await drizzleDb.update(schema.accounts).set({
-				balance: newBalance,
-			});
+				// update the account balance
+				await drizzleDb
+					.update(schema.accounts)
+					.set({
+						balance: mainAccountBalance,
+					})
+					.where(eq(schema.accounts.id, account[0].id));
+				// update the account balance
+				await drizzleDb
+					.update(schema.accounts)
+					.set({
+						balance: relatedAccountBalance,
+					})
+					.where(eq(schema.accounts.id, relatedAccount?.id as number));
+			} else {
+				let newBalance = 0;
+				if (transaction[0].type === 'expense') {
+					newBalance = account[0].balance + transaction[0].amount;
+				} else {
+					newBalance = account[0].balance - transaction[0].amount;
+				}
+
+				// update the account balance
+				await drizzleDb
+					.update(schema.accounts)
+					.set({
+						balance: newBalance,
+					})
+					.where(eq(schema.accounts.id, account[0].id));
+			}
 
 			ToastAndroid.show('Record deleted successfully!', ToastAndroid.SHORT);
 			closeDialog();

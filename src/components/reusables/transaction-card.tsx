@@ -8,8 +8,8 @@ interface TransactionCard {
 	transactionType: 'expense' | 'income' | 'transfer';
 	data: Transaction;
 	account: Accounts;
+	relatedAccount?: Accounts;
 	category: TransactionCategories;
-	showsIncomeDate?: boolean;
 	disableFirstButton?: boolean;
 	disableSecondButton?: boolean;
 }
@@ -19,9 +19,9 @@ export default function TransactionCard({
 	data,
 	account,
 	category,
-	showsIncomeDate = true,
 	disableSecondButton = false,
 	disableFirstButton = false,
+	relatedAccount,
 }: TransactionCard) {
 	if (transactionType === 'expense')
 		return (
@@ -34,14 +34,14 @@ export default function TransactionCard({
 			/>
 		);
 	if (transactionType === 'income')
-		return (
-			<IncomeCard
-				accounts={account}
-				category={category}
-				data={data}
-				showsDate={showsIncomeDate}
-			/>
-		);
+		return <IncomeCard accounts={account} category={category} data={data} />;
 
-	return <TransferCard account={account} category={category} data={data} />;
+	return (
+		<TransferCard
+			relatedAccount={relatedAccount!}
+			accounts={account}
+			category={category}
+			data={data}
+		/>
+	);
 }

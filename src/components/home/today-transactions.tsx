@@ -9,6 +9,7 @@ import { and, asc, eq } from 'drizzle-orm';
 
 import NoItemNotice from '../reusables/no-items-notice';
 import TransactionCard from '../reusables/transaction-card';
+import { alias } from 'drizzle-orm/sqlite-core';
 
 export default function TodayTransaction() {
 	const theme = useTheme();
@@ -17,9 +18,25 @@ export default function TodayTransaction() {
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
 
+	const relatedAccounts = alias(schema.accounts, 'related_accounts'); // Alias for related accounts
+
 	const { data } = useLiveQuery(
 		drizzleDb
-			.select()
+			.select({
+				id: schema.transactions.id,
+				amount: schema.transactions.amount,
+				note: schema.transactions.note,
+				account_id: schema.transactions.account_id,
+				category_id: schema.transactions.category_id,
+				type: schema.transactions.type,
+				image: schema.transactions.image,
+				created_date: schema.transactions.created_date,
+				created_month: schema.transactions.created_month,
+				created_year: schema.transactions.created_year,
+				category: schema.categories,
+				account: schema.accounts,
+				related_account: relatedAccounts, // Use the alias here
+			})
 			.from(schema.transactions)
 			.where(
 				and(
@@ -36,6 +53,10 @@ export default function TodayTransaction() {
 				schema.accounts,
 				eq(schema.transactions.account_id, schema.accounts.id)
 			)
+			.innerJoin(
+				relatedAccounts, // Use the alias for the second join
+				eq(schema.transactions.related_account_id, relatedAccounts.id)
+			)
 			.orderBy(asc(schema.transactions.created_date))
 	);
 
@@ -50,13 +71,14 @@ export default function TodayTransaction() {
 	return (
 		<Wrapper theme={theme} todayDate={todayDate}>
 			<View>
-				{data.map(({ transactions, accounts, categories }) => (
+				{data.map((transaction) => (
 					<TransactionCard
-						key={transactions.id}
-						transactionType={transactions.type as any}
-						account={accounts}
-						category={categories}
-						data={transactions}
+						key={transaction.id}
+						transactionType={transaction.type as any}
+						account={transaction.account}
+						relatedAccount={transaction.related_account}
+						category={transaction.category}
+						data={transaction}
 					/>
 				))}
 			</View>

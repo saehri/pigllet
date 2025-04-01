@@ -118,20 +118,23 @@ export default function IncomeCard({
 							Added to
 						</Text>
 
-						<Text
-							variant="labelLarge"
-							style={[
-								styles.bodyMedium,
-								{
-									backgroundColor: theme.colors.elevation.level3,
-									paddingHorizontal: 5,
-									borderRadius: 6,
-								},
-							]}
-							numberOfLines={1}
+						<View
+							style={{
+								maxWidth: 80,
+								backgroundColor: theme.colors.elevation.level3,
+								paddingHorizontal: 5,
+								borderRadius: 6,
+							}}
 						>
-							{accounts.name}
-						</Text>
+							<Text
+								variant="labelLarge"
+								style={styles.bodyMedium}
+								adjustsFontSizeToFit
+								numberOfLines={1}
+							>
+								{accounts?.name}
+							</Text>
+						</View>
 					</View>
 				</View>
 			</Pressable>

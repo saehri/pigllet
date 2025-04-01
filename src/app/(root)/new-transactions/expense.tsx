@@ -7,7 +7,10 @@ export default function NewExpense() {
 	const theme = useTheme();
 
 	return (
-		<ScrollView style={{ backgroundColor: theme.colors.background }}>
+		<ScrollView
+			style={{ backgroundColor: theme.colors.background }}
+			showsVerticalScrollIndicator={false}
+		>
 			<View style={{ paddingTop: 59 }}>
 				<NewExpenseForm />
 			</View>
