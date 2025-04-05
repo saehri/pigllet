@@ -33,6 +33,7 @@ export default function AddAccountScreen() {
 	async function createAccount() {
 		try {
 			setFormLoading(true);
+
 			if (!accountName.length || !accountBalance.length) {
 				return ToastAndroid.show('Invalid account data!', ToastAndroid.SHORT);
 			}
@@ -74,6 +75,7 @@ export default function AddAccountScreen() {
 							keyboardType="default"
 							onChangeText={setAccountName}
 							value={accountName}
+							maxLength={12}
 						/>
 					</View>
 

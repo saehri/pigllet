@@ -2,13 +2,12 @@ import React, { useCallback } from 'react';
 import { drizzle, ExpoSQLiteDatabase } from 'drizzle-orm/expo-sqlite';
 import { SQLiteDatabase, useSQLiteContext } from 'expo-sqlite';
 import { useContext, useEffect, useState } from 'react';
-import { Alert, ScrollView, ToastAndroid, View } from 'react-native';
+import { ScrollView, ToastAndroid, View } from 'react-native';
 import {
 	ActivityIndicator,
 	Button,
 	Dialog,
 	MD3Theme,
-	Modal,
 	Portal,
 	Text,
 	TextInput,
@@ -23,7 +22,6 @@ import {
 import { eq, or } from 'drizzle-orm';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import NoItemNotice from '@/src/components/reusables/no-items-notice';
-import { Trash2 } from 'lucide-react-native';
 
 export default function EditAccountScreen() {
 	const db = useSQLiteContext();
@@ -169,6 +167,7 @@ function Form({ theme, drizzleDb, initialFormValue }: FormProps) {
 						keyboardType="default"
 						onChangeText={setAccountName}
 						value={accountName}
+						maxLength={12}
 					/>
 				</View>
 
