@@ -65,7 +65,11 @@ const ChartFooter = memo(({ selectedMonth, setSelectedMonth }: Props) => {
 				<View style={{ width: 90 }}>
 					<Text
 						variant="bodyLarge"
-						style={{ textTransform: 'capitalize', textAlign: 'center' }}
+						style={{
+							textTransform: 'capitalize',
+							textAlign: 'center',
+							fontFamily: 'Inter-Regular',
+						}}
 					>
 						{MONTHS[selectedMonth.value].label}
 					</Text>
