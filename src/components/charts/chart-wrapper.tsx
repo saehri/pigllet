@@ -1,4 +1,6 @@
-import { Surface, useTheme } from 'react-native-paper';
+import { useTheme } from 'react-native-paper';
+import { LinearGradient } from 'expo-linear-gradient';
+import { View } from 'react-native';
 
 type Props = {
 	children: React.ReactNode;
@@ -8,20 +10,26 @@ export default function ChartWrapper({ children }: Props) {
 	const theme = useTheme();
 
 	return (
-		<Surface
-			mode="flat"
-			elevation={4}
+		<View
 			style={{
 				borderRadius: 20,
-				overflow: 'hidden',
-				padding: 16,
-				paddingTop: 10,
-				alignItems: 'center',
 				borderWidth: 1,
 				borderColor: theme.colors.outlineVariant,
+				overflow: 'hidden',
 			}}
 		>
-			{children}
-		</Surface>
+			<LinearGradient
+				style={{
+					padding: 16,
+
+					alignItems: 'center',
+
+					paddingTop: 10,
+				}}
+				colors={[theme.colors.elevation.level5, theme.colors.elevation.level1]}
+			>
+				{children}
+			</LinearGradient>
+		</View>
 	);
 }
