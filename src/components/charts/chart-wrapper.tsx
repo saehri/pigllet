@@ -26,7 +26,7 @@ export default function ChartWrapper({ children }: Props) {
 
 					paddingTop: 10,
 				}}
-				colors={[theme.colors.elevation.level5, theme.colors.elevation.level1]}
+				colors={[theme.colors.elevation.level5, theme.colors.elevation.level4]}
 			>
 				{children}
 			</LinearGradient>

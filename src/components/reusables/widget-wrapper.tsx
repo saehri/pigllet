@@ -31,7 +31,7 @@ export default function WidgetWrapper({ title, customStyle, children }: Props) {
 				<LinearGradient
 					colors={[
 						theme.colors.elevation.level5,
-						theme.colors.elevation.level3,
+						theme.colors.elevation.level4,
 					]}
 					style={{
 						padding: 16,
