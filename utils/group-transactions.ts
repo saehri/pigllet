@@ -37,9 +37,9 @@ export function groupedTransactionsByDate(
 	}, []);
 }
 
-export function getChartDataByCategory(
+export async function getChartDataByCategory(
 	transactions: Transaction[]
-): GroupedTransactionByCategory[] {
+): Promise<GroupedTransactionByCategory[]> {
 	return transactions.reduce<GroupedTransactionByCategory[]>(
 		(acc, transaction) => {
 			const categoryName = transaction.category?.label!;
@@ -62,16 +62,15 @@ export function getChartDataByCategory(
 	);
 }
 
-export function getChartDataByDate(
+export async function getChartDataByDate(
 	transactions: Transaction[]
-): GroupedTransactionByCategory[] {
+): Promise<GroupedTransactionByCategory[]> {
 	return transactions.reduce<GroupedTransactionByCategory[]>(
 		(acc, transaction) => {
 			const date = new Date(transaction.created_at).toLocaleDateString(
 				'en-US',
 				{
 					dateStyle: 'medium',
-					// month: '',
 				}
 			);
 			const existingDate = acc.find((group) => group.label === date);

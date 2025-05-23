@@ -8,7 +8,7 @@ import {
 } from '@/context/UserPreferenceContext';
 import { Image } from 'lucide-react-native';
 
-import { Transaction, TransactionCategories } from '@/db/schema';
+import { Transaction, Category } from '@/db/schema';
 
 import TransactionIcons from './transaction-icons';
 import getLocaleByCurrencySymbol from '@/utils/locale-getter';
@@ -16,7 +16,7 @@ import getLocaleByCurrencySymbol from '@/utils/locale-getter';
 // type TransactionWithoutImage = Omit<Transaction, 'image'>;
 
 interface Props {
-	category: TransactionCategories;
+	category: Category;
 	data: Transaction;
 	accountName?: string;
 	disableFirstButton?: boolean;
@@ -67,7 +67,11 @@ export default function ExpenseCard({
 			>
 				<View style={{ flex: 1, flexDirection: 'row' }}>
 					<View style={styles.row}>
-						<Text variant="bodyLarge" style={{ fontFamily: 'Inter-Regular' }}>
+						<Text
+							numberOfLines={1}
+							variant="bodyLarge"
+							style={{ fontFamily: 'Inter-Regular' }}
+						>
 							{category.label}
 						</Text>
 					</View>
@@ -179,3 +183,4 @@ const styles = StyleSheet.create({
 		opacity: 0.8,
 	},
 });
+

@@ -1,46 +1,173 @@
-import { View } from 'react-native';
-import { Text } from 'react-native-paper';
-import { Dispatch, SetStateAction, memo } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { Button, useTheme } from 'react-native-paper';
+import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 
-import YearPicker from '../forms/year-picker';
+import { ArrowRightIcon, FilterIcon } from 'lucide-react-native';
+import SelectInput from '../forms/select-input';
 
 type Props = {
-	selectedYear: number;
-	setSelectedYear: Dispatch<SetStateAction<number>>;
-	selectedMonth: number;
+	startDate: Date;
+	setStartDate: Dispatch<SetStateAction<Date>>;
+	endDate: Date;
+	setEndDate: Dispatch<SetStateAction<Date>>;
+	quickFilter: string;
+	setQuickFilter: Dispatch<SetStateAction<string>>;
 };
 
-const ChartHeader = memo(
-	({ selectedYear, setSelectedYear, selectedMonth }: Props) => {
-		const date = new Date(
-			`${selectedYear}-${selectedMonth}-1`
-		).toLocaleDateString('us-US', { month: 'long', year: 'numeric' });
+export default function ChartHeader({
+	startDate,
+	setStartDate,
+	endDate,
+	setEndDate,
+	quickFilter,
+	setQuickFilter,
+}: Props) {
+	const theme = useTheme();
 
-		return (
-			<View
-				style={{
-					flexDirection: 'row',
-					justifyContent: 'space-between',
-					width: '100%',
-					alignItems: 'center',
-					marginBottom: 12,
-					flex: 1,
-				}}
+	// Function to open the date picker
+	const openStartDatePicker = () => {
+		DateTimePickerAndroid.open({
+			value: startDate,
+			mode: 'date',
+			display: 'default',
+			firstDayOfWeek: 1,
+			onChange: (event, date) => {
+				if (date) {
+					setStartDate(date);
+				}
+			},
+		});
+	};
+
+	// Function to open the date picker
+	const openEndDatePicker = () => {
+		DateTimePickerAndroid.open({
+			value: endDate,
+			mode: 'date',
+			display: 'default',
+			firstDayOfWeek: 1,
+			onChange: (event, date) => {
+				if (date) {
+					setEndDate(date);
+				}
+			},
+		});
+	};
+
+	function handleQuickFilterChange(filter: string) {
+		const date = new Date(),
+			y = date.getFullYear(),
+			m = date.getMonth();
+
+		if (filter === 'today') {
+			setStartDate(date);
+			setEndDate(date);
+		}
+		if (filter === 'month') {
+			setStartDate(new Date(y, m, 1));
+			setEndDate(new Date(y, m + 1, 0));
+		}
+		if (filter === 'year') {
+			setStartDate(new Date(y, 0, 1));
+			setEndDate(new Date(y, 11, 31));
+		}
+
+		setQuickFilter(filter);
+	}
+
+	return (
+		<View style={styles.container}>
+			<Button
+				onPress={openStartDatePicker}
+				mode="outlined"
+				labelStyle={styles.buttonLabel}
+				style={[styles.button, { borderColor: theme.colors.outlineVariant }]}
+				contentStyle={styles.buttonContent}
 			>
-				<Text
-					style={{ fontFamily: 'Inter-Regular', textTransform: 'capitalize' }}
-					variant="titleLarge"
-				>
-					{date}
-				</Text>
+				{startDate.toLocaleDateString('en-US', { dateStyle: 'medium' })}
+			</Button>
 
-				<YearPicker
-					selectedYear={selectedYear}
-					setSelectedYear={setSelectedYear}
+			<View
+				style={[
+					styles.iconDividerContainer,
+					{ backgroundColor: theme.colors.primary },
+				]}
+			>
+				<ArrowRightIcon
+					size={12}
+					strokeWidth={1.5}
+					color={theme.colors.background}
 				/>
 			</View>
-		);
-	}
-);
 
-export default ChartHeader;
+			<Button
+				onPress={openEndDatePicker}
+				mode="outlined"
+				labelStyle={styles.buttonLabel}
+				style={[styles.button, { borderColor: theme.colors.outlineVariant }]}
+				contentStyle={styles.buttonContent}
+			>
+				{endDate.toLocaleDateString('en-US', { dateStyle: 'medium' })}
+			</Button>
+
+			<SelectInput
+				data={[
+					{ label: 'Today', value: 'today' },
+					{ label: 'This month', value: 'month' },
+					{ label: 'This year', value: 'year' },
+				]}
+				handleSelect={handleQuickFilterChange}
+				value={quickFilter}
+				closeAfterSelect
+				triggerButton={({ showDialog }) => (
+					<Button
+						onPress={showDialog}
+						mode="outlined"
+						compact
+						style={{
+							borderColor: theme.colors.outlineVariant,
+							borderRadius: 11,
+							height: 41,
+						}}
+					>
+						<FilterIcon
+							size={16}
+							strokeWidth={1.5}
+							color={theme.colors.primary}
+						/>
+					</Button>
+				)}
+			/>
+		</View>
+	);
+}
+
+const styles = StyleSheet.create({
+	container: {
+		flexDirection: 'row',
+		gap: 6,
+		alignItems: 'center',
+		padding: 16,
+	},
+	buttonLabel: {
+		fontFamily: 'Inter-Regular',
+		width: '100%',
+	},
+	button: {
+		flex: 1,
+		borderRadius: 11,
+		padding: 0,
+	},
+	iconDividerContainer: {
+		width: 16,
+		height: 16,
+		borderRadius: 100,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	buttonContent: {
+		padding: 0,
+	},
+});
+

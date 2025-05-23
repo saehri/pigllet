@@ -9,7 +9,7 @@ type Props = {
 	value: string;
 	placeholder?: string;
 	closeAfterSelect?: boolean;
-	handleSelect: Dispatch<SetStateAction<any>>;
+	handleSelect: any;
 	triggerButton?: ({
 		showDialog,
 	}: {

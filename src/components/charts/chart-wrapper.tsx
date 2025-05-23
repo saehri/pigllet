@@ -14,7 +14,6 @@ export default function ChartWrapper({ children }: Props) {
 				borderWidth: 1,
 				borderColor: theme.colors.outlineVariant,
 				overflow: 'hidden',
-				padding: 16,
 				alignItems: 'center',
 			}}
 			elevation={3}
