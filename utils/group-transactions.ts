@@ -1,10 +1,7 @@
-import {
-	Transaction as BaseTransaction,
-	TransactionCategories,
-} from '@/db/schema';
+import { Transaction as BaseTransaction, Category } from '@/db/schema';
 
 interface Transaction extends BaseTransaction {
-	category?: TransactionCategories;
+	category?: Category;
 }
 
 interface GroupedTransactionByCategory {
@@ -21,9 +18,7 @@ export function groupedTransactionsByDate(
 	transactions: Transaction[]
 ): GroupedTransactionByDate[] {
 	return transactions.reduce((acc: GroupedTransactionByDate[], transaction) => {
-		const date = new Date(
-			`${transaction.created_year}-${transaction.created_month}-${transaction.created_date}`
-		).toLocaleDateString('en-US', {
+		const date = new Date(transaction.created_at).toLocaleDateString('en-US', {
 			dateStyle: 'long',
 			month: 'short',
 		});
@@ -72,12 +67,13 @@ export function getChartDataByDate(
 ): GroupedTransactionByCategory[] {
 	return transactions.reduce<GroupedTransactionByCategory[]>(
 		(acc, transaction) => {
-			const date = new Date(
-				`${transaction.created_year}-${transaction.created_month}-${transaction.created_date}`
-			).toLocaleDateString('en-US', {
-				dateStyle: 'medium',
-				// month: '',
-			});
+			const date = new Date(transaction.created_at).toLocaleDateString(
+				'en-US',
+				{
+					dateStyle: 'medium',
+					// month: '',
+				}
+			);
 			const existingDate = acc.find((group) => group.label === date);
 
 			if (existingDate) {
@@ -94,3 +90,4 @@ export function getChartDataByDate(
 		[]
 	);
 }
+

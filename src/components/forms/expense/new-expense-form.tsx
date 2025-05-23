@@ -20,7 +20,7 @@ import {
 } from '@/context/UserPreferenceContext';
 
 import DatePicker from '../date-picker';
-import AccountSelector from '../account-selector';
+import Accountelector from '../account-selector';
 import ImageSelectorInput from '../image-select-input';
 import SelectInputWithIcon from '../select-input-with-icon';
 
@@ -33,9 +33,8 @@ export default function CreateExpenseForm() {
 	// form state
 	const [isLoading, setLoading] = useState(false);
 
-	const [selectedCategory, setSelectedCategory] =
-		useState<schema.TransactionCategories>();
-	const [selectedAccount, setSelectedAccount] = useState<schema.Accounts>();
+	const [selectedCategory, setSelectedCategory] = useState<schema.Category>();
+	const [selectedAccount, setSelectedAccount] = useState<schema.Account>();
 	const [amount, setAmount] = useState<string>('');
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 	const [note, setNote] = useState<string>('');
@@ -44,24 +43,24 @@ export default function CreateExpenseForm() {
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
 
-	const [userAccounts, setUserAccounts] = useState<schema.Accounts[]>([]);
+	const [userAccount, setUserAccount] = useState<schema.Account[]>([]);
 	const [userExpenseCategories, setUserExpensesCategories] = useState<
-		schema.TransactionCategories[]
+		schema.Category[]
 	>([]);
 
 	useEffect(() => {
 		async function load() {
 			try {
-				const accounts = await drizzleDb.select().from(schema.accounts);
+				const Account = await drizzleDb.select().from(schema.accounts);
 				const categories = await drizzleDb
 					.select()
 					.from(schema.categories)
 					.where(eq(schema.categories.type, 'expense'));
 
-				setUserAccounts(accounts as schema.Accounts[]);
-				setSelectedAccount(accounts[0]);
+				setUserAccount(Account as schema.Account[]);
+				setSelectedAccount(Account[0]);
 				setSelectedCategory(categories[0]);
-				setUserExpensesCategories(categories as schema.TransactionCategories[]);
+				setUserExpensesCategories(categories as schema.Category[]);
 			} catch (error: any) {
 				ToastAndroid.show(error.message, ToastAndroid.CENTER);
 			}
@@ -86,9 +85,7 @@ export default function CreateExpenseForm() {
 				account_id: selectedAccount.id as number,
 				amount: Number(amount),
 				category_id: selectedCategory.id as number,
-				created_date: selectedDate.getDate(),
-				created_month: selectedDate.getMonth() + 1,
-				created_year: selectedDate.getFullYear(),
+				created_at: selectedDate.toISOString(),
 				image,
 				note,
 			};
@@ -123,8 +120,8 @@ export default function CreateExpenseForm() {
 			<View style={{ flexDirection: 'row', gap: 8 }}>
 				<View style={{ gap: 8, flex: 1 }}>
 					<Text variant="bodyLarge">From</Text>
-					<AccountSelector
-						accounts={userAccounts}
+					<Accountelector
+						accounts={userAccount}
 						handleSelect={setSelectedAccount}
 						selectedAccount={selectedAccount!}
 					/>
@@ -183,3 +180,4 @@ export default function CreateExpenseForm() {
 		</View>
 	);
 }
+
