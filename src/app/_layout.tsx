@@ -7,11 +7,13 @@ import {
 	useColorScheme,
 	View,
 	Image,
+	ScrollView,
 } from 'react-native';
 import {
 	ActivityIndicator,
 	DefaultTheme,
 	PaperProvider,
+	Text,
 	ThemeProvider,
 } from 'react-native-paper';
 import { SQLiteProvider, openDatabaseSync } from 'expo-sqlite';
@@ -38,7 +40,7 @@ SplashScreen.setOptions({
 	fade: true,
 });
 
-const DATABASE_NAME = 'database';
+const DATABASE_NAME = 'database.db';
 
 type AppProps = {
 	colorScheme: ColorSchemeName;
@@ -95,6 +97,8 @@ export default function RootLayout() {
 	const { success, error } = useMigrations(db, migrations);
 	useDrizzleStudio(expoDb);
 
+	console.log({ success, error });
+
 	useEffect(() => {
 		if (loaded || fontLoaderError) {
 			SplashScreen.hideAsync();
@@ -104,6 +108,13 @@ export default function RootLayout() {
 	if (!loaded && !fontLoaderError) {
 		return null;
 	}
+
+	if (!success)
+		return (
+			<ScrollView style={{ backgroundColor: '#fff' }}>
+				<Text>{error?.stack}</Text>
+			</ScrollView>
+		);
 
 	return (
 		<Suspense
@@ -130,3 +141,4 @@ export default function RootLayout() {
 		</Suspense>
 	);
 }
+

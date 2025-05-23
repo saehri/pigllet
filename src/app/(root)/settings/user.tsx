@@ -72,7 +72,7 @@ function ResetUserPreference() {
 		try {
 			resetUserPreferenceData();
 			await drizzleDb.delete(schema.accounts);
-			await drizzleDb.delete(schema.budget);
+			await drizzleDb.delete(schema.budgets);
 			await drizzleDb.delete(schema.categories);
 			await drizzleDb.delete(schema.subscriptions);
 			await drizzleDb.delete(schema.transactions);
@@ -137,3 +137,4 @@ function ResetUserPreference() {
 		</>
 	);
 }
+
