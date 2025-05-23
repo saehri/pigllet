@@ -41,20 +41,12 @@ export default function ExpensesScreen() {
 					category_id: schema.transactions.category_id,
 					type: schema.transactions.type,
 					image: schema.transactions.image,
-					created_date: schema.transactions.created_date,
-					created_month: schema.transactions.created_month,
-					created_year: schema.transactions.created_year,
+					created_at: schema.transactions.created_at,
 					category: schema.categories,
 					accountName: schema.accounts.name,
 				})
 				.from(schema.transactions)
-				.where(
-					and(
-						eq(schema.transactions.type, 'expense'),
-						eq(schema.transactions.created_month, month),
-						eq(schema.transactions.created_year, year)
-					)
-				)
+				.where(and(eq(schema.transactions.type, 'expense')))
 				.innerJoin(
 					schema.categories,
 					eq(schema.transactions.category_id, schema.categories.id)
@@ -63,7 +55,7 @@ export default function ExpensesScreen() {
 					schema.accounts,
 					eq(schema.transactions.account_id, schema.accounts.id)
 				)
-				.orderBy(desc(schema.transactions.created_date));
+				.orderBy(desc(schema.transactions.created_at));
 		},
 		[drizzleDb]
 	);
@@ -120,7 +112,7 @@ export default function ExpensesScreen() {
 							<ExpenseCard
 								key={transaction.id}
 								data={transaction as any}
-								category={transaction.category as schema.TransactionCategories}
+								category={transaction.category as schema.Category}
 								accountName={transaction.accountName}
 							/>
 						))}
