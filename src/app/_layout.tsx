@@ -6,11 +6,9 @@ import {
 	StatusBar,
 	useColorScheme,
 	View,
-	Image,
 	ScrollView,
 } from 'react-native';
 import {
-	ActivityIndicator,
 	DefaultTheme,
 	PaperProvider,
 	Text,
@@ -96,8 +94,6 @@ export default function RootLayout() {
 	const db = drizzle(expoDb);
 	const { success, error } = useMigrations(db, migrations);
 	useDrizzleStudio(expoDb);
-
-	console.log({ success, error });
 
 	useEffect(() => {
 		if (loaded || fontLoaderError) {
