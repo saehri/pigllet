@@ -1,92 +1,190 @@
-import { ChevronsLeft, ChevronsRight } from 'lucide-react-native';
-import { Dispatch, SetStateAction, memo, useCallback } from 'react';
-import { ScrollView, View } from 'react-native';
+import { useContext, useEffect, useState } from 'react';
+import { LinearGradient } from 'expo-linear-gradient';
+import { EyeClosedIcon, EyeIcon } from 'lucide-react-native';
+import { StyleSheet, ToastAndroid, View } from 'react-native';
 import { Button, Text, useTheme } from 'react-native-paper';
 
-type MonthTypes = { value: number; label: string };
+import { Category, Transaction } from '@/db/schema';
+import { getChartDataByCategory } from '@/utils/group-transactions';
+import {
+	UserPreferenceContext,
+	UserPreferenceContextTypes,
+} from '@/context/UserPreferenceContext';
+import getLocaleByCurrencySymbol from '@/utils/locale-getter';
 
-const MONTHS: MonthTypes[] = [
-	{ value: 0, label: 'january' },
-	{ value: 1, label: 'february' },
-	{ value: 2, label: 'march' },
-	{ value: 3, label: 'april' },
-	{ value: 4, label: 'may' },
-	{ value: 5, label: 'june' },
-	{ value: 6, label: 'july' },
-	{ value: 7, label: 'august' },
-	{ value: 8, label: 'september' },
-	{ value: 9, label: 'october' },
-	{ value: 10, label: 'november' },
-	{ value: 11, label: 'december' },
-];
+interface TransactionWithCategory extends Transaction {
+	category?: Category;
+}
 
 type Props = {
-	selectedMonth: MonthTypes;
-	setSelectedMonth: Dispatch<SetStateAction<MonthTypes>>;
+	transactions: TransactionWithCategory[];
 };
 
-const ChartFooter = memo(({ selectedMonth, setSelectedMonth }: Props) => {
+export default function ChartFooter({ transactions }: Props) {
 	const theme = useTheme();
 
-	const selectPrevMonth = useCallback(() => {
-		const newIndex = selectedMonth.value - 1;
-		if (newIndex >= 0) {
-			setSelectedMonth(MONTHS[newIndex]);
-		}
-	}, [selectedMonth, setSelectedMonth]);
+	const { currentCurrencySymbol } = useContext(
+		UserPreferenceContext
+	) as UserPreferenceContextTypes;
 
-	const selectNextMonth = useCallback(() => {
-		const newIndex = selectedMonth.value + 1;
-		if (newIndex <= MONTHS.length - 1) {
-			setSelectedMonth(MONTHS[newIndex]);
+	const [maximize, setMaximize] = useState(false);
+	const [sortedData, setSortedData] = useState<
+		{ label: string; value: number }[]
+	>([]);
+
+	useEffect(() => {
+		async function load() {
+			try {
+				const data = await getChartDataByCategory(transactions);
+				setSortedData(data);
+			} catch (error: any) {
+				ToastAndroid.show(error.message, ToastAndroid.SHORT);
+			}
 		}
-	}, [selectedMonth, setSelectedMonth]);
+
+		load();
+	}, []);
+
+	const transactionsSum = sortedData
+		.map((bl) => bl.value)
+		.reduce((a, b) => a + b, 0);
 
 	return (
-		<ScrollView horizontal showsHorizontalScrollIndicator={false}>
-			<View
-				style={{
-					flexDirection: 'row',
-					gap: 9,
-					paddingTop: 12,
-					alignItems: 'center',
-				}}
-			>
-				<Button
-					onPress={selectPrevMonth}
-					mode="outlined"
-					style={{ borderColor: theme.colors.outlineVariant, borderRadius: 10 }}
-					contentStyle={{ height: 36 }}
-					disabled={selectedMonth.value === 0}
+		<View style={styles.container}>
+			<View style={styles.header}>
+				<Text
+					style={[styles.title, { borderColor: theme.colors.outlineVariant }]}
+					variant="titleMedium"
 				>
-					<ChevronsLeft color={theme.colors.primary} />
-				</Button>
-
-				<View style={{ width: 90 }}>
-					<Text
-						variant="bodyLarge"
-						style={{
-							textTransform: 'capitalize',
-							textAlign: 'center',
-							fontFamily: 'Inter-Regular',
-						}}
-					>
-						{MONTHS[selectedMonth.value].label}
-					</Text>
-				</View>
+					Summary
+				</Text>
 
 				<Button
-					onPress={selectNextMonth}
-					mode="outlined"
-					style={{ borderColor: theme.colors.outlineVariant, borderRadius: 10 }}
-					contentStyle={{ height: 36 }}
-					disabled={selectedMonth.value === MONTHS.length - 1}
+					style={styles.maximizeButton}
+					mode="elevated"
+					compact
+					onPress={() => setMaximize(!maximize)}
 				>
-					<ChevronsRight color={theme.colors.primary} />
+					{maximize ? (
+						<EyeIcon size={16} strokeWidth={1.5} color={theme.colors.primary} />
+					) : (
+						<EyeClosedIcon
+							size={16}
+							strokeWidth={1.5}
+							color={theme.colors.primary}
+						/>
+					)}
 				</Button>
 			</View>
-		</ScrollView>
+
+			<View
+				style={{
+					height: maximize ? 'auto' : 45,
+					overflow: 'hidden',
+					display: !sortedData.length ? 'none' : 'flex',
+				}}
+			>
+				<View
+					style={[
+						styles.summaryContainer,
+						{ borderColor: theme.colors.outlineVariant },
+					]}
+				>
+					{sortedData.map((data, i) => (
+						<View
+							style={[
+								styles.summaryItem,
+								{ borderColor: theme.colors.outlineVariant },
+							]}
+							key={i}
+						>
+							<Text
+								textBreakStrategy="balanced"
+								numberOfLines={1}
+								style={styles.summaryItemText}
+							>
+								{data.label}
+							</Text>
+							<Text
+								textBreakStrategy="balanced"
+								numberOfLines={1}
+								style={styles.summaryItemText}
+							>
+								{`${currentCurrencySymbol} ${data.value.toLocaleString(getLocaleByCurrencySymbol(currentCurrencySymbol))}`}
+							</Text>
+						</View>
+					))}
+
+					<View
+						style={[
+							styles.totalItem,
+							{ borderColor: theme.colors.outlineVariant },
+						]}
+					>
+						<Text textBreakStrategy="balanced" style={styles.summaryItemText}>
+							Total
+						</Text>
+						<Text textBreakStrategy="balanced" style={styles.summaryItemText}>
+							{`${currentCurrencySymbol} ${transactionsSum.toLocaleString(getLocaleByCurrencySymbol(currentCurrencySymbol))}`}
+						</Text>
+					</View>
+				</View>
+
+				<LinearGradient
+					colors={[theme.colors.elevation.level3, 'transparent']}
+					style={[styles.linearGradient, { height: maximize ? 0 : 35 }]}
+					start={{ x: 0, y: 1 }}
+					end={{ x: 0, y: 0 }}
+				/>
+			</View>
+		</View>
 	);
+}
+
+const styles = StyleSheet.create({
+	container: {
+		width: '100%',
+		marginTop: 16,
+	},
+	title: {
+		fontFamily: 'Inter-Regular',
+		// borderBottomWidth: 1,
+		// paddingBottom: 8,
+	},
+	maximizeButton: { position: 'absolute', bottom: 8, right: 8 },
+	header: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		padding: 16,
+		paddingTop: 0,
+	},
+	summaryContainer: {
+		padding: 16,
+		borderTopWidth: 1,
+		paddingTop: 0,
+	},
+	linearGradient: {
+		position: 'absolute',
+		bottom: 0,
+		width: '100%',
+	},
+	summaryItem: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'center',
+		paddingVertical: 8,
+		borderBottomWidth: 1,
+	},
+	summaryItemText: {
+		fontFamily: 'Inter-Regular',
+		maxWidth: 200,
+	},
+	totalItem: {
+		paddingVertical: 8,
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		borderTopWidth: 1,
+		marginTop: 4,
+	},
 });
 
-export default ChartFooter;

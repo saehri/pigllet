@@ -1,9 +1,9 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { FlatList, View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 
 import * as schema from '@/db/schema';
-import { and, desc, eq } from 'drizzle-orm';
+import { and, desc, eq, sql } from 'drizzle-orm';
 import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { useSQLiteContext } from 'expo-sqlite';
 
@@ -22,47 +22,48 @@ export default function ExpensesScreen() {
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
 
-	const [selectedYear, setSelectedYear] = useState<number>(
-		new Date().getFullYear()
-	);
-	const [selectedMonth, setSelectedMonth] = useState<{
-		value: number;
-		label: string;
-	}>({ value: new Date().getMonth(), label: '' });
+	const [startDate, setStartDate] = useState(new Date());
+	const [endDate, setEndDate] = useState(new Date());
 
-	const loadExpenseData = useCallback(
-		(year: number, month: number) => {
-			return drizzleDb
-				.select({
-					id: schema.transactions.id,
-					amount: schema.transactions.amount,
-					note: schema.transactions.note,
-					account_id: schema.transactions.account_id,
-					category_id: schema.transactions.category_id,
-					type: schema.transactions.type,
-					image: schema.transactions.image,
-					created_at: schema.transactions.created_at,
-					category: schema.categories,
-					accountName: schema.accounts.name,
-				})
-				.from(schema.transactions)
-				.where(and(eq(schema.transactions.type, 'expense')))
-				.innerJoin(
-					schema.categories,
-					eq(schema.transactions.category_id, schema.categories.id)
-				)
-				.innerJoin(
-					schema.accounts,
-					eq(schema.transactions.account_id, schema.accounts.id)
-				)
-				.orderBy(desc(schema.transactions.created_at));
-		},
-		[drizzleDb]
-	);
+	const loadExpenseData = (startDate: string, endDate: string) =>
+		drizzleDb
+			.select({
+				id: schema.transactions.id,
+				amount: schema.transactions.amount,
+				note: schema.transactions.note,
+				account_id: schema.transactions.account_id,
+				category_id: schema.transactions.category_id,
+				type: schema.transactions.type,
+				image: schema.transactions.image,
+				created_at: schema.transactions.created_at,
+				category: schema.categories,
+				accountName: schema.accounts.name,
+			})
+			.from(schema.transactions)
+			.where(
+				startDate === endDate
+					? and(
+							eq(schema.transactions.type, 'expense'),
+							sql`DATE(${schema.transactions.created_at}) = DATE(${endDate})`
+						)
+					: and(
+							eq(schema.transactions.type, 'expense'),
+							sql`DATE(${schema.transactions.created_at}) BETWEEN DATE(${startDate}) AND DATE(${endDate})`
+						)
+			)
+			.innerJoin(
+				schema.categories,
+				eq(schema.transactions.category_id, schema.categories.id)
+			)
+			.innerJoin(
+				schema.accounts,
+				eq(schema.transactions.account_id, schema.accounts.id)
+			)
+			.orderBy(desc(schema.transactions.created_at));
 
 	const { data: transactions } = useLiveQuery(
-		loadExpenseData(selectedYear, selectedMonth.value + 1),
-		[selectedYear, selectedMonth]
+		loadExpenseData(startDate.toISOString(), endDate.toISOString()),
+		[startDate, endDate]
 	);
 
 	return (
@@ -79,19 +80,17 @@ export default function ExpensesScreen() {
 					}}
 				>
 					<ChartWrapper>
-						{/* <ChartHeader
-							selectedYear={selectedYear}
-							setSelectedYear={setSelectedYear}
-							selectedMonth={selectedMonth.value + 1}
-						/> */}
+						<ChartHeader
+							startDate={startDate}
+							setStartDate={setStartDate}
+							endDate={endDate}
+							setEndDate={setEndDate}
+						/>
 						<TransactionsSummaryChart
 							groupBy="category"
 							transactions={transactions as any}
 						/>
-						{/* <ChartFooter
-							selectedMonth={selectedMonth}
-							setSelectedMonth={setSelectedMonth}
-						/> */}
+						<ChartFooter transactions={transactions} />
 					</ChartWrapper>
 				</View>
 			)}

@@ -11,7 +11,7 @@ import {
 import { useLocalSearchParams } from 'expo-router';
 
 import * as schema from '@/db/schema';
-import { TransactionCategories, Accounts } from '@/db/schema';
+import { Category, Account } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 
 import { useSQLiteContext } from 'expo-sqlite';
@@ -39,20 +39,20 @@ export default function EditExpenseForm() {
 
 	const [initialFormValue, setInitialFormValue] =
 		useState<schema.Transaction>();
-	const [userAccounts, setUserAccounts] = useState<schema.Accounts[]>([]);
+	const [userAccounts, setUserAccounts] = useState<schema.Account[]>([]);
 	const [userExpenseCategories, setUserExpensesCategories] = useState<
-		schema.TransactionCategories[]
+		schema.Category[]
 	>([]);
 
 	// form state
 	const [isLoading, setLoading] = useState(false);
 
-	const [initialAccount, setInitialAccount] = useState<schema.Accounts>();
-	const [selectedCategory, setSelectedCategory] =
-		useState<TransactionCategories>();
-	const [selectedAccount, setSelectedAccount] = useState<Accounts>();
+	const [initialAccount, setInitialAccount] = useState<schema.Account>();
+
+	const [selectedCategory, setSelectedCategory] = useState<Category>();
+	const [selectedAccount, setSelectedAccount] = useState<Account>();
 	const [amount, setAmount] = useState<string>('');
-	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+	const [createdAt, setCreatedAt] = useState<Date>(new Date());
 	const [note, setNote] = useState<string>('');
 	const [image, setImage] = useState<string>('');
 
@@ -88,13 +88,9 @@ export default function EditExpenseForm() {
 				setSelectedAccount(accounts);
 				setAmount(transactions.amount.toString());
 				setSelectedCategory(categories);
-				setSelectedDate(
-					new Date(
-						`${transactions.created_year}-${transactions.created_month}-${transactions.created_date}`
-					)
-				);
 				setNote(transactions.note || '');
 				setImage(transactions.image || '');
+				setCreatedAt(new Date(transactions.created_at));
 
 				setInitialAccount(accounts);
 
@@ -131,9 +127,7 @@ export default function EditExpenseForm() {
 					account_id: selectedAccount.id,
 					amount: Number(amount),
 					category_id: selectedCategory.id,
-					created_date: selectedDate.getDate(),
-					created_month: selectedDate.getMonth() + 1,
-					created_year: selectedDate.getFullYear(),
+					created_at: createdAt.toISOString(),
 					image,
 					note,
 				})
@@ -189,10 +183,7 @@ export default function EditExpenseForm() {
 
 			<View style={{ gap: 8 }}>
 				<Text variant="bodyLarge">Date</Text>
-				<DatePicker
-					selectedDate={selectedDate}
-					setSelectedDate={setSelectedDate}
-				/>
+				<DatePicker selectedDate={createdAt} setSelectedDate={setCreatedAt} />
 			</View>
 
 			<View style={{ gap: 8 }}>
@@ -221,3 +212,4 @@ export default function EditExpenseForm() {
 		</View>
 	);
 }
+

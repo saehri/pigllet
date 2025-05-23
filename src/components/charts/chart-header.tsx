@@ -1,46 +1,105 @@
-import { View } from 'react-native';
-import { Text } from 'react-native-paper';
-import { Dispatch, SetStateAction, memo } from 'react';
+import { Dispatch, SetStateAction } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { Button, useTheme } from 'react-native-paper';
+import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 
-import YearPicker from '../forms/year-picker';
+import { ArrowRightIcon } from 'lucide-react-native';
 
 type Props = {
-	selectedYear: number;
-	setSelectedYear: Dispatch<SetStateAction<number>>;
-	selectedMonth: number;
+	startDate: Date;
+	setStartDate: Dispatch<SetStateAction<Date>>;
+	endDate: Date;
+	setEndDate: Dispatch<SetStateAction<Date>>;
 };
 
-const ChartHeader = memo(
-	({ selectedYear, setSelectedYear, selectedMonth }: Props) => {
-		const date = new Date(
-			`${selectedYear}-${selectedMonth}-1`
-		).toLocaleDateString('us-US', { month: 'long', year: 'numeric' });
+export default function ChartHeader({
+	startDate,
+	setStartDate,
+	endDate,
+	setEndDate,
+}: Props) {
+	const theme = useTheme();
 
-		return (
-			<View
-				style={{
-					flexDirection: 'row',
-					justifyContent: 'space-between',
-					width: '100%',
-					alignItems: 'center',
-					marginBottom: 12,
-					flex: 1,
-				}}
+	// Function to open the date picker
+	const openStartDatePicker = () => {
+		DateTimePickerAndroid.open({
+			value: startDate,
+			mode: 'date',
+			display: 'default',
+			onChange: (event, date) => {
+				if (date) {
+					setStartDate(date);
+				}
+			},
+		});
+	};
+
+	// Function to open the date picker
+	const openEndDatePicker = () => {
+		DateTimePickerAndroid.open({
+			value: endDate,
+			mode: 'date',
+			display: 'default',
+			onChange: (event, date) => {
+				if (date) {
+					setEndDate(date);
+				}
+			},
+		});
+	};
+
+	return (
+		<View style={styles.container}>
+			<Button
+				onPress={openStartDatePicker}
+				mode="outlined"
+				labelStyle={styles.buttonLabel}
+				style={[styles.button, { borderColor: theme.colors.outlineVariant }]}
 			>
-				<Text
-					style={{ fontFamily: 'Inter-Regular', textTransform: 'capitalize' }}
-					variant="titleLarge"
-				>
-					{date}
-				</Text>
+				{startDate.toLocaleDateString('en-US', { dateStyle: 'medium' })}
+			</Button>
 
-				<YearPicker
-					selectedYear={selectedYear}
-					setSelectedYear={setSelectedYear}
-				/>
+			<View
+				style={[
+					styles.iconDividerContainer,
+					{ backgroundColor: theme.colors.primary },
+				]}
+			>
+				<ArrowRightIcon strokeWidth={1.5} color={theme.colors.background} />
 			</View>
-		);
-	}
-);
 
-export default ChartHeader;
+			<Button
+				onPress={openEndDatePicker}
+				mode="outlined"
+				labelStyle={styles.buttonLabel}
+				style={[styles.button, { borderColor: theme.colors.outlineVariant }]}
+			>
+				{endDate.toLocaleDateString('en-US', { dateStyle: 'medium' })}
+			</Button>
+		</View>
+	);
+}
+
+const styles = StyleSheet.create({
+	container: {
+		flexDirection: 'row',
+		gap: 8,
+		alignItems: 'center',
+		padding: 16,
+	},
+	buttonLabel: {
+		fontFamily: 'Inter-Regular',
+	},
+	button: {
+		flex: 1,
+		borderRadius: 11,
+	},
+	iconDividerContainer: {
+		width: 28,
+		height: 28,
+		borderRadius: 100,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+});
+
