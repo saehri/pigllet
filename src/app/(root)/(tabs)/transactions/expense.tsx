@@ -87,19 +87,19 @@ export default function ExpensesScreen() {
 					}}
 				>
 					<ChartWrapper>
-						<ChartHeader
+						{/* <ChartHeader
 							selectedYear={selectedYear}
 							setSelectedYear={setSelectedYear}
 							selectedMonth={selectedMonth.value + 1}
-						/>
+						/> */}
 						<TransactionsSummaryChart
 							groupBy="category"
 							transactions={transactions as any}
 						/>
-						<ChartFooter
+						{/* <ChartFooter
 							selectedMonth={selectedMonth}
 							setSelectedMonth={setSelectedMonth}
-						/>
+						/> */}
 					</ChartWrapper>
 				</View>
 			)}
@@ -130,3 +130,4 @@ export default function ExpensesScreen() {
 		/>
 	);
 }
+
