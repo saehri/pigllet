@@ -1,4 +1,3 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import { PropsWithChildren } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Surface, Text, useTheme } from 'react-native-paper';
@@ -20,26 +19,17 @@ export default function WidgetWrapper({ title, customStyle, children }: Props) {
 				{title}
 			</Text>
 
-			<View
-				style={{
-					borderRadius: 20,
-					overflow: 'hidden',
-					borderWidth: 1,
-					borderColor: theme.colors.outlineVariant,
-				}}
+			<Surface
+				style={[
+					styles.surface,
+					{
+						borderColor: theme.colors.outlineVariant,
+					},
+				]}
+				elevation={3}
 			>
-				<LinearGradient
-					colors={[
-						theme.colors.elevation.level5,
-						theme.colors.elevation.level4,
-					]}
-					style={{
-						padding: 16,
-					}}
-				>
-					{children}
-				</LinearGradient>
-			</View>
+				{children}
+			</Surface>
 		</View>
 	);
 }
@@ -49,4 +39,11 @@ const styles = StyleSheet.create({
 		fontFamily: 'Inter-Regular',
 		marginBottom: 8,
 	},
+	surface: {
+		borderRadius: 16,
+		overflow: 'hidden',
+		borderWidth: 1,
+		padding: 16,
+	},
 });
+
