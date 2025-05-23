@@ -27,21 +27,6 @@ export default function Customization() {
 					<ThemeSelector />
 					<ColorSelector />
 				</SettingContentWrapper>
-
-				<SettingContentWrapper headerTitle="Other">
-					<SettingContentButton
-						label="Language (Coming soon)"
-						buttonRightTitle="English"
-					/>
-					<SettingContentButton
-						label="Wallpaper (Coming soon)"
-						buttonRightTitle="Default"
-					/>
-					<SettingContentButton
-						label="Reduce motion (Coming soon)"
-						buttonRightTitle="Off"
-					/>
-				</SettingContentWrapper>
 			</View>
 		</ScrollView>
 	);
@@ -90,3 +75,4 @@ function ThemeSelector() {
 		/>
 	);
 }
+
