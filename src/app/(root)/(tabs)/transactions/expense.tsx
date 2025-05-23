@@ -24,6 +24,7 @@ export default function ExpensesScreen() {
 
 	const [startDate, setStartDate] = useState(new Date());
 	const [endDate, setEndDate] = useState(new Date());
+	const [quickFilter, setQuickFilter] = useState('today');
 
 	const loadExpenseData = (startDate: string, endDate: string) =>
 		drizzleDb
@@ -85,6 +86,8 @@ export default function ExpensesScreen() {
 							setStartDate={setStartDate}
 							endDate={endDate}
 							setEndDate={setEndDate}
+							quickFilter={quickFilter}
+							setQuickFilter={setQuickFilter}
 						/>
 						<TransactionsSummaryChart
 							groupBy="category"

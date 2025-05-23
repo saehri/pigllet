@@ -1,15 +1,18 @@
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, useTheme } from 'react-native-paper';
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 
-import { ArrowRightIcon } from 'lucide-react-native';
+import { ArrowRightIcon, FilterIcon } from 'lucide-react-native';
+import SelectInput from '../forms/select-input';
 
 type Props = {
 	startDate: Date;
 	setStartDate: Dispatch<SetStateAction<Date>>;
 	endDate: Date;
 	setEndDate: Dispatch<SetStateAction<Date>>;
+	quickFilter: string;
+	setQuickFilter: Dispatch<SetStateAction<string>>;
 };
 
 export default function ChartHeader({
@@ -17,6 +20,8 @@ export default function ChartHeader({
 	setStartDate,
 	endDate,
 	setEndDate,
+	quickFilter,
+	setQuickFilter,
 }: Props) {
 	const theme = useTheme();
 
@@ -26,6 +31,7 @@ export default function ChartHeader({
 			value: startDate,
 			mode: 'date',
 			display: 'default',
+			firstDayOfWeek: 1,
 			onChange: (event, date) => {
 				if (date) {
 					setStartDate(date);
@@ -40,6 +46,7 @@ export default function ChartHeader({
 			value: endDate,
 			mode: 'date',
 			display: 'default',
+			firstDayOfWeek: 1,
 			onChange: (event, date) => {
 				if (date) {
 					setEndDate(date);
@@ -48,6 +55,27 @@ export default function ChartHeader({
 		});
 	};
 
+	function handleQuickFilterChange(filter: string) {
+		const date = new Date(),
+			y = date.getFullYear(),
+			m = date.getMonth();
+
+		if (filter === 'today') {
+			setStartDate(date);
+			setEndDate(date);
+		}
+		if (filter === 'month') {
+			setStartDate(new Date(y, m, 1));
+			setEndDate(new Date(y, m + 1, 0));
+		}
+		if (filter === 'year') {
+			setStartDate(new Date(y, 0, 1));
+			setEndDate(new Date(y, 11, 31));
+		}
+
+		setQuickFilter(filter);
+	}
+
 	return (
 		<View style={styles.container}>
 			<Button
@@ -55,6 +83,7 @@ export default function ChartHeader({
 				mode="outlined"
 				labelStyle={styles.buttonLabel}
 				style={[styles.button, { borderColor: theme.colors.outlineVariant }]}
+				contentStyle={styles.buttonContent}
 			>
 				{startDate.toLocaleDateString('en-US', { dateStyle: 'medium' })}
 			</Button>
@@ -65,7 +94,11 @@ export default function ChartHeader({
 					{ backgroundColor: theme.colors.primary },
 				]}
 			>
-				<ArrowRightIcon strokeWidth={1.5} color={theme.colors.background} />
+				<ArrowRightIcon
+					size={12}
+					strokeWidth={1.5}
+					color={theme.colors.background}
+				/>
 			</View>
 
 			<Button
@@ -73,9 +106,39 @@ export default function ChartHeader({
 				mode="outlined"
 				labelStyle={styles.buttonLabel}
 				style={[styles.button, { borderColor: theme.colors.outlineVariant }]}
+				contentStyle={styles.buttonContent}
 			>
 				{endDate.toLocaleDateString('en-US', { dateStyle: 'medium' })}
 			</Button>
+
+			<SelectInput
+				data={[
+					{ label: 'Today', value: 'today' },
+					{ label: 'This month', value: 'month' },
+					{ label: 'This year', value: 'year' },
+				]}
+				handleSelect={handleQuickFilterChange}
+				value={quickFilter}
+				closeAfterSelect
+				triggerButton={({ showDialog }) => (
+					<Button
+						onPress={showDialog}
+						mode="outlined"
+						compact
+						style={{
+							borderColor: theme.colors.outlineVariant,
+							borderRadius: 11,
+							height: 41,
+						}}
+					>
+						<FilterIcon
+							size={16}
+							strokeWidth={1.5}
+							color={theme.colors.primary}
+						/>
+					</Button>
+				)}
+			/>
 		</View>
 	);
 }
@@ -83,23 +146,28 @@ export default function ChartHeader({
 const styles = StyleSheet.create({
 	container: {
 		flexDirection: 'row',
-		gap: 8,
+		gap: 6,
 		alignItems: 'center',
 		padding: 16,
 	},
 	buttonLabel: {
 		fontFamily: 'Inter-Regular',
+		width: '100%',
 	},
 	button: {
 		flex: 1,
 		borderRadius: 11,
+		padding: 0,
 	},
 	iconDividerContainer: {
-		width: 28,
-		height: 28,
+		width: 16,
+		height: 16,
 		borderRadius: 100,
 		alignItems: 'center',
 		justifyContent: 'center',
+	},
+	buttonContent: {
+		padding: 0,
 	},
 });
 
