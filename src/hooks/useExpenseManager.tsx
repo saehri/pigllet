@@ -224,13 +224,13 @@ export default function useExpenseManager({
 			await drizzleDb
 				.update(schema.transactions)
 				.set({
-					type: 'expense',
+					type: transactionType,
 					account_id: transactionUsedAccount?.id,
 					amount: Number(transactionAmmount),
 					category_id: transactionCategory?.id,
 					created_at: transactionCreatedAt.toISOString(),
 					image: transactionImage,
-					note: transactionImage,
+					note: transactionNote,
 				})
 				.where(eq(schema.transactions.id, initialFormValue?.id as number));
 
