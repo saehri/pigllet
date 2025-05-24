@@ -15,6 +15,7 @@ import ChartFooter from '@/src/components/charts/chart-footer';
 import ChartWrapper from '@/src/components/charts/chart-wrapper';
 import NoItemNotice from '@/src/components/reusables/no-items-notice';
 import TransactionsSummaryChart from '@/src/components/charts/transactions-summary-chart';
+import { toYYYYMMDD } from '@/utils/utils';
 
 export default function ExpensesScreen() {
 	const theme = useTheme();
@@ -42,15 +43,10 @@ export default function ExpensesScreen() {
 			})
 			.from(schema.transactions)
 			.where(
-				startDate === endDate
-					? and(
-							eq(schema.transactions.type, 'expense'),
-							sql`DATE(${schema.transactions.created_at}) = DATE(${endDate})`
-						)
-					: and(
-							eq(schema.transactions.type, 'expense'),
-							sql`DATE(${schema.transactions.created_at}) BETWEEN DATE(${startDate}) AND DATE(${endDate})`
-						)
+				and(
+					eq(schema.transactions.type, 'expense'),
+					sql`DATE(transactions.created_at) BETWEEN DATE(${startDate}) AND DATE(${endDate})`
+				)
 			)
 			.innerJoin(
 				schema.categories,
@@ -63,7 +59,7 @@ export default function ExpensesScreen() {
 			.orderBy(desc(schema.transactions.created_at));
 
 	const { data: transactions } = useLiveQuery(
-		loadExpenseData(startDate.toISOString(), endDate.toISOString()),
+		loadExpenseData(toYYYYMMDD(startDate), toYYYYMMDD(endDate)),
 		[startDate, endDate]
 	);
 

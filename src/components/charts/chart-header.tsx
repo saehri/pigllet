@@ -35,6 +35,7 @@ export default function ChartHeader({
 			onChange: (event, date) => {
 				if (date) {
 					setStartDate(date);
+					setQuickFilter('');
 				}
 			},
 		});
@@ -50,6 +51,7 @@ export default function ChartHeader({
 			onChange: (event, date) => {
 				if (date) {
 					setEndDate(date);
+					setQuickFilter('');
 				}
 			},
 		});
