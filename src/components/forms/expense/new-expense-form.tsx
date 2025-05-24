@@ -23,6 +23,7 @@ import DatePicker from '../date-picker';
 import Accountelector from '../account-selector';
 import ImageSelectorInput from '../image-select-input';
 import SelectInputWithIcon from '../select-input-with-icon';
+import { StyleSheet } from 'react-native';
 
 export default function CreateExpenseForm() {
 	const theme = useTheme();
@@ -119,7 +120,9 @@ export default function CreateExpenseForm() {
 		<View style={{ padding: 16, gap: 16 }}>
 			<View style={{ flexDirection: 'row', gap: 8 }}>
 				<View style={{ gap: 8, flex: 1 }}>
-					<Text variant="bodyLarge">From</Text>
+					<Text style={styles.inputLabel} variant="bodyLarge">
+						From
+					</Text>
 					<Accountelector
 						accounts={userAccount}
 						handleSelect={setSelectedAccount}
@@ -128,17 +131,22 @@ export default function CreateExpenseForm() {
 				</View>
 
 				<View style={{ gap: 8, flex: 1 }}>
-					<Text variant="bodyLarge">Amount ({currentCurrencySymbol})</Text>
+					<Text style={styles.inputLabel} variant="bodyLarge">
+						Amount ({currentCurrencySymbol})
+					</Text>
 					<TextInput
 						keyboardType="number-pad"
 						onChangeText={setAmount}
 						value={amount}
+						contentStyle={styles.inputContent}
 					/>
 				</View>
 			</View>
 
 			<View style={{ gap: 8 }}>
-				<Text variant="bodyLarge">Expense category</Text>
+				<Text style={styles.inputLabel} variant="bodyLarge">
+					Expense category
+				</Text>
 				<SelectInputWithIcon
 					data={userExpenseCategories}
 					handleSelect={setSelectedCategory}
@@ -147,7 +155,9 @@ export default function CreateExpenseForm() {
 			</View>
 
 			<View style={{ gap: 8 }}>
-				<Text variant="bodyLarge">Date</Text>
+				<Text style={styles.inputLabel} variant="bodyLarge">
+					Date
+				</Text>
 				<DatePicker
 					selectedDate={selectedDate}
 					setSelectedDate={setSelectedDate}
@@ -155,12 +165,20 @@ export default function CreateExpenseForm() {
 			</View>
 
 			<View style={{ gap: 8 }}>
-				<Text variant="bodyLarge">Note</Text>
-				<TextInput onChangeText={setNote} value={note} />
+				<Text style={styles.inputLabel} variant="bodyLarge">
+					Note
+				</Text>
+				<TextInput
+					onChangeText={setNote}
+					value={note}
+					contentStyle={styles.inputContent}
+				/>
 			</View>
 
 			<View style={{ gap: 8 }}>
-				<Text variant="bodyLarge">Add image</Text>
+				<Text style={styles.inputLabel} variant="bodyLarge">
+					Add image
+				</Text>
 				<ImageSelectorInput handleSelect={setImage} selectedImage={image} />
 			</View>
 
@@ -180,4 +198,13 @@ export default function CreateExpenseForm() {
 		</View>
 	);
 }
+
+const styles = StyleSheet.create({
+	inputLabel: {
+		fontFamily: 'Inter-Regular',
+	},
+	inputContent: {
+		fontFamily: 'Inter-Regular',
+	},
+});
 

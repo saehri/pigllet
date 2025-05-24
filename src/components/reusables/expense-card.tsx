@@ -13,8 +13,6 @@ import { Transaction, Category } from '@/db/schema';
 import TransactionIcons from './transaction-icons';
 import getLocaleByCurrencySymbol from '@/utils/locale-getter';
 
-// type TransactionWithoutImage = Omit<Transaction, 'image'>;
-
 interface Props {
 	category: Category;
 	data: Transaction;

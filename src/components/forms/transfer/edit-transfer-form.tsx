@@ -1,6 +1,5 @@
-import { useContext } from 'react';
-import { useEffect, useState } from 'react';
-import { StyleSheet, ToastAndroid, View } from 'react-native';
+import { drizzle } from 'drizzle-orm/expo-sqlite';
+import { useSQLiteContext } from 'expo-sqlite';
 import {
 	ActivityIndicator,
 	Button,
@@ -9,31 +8,32 @@ import {
 	useTheme,
 } from 'react-native-paper';
 
-import { eq } from 'drizzle-orm';
 import * as schema from '@/db/schema';
-import { Category } from '@/db/schema';
-import { useSQLiteContext } from 'expo-sqlite';
-import { drizzle } from 'drizzle-orm/expo-sqlite';
-
+import { useContext, useEffect, useState } from 'react';
 import {
 	UserPreferenceContext,
 	UserPreferenceContextTypes,
 } from '@/context/UserPreferenceContext';
+import { ToastAndroid } from 'react-native';
+import { View } from 'lucide-react-native';
+import { eq } from 'drizzle-orm';
 
-import DatePicker from '../date-picker';
 import AccountSelector from '../account-selector';
-import ImageSelectorInput from '../image-select-input';
 import SelectInputWithIcon from '../select-input-with-icon';
+import DatePicker from '../date-picker';
+import ImageSelectorInput from '../image-select-input';
+import { useLocalSearchParams } from 'expo-router';
 
-export default function NewTransferForm() {
+export default function EditTransferForm() {
 	const theme = useTheme();
-
-	const db = useSQLiteContext();
-	const drizzleDb = drizzle(db, { schema });
 
 	const { currentCurrencySymbol } = useContext(
 		UserPreferenceContext
 	) as UserPreferenceContextTypes;
+	const { id } = useLocalSearchParams();
+
+	const db = useSQLiteContext();
+	const drizzleDb = drizzle(db, { schema });
 
 	// form state
 	const [isLoading, setLoading] = useState(false);
@@ -54,17 +54,37 @@ export default function NewTransferForm() {
 	useEffect(() => {
 		async function load() {
 			try {
-				const accounts = await drizzleDb.select().from(schema.accounts);
+				const data = await drizzleDb
+					.select({
+						transactions: schema.transactions,
+						account: schema.accounts,
+						category: schema.categories,
+					})
+					.from(schema.transactions)
+					.where(eq(schema.transactions.id, Number(id)))
+					.innerJoin(
+						schema.categories,
+						eq(schema.transactions.category_id, schema.categories.id)
+					)
+					.innerJoin(
+						schema.accounts,
+						eq(schema.transactions.account_id, schema.accounts.id)
+					);
+
+				const allAccounts = await drizzleDb.select().from(schema.accounts);
+
 				const transferCategories = await drizzleDb
 					.select()
 					.from(schema.categories)
 					.where(eq(schema.categories.type, 'transfer'));
 
-				setUserAccounts(accounts as schema.Account[]);
-				setMainAccount(accounts[0]);
-				setRelatedAccount(accounts[0]);
+				setUserAccounts(allAccounts as schema.Account[]);
 
-				setUserTransferCategories(transferCategories as Category[]);
+				setMainAccount(data[0].account);
+
+				setRelatedAccount(data[0].transactions);
+
+				setUserTransferCategories(transferCategories as schema.Category[]);
 				setSelectedCategory(transferCategories[0]);
 			} catch (error: any) {
 				ToastAndroid.show(error.message, ToastAndroid.CENTER);
@@ -126,9 +146,7 @@ export default function NewTransferForm() {
 		<View style={{ padding: 16, gap: 16 }}>
 			<View style={{ flexDirection: 'row', gap: 8 }}>
 				<View style={{ gap: 8, flex: 1 }}>
-					<Text style={styles.inputLabel} variant="bodyLarge">
-						From account
-					</Text>
+					<Text variant="bodyLarge">From account</Text>
 					<AccountSelector
 						accounts={userAccounts}
 						handleSelect={setMainAccount}
@@ -137,9 +155,7 @@ export default function NewTransferForm() {
 				</View>
 
 				<View style={{ gap: 8, flex: 1 }}>
-					<Text style={styles.inputLabel} variant="bodyLarge">
-						To account
-					</Text>
+					<Text variant="bodyLarge">To account</Text>
 					<AccountSelector
 						accounts={userAccounts}
 						handleSelect={setRelatedAccount}
@@ -149,21 +165,16 @@ export default function NewTransferForm() {
 			</View>
 
 			<View style={{ gap: 8, flex: 1 }}>
-				<Text style={styles.inputLabel} variant="bodyLarge">
-					Amount ({currentCurrencySymbol})
-				</Text>
+				<Text variant="bodyLarge">Amount ({currentCurrencySymbol})</Text>
 				<TextInput
 					keyboardType="number-pad"
 					onChangeText={setAmount}
 					value={amount}
-					contentStyle={styles.inputContent}
 				/>
 			</View>
 
 			<View style={{ gap: 8 }}>
-				<Text style={styles.inputLabel} variant="bodyLarge">
-					Transfer category
-				</Text>
+				<Text variant="bodyLarge">Transfer category</Text>
 				<SelectInputWithIcon
 					data={userTransferCategories}
 					handleSelect={setSelectedCategory}
@@ -172,9 +183,7 @@ export default function NewTransferForm() {
 			</View>
 
 			<View style={{ gap: 8 }}>
-				<Text style={styles.inputLabel} variant="bodyLarge">
-					Date
-				</Text>
+				<Text variant="bodyLarge">Date</Text>
 				<DatePicker
 					selectedDate={selectedDate}
 					setSelectedDate={setSelectedDate}
@@ -182,20 +191,12 @@ export default function NewTransferForm() {
 			</View>
 
 			<View style={{ gap: 8 }}>
-				<Text style={styles.inputLabel} variant="bodyLarge">
-					Note
-				</Text>
-				<TextInput
-					contentStyle={styles.inputContent}
-					onChangeText={setNote}
-					value={note}
-				/>
+				<Text variant="bodyLarge">Note</Text>
+				<TextInput onChangeText={setNote} value={note} />
 			</View>
 
 			<View style={{ gap: 8 }}>
-				<Text style={styles.inputLabel} variant="bodyLarge">
-					Add image
-				</Text>
+				<Text variant="bodyLarge">Add image</Text>
 				<ImageSelectorInput handleSelect={setImage} selectedImage={image} />
 			</View>
 
@@ -209,19 +210,10 @@ export default function NewTransferForm() {
 				{isLoading ? (
 					<ActivityIndicator size={20} color={theme.colors.onPrimary} />
 				) : (
-					'Save transfer record'
+					'Save changes'
 				)}
 			</Button>
 		</View>
 	);
 }
-
-const styles = StyleSheet.create({
-	inputLabel: {
-		fontFamily: 'Inter-Regular',
-	},
-	inputContent: {
-		fontFamily: 'Inter-Regular',
-	},
-});
 

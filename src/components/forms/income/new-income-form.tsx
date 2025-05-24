@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { useEffect, useState } from 'react';
-import { ToastAndroid, View } from 'react-native';
+import { StyleSheet, ToastAndroid, View } from 'react-native';
 import {
 	ActivityIndicator,
 	Button,
@@ -11,7 +11,7 @@ import {
 
 import { eq } from 'drizzle-orm';
 import * as schema from '@/db/schema';
-import { TransactionCategories, Accounts } from '@/db/schema';
+import { Category, Account } from '@/db/schema';
 import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 
@@ -34,9 +34,8 @@ export default function CreateIncomeForm() {
 	// form state
 	const [isLoading, setLoading] = useState(false);
 
-	const [selectedCategory, setSelectedCategory] =
-		useState<TransactionCategories>();
-	const [selectedAccount, setSelectedAccount] = useState<Accounts>();
+	const [selectedCategory, setSelectedCategory] = useState<Category>();
+	const [selectedAccount, setSelectedAccount] = useState<Account>();
 	const [amount, setAmount] = useState<string>('');
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 	const [note, setNote] = useState<string>('');
@@ -45,9 +44,9 @@ export default function CreateIncomeForm() {
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
 
-	const [userAccounts, setUserAccounts] = useState<schema.Accounts[]>([]);
-	const [userExpenseCategories, setUserExpensesCategories] = useState<
-		schema.TransactionCategories[]
+	const [userAccounts, setUserAccounts] = useState<schema.Account[]>([]);
+	const [userIncomeCategory, setUserIncomeCategories] = useState<
+		schema.Category[]
 	>([]);
 
 	useEffect(() => {
@@ -59,10 +58,10 @@ export default function CreateIncomeForm() {
 					.from(schema.categories)
 					.where(eq(schema.categories.type, 'income'));
 
-				setUserAccounts(accounts as Accounts[]);
+				setUserAccounts(accounts as Account[]);
 				setSelectedAccount(accounts[0]);
 				setSelectedCategory(categories[0]);
-				setUserExpensesCategories(categories as TransactionCategories[]);
+				setUserIncomeCategories(categories as Category[]);
 			} catch (error: any) {
 				ToastAndroid.show(error.message, ToastAndroid.CENTER);
 			}
@@ -75,6 +74,8 @@ export default function CreateIncomeForm() {
 		try {
 			setLoading(true);
 
+			if (!selectedAccount || !selectedCategory) return;
+
 			if (!amount.length || isNaN(Number(amount))) {
 				ToastAndroid.show('Please enter a valid amount', ToastAndroid.SHORT);
 				return;
@@ -84,9 +85,7 @@ export default function CreateIncomeForm() {
 				amount: Number(amount),
 				account_id: selectedAccount.id as number,
 				category_id: selectedCategory.id as number,
-				created_date: selectedDate.getDate(),
-				created_month: selectedDate.getMonth() + 1,
-				created_year: selectedDate.getFullYear(),
+				created_at: selectedDate.toISOString(),
 				image,
 				note,
 				type: 'income',
@@ -118,7 +117,9 @@ export default function CreateIncomeForm() {
 		<View style={{ padding: 16, gap: 16 }}>
 			<View style={{ flexDirection: 'row', gap: 8 }}>
 				<View style={{ gap: 8, flex: 1 }}>
-					<Text variant="bodyLarge">To account</Text>
+					<Text style={styles.inputLabel} variant="bodyLarge">
+						To account
+					</Text>
 					<AccountSelector
 						accounts={userAccounts}
 						handleSelect={setSelectedAccount}
@@ -127,26 +128,33 @@ export default function CreateIncomeForm() {
 				</View>
 
 				<View style={{ gap: 8, flex: 1 }}>
-					<Text variant="bodyLarge">Amount ({currentCurrencySymbol})</Text>
+					<Text style={styles.inputLabel} variant="bodyLarge">
+						Amount ({currentCurrencySymbol})
+					</Text>
 					<TextInput
 						keyboardType="number-pad"
 						onChangeText={setAmount}
 						value={amount}
+						contentStyle={styles.inputContent}
 					/>
 				</View>
 			</View>
 
 			<View style={{ gap: 8 }}>
-				<Text variant="bodyLarge">Expense category</Text>
+				<Text style={styles.inputLabel} variant="bodyLarge">
+					Expense category
+				</Text>
 				<SelectInputWithIcon
-					data={userExpenseCategories}
+					data={userIncomeCategory}
 					handleSelect={setSelectedCategory}
 					selectedCategory={selectedCategory}
 				/>
 			</View>
 
 			<View style={{ gap: 8 }}>
-				<Text variant="bodyLarge">Date</Text>
+				<Text style={styles.inputLabel} variant="bodyLarge">
+					Date
+				</Text>
 				<DatePicker
 					selectedDate={selectedDate}
 					setSelectedDate={setSelectedDate}
@@ -154,12 +162,20 @@ export default function CreateIncomeForm() {
 			</View>
 
 			<View style={{ gap: 8 }}>
-				<Text variant="bodyLarge">Note</Text>
-				<TextInput onChangeText={setNote} value={note} />
+				<Text style={styles.inputLabel} variant="bodyLarge">
+					Note
+				</Text>
+				<TextInput
+					contentStyle={styles.inputContent}
+					onChangeText={setNote}
+					value={note}
+				/>
 			</View>
 
 			<View style={{ gap: 8 }}>
-				<Text variant="bodyLarge">Add image</Text>
+				<Text style={styles.inputLabel} variant="bodyLarge">
+					Add image
+				</Text>
 				<ImageSelectorInput handleSelect={setImage} selectedImage={image} />
 			</View>
 
@@ -179,3 +195,13 @@ export default function CreateIncomeForm() {
 		</View>
 	);
 }
+
+const styles = StyleSheet.create({
+	inputLabel: {
+		fontFamily: 'Inter-Regular',
+	},
+	inputContent: {
+		fontFamily: 'Inter-Regular',
+	},
+});
+

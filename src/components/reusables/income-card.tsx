@@ -7,15 +7,15 @@ import {
 	UserPreferenceContextTypes,
 } from '@/context/UserPreferenceContext';
 
-import { Accounts, Transaction, TransactionCategories } from '@/db/schema';
+import { Account, Transaction, Category } from '@/db/schema';
 
 import getLocaleByCurrencySymbol from '@/utils/locale-getter';
 import { ArrowDownLeft, Image } from 'lucide-react-native';
 
 interface Props {
-	category: TransactionCategories;
+	category: Category;
 	data: Transaction;
-	accounts: Accounts;
+	accounts: Account;
 	disableFirstButton?: boolean;
 	disableSecondButton?: boolean;
 }
@@ -180,3 +180,4 @@ const styles = StyleSheet.create({
 		opacity: 0.8,
 	},
 });
+

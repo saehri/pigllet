@@ -60,9 +60,11 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		color: '#fff',
 		textTransform: 'capitalize',
+		fontFamily: 'Inter-Regular',
 	},
 	icon: {
 		position: 'absolute',
 		right: 8,
 	},
 });
+
