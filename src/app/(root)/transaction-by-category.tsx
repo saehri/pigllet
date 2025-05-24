@@ -1,88 +1,95 @@
-import { FlatList, ScrollView, View } from 'react-native';
-import {
-	Dispatch,
-	SetStateAction,
-	useCallback,
-	useEffect,
-	useState,
-} from 'react';
+import { Text } from 'react-native-paper';
 import { useSQLiteContext } from 'expo-sqlite';
+import { useEffect, useState } from 'react';
+import { FlatList, StyleSheet, View } from 'react-native';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
-import { Chip, Text } from 'react-native-paper';
 
 import * as schema from '@/db/schema';
 import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
-import { and, desc, eq } from 'drizzle-orm';
 
+import { alias } from 'drizzle-orm/sqlite-core';
+import { toYYYYMMDD } from '@/utils/utils';
+import { and, eq, sql } from 'drizzle-orm';
 import { groupedTransactionsByDate } from '@/utils/group-transactions';
 
+import ChartHeader from '@/src/components/charts/chart-header';
+import ChartFooter from '@/src/components/charts/chart-footer';
+import ChartWrapper from '@/src/components/charts/chart-wrapper';
 import NoItemNotice from '@/src/components/reusables/no-items-notice';
 import TransactionCard from '@/src/components/reusables/transaction-card';
-import ChartWrapper from '@/src/components/charts/chart-wrapper';
 import TransactionsSummaryChart from '@/src/components/charts/transactions-summary-chart';
-
-type FilterTypes = 'all' | 'this-month' | 'this-year';
 
 export default function TransactionByCategoryScreen() {
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
 	const navigation = useNavigation();
+
 	const { categoryId, categoryName } = useLocalSearchParams();
 
-	const [filter, setFilter] = useState<FilterTypes>('this-month');
+	// ---- states used to filter and query the data
+	const [startDate, setStartDate] = useState(new Date());
+	const [endDate, setEndDate] = useState(new Date());
+	const [quickFilter, setQuickFilter] = useState('today');
 
-	const loadExpenseData = useCallback(
-		(filter: FilterTypes, todayDate: Date) => {
-			let query = drizzleDb
-				.select({
-					id: schema.transactions.id,
-					amount: schema.transactions.amount,
-					note: schema.transactions.note,
-					account_id: schema.transactions.account_id,
-					category_id: schema.transactions.category_id,
-					type: schema.transactions.type,
-					created_date: schema.transactions.created_date,
-					created_month: schema.transactions.created_month,
-					created_year: schema.transactions.created_year,
-					category: schema.categories,
-					account: schema.accounts,
-					image: schema.transactions.image,
-				})
-				.from(schema.transactions)
-				.innerJoin(
-					schema.categories,
-					eq(schema.transactions.category_id, schema.categories.id)
-				)
-				.innerJoin(
-					schema.accounts,
-					eq(schema.transactions.account_id, schema.accounts.id)
-				)
-				.orderBy(desc(schema.transactions.created_month));
-
-			// Base filter by category ID
-			let conditions = [
-				eq(schema.transactions.category_id, Number(categoryId)),
-			];
-
-			if (filter === 'this-month') {
-				conditions.push(
-					eq(schema.transactions.created_month, todayDate.getMonth() + 1),
-					eq(schema.transactions.created_year, todayDate.getFullYear())
-				);
-			} else if (filter !== 'all') {
-				conditions.push(
-					eq(schema.transactions.created_year, todayDate.getFullYear())
-				);
-			}
-
-			return query.where(and(...conditions));
-		},
-		[drizzleDb]
-	);
+	const relatedAccounts = alias(schema.accounts, 'related_accounts'); // Alias for related accounts
 
 	const { data: transactions } = useLiveQuery(
-		loadExpenseData(filter, new Date()),
-		[filter]
+		drizzleDb
+			.select({
+				id: schema.transactions.id,
+				amount: schema.transactions.amount,
+				note: schema.transactions.note,
+				account_id: schema.transactions.account_id,
+				related_account_id: schema.transactions.related_account_id,
+				category_id: schema.transactions.category_id,
+				type: schema.transactions.type,
+				image: schema.transactions.image,
+				created_at: schema.transactions.created_at,
+				account: {
+					id: schema.accounts.id,
+					name: schema.accounts.name,
+					number: schema.accounts.number,
+					balance: schema.accounts.balance,
+					is_cash: schema.accounts.is_cash,
+					image: schema.accounts.image,
+					created_at: schema.accounts.created_at,
+				},
+				category: {
+					id: schema.categories.id,
+					label: schema.categories.label,
+					icon_name: schema.categories.icon_name,
+					type: schema.categories.type,
+				},
+				related_account: {
+					id: relatedAccounts.id,
+					name: relatedAccounts.name,
+					number: relatedAccounts.number,
+					balance: relatedAccounts.balance,
+					is_cash: relatedAccounts.is_cash,
+					image: relatedAccounts.image,
+					created_at: relatedAccounts.created_at,
+				},
+			})
+			.from(schema.transactions)
+			.where(
+				and(
+					eq(schema.transactions.category_id, Number(categoryId)),
+					sql`DATE(transactions.created_at) BETWEEN DATE(${toYYYYMMDD(startDate)}) AND DATE(${toYYYYMMDD(endDate)})`
+				)
+			)
+			.leftJoin(
+				schema.categories,
+				eq(schema.transactions.category_id, schema.categories.id)
+			)
+			.leftJoin(
+				schema.accounts,
+				eq(schema.transactions.account_id, schema.accounts.id)
+			)
+			.leftJoin(
+				relatedAccounts,
+				eq(schema.transactions.related_account_id, relatedAccounts.id)
+			),
+		[startDate, endDate]
 	);
 
 	useEffect(() => {
@@ -94,38 +101,35 @@ export default function TransactionByCategoryScreen() {
 	return (
 		<FlatList
 			ListHeaderComponent={() => (
-				<View>
-					<ListHeader setFilter={setFilter} selectedFilter={filter} />
-
-					<View style={{ paddingHorizontal: 16, paddingBottom: 24 }}>
-						<ChartWrapper>
-							<TransactionsSummaryChart
-								groupBy="date"
-								transactions={transactions}
-							/>
-						</ChartWrapper>
-					</View>
+				<View style={styles.chartWrapperContainer}>
+					<ChartWrapper>
+						<ChartHeader
+							startDate={startDate}
+							setStartDate={setStartDate}
+							endDate={endDate}
+							setEndDate={setEndDate}
+							quickFilter={quickFilter}
+							setQuickFilter={setQuickFilter}
+						/>
+						<TransactionsSummaryChart
+							groupBy="date"
+							transactions={transactions}
+						/>
+						<ChartFooter transactions={transactions as any} />
+					</ChartWrapper>
 				</View>
 			)}
 			data={groupedTransactionsByDate(transactions as any)}
 			ListEmptyComponent={<NoItemNotice />}
 			renderItem={({ item }) => (
-				<View style={{ paddingBottom: 18, gap: 8 }}>
-					<Text
-						style={{
-							fontFamily: 'Inter-Regular',
-							paddingHorizontal: 16,
-							fontSize: 18,
-						}}
-					>
-						{item.created_date}
-					</Text>
+				<View style={styles.renderItem}>
+					<Text style={styles.renderItemHeader}>{item.created_date}</Text>
 					<View>
 						{item.transactions.map((transaction) => (
 							<TransactionCard
 								key={transaction.id}
-								account={transaction.account}
-								category={transaction.category as any}
+								account={transaction.account as schema.Account}
+								category={transaction.category as schema.Category}
 								data={transaction}
 								transactionType={transaction.type as any}
 								disableFirstButton
@@ -138,48 +142,16 @@ export default function TransactionByCategoryScreen() {
 	);
 }
 
-type ListHeaderProps = {
-	setFilter: Dispatch<SetStateAction<FilterTypes>>;
-	selectedFilter: FilterTypes;
-};
+const styles = StyleSheet.create({
+	chartWrapperContainer: {
+		padding: 16,
+		paddingBottom: 24,
+	},
+	renderItem: { paddingBottom: 18, gap: 8 },
+	renderItemHeader: {
+		fontFamily: 'Inter-Regular',
+		paddingHorizontal: 16,
+		fontSize: 18,
+	},
+});
 
-function ListHeader({ setFilter, selectedFilter }: ListHeaderProps) {
-	return (
-		<ScrollView horizontal showsHorizontalScrollIndicator={false}>
-			<View
-				style={{
-					flexDirection: 'row',
-					gap: 8,
-					alignItems: 'center',
-					paddingHorizontal: 16,
-					paddingBottom: 24,
-				}}
-			>
-				<Chip
-					selected={selectedFilter === 'all'}
-					style={{ borderRadius: 100 }}
-					onPress={() => setFilter('all')}
-					textStyle={{ fontFamily: 'Inter-Regular' }}
-				>
-					All
-				</Chip>
-				<Chip
-					selected={selectedFilter === 'this-month'}
-					style={{ borderRadius: 100 }}
-					onPress={() => setFilter('this-month')}
-					textStyle={{ fontFamily: 'Inter-Regular' }}
-				>
-					This month
-				</Chip>
-				<Chip
-					selected={selectedFilter === 'this-year'}
-					style={{ borderRadius: 100 }}
-					onPress={() => setFilter('this-year')}
-					textStyle={{ fontFamily: 'Inter-Regular' }}
-				>
-					This year
-				</Chip>
-			</View>
-		</ScrollView>
-	);
-}

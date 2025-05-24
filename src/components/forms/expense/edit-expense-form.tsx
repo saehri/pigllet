@@ -26,205 +26,229 @@ import AccountSelector from '../account-selector';
 import SelectInputWithIcon from '../select-input-with-icon';
 import DatePicker from '../date-picker';
 import ImageSelectorInput from '../image-select-input';
+import useExpenseManager from '@/src/hooks/useExpenseManager';
 
 export default function EditExpenseForm() {
 	const theme = useTheme();
 	const { currentCurrencySymbol } = useContext(
 		UserPreferenceContext
 	) as UserPreferenceContextTypes;
-	const { id, type } = useLocalSearchParams();
+	const { id } = useLocalSearchParams();
 
-	const db = useSQLiteContext();
-	const drizzleDb = drizzle(db, { schema });
+	// const db = useSQLiteContext();
+	// const drizzleDb = drizzle(db, { schema });
 
-	const [initialFormValue, setInitialFormValue] =
-		useState<schema.Transaction>();
-	const [userAccounts, setUserAccounts] = useState<schema.Account[]>([]);
-	const [userExpenseCategories, setUserExpensesCategories] = useState<
-		schema.Category[]
-	>([]);
+	// const [initialFormValue, setInitialFormValue] =
+	// 	useState<schema.Transaction>();
+	// const [userAccounts, setUserAccounts] = useState<schema.Account[]>([]);
+	// const [userExpenseCategories, setUserExpensesCategories] = useState<
+	// 	schema.Category[]
+	// >([]);
 
-	// form state
-	const [isLoading, setLoading] = useState(false);
+	// // form state
+	// const [isLoading, setLoading] = useState(false);
 
-	const [initialAccount, setInitialAccount] = useState<schema.Account>();
+	// const [initialAccount, setInitialAccount] = useState<schema.Account>();
 
-	const [selectedCategory, setSelectedCategory] = useState<Category>();
-	const [selectedAccount, setSelectedAccount] = useState<Account>();
-	const [amount, setAmount] = useState<string>('');
-	const [createdAt, setCreatedAt] = useState<Date>(new Date());
-	const [note, setNote] = useState<string>('');
-	const [image, setImage] = useState<string>('');
+	// const [selectedCategory, setSelectedCategory] = useState<Category>();
+	// const [selectedAccount, setSelectedAccount] = useState<Account>();
+	// const [amount, setAmount] = useState<string>('');
+	// const [createdAt, setCreatedAt] = useState<Date>(new Date());
+	// const [note, setNote] = useState<string>('');
+	// const [image, setImage] = useState<string>('');
 
-	useEffect(() => {
-		async function load() {
-			try {
-				const data = await drizzleDb
-					.select({
-						transactions: schema.transactions,
-						accounts: schema.accounts,
-						categories: schema.categories,
-					})
-					.from(schema.transactions)
-					.where(eq(schema.transactions.id, Number(id)))
-					.innerJoin(
-						schema.categories,
-						eq(schema.transactions.category_id, schema.categories.id)
-					)
-					.innerJoin(
-						schema.accounts,
-						eq(schema.transactions.account_id, schema.accounts.id)
-					);
+	// useEffect(() => {
+	// 	async function load() {
+	// 		try {
+	// 			const data = await drizzleDb
+	// 				.select({
+	// 					transactions: schema.transactions,
+	// 					accounts: schema.accounts,
+	// 					categories: schema.categories,
+	// 				})
+	// 				.from(schema.transactions)
+	// 				.where(eq(schema.transactions.id, Number(id)))
+	// 				.innerJoin(
+	// 					schema.categories,
+	// 					eq(schema.transactions.category_id, schema.categories.id)
+	// 				)
+	// 				.innerJoin(
+	// 					schema.accounts,
+	// 					eq(schema.transactions.account_id, schema.accounts.id)
+	// 				);
 
-				const allAccounts = await drizzleDb.select().from(schema.accounts);
-				const allCategories = await drizzleDb
-					.select()
-					.from(schema.categories)
-					.where(eq(schema.categories.type, type as string));
+	// 			const allAccounts = await drizzleDb.select().from(schema.accounts);
+	// 			const allCategories = await drizzleDb
+	// 				.select()
+	// 				.from(schema.categories)
+	// 				.where(eq(schema.categories.type, type as string));
 
-				const { accounts, categories, transactions } = data[0];
+	// 			const { accounts, categories, transactions } = data[0];
 
-				setInitialFormValue(transactions);
-				setSelectedAccount(accounts);
-				setAmount(transactions.amount.toString());
-				setSelectedCategory(categories);
-				setNote(transactions.note || '');
-				setImage(transactions.image || '');
-				setCreatedAt(new Date(transactions.created_at));
+	// 			setInitialFormValue(transactions);
+	// 			setSelectedAccount(accounts);
+	// 			setAmount(transactions.amount.toString());
+	// 			setSelectedCategory(categories);
+	// 			setNote(transactions.note || '');
+	// 			setImage(transactions.image || '');
+	// 			setCreatedAt(new Date(transactions.created_at));
 
-				setInitialAccount(accounts);
+	// 			setInitialAccount(accounts);
 
-				setUserAccounts(allAccounts);
-				setUserExpensesCategories(allCategories);
-			} catch (error: any) {
-				ToastAndroid.show(error.message, ToastAndroid.CENTER);
-			}
-		}
+	// 			setUserAccounts(allAccounts);
+	// 			setUserExpensesCategories(allCategories);
+	// 		} catch (error: any) {
+	// 			ToastAndroid.show(error.message, ToastAndroid.CENTER);
+	// 		}
+	// 	}
 
-		load();
-	}, []);
+	// 	load();
+	// }, []);
 
-	async function handleSubmit() {
-		try {
-			setLoading(true);
-			if (
-				!selectedAccount ||
-				!selectedCategory ||
-				!initialFormValue ||
-				!initialAccount
-			)
-				return;
+	// async function handleSubmit() {
+	// 	try {
+	// 		setLoading(true);
+	// 		if (
+	// 			!selectedAccount ||
+	// 			!selectedCategory ||
+	// 			!initialFormValue ||
+	// 			!initialAccount
+	// 		)
+	// 			return;
 
-			if (!amount.length || isNaN(Number(amount))) {
-				ToastAndroid.show('Please enter a valid amount', ToastAndroid.SHORT);
-				return;
-			}
+	// 		if (!amount.length || isNaN(Number(amount))) {
+	// 			ToastAndroid.show('Please enter a valid amount', ToastAndroid.SHORT);
+	// 			return;
+	// 		}
 
-			await drizzleDb
-				.update(schema.transactions)
-				.set({
-					type: 'expense',
-					account_id: selectedAccount.id,
-					amount: Number(amount),
-					category_id: selectedCategory.id,
-					created_at: createdAt.toISOString(),
-					image,
-					note,
-				})
-				.where(eq(schema.transactions.id, initialFormValue.id as number));
+	// 		await drizzleDb
+	// 			.update(schema.transactions)
+	// 			.set({
+	// 				type: 'expense',
+	// 				account_id: selectedAccount.id,
+	// 				amount: Number(amount),
+	// 				category_id: selectedCategory.id,
+	// 				created_at: createdAt.toISOString(),
+	// 				image,
+	// 				note,
+	// 			})
+	// 			.where(eq(schema.transactions.id, initialFormValue.id as number));
 
-			await drizzleDb
-				.update(schema.accounts)
-				.set({
-					balance:
-						initialAccount.balance - initialFormValue.amount + Number(amount),
-				})
-				.where(eq(schema.accounts.id, selectedAccount.id as number));
+	// 		await drizzleDb
+	// 			.update(schema.accounts)
+	// 			.set({
+	// 				balance:
+	// 					initialAccount.balance - initialFormValue.amount + Number(amount),
+	// 			})
+	// 			.where(eq(schema.accounts.id, selectedAccount.id as number));
 
-			ToastAndroid.show('Changes saved!', ToastAndroid.CENTER);
-		} catch (error) {
-			ToastAndroid.show('Error when updating expense', ToastAndroid.CENTER);
-		} finally {
-			setLoading(false);
-		}
-	}
+	// 		ToastAndroid.show('Changes saved!', ToastAndroid.CENTER);
+	// 	} catch (error) {
+	// 		ToastAndroid.show('Error when updating expense', ToastAndroid.CENTER);
+	// 	} finally {
+	// 		setLoading(false);
+	// 	}
+	// }
+
+	const {
+		transactionUsedAccount,
+		transactionCreatedAt,
+		transactionCategory,
+		transactionAmmount,
+		expenseCategories,
+		transactionImage,
+		transactionNote,
+		userAccounts,
+		loading,
+		setTransactionNote,
+		setTransactionImage,
+		setTransactionAmount,
+		setTransactionCategory,
+		setTransactionCreatedAt,
+		updateTransactionRecord,
+		setTransactionUsedAccount,
+	} = useExpenseManager({ actionType: 'update', transactionId: Number(id) });
 
 	return (
-		<View style={{ padding: 16, gap: 16 }}>
-			<View style={{ flexDirection: 'row', gap: 8 }}>
-				<View style={{ gap: 8, flex: 1 }}>
+		<View style={styles.formWrapper}>
+			<View style={styles.gridContainer}>
+				<View style={styles.inputCotainerFull}>
 					<Text style={styles.inputLabel} variant="bodyLarge">
 						From
 					</Text>
 					<AccountSelector
 						accounts={userAccounts}
-						handleSelect={setSelectedAccount}
-						selectedAccount={selectedAccount!}
+						handleSelect={setTransactionUsedAccount}
+						selectedAccount={transactionUsedAccount}
 					/>
 				</View>
 
-				<View style={{ gap: 8, flex: 1 }}>
+				<View style={styles.inputCotainerFull}>
 					<Text style={styles.inputLabel} variant="bodyLarge">
 						Amount ({currentCurrencySymbol})
 					</Text>
-
 					<TextInput
 						keyboardType="number-pad"
-						onChangeText={setAmount}
-						value={amount}
-						contentStyle={styles.contentStyle}
+						onChangeText={setTransactionAmount}
+						value={transactionAmmount}
+						contentStyle={styles.inputContent}
 					/>
 				</View>
 			</View>
 
-			<View style={{ gap: 8 }}>
+			<View style={styles.inputContainer}>
 				<Text style={styles.inputLabel} variant="bodyLarge">
 					Expense category
 				</Text>
-
 				<SelectInputWithIcon
-					data={userExpenseCategories}
-					handleSelect={setSelectedCategory}
-					selectedCategory={selectedCategory}
+					data={expenseCategories}
+					selectedCategory={transactionCategory}
+					handleSelect={setTransactionCategory}
 				/>
 			</View>
 
-			<View style={{ gap: 8 }}>
+			<View style={styles.inputContainer}>
 				<Text style={styles.inputLabel} variant="bodyLarge">
 					Date
 				</Text>
-				<DatePicker selectedDate={createdAt} setSelectedDate={setCreatedAt} />
+				<DatePicker
+					selectedDate={transactionCreatedAt}
+					setSelectedDate={setTransactionCreatedAt}
+				/>
 			</View>
 
-			<View style={{ gap: 8 }}>
+			<View style={styles.inputContainer}>
 				<Text style={styles.inputLabel} variant="bodyLarge">
 					Note
 				</Text>
 				<TextInput
-					contentStyle={styles.contentStyle}
-					onChangeText={setNote}
-					value={note}
+					value={transactionNote}
+					onChangeText={setTransactionNote}
+					contentStyle={styles.inputContent}
 				/>
 			</View>
 
-			<View style={{ gap: 8 }}>
+			<View style={styles.inputContainer}>
 				<Text style={styles.inputLabel} variant="bodyLarge">
 					Add image
 				</Text>
-				<ImageSelectorInput handleSelect={setImage} selectedImage={image} />
+				<ImageSelectorInput
+					selectedImage={transactionImage}
+					handleSelect={setTransactionImage}
+				/>
 			</View>
 
 			<Button
 				mode="contained"
-				style={{ borderRadius: 10, marginTop: 16 }}
-				labelStyle={{ fontFamily: 'Inter-Regular', fontSize: 16 }}
-				onPress={handleSubmit}
-				disabled={!amount.length}
+				style={styles.button}
+				labelStyle={styles.buttonLabel}
+				onPress={updateTransactionRecord}
+				disabled={!transactionAmmount.length}
 			>
-				{isLoading ? (
+				{loading ? (
 					<ActivityIndicator size={20} color={theme.colors.onPrimary} />
 				) : (
-					'Save changes'
+					'Save transaction'
 				)}
 			</Button>
 		</View>
@@ -235,6 +259,28 @@ const styles = StyleSheet.create({
 	inputLabel: {
 		fontFamily: 'Inter-Regular',
 	},
-	contentStyle: { fontFamily: 'Inter-Regular' },
+	inputContent: {
+		fontFamily: 'Inter-Regular',
+	},
+	button: { borderRadius: 10, marginTop: 16, padding: 8 },
+	buttonLabel: {
+		fontFamily: 'Inter-Medium',
+		fontSize: 16,
+	},
+	inputContainer: {
+		gap: 8,
+	},
+	inputCotainerFull: {
+		gap: 8,
+		flex: 1,
+	},
+	gridContainer: {
+		flexDirection: 'row',
+		gap: 8,
+	},
+	formWrapper: {
+		padding: 16,
+		gap: 16,
+	},
 });
 

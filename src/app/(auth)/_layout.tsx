@@ -14,7 +14,7 @@ export default function Layout() {
 		>
 			<Stack.Screen name="welcome" options={{ headerShown: false }} />
 			<Stack.Screen
-				name="wallet-setup"
+				name="account-setup"
 				options={{
 					headerShown: false,
 				}}
@@ -24,3 +24,4 @@ export default function Layout() {
 		</Stack>
 	);
 }
+

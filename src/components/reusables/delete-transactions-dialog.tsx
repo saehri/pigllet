@@ -38,7 +38,7 @@ export default function DeleteTransactionsDialog({ transactionId }: Props) {
 				.from(schema.accounts)
 				.where(eq(schema.accounts.id, transaction[0].account_id));
 
-			let relatedAccount: schema.Accounts | undefined = undefined;
+			let relatedAccount: schema.Account | undefined = undefined;
 			if (transaction[0].related_account_id) {
 				const relAccount = await drizzleDb
 					.select()
@@ -104,9 +104,11 @@ export default function DeleteTransactionsDialog({ transactionId }: Props) {
 		<>
 			<Portal>
 				<Dialog visible={visible} onDismiss={closeDialog}>
-					<Dialog.Title>Delete transaction</Dialog.Title>
+					<Dialog.Title style={{ fontFamily: 'Inter-Regular' }}>
+						Delete transaction
+					</Dialog.Title>
 					<Dialog.Content>
-						<Text style={{ fontFamily: 'Inter-Regular' }} variant="bodyLarge">
+						<Text style={{ fontFamily: 'Inter-Regular' }} variant="bodyMedium">
 							This action cannot be undone.
 						</Text>
 					</Dialog.Content>
@@ -115,7 +117,7 @@ export default function DeleteTransactionsDialog({ transactionId }: Props) {
 						<Button
 							onPress={closeDialog}
 							disabled={loading}
-							labelStyle={{ fontFamily: 'Inter-Regular', fontSize: 16 }}
+							labelStyle={{ fontFamily: 'Inter-Regular' }}
 						>
 							Cancel
 						</Button>
@@ -123,7 +125,7 @@ export default function DeleteTransactionsDialog({ transactionId }: Props) {
 						<Button
 							onPress={deleteTransaction}
 							disabled={loading}
-							labelStyle={{ fontFamily: 'Inter-Regular', fontSize: 16 }}
+							labelStyle={{ fontFamily: 'Inter-Regular' }}
 						>
 							{loading ? 'Deleting' : 'I understand'}
 						</Button>
@@ -137,3 +139,4 @@ export default function DeleteTransactionsDialog({ transactionId }: Props) {
 		</>
 	);
 }
+

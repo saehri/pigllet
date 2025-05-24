@@ -17,3 +17,4 @@ export default function Page() {
 
 	return <Redirect href="/(root)/(tabs)/home" />;
 }
+

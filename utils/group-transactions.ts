@@ -1,7 +1,8 @@
-import { Transaction as BaseTransaction, Category } from '@/db/schema';
+import { Account, Transaction as BaseTransaction, Category } from '@/db/schema';
 
 interface Transaction extends BaseTransaction {
 	category?: Category;
+	account?: Account;
 }
 
 interface GroupedTransactionByCategory {

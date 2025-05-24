@@ -1,4 +1,4 @@
-import { Accounts, Transaction, TransactionCategories } from '@/db/schema';
+import { Account, Transaction, Category } from '@/db/schema';
 
 import IncomeCard from './income-card';
 import ExpenseCard from './expense-card';
@@ -7,9 +7,9 @@ import TransferCard from './transfer-card';
 interface TransactionCard {
 	transactionType: 'expense' | 'income' | 'transfer';
 	data: Transaction;
-	account: Accounts;
-	relatedAccount?: Accounts;
-	category: TransactionCategories;
+	account: Account;
+	relatedAccount?: Account;
+	category: Category;
 	disableFirstButton?: boolean;
 	disableSecondButton?: boolean;
 }
@@ -33,6 +33,7 @@ export default function TransactionCard({
 				accountName={account.name}
 			/>
 		);
+
 	if (transactionType === 'income')
 		return <IncomeCard accounts={account} category={category} data={data} />;
 
@@ -45,3 +46,4 @@ export default function TransactionCard({
 		/>
 	);
 }
+

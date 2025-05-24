@@ -1,4 +1,4 @@
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { useFonts } from 'expo-font';
 import { Suspense, useContext, useEffect } from 'react';
 import {
@@ -7,6 +7,7 @@ import {
 	useColorScheme,
 	View,
 	ScrollView,
+	StyleSheet,
 } from 'react-native';
 import {
 	DefaultTheme,
@@ -14,12 +15,17 @@ import {
 	Text,
 	ThemeProvider,
 } from 'react-native-paper';
-import { SQLiteProvider, openDatabaseSync } from 'expo-sqlite';
+import {
+	SQLiteProvider,
+	openDatabaseSync,
+	useSQLiteContext,
+} from 'expo-sqlite';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 import { useDrizzleStudio } from 'expo-drizzle-studio-plugin';
 import migrations from '@/drizzle/migrations';
 
+import * as schema from '@/db/schema';
 import * as SplashScreen from 'expo-splash-screen';
 
 import UserPreferenceProvider, {
@@ -54,6 +60,23 @@ function App({ colorScheme }: AppProps) {
 		colors: selectColorScheme(currentAppTheme, currentAppColor, colorScheme),
 	};
 
+	const router = useRouter(); // -- Is used in fetchAccounts fn to redirect user to account set up screen if they does not have any account
+
+	const db = useSQLiteContext();
+	const drizzleDb = drizzle(db, { schema });
+
+	useEffect(() => {
+		const fetchAccounts = async () => {
+			const accounts = await drizzleDb.select().from(schema.accounts);
+
+			if (!accounts.length) {
+				router.replace('/(auth)/welcome');
+			}
+		};
+
+		fetchAccounts();
+	}, []);
+
 	return (
 		<PaperProvider theme={theme}>
 			<ThemeProvider theme={theme}>
@@ -79,6 +102,7 @@ function App({ colorScheme }: AppProps) {
 }
 
 export default function RootLayout() {
+	// ---- fonts
 	const [loaded, fontLoaderError] = useFonts({
 		'Inter-Black': require('@/assets/fonts//Inter_18pt-Black.ttf'),
 		'Inter-Bold': require('@/assets/fonts/Inter_18pt-Bold.ttf'),
@@ -92,7 +116,11 @@ export default function RootLayout() {
 
 	const expoDb = openDatabaseSync(DATABASE_NAME);
 	const db = drizzle(expoDb);
-	const { success, error } = useMigrations(db, migrations);
+	// --- migrate the database, the variables will be used to determine whether we should shows the app or not
+	const { success: isMigrationSuccess, error: migrationError } = useMigrations(
+		db,
+		migrations
+	);
 	useDrizzleStudio(expoDb);
 
 	useEffect(() => {
@@ -101,14 +129,16 @@ export default function RootLayout() {
 		}
 	}, [loaded, fontLoaderError]);
 
+	// --- Do not show app if the font is not loaded properly
 	if (!loaded && !fontLoaderError) {
 		return null;
 	}
 
-	if (!success)
+	// --- Shows the db migration error message
+	if (!isMigrationSuccess)
 		return (
 			<ScrollView style={{ backgroundColor: '#fff' }}>
-				<Text>{error?.stack}</Text>
+				<Text>{migrationError?.stack}</Text>
 			</ScrollView>
 		);
 
@@ -116,12 +146,10 @@ export default function RootLayout() {
 		<Suspense
 			fallback={
 				<View
-					style={{
-						flex: 1,
-						backgroundColor: colorScheme === 'dark' ? '#111' : '#fff',
-						alignItems: 'center',
-						justifyContent: 'center',
-					}}
+					style={[
+						styles.fallbackComponent,
+						{ backgroundColor: colorScheme === 'dark' ? '#111' : '#fff' },
+					]}
 				></View>
 			}
 		>
@@ -137,4 +165,12 @@ export default function RootLayout() {
 		</Suspense>
 	);
 }
+
+const styles = StyleSheet.create({
+	fallbackComponent: {
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+});
 
