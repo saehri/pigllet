@@ -5,11 +5,12 @@ import { useSQLiteContext } from 'expo-sqlite';
 
 import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import * as schema from '@/db/schema';
-import { and, asc, eq } from 'drizzle-orm';
+import { and, asc, eq, sql } from 'drizzle-orm';
 
 import NoItemNotice from '../reusables/no-items-notice';
 import TransactionCard from '../reusables/transaction-card';
 import { alias } from 'drizzle-orm/sqlite-core';
+import { toYYYYMMDD } from '@/utils/utils';
 
 export default function TodayTransaction() {
 	const theme = useTheme();
@@ -23,41 +24,61 @@ export default function TodayTransaction() {
 	const { data } = useLiveQuery(
 		drizzleDb
 			.select({
-				id: schema.transactions.id,
-				amount: schema.transactions.amount,
-				note: schema.transactions.note,
-				account_id: schema.transactions.account_id,
-				category_id: schema.transactions.category_id,
-				type: schema.transactions.type,
-				image: schema.transactions.image,
-				created_date: schema.transactions.created_date,
-				created_month: schema.transactions.created_month,
-				created_year: schema.transactions.created_year,
-				category: schema.categories,
-				account: schema.accounts,
-				related_account: relatedAccounts, // Use the alias here
+				transaction: {
+					id: schema.transactions.id,
+					amount: schema.transactions.amount,
+					note: schema.transactions.note,
+					account_id: schema.transactions.account_id,
+					related_account_id: schema.transactions.related_account_id,
+					category_id: schema.transactions.category_id,
+					type: schema.transactions.type,
+					image: schema.transactions.image,
+					created_at: schema.transactions.created_at,
+				},
+
+				account: {
+					id: schema.accounts.id,
+					name: schema.accounts.name,
+					number: schema.accounts.number,
+					balance: schema.accounts.balance,
+					is_cash: schema.accounts.is_cash,
+					image: schema.accounts.image,
+					created_at: schema.accounts.created_at,
+				},
+
+				category: {
+					id: schema.categories.id,
+					label: schema.categories.label,
+					icon_name: schema.categories.icon_name,
+					type: schema.categories.type,
+				},
+
+				related_account: {
+					id: relatedAccounts.id,
+					name: relatedAccounts.name,
+					number: relatedAccounts.number,
+					balance: relatedAccounts.balance,
+					is_cash: relatedAccounts.is_cash,
+					image: relatedAccounts.image,
+					created_at: relatedAccounts.created_at,
+				},
 			})
 			.from(schema.transactions)
 			.where(
-				and(
-					eq(schema.transactions.created_date, todayDate.getDate()),
-					eq(schema.transactions.created_month, todayDate.getMonth() + 1),
-					eq(schema.transactions.created_year, todayDate.getFullYear())
-				)
+				sql`DATE(transactions.created_at) = DATE(${toYYYYMMDD(todayDate)})`
 			)
-			.innerJoin(
+			.leftJoin(
 				schema.categories,
 				eq(schema.transactions.category_id, schema.categories.id)
 			)
-			.innerJoin(
+			.leftJoin(
 				schema.accounts,
 				eq(schema.transactions.account_id, schema.accounts.id)
 			)
-			.innerJoin(
-				relatedAccounts, // Use the alias for the second join
+			.leftJoin(
+				relatedAccounts,
 				eq(schema.transactions.related_account_id, relatedAccounts.id)
 			)
-			.orderBy(asc(schema.transactions.created_date))
 	);
 
 	if (!data.length) {
@@ -71,14 +92,14 @@ export default function TodayTransaction() {
 	return (
 		<Wrapper theme={theme} todayDate={todayDate}>
 			<View>
-				{data.map((transaction) => (
+				{data.map(({ account, transaction, category, related_account }) => (
 					<TransactionCard
-						key={transaction.id}
-						transactionType={transaction.type as any}
-						account={transaction.account}
-						relatedAccount={transaction.related_account}
-						category={transaction.category}
-						data={transaction}
+						key={transaction?.id}
+						transactionType={transaction?.type as any}
+						account={account as schema.Account}
+						relatedAccount={related_account as schema.Account}
+						category={category as schema.Category}
+						data={transaction as schema.Transaction}
 					/>
 				))}
 			</View>
@@ -141,3 +162,4 @@ const styles = StyleSheet.create({
 		borderRadius: 100,
 	},
 });
+

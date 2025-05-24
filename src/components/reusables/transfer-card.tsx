@@ -7,16 +7,16 @@ import {
 	UserPreferenceContextTypes,
 } from '@/context/UserPreferenceContext';
 
-import { Accounts, Transaction, TransactionCategories } from '@/db/schema';
+import { Account, Transaction, Category } from '@/db/schema';
 
 import getLocaleByCurrencySymbol from '@/utils/locale-getter';
 import { ArrowLeftRight, ArrowRight, Image } from 'lucide-react-native';
 
 interface Props {
-	category: TransactionCategories;
+	category: Category;
 	data: Transaction;
-	accounts: Accounts;
-	relatedAccount: Accounts;
+	accounts: Account;
+	relatedAccount: Account;
 	disableFirstButton?: boolean;
 	disableSecondButton?: boolean;
 }
@@ -57,7 +57,7 @@ export default function TransferCard({
 			<Pressable
 				onPress={() =>
 					router.push({
-						pathname: '/(root)/edit-income',
+						pathname: '/(root)/edit-transfer',
 						params: {
 							id: data.id as any,
 							type: data.type,
@@ -216,3 +216,4 @@ const styles = StyleSheet.create({
 		opacity: 0.8,
 	},
 });
+

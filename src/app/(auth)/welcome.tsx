@@ -75,7 +75,7 @@ export default function WelcomeScreen() {
 				)
 				.onConflictDoNothing();
 
-			router.push('/(auth)/wallet-setup');
+			router.push('/(auth)/account-setup');
 		} catch (error) {
 			setIsSettingUp(false);
 		} finally {
@@ -90,27 +90,16 @@ export default function WelcomeScreen() {
 			<View style={styles.imageContainer}>
 				<Image
 					source={require('@/assets/images/welcome image.png')}
-					style={{ width: 264, height: 302 }}
+					style={styles.image}
 				/>
 			</View>
 
 			<View style={{ gap: 16 }}>
-				<Text
-					variant="headlineLarge"
-					style={{ fontFamily: 'Inter-Black', textAlign: 'center' }}
-				>
+				<Text variant="headlineLarge" style={styles.headlineLarge}>
 					Take control of your finance, now!
 				</Text>
 
-				<Text
-					variant="bodyLarge"
-					numberOfLines={2}
-					style={{
-						fontFamily: 'Inter-Regular',
-						textAlign: 'center',
-						opacity: 0.8,
-					}}
-				>
+				<Text variant="bodyLarge" numberOfLines={2} style={styles.bodyLarge}>
 					Pigllet is a next-gen money tracker, but like… cuter, smarter, and
 					totally iconic. 💖✨💸
 				</Text>
@@ -119,8 +108,8 @@ export default function WelcomeScreen() {
 			<View style={{ gap: 12 }}>
 				<Button
 					mode="contained"
-					style={{ borderRadius: 10 }}
-					labelStyle={{ fontFamily: 'Inter-Regular', fontSize: 16 }}
+					style={styles.button}
+					labelStyle={styles.buttonLabel}
 					onPress={setMyApp}
 				>
 					{isSettingUp ? (
@@ -131,26 +120,11 @@ export default function WelcomeScreen() {
 				</Button>
 
 				<View>
-					<Text
-						variant="labelSmall"
-						style={{
-							fontFamily: 'Inter-Regular',
-							opacity: 0.6,
-							textAlign: 'center',
-							marginTop: 16,
-						}}
-					>
+					<Text variant="labelSmall" style={styles.labelSmall}>
 						*Pigllet is an offline first application meaning you can use it
 						without internet connection.
 					</Text>
-					<Text
-						variant="labelSmall"
-						style={{
-							fontFamily: 'Inter-Regular',
-							opacity: 0.6,
-							textAlign: 'center',
-						}}
-					>
+					<Text variant="labelSmall" style={styles.labelSmall}>
 						**By creating an account you will be able to upload your data to the
 						cloud so you can access it on other device.
 					</Text>
@@ -173,4 +147,15 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: 'center',
 	},
+	labelSmall: {
+		fontFamily: 'Inter-Regular',
+		opacity: 0.6,
+		textAlign: 'center',
+	},
+	button: { borderRadius: 10, padding: 8 },
+	buttonLabel: { fontFamily: 'Inter-Medium', fontSize: 16 },
+	bodyLarge: { fontFamily: 'Inter-Regular', textAlign: 'center', opacity: 0.8 },
+	image: { width: 264, height: 302 },
+	headlineLarge: { fontFamily: 'Inter-Black', textAlign: 'center' },
 });
+

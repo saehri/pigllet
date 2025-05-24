@@ -98,11 +98,7 @@ function ProgressBarWithLabel({ progressBarState }: ProgressBarWithLabelProps) {
 			});
 
 			if (referenceRefRect && floatingLabelRect) {
-				const isInterSecting =
-					referenceRefRect.width -
-					(floatingLabelRect.width);
-
-				console.log(isInterSecting);
+				const isInterSecting = referenceRefRect.width - floatingLabelRect.width;
 
 				setLabelIntersecting(isInterSecting < 0);
 			}
@@ -178,3 +174,4 @@ const styles = StyleSheet.create({
 		top: 8,
 	},
 });
+

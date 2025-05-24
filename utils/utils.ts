@@ -4,3 +4,7 @@ export function getYearsBetween(startYear: number, endYear: number) {
 		(_, i) => startYear + i
 	);
 }
+
+export function toYYYYMMDD(date: Date): string {
+	return date.toISOString().slice(0, 10); // Returns 'YYYY-MM-DD' in UTC
+}
