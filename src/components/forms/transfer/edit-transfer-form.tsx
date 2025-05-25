@@ -14,8 +14,7 @@ import {
 	UserPreferenceContext,
 	UserPreferenceContextTypes,
 } from '@/context/UserPreferenceContext';
-import { ToastAndroid } from 'react-native';
-import { View } from 'lucide-react-native';
+import { StyleSheet, ToastAndroid, View } from 'react-native';
 import { eq } from 'drizzle-orm';
 
 import AccountSelector from '../account-selector';
@@ -143,10 +142,12 @@ export default function EditTransferForm() {
 	}
 
 	return (
-		<View style={{ padding: 16, gap: 16 }}>
-			<View style={{ flexDirection: 'row', gap: 8 }}>
-				<View style={{ gap: 8, flex: 1 }}>
-					<Text variant="bodyLarge">From account</Text>
+		<View style={styles.formWrapper}>
+			<View style={styles.gridContainer}>
+				<View style={styles.inputContainerFull}>
+					<Text style={styles.inputLabel} variant="bodyLarge">
+						From account
+					</Text>
 					<AccountSelector
 						accounts={userAccounts}
 						handleSelect={setMainAccount}
@@ -154,8 +155,10 @@ export default function EditTransferForm() {
 					/>
 				</View>
 
-				<View style={{ gap: 8, flex: 1 }}>
-					<Text variant="bodyLarge">To account</Text>
+				<View style={styles.inputContainerFull}>
+					<Text style={styles.inputLabel} variant="bodyLarge">
+						To account
+					</Text>
 					<AccountSelector
 						accounts={userAccounts}
 						handleSelect={setRelatedAccount}
@@ -164,8 +167,10 @@ export default function EditTransferForm() {
 				</View>
 			</View>
 
-			<View style={{ gap: 8, flex: 1 }}>
-				<Text variant="bodyLarge">Amount ({currentCurrencySymbol})</Text>
+			<View style={styles.inputContainerFull}>
+				<Text style={styles.inputLabel} variant="bodyLarge">
+					Amount ({currentCurrencySymbol})
+				</Text>
 				<TextInput
 					keyboardType="number-pad"
 					onChangeText={setAmount}
@@ -173,8 +178,10 @@ export default function EditTransferForm() {
 				/>
 			</View>
 
-			<View style={{ gap: 8 }}>
-				<Text variant="bodyLarge">Transfer category</Text>
+			<View style={styles.inputContainer}>
+				<Text style={styles.inputLabel} variant="bodyLarge">
+					Transfer category
+				</Text>
 				<SelectInputWithIcon
 					data={userTransferCategories}
 					handleSelect={setSelectedCategory}
@@ -182,28 +189,34 @@ export default function EditTransferForm() {
 				/>
 			</View>
 
-			<View style={{ gap: 8 }}>
-				<Text variant="bodyLarge">Date</Text>
+			<View style={styles.inputContainer}>
+				<Text style={styles.inputLabel} variant="bodyLarge">
+					Date
+				</Text>
 				<DatePicker
 					selectedDate={selectedDate}
 					setSelectedDate={setSelectedDate}
 				/>
 			</View>
 
-			<View style={{ gap: 8 }}>
-				<Text variant="bodyLarge">Note</Text>
+			<View style={styles.inputContainer}>
+				<Text style={styles.inputLabel} variant="bodyLarge">
+					Note
+				</Text>
 				<TextInput onChangeText={setNote} value={note} />
 			</View>
 
-			<View style={{ gap: 8 }}>
-				<Text variant="bodyLarge">Add image</Text>
+			<View style={styles.inputContainer}>
+				<Text style={styles.inputLabel} variant="bodyLarge">
+					Add image
+				</Text>
 				<ImageSelectorInput handleSelect={setImage} selectedImage={image} />
 			</View>
 
 			<Button
 				mode="contained"
-				style={{ borderRadius: 10, marginTop: 16 }}
-				labelStyle={{ fontFamily: 'Inter-Regular', fontSize: 16 }}
+				style={styles.button}
+				labelStyle={styles.buttonLabel}
 				onPress={handleSubmit}
 				disabled={!amount.length}
 			>
@@ -216,4 +229,33 @@ export default function EditTransferForm() {
 		</View>
 	);
 }
+
+const styles = StyleSheet.create({
+	inputLabel: {
+		fontFamily: 'Inter-Regular',
+	},
+	inputContent: {
+		fontFamily: 'Inter-Regular',
+	},
+	button: { borderRadius: 10, marginTop: 16, padding: 8 },
+	buttonLabel: {
+		fontFamily: 'Inter-Medium',
+		fontSize: 16,
+	},
+	inputContainer: {
+		gap: 8,
+	},
+	inputContainerFull: {
+		gap: 8,
+		flex: 1,
+	},
+	gridContainer: {
+		flexDirection: 'row',
+		gap: 8,
+	},
+	formWrapper: {
+		padding: 16,
+		gap: 16,
+	},
+});
 

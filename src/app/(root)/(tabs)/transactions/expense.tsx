@@ -7,19 +7,23 @@ import { toYYYYMMDD } from '@/utils/utils';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { groupedTransactionsByDate } from '@/utils/group-transactions';
 
+import useTransactionsManager from '@/src/hooks/useTransactionsManager';
+
 import ExpenseCard from '@/src/components/reusables/expense-card';
 import ChartHeader from '@/src/components/charts/chart-header';
 import ChartFooter from '@/src/components/charts/chart-footer';
 import ChartWrapper from '@/src/components/charts/chart-wrapper';
 import NoItemNotice from '@/src/components/reusables/no-items-notice';
-import useExpenseManager from '@/src/hooks/useExpenseManager';
 import TransactionsSummaryChart from '@/src/components/charts/transactions-summary-chart';
 
 export default function ExpensesScreen() {
 	const theme = useTheme();
 
 	// ----- used in useLiveQuery hooks to fetch the data
-	const { loadExpenseData } = useExpenseManager({ actionType: 'read' });
+	const { loadExpenseData } = useTransactionsManager({
+		actionType: 'read',
+		transactionType: 'expense',
+	});
 
 	// ---- states used to filter and query the data
 	const [startDate, setStartDate] = useState(new Date());
@@ -51,7 +55,7 @@ export default function ExpensesScreen() {
 							groupBy="category"
 							transactions={transactions as any}
 						/>
-						<ChartFooter transactions={transactions} />
+						<ChartFooter groupBy="category" transactions={transactions} />
 					</ChartWrapper>
 				</View>
 			)}

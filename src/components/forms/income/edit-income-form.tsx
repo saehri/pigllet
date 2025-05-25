@@ -1,6 +1,5 @@
 import { useContext } from 'react';
-import { useEffect, useState } from 'react';
-import { StyleSheet, ToastAndroid, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import {
 	ActivityIndicator,
 	Button,
@@ -9,12 +8,6 @@ import {
 	useTheme,
 } from 'react-native-paper';
 import { useLocalSearchParams } from 'expo-router';
-
-import * as schema from '@/db/schema';
-import { eq } from 'drizzle-orm';
-
-import { useSQLiteContext } from 'expo-sqlite';
-import { drizzle } from 'drizzle-orm/expo-sqlite';
 
 import {
 	UserPreferenceContext,
@@ -25,198 +18,116 @@ import AccountSelector from '../account-selector';
 import SelectInputWithIcon from '../select-input-with-icon';
 import DatePicker from '../date-picker';
 import ImageSelectorInput from '../image-select-input';
+import useTransactionsManager from '@/src/hooks/useTransactionsManager';
 
 export default function EditIncomeForm() {
 	const theme = useTheme();
 	const { currentCurrencySymbol } = useContext(
 		UserPreferenceContext
 	) as UserPreferenceContextTypes;
-	const { id, type } = useLocalSearchParams();
+	const { id } = useLocalSearchParams();
 
-	const db = useSQLiteContext();
-	const drizzleDb = drizzle(db, { schema });
-
-	const [initialFormValue, setInitialFormValue] =
-		useState<schema.Transaction>();
-	const [userAccounts, setUserAccounts] = useState<schema.Account[]>([]);
-	const [userIncomeCategories, setUserIncomeCategories] = useState<
-		schema.Category[]
-	>([]);
-
-	// form state
-	const [isLoading, setLoading] = useState(false);
-
-	const [initialAccount, setInitialAccount] = useState<schema.Account>();
-	const [selectedCategory, setSelectedCategory] = useState<schema.Category>();
-	const [selectedAccount, setSelectedAccount] = useState<schema.Account>();
-	const [amount, setAmount] = useState<string>('');
-	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-	const [note, setNote] = useState<string>('');
-	const [image, setImage] = useState<string>('');
-
-	useEffect(() => {
-		async function load() {
-			try {
-				const data = await drizzleDb
-					.select({
-						transactions: schema.transactions,
-						accounts: schema.accounts,
-						categories: schema.categories,
-					})
-					.from(schema.transactions)
-					.where(eq(schema.transactions.id, Number(id)))
-					.innerJoin(
-						schema.categories,
-						eq(schema.transactions.category_id, schema.categories.id)
-					)
-					.innerJoin(
-						schema.accounts,
-						eq(schema.transactions.account_id, schema.accounts.id)
-					);
-
-				const allAccounts = await drizzleDb.select().from(schema.accounts);
-				const allCategories = await drizzleDb
-					.select()
-					.from(schema.categories)
-					.where(eq(schema.categories.type, type as string));
-
-				const { accounts, categories, transactions } = data[0];
-
-				setInitialFormValue(transactions);
-				setSelectedAccount(accounts);
-				setAmount(transactions.amount.toString());
-				setSelectedCategory(categories);
-				setSelectedDate(new Date(transactions.created_at));
-				setNote(transactions.note || '');
-				setImage(transactions.image || '');
-
-				setInitialAccount(accounts);
-
-				setUserAccounts(allAccounts);
-				setUserIncomeCategories(allCategories);
-			} catch (error: any) {
-				ToastAndroid.show(error.message, ToastAndroid.CENTER);
-			}
-		}
-
-		load();
-	}, []);
-
-	async function handleSubmit() {
-		try {
-			setLoading(true);
-
-			if (
-				!selectedAccount ||
-				!selectedCategory ||
-				!initialFormValue ||
-				!initialAccount
-			)
-				return;
-
-			await drizzleDb
-				.update(schema.transactions)
-				.set({
-					account_id: selectedAccount.id,
-					amount: Number(amount),
-					category_id: selectedCategory.id,
-					created_at: selectedDate.toISOString(),
-					image,
-					note,
-				})
-				.where(eq(schema.transactions.id, initialFormValue.id as number));
-
-			await drizzleDb
-				.update(schema.accounts)
-				.set({
-					balance:
-						initialAccount.balance - initialFormValue.amount + Number(amount),
-				})
-				.where(eq(schema.accounts.id, selectedAccount.id as number));
-
-			ToastAndroid.show('Changes saved!', ToastAndroid.CENTER);
-		} catch (error) {
-			ToastAndroid.show('Error when updating expense', ToastAndroid.CENTER);
-		} finally {
-			setLoading(false);
-		}
-	}
+	const {
+		transactionUsedAccount,
+		transactionCreatedAt,
+		transactionCategory,
+		transactionAmmount,
+		transactionCategories,
+		transactionImage,
+		transactionNote,
+		userAccounts,
+		loading,
+		setTransactionNote,
+		updateIncomeRecord,
+		setTransactionImage,
+		setTransactionAmount,
+		setTransactionCategory,
+		setTransactionCreatedAt,
+		setTransactionUsedAccount,
+	} = useTransactionsManager({
+		actionType: 'update',
+		transactionId: Number(id),
+		transactionType: 'income',
+	});
 
 	return (
-		<View style={{ padding: 16, gap: 16 }}>
-			<View style={{ flexDirection: 'row', gap: 8 }}>
-				<View style={{ gap: 8, flex: 1 }}>
+		<View style={styles.formWrapper}>
+			<View style={styles.gridContainer}>
+				<View style={styles.inputCotainerFull}>
 					<Text style={styles.inputLabel} variant="bodyLarge">
 						Account
 					</Text>
 					<AccountSelector
 						accounts={userAccounts}
-						handleSelect={setSelectedAccount}
-						selectedAccount={selectedAccount!}
+						handleSelect={setTransactionUsedAccount}
+						selectedAccount={transactionUsedAccount}
 					/>
 				</View>
 
-				<View style={{ gap: 8, flex: 1 }}>
+				<View style={styles.inputCotainerFull}>
 					<Text style={styles.inputLabel} variant="bodyLarge">
 						Amount ({currentCurrencySymbol})
 					</Text>
 
 					<TextInput
 						keyboardType="number-pad"
-						onChangeText={setAmount}
-						value={amount}
+						onChangeText={setTransactionAmount}
+						value={transactionAmmount}
 						contentStyle={styles.inputContent}
 					/>
 				</View>
 			</View>
 
-			<View style={{ gap: 8 }}>
+			<View style={styles.inputContainer}>
 				<Text style={styles.inputLabel} variant="bodyLarge">
 					Income category
 				</Text>
 				<SelectInputWithIcon
-					data={userIncomeCategories}
-					handleSelect={setSelectedCategory}
-					selectedCategory={selectedCategory}
+					data={transactionCategories}
+					selectedCategory={transactionCategory}
+					handleSelect={setTransactionCategory}
 				/>
 			</View>
 
-			<View style={{ gap: 8 }}>
+			<View style={styles.inputContainer}>
 				<Text style={styles.inputLabel} variant="bodyLarge">
 					Date
 				</Text>
 				<DatePicker
-					selectedDate={selectedDate}
-					setSelectedDate={setSelectedDate}
+					selectedDate={transactionCreatedAt}
+					setSelectedDate={setTransactionCreatedAt}
 				/>
 			</View>
 
-			<View style={{ gap: 8 }}>
+			<View style={styles.inputContainer}>
 				<Text style={styles.inputLabel} variant="bodyLarge">
 					Note
 				</Text>
 				<TextInput
 					contentStyle={styles.inputContent}
-					onChangeText={setNote}
-					value={note}
+					value={transactionNote}
+					onChangeText={setTransactionNote}
 				/>
 			</View>
 
-			<View style={{ gap: 8 }}>
+			<View style={styles.inputContainer}>
 				<Text style={styles.inputLabel} variant="bodyLarge">
 					Add image
 				</Text>
-				<ImageSelectorInput handleSelect={setImage} selectedImage={image} />
+				<ImageSelectorInput
+					handleSelect={setTransactionImage}
+					selectedImage={transactionImage}
+				/>
 			</View>
 
 			<Button
 				mode="contained"
-				style={{ borderRadius: 10, marginTop: 16 }}
-				labelStyle={{ fontFamily: 'Inter-Regular', fontSize: 16 }}
-				onPress={handleSubmit}
-				disabled={!amount.length}
+				style={styles.button}
+				labelStyle={styles.buttonLabel}
+				onPress={updateIncomeRecord}
+				disabled={!transactionAmmount.length}
 			>
-				{isLoading ? (
+				{loading ? (
 					<ActivityIndicator size={20} color={theme.colors.onPrimary} />
 				) : (
 					'Save changes'
@@ -232,6 +143,26 @@ const styles = StyleSheet.create({
 	},
 	inputContent: {
 		fontFamily: 'Inter-Regular',
+	},
+	button: { borderRadius: 10, marginTop: 16, padding: 8 },
+	buttonLabel: {
+		fontFamily: 'Inter-Medium',
+		fontSize: 16,
+	},
+	inputContainer: {
+		gap: 8,
+	},
+	inputCotainerFull: {
+		gap: 8,
+		flex: 1,
+	},
+	gridContainer: {
+		flexDirection: 'row',
+		gap: 8,
+	},
+	formWrapper: {
+		padding: 16,
+		gap: 16,
 	},
 });
 

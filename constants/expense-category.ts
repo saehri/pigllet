@@ -1,4 +1,4 @@
-export const expenseCategories = [
+export const transactionCategories = [
 	{ icon: 'other', label: 'Other Expense' },
 	{ label: 'Advertising', icon: 'advertising' },
 	{ label: 'Airlines', icon: 'airlines' },
@@ -33,3 +33,4 @@ export const expenseCategories = [
 	{ label: 'Utilities', icon: 'utilities' },
 	{ label: 'Vehicle Expenses', icon: 'vehicle-expenses' },
 ] as const;
+

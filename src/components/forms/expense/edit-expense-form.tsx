@@ -1,5 +1,4 @@
 import { useContext } from 'react';
-import { useEffect, useState } from 'react';
 import { StyleSheet, ToastAndroid, View } from 'react-native';
 import {
 	ActivityIndicator,
@@ -10,13 +9,6 @@ import {
 } from 'react-native-paper';
 import { useLocalSearchParams } from 'expo-router';
 
-import * as schema from '@/db/schema';
-import { Category, Account } from '@/db/schema';
-import { eq } from 'drizzle-orm';
-
-import { useSQLiteContext } from 'expo-sqlite';
-import { drizzle } from 'drizzle-orm/expo-sqlite';
-
 import {
 	UserPreferenceContext,
 	UserPreferenceContextTypes,
@@ -26,7 +18,7 @@ import AccountSelector from '../account-selector';
 import SelectInputWithIcon from '../select-input-with-icon';
 import DatePicker from '../date-picker';
 import ImageSelectorInput from '../image-select-input';
-import useExpenseManager from '@/src/hooks/useExpenseManager';
+import useTransactionsManager from '@/src/hooks/useTransactionsManager';
 
 export default function EditExpenseForm() {
 	const theme = useTheme();
@@ -35,127 +27,12 @@ export default function EditExpenseForm() {
 	) as UserPreferenceContextTypes;
 	const { id } = useLocalSearchParams();
 
-	// const db = useSQLiteContext();
-	// const drizzleDb = drizzle(db, { schema });
-
-	// const [initialFormValue, setInitialFormValue] =
-	// 	useState<schema.Transaction>();
-	// const [userAccounts, setUserAccounts] = useState<schema.Account[]>([]);
-	// const [userExpenseCategories, setUserExpensesCategories] = useState<
-	// 	schema.Category[]
-	// >([]);
-
-	// // form state
-	// const [isLoading, setLoading] = useState(false);
-
-	// const [initialAccount, setInitialAccount] = useState<schema.Account>();
-
-	// const [selectedCategory, setSelectedCategory] = useState<Category>();
-	// const [selectedAccount, setSelectedAccount] = useState<Account>();
-	// const [amount, setAmount] = useState<string>('');
-	// const [createdAt, setCreatedAt] = useState<Date>(new Date());
-	// const [note, setNote] = useState<string>('');
-	// const [image, setImage] = useState<string>('');
-
-	// useEffect(() => {
-	// 	async function load() {
-	// 		try {
-	// 			const data = await drizzleDb
-	// 				.select({
-	// 					transactions: schema.transactions,
-	// 					accounts: schema.accounts,
-	// 					categories: schema.categories,
-	// 				})
-	// 				.from(schema.transactions)
-	// 				.where(eq(schema.transactions.id, Number(id)))
-	// 				.innerJoin(
-	// 					schema.categories,
-	// 					eq(schema.transactions.category_id, schema.categories.id)
-	// 				)
-	// 				.innerJoin(
-	// 					schema.accounts,
-	// 					eq(schema.transactions.account_id, schema.accounts.id)
-	// 				);
-
-	// 			const allAccounts = await drizzleDb.select().from(schema.accounts);
-	// 			const allCategories = await drizzleDb
-	// 				.select()
-	// 				.from(schema.categories)
-	// 				.where(eq(schema.categories.type, type as string));
-
-	// 			const { accounts, categories, transactions } = data[0];
-
-	// 			setInitialFormValue(transactions);
-	// 			setSelectedAccount(accounts);
-	// 			setAmount(transactions.amount.toString());
-	// 			setSelectedCategory(categories);
-	// 			setNote(transactions.note || '');
-	// 			setImage(transactions.image || '');
-	// 			setCreatedAt(new Date(transactions.created_at));
-
-	// 			setInitialAccount(accounts);
-
-	// 			setUserAccounts(allAccounts);
-	// 			setUserExpensesCategories(allCategories);
-	// 		} catch (error: any) {
-	// 			ToastAndroid.show(error.message, ToastAndroid.CENTER);
-	// 		}
-	// 	}
-
-	// 	load();
-	// }, []);
-
-	// async function handleSubmit() {
-	// 	try {
-	// 		setLoading(true);
-	// 		if (
-	// 			!selectedAccount ||
-	// 			!selectedCategory ||
-	// 			!initialFormValue ||
-	// 			!initialAccount
-	// 		)
-	// 			return;
-
-	// 		if (!amount.length || isNaN(Number(amount))) {
-	// 			ToastAndroid.show('Please enter a valid amount', ToastAndroid.SHORT);
-	// 			return;
-	// 		}
-
-	// 		await drizzleDb
-	// 			.update(schema.transactions)
-	// 			.set({
-	// 				type: 'expense',
-	// 				account_id: selectedAccount.id,
-	// 				amount: Number(amount),
-	// 				category_id: selectedCategory.id,
-	// 				created_at: createdAt.toISOString(),
-	// 				image,
-	// 				note,
-	// 			})
-	// 			.where(eq(schema.transactions.id, initialFormValue.id as number));
-
-	// 		await drizzleDb
-	// 			.update(schema.accounts)
-	// 			.set({
-	// 				balance:
-	// 					initialAccount.balance - initialFormValue.amount + Number(amount),
-	// 			})
-	// 			.where(eq(schema.accounts.id, selectedAccount.id as number));
-
-	// 		ToastAndroid.show('Changes saved!', ToastAndroid.CENTER);
-	// 	} catch (error) {
-	// 		ToastAndroid.show('Error when updating expense', ToastAndroid.CENTER);
-	// 	} finally {
-	// 		setLoading(false);
-	// 	}
-	// }
-
 	const {
 		transactionUsedAccount,
 		transactionCreatedAt,
 		transactionCategory,
 		transactionAmmount,
-		expenseCategories,
+		transactionCategories,
 		transactionImage,
 		transactionNote,
 		userAccounts,
@@ -165,14 +42,18 @@ export default function EditExpenseForm() {
 		setTransactionAmount,
 		setTransactionCategory,
 		setTransactionCreatedAt,
-		updateTransactionRecord,
+		updateExpenseRecord,
 		setTransactionUsedAccount,
-	} = useExpenseManager({ actionType: 'update', transactionId: Number(id) });
+	} = useTransactionsManager({
+		actionType: 'update',
+		transactionId: Number(id),
+		transactionType: 'expense',
+	});
 
 	return (
 		<View style={styles.formWrapper}>
 			<View style={styles.gridContainer}>
-				<View style={styles.inputCotainerFull}>
+				<View style={styles.inputContainerFull}>
 					<Text style={styles.inputLabel} variant="bodyLarge">
 						From
 					</Text>
@@ -183,7 +64,7 @@ export default function EditExpenseForm() {
 					/>
 				</View>
 
-				<View style={styles.inputCotainerFull}>
+				<View style={styles.inputContainerFull}>
 					<Text style={styles.inputLabel} variant="bodyLarge">
 						Amount ({currentCurrencySymbol})
 					</Text>
@@ -201,7 +82,7 @@ export default function EditExpenseForm() {
 					Expense category
 				</Text>
 				<SelectInputWithIcon
-					data={expenseCategories}
+					data={transactionCategories}
 					selectedCategory={transactionCategory}
 					handleSelect={setTransactionCategory}
 				/>
@@ -242,13 +123,13 @@ export default function EditExpenseForm() {
 				mode="contained"
 				style={styles.button}
 				labelStyle={styles.buttonLabel}
-				onPress={updateTransactionRecord}
+				onPress={updateExpenseRecord}
 				disabled={!transactionAmmount.length}
 			>
 				{loading ? (
 					<ActivityIndicator size={20} color={theme.colors.onPrimary} />
 				) : (
-					'Save transaction'
+					'Save changes'
 				)}
 			</Button>
 		</View>
@@ -270,7 +151,7 @@ const styles = StyleSheet.create({
 	inputContainer: {
 		gap: 8,
 	},
-	inputCotainerFull: {
+	inputContainerFull: {
 		gap: 8,
 		flex: 1,
 	},

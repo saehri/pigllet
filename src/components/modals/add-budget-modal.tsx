@@ -12,8 +12,8 @@ import { useCallback, useState } from 'react';
 import { Plus, X } from 'lucide-react-native';
 import SelectInput from '../forms/select-input';
 
-import { expenseCategories } from '@/constants/expense-category';
-const selectableExpenseCategories = expenseCategories.map((cat) => ({
+import { transactionCategories } from '@/constants/expense-category';
+const selectableExpenseCategories = transactionCategories.map((cat) => ({
 	value: cat.category,
 	label: cat.category,
 }));
@@ -176,3 +176,4 @@ const styles = StyleSheet.create({
 		textTransform: 'capitalize',
 	},
 });
+

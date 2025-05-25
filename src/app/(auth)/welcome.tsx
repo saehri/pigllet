@@ -12,7 +12,7 @@ import * as schema from '@/db/schema';
 import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 
-import { expenseCategories } from '@/constants/expense-category';
+import { transactionCategories } from '@/constants/expense-category';
 import { incomeCategories } from '@/constants/income-category';
 import { transferCategories } from '@/constants/transfer-category';
 
@@ -41,7 +41,7 @@ export default function WelcomeScreen() {
 			await drizzleDb
 				.insert(schema.categories)
 				.values(
-					expenseCategories.map((category) => ({
+					transactionCategories.map((category) => ({
 						type: 'expense',
 						label: category.label, // Use category name
 						icon_name: category.icon, // Use icon name

@@ -16,7 +16,7 @@ import {
 
 import DatePicker from '../date-picker';
 import AccountSelector from '../account-selector';
-import useExpenseManager from '@/src/hooks/useExpenseManager';
+import useTransactionsManager from '@/src/hooks/useTransactionsManager';
 import ImageSelectorInput from '../image-select-input';
 import SelectInputWithIcon from '../select-input-with-icon';
 
@@ -31,7 +31,7 @@ export default function CreateExpenseForm() {
 		transactionCreatedAt,
 		transactionCategory,
 		transactionAmmount,
-		expenseCategories,
+		transactionCategories,
 		transactionImage,
 		transactionNote,
 		userAccounts,
@@ -41,14 +41,17 @@ export default function CreateExpenseForm() {
 		setTransactionAmount,
 		setTransactionCategory,
 		setTransactionCreatedAt,
-		createTransactionRecord,
+		createExpenseRecord,
 		setTransactionUsedAccount,
-	} = useExpenseManager({ actionType: 'create' });
+	} = useTransactionsManager({
+		actionType: 'create',
+		transactionType: 'expense',
+	});
 
 	return (
 		<View style={styles.formWrapper}>
 			<View style={styles.gridContainer}>
-				<View style={styles.inputCotainerFull}>
+				<View style={styles.inputContainerFull}>
 					<Text style={styles.inputLabel} variant="bodyLarge">
 						From
 					</Text>
@@ -59,7 +62,7 @@ export default function CreateExpenseForm() {
 					/>
 				</View>
 
-				<View style={styles.inputCotainerFull}>
+				<View style={styles.inputContainerFull}>
 					<Text style={styles.inputLabel} variant="bodyLarge">
 						Amount ({currentCurrencySymbol})
 					</Text>
@@ -77,7 +80,7 @@ export default function CreateExpenseForm() {
 					Expense category
 				</Text>
 				<SelectInputWithIcon
-					data={expenseCategories}
+					data={transactionCategories}
 					selectedCategory={transactionCategory}
 					handleSelect={setTransactionCategory}
 				/>
@@ -118,7 +121,7 @@ export default function CreateExpenseForm() {
 				mode="contained"
 				style={styles.button}
 				labelStyle={styles.buttonLabel}
-				onPress={createTransactionRecord}
+				onPress={createExpenseRecord}
 				disabled={!transactionAmmount.length}
 			>
 				{loading ? (
@@ -146,7 +149,7 @@ const styles = StyleSheet.create({
 	inputContainer: {
 		gap: 8,
 	},
-	inputCotainerFull: {
+	inputContainerFull: {
 		gap: 8,
 		flex: 1,
 	},

@@ -5,7 +5,10 @@ import { StyleSheet, ToastAndroid, View } from 'react-native';
 import { Button, Text, useTheme } from 'react-native-paper';
 
 import { Category, Transaction } from '@/db/schema';
-import { getChartDataByCategory } from '@/utils/group-transactions';
+import {
+	getChartDataByCategory,
+	getChartDataByDate,
+} from '@/utils/group-transactions';
 import {
 	UserPreferenceContext,
 	UserPreferenceContextTypes,
@@ -18,9 +21,13 @@ interface TransactionWithCategory extends Transaction {
 
 type Props = {
 	transactions: TransactionWithCategory[];
+	groupBy: 'date' | 'category';
 };
 
-export default function ChartFooter({ transactions }: Props) {
+export default function ChartFooter({
+	transactions,
+	groupBy = 'category',
+}: Props) {
 	const theme = useTheme();
 
 	const { currentCurrencySymbol } = useContext(
@@ -35,8 +42,13 @@ export default function ChartFooter({ transactions }: Props) {
 	useEffect(() => {
 		async function load() {
 			try {
-				const data = await getChartDataByCategory(transactions);
-				setSortedData(data);
+				if (groupBy === 'category') {
+					const data = await getChartDataByCategory(transactions);
+					setSortedData(data);
+				} else {
+					const data = await getChartDataByDate(transactions);
+					setSortedData(data);
+				}
 			} catch (error: any) {
 				ToastAndroid.show(error.message, ToastAndroid.SHORT);
 			}

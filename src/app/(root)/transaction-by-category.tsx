@@ -32,7 +32,6 @@ export default function TransactionByCategoryScreen() {
 	const [quickFilter, setQuickFilter] = useState('today');
 
 	const relatedAccounts = alias(schema.accounts, 'related_accounts'); // Alias for related accounts
-
 	const { data: transactions } = useLiveQuery(
 		drizzleDb
 			.select({
@@ -54,12 +53,14 @@ export default function TransactionByCategoryScreen() {
 					image: schema.accounts.image,
 					created_at: schema.accounts.created_at,
 				},
+
 				category: {
 					id: schema.categories.id,
 					label: schema.categories.label,
 					icon_name: schema.categories.icon_name,
 					type: schema.categories.type,
 				},
+
 				related_account: {
 					id: relatedAccounts.id,
 					name: relatedAccounts.name,
@@ -88,8 +89,7 @@ export default function TransactionByCategoryScreen() {
 			.leftJoin(
 				relatedAccounts,
 				eq(schema.transactions.related_account_id, relatedAccounts.id)
-			),
-		[startDate, endDate]
+			)
 	);
 
 	useEffect(() => {
@@ -115,7 +115,7 @@ export default function TransactionByCategoryScreen() {
 							groupBy="date"
 							transactions={transactions}
 						/>
-						<ChartFooter transactions={transactions as any} />
+						<ChartFooter groupBy="date" transactions={transactions as any} />
 					</ChartWrapper>
 				</View>
 			)}
@@ -125,10 +125,11 @@ export default function TransactionByCategoryScreen() {
 				<View style={styles.renderItem}>
 					<Text style={styles.renderItemHeader}>{item.created_date}</Text>
 					<View>
-						{item.transactions.map((transaction) => (
+						{item.transactions.map((transaction: any) => (
 							<TransactionCard
 								key={transaction.id}
 								account={transaction.account as schema.Account}
+								relatedAccount={transaction.related_account as schema.Account}
 								category={transaction.category as schema.Category}
 								data={transaction}
 								transactionType={transaction.type as any}

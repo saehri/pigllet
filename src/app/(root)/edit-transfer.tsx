@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Button, useTheme } from 'react-native-paper';
-import { CalculatorIcon, View } from 'lucide-react-native';
-import { ScrollView, StyleSheet } from 'react-native';
+import { CalculatorIcon } from 'lucide-react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 
 import EditTransferForm from '@/src/components/forms/transfer/edit-transfer-form';
