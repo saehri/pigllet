@@ -699,7 +699,7 @@ export default function useTransactionsManager({
 					schema.accounts,
 					eq(schema.transactions.account_id, schema.accounts.id)
 				)
-				.innerJoin(
+				.leftJoin(
 					relatedAccountsAlias, // Use the alias for the second join
 					eq(schema.transactions.related_account_id, relatedAccountsAlias.id)
 				);
@@ -714,7 +714,7 @@ export default function useTransactionsManager({
 				.delete(schema.transactions)
 				.where(eq(schema.transactions.id, Number(transactionId)));
 
-			if (transactionType === 'transfer') {
+			if (transactionType === 'transfer' && relatedAccount) {
 				if (mainAccount.id !== relatedAccount.id) {
 					// 01 - change main account balance
 					// formula -> main account balance + transaction ammount
