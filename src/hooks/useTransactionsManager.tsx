@@ -6,11 +6,12 @@ import * as schema from '@/db/schema';
 import { alias } from 'drizzle-orm/sqlite-core';
 import { and, desc, eq, sql } from 'drizzle-orm';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { useRouter } from 'expo-router';
 
 type Props = {
-	actionType?: 'create' | 'read' | 'update';
+	actionType?: 'create' | 'read' | 'update' | 'delete';
 	transactionId?: number;
-	transactionType: 'expense' | 'income' | 'transfer';
+	transactionType: schema.TransactionType;
 };
 
 type UseExpenseManagerTypes = {
@@ -22,6 +23,8 @@ type UseExpenseManagerTypes = {
 	createTransferRecord: () => Promise<void>;
 	updateExpenseRecord: () => Promise<void>;
 	updateIncomeRecord: () => Promise<void>;
+	updateTransferRecord: () => Promise<void>;
+	deleteTransaction: () => Promise<void>;
 	loading: boolean;
 	setLoading: Dispatch<SetStateAction<boolean>>;
 	userAccounts: schema.Account[];
@@ -51,8 +54,10 @@ export default function useTransactionsManager({
 	transactionId,
 	transactionType,
 }: Props): UseExpenseManagerTypes {
+	const router = useRouter();
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
+	const relatedAccountsAlias = alias(schema.accounts, 'related_accounts'); // Alias for related accounts
 
 	// ------ form state
 	const [loading, setLoading] = useState<boolean>(false);
@@ -70,8 +75,11 @@ export default function useTransactionsManager({
 		useState<schema.Transaction>();
 	const [previouslyUsedAccount, setPreviouslyUsedAccount] =
 		useState<schema.Account>();
-	// ---- intialFormValue and previouslyUsedAccount is to store the old data
+	const [previouslyUsedRelatedAccount, setPreviouslyUsedRelatedAccount] =
+		useState<schema.Account>();
+	// ---- intialFormValue, previouslyUsedAccount, and previouslyUsedRelatedAccount is to store the old data
 	// previouslyUsedAccount is the old data of the main account
+	// previouslyUsedRelatedAccount is the old data of the related account
 
 	const [transactionCreatedAt, setTransactionCreatedAt] = useState<Date>(
 		new Date()
@@ -97,9 +105,10 @@ export default function useTransactionsManager({
 							transactions: schema.transactions,
 							accounts: schema.accounts,
 							categories: schema.categories,
+							related_account: relatedAccountsAlias,
 						})
 						.from(schema.transactions)
-						.where(eq(schema.transactions.id, Number(transactionId)))
+						.where(eq(schema.transactions.id, transactionId as number))
 						.innerJoin(
 							schema.categories,
 							eq(schema.transactions.category_id, schema.categories.id)
@@ -107,12 +116,25 @@ export default function useTransactionsManager({
 						.innerJoin(
 							schema.accounts,
 							eq(schema.transactions.account_id, schema.accounts.id)
+						)
+						.leftJoin(
+							relatedAccountsAlias, // Use the alias for the second join
+							eq(
+								schema.transactions.related_account_id,
+								relatedAccountsAlias.id
+							)
 						);
 
-					const { accounts, categories, transactions } = data[0];
+					const { accounts, categories, transactions, related_account } =
+						data[0];
 
 					setInitialFormValue(transactions);
 					setPreviouslyUsedAccount(accounts);
+
+					if (related_account) {
+						setPreviouslyUsedRelatedAccount(related_account);
+						setTransactionUsedRelatedAccount(related_account);
+					}
 
 					setTransactionAmount(transactions.amount.toString());
 					setTransactionCategory(categories);
@@ -130,9 +152,12 @@ export default function useTransactionsManager({
 
 				setUserAccounts(userAccounts);
 				setTransactionCategories(transactionCategories);
-				if (userAccounts.length > 1) {
-					setTransactionUsedRelatedAccount(userAccounts[1]);
-				} else {
+
+				if (
+					transactionType == 'income' ||
+					transactionType === 'expense' ||
+					(transactionType === 'transfer' && actionType !== 'update')
+				) {
 					setTransactionUsedRelatedAccount(userAccounts[0]);
 				}
 
@@ -147,7 +172,7 @@ export default function useTransactionsManager({
 		}
 
 		// ----- Do nothing if the user use the hooks for reading the data
-		if (actionType !== 'read') {
+		if (actionType !== 'read' && actionType !== 'delete') {
 			populateForm();
 		}
 	}, []);
@@ -229,8 +254,6 @@ export default function useTransactionsManager({
 			.orderBy(desc(schema.transactions.created_at));
 
 	const loadTransferData = (startDate: string, endDate: string) => {
-		const relatedAccounts = alias(schema.accounts, 'related_accounts'); // Alias for related accounts
-
 		return drizzleDb
 			.select({
 				id: schema.transactions.id,
@@ -243,7 +266,7 @@ export default function useTransactionsManager({
 				created_at: schema.transactions.created_at,
 				category: schema.categories,
 				account: schema.accounts,
-				related_account: relatedAccounts, // Use the alias here
+				related_account: relatedAccountsAlias, // Use the alias here
 			})
 			.from(schema.transactions)
 			.where(
@@ -261,8 +284,8 @@ export default function useTransactionsManager({
 				eq(schema.transactions.account_id, schema.accounts.id)
 			)
 			.innerJoin(
-				relatedAccounts, // Use the alias for the second join
-				eq(schema.transactions.related_account_id, relatedAccounts.id)
+				relatedAccountsAlias, // Use the alias for the second join
+				eq(schema.transactions.related_account_id, relatedAccountsAlias.id)
 			)
 			.orderBy(desc(schema.transactions.created_at));
 	};
@@ -588,6 +611,149 @@ export default function useTransactionsManager({
 		}
 	}
 
+	async function updateTransferRecord() {
+		try {
+			setLoading(true);
+
+			if (
+				!previouslyUsedAccount ||
+				!previouslyUsedRelatedAccount ||
+				!transactionUsedAccount ||
+				!transactionUsedRelatedAccount ||
+				!transactionCategory ||
+				!transactionAmmount.length ||
+				!initialFormValue ||
+				isNaN(Number(transactionAmmount))
+			) {
+				ToastAndroid.show('Invalid transfer details', ToastAndroid.SHORT);
+				return;
+			}
+
+			await drizzleDb
+				.update(schema.transactions)
+				.set({
+					type: transactionType,
+					amount: Number(transactionAmmount),
+					account_id: transactionUsedAccount.id as number,
+					related_account_id: transactionUsedRelatedAccount.id,
+					category_id: transactionCategory.id as number,
+					created_at: transactionCreatedAt.toISOString(),
+					image: transactionImage,
+					note: transactionNote,
+				})
+				.where(eq(schema.transactions.id, Number(transactionId)));
+
+			if (initialFormValue.amount.toString() !== transactionAmmount) {
+				// 01 - change the main account balance
+				// formula -> current balance + previous transactions ammount - current transaction ammount
+				await drizzleDb
+					.update(schema.accounts)
+					.set({
+						balance:
+							previouslyUsedAccount.balance +
+							initialFormValue.amount -
+							Number(transactionAmmount),
+					})
+					.where(eq(schema.accounts.id, previouslyUsedAccount.id as number));
+
+				// 02 - change the related account balance
+				// formula -> current balance - previous transactions ammount + current transactions ammount
+				await drizzleDb
+					.update(schema.accounts)
+					.set({
+						balance:
+							previouslyUsedRelatedAccount.balance -
+							initialFormValue.amount +
+							Number(transactionAmmount),
+					})
+					.where(
+						eq(schema.accounts.id, previouslyUsedRelatedAccount?.id as number)
+					);
+			}
+
+			ToastAndroid.show('Changes saved!', ToastAndroid.CENTER);
+		} catch (error: any) {
+			ToastAndroid.show(
+				error.message || 'Error during transfer',
+				ToastAndroid.CENTER
+			);
+		} finally {
+			setLoading(false);
+		}
+	}
+
+	async function deleteTransaction() {
+		try {
+			setLoading(true);
+
+			// ---- Delete the transaction from the record
+			const transactionData = await drizzleDb
+				.select({
+					transaction: schema.transactions,
+					account: schema.accounts,
+					related_account: relatedAccountsAlias,
+				})
+				.from(schema.transactions)
+				.where(eq(schema.transactions.id, Number(transactionId)))
+				.innerJoin(
+					schema.accounts,
+					eq(schema.transactions.account_id, schema.accounts.id)
+				)
+				.innerJoin(
+					relatedAccountsAlias, // Use the alias for the second join
+					eq(schema.transactions.related_account_id, relatedAccountsAlias.id)
+				);
+
+			const {
+				transaction,
+				account: mainAccount,
+				related_account: relatedAccount,
+			} = transactionData[0];
+
+			await drizzleDb
+				.delete(schema.transactions)
+				.where(eq(schema.transactions.id, Number(transactionId)));
+
+			if (transactionType === 'transfer') {
+				if (mainAccount.id !== relatedAccount.id) {
+					// 01 - change main account balance
+					// formula -> main account balance + transaction ammount
+					await drizzleDb
+						.update(schema.accounts)
+						.set({
+							balance: mainAccount.balance + transaction.amount,
+						})
+						.where(eq(schema.accounts.id, mainAccount.id as number));
+
+					// 02 - change related account balance
+					// formula -> related account balance - transaction ammount
+					await drizzleDb
+						.update(schema.accounts)
+						.set({
+							balance: relatedAccount.balance - transaction.amount,
+						})
+						.where(eq(schema.accounts.id, relatedAccount.id as number));
+				}
+			} else {
+				// --- Update the main account balance
+				if (transactionType === 'income') {
+					await drizzleDb
+						.update(schema.accounts)
+						.set({ balance: mainAccount.balance - transaction.amount });
+				} else if (transactionType === 'expense') {
+					await drizzleDb
+						.update(schema.accounts)
+						.set({ balance: mainAccount.balance + transaction.amount });
+				}
+			}
+		} catch (error: any) {
+			ToastAndroid.show(error.message, ToastAndroid.SHORT);
+		} finally {
+			setLoading(false);
+			router.back();
+		}
+	}
+
 	return {
 		transactionUsedAccount,
 		transactionCategories,
@@ -604,12 +770,14 @@ export default function useTransactionsManager({
 		userAccounts,
 		loading,
 		setLoading,
+		deleteTransaction,
 		setTransactionNote,
 		createIncomeRecord,
 		updateIncomeRecord,
 		setTransactionImage,
 		updateExpenseRecord,
 		setTransactionAmount,
+		updateTransferRecord,
 		setTransactionCategory,
 		setTransactionCreatedAt,
 		setTransactionUsedAccount,

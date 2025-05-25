@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
+import { FlatList, StyleSheet, View } from 'react-native';
 
 import * as schema from '@/db/schema';
 import { toYYYYMMDD } from '@/utils/utils';

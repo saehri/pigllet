@@ -31,7 +31,10 @@ export default function IncomeDetail() {
 						/>
 					</Button>
 
-					<DeleteTransactionsDialog transactionId={Number(id)} />
+					<DeleteTransactionsDialog
+						transactionType="income"
+						transactionId={Number(id)}
+					/>
 				</View>
 			),
 		});
@@ -43,3 +46,4 @@ export default function IncomeDetail() {
 		</ScrollView>
 	);
 }
+

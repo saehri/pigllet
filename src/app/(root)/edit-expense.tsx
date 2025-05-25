@@ -31,7 +31,10 @@ export default function ExpenseDetail() {
 						/>
 					</Button>
 
-					<DeleteTransactionsDialog transactionId={Number(id)} />
+					<DeleteTransactionsDialog
+						transactionType="expense"
+						transactionId={Number(id)}
+					/>
 				</View>
 			),
 		});
@@ -43,3 +46,4 @@ export default function ExpenseDetail() {
 		</ScrollView>
 	);
 }
+

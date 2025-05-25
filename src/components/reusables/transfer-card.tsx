@@ -80,7 +80,6 @@ export default function TransferCard({
 							variant="bodyLarge"
 							style={{
 								fontFamily: 'Inter-Regular',
-								maxWidth: 150,
 								overflow: 'hidden',
 							}}
 							numberOfLines={1}
