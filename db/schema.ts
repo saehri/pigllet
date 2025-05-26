@@ -72,7 +72,6 @@ export const subscriptions = sqliteTable('subscriptions', {
 	account_id: integer('account_id')
 		.notNull()
 		.references(() => accounts.id),
-	category_id: integer('category_id').references(() => categories.id),
 	due_date: text('due_date').notNull(), // ISO date
 	started_at: text('started_at').notNull(), // ISO date
 });
@@ -103,3 +102,4 @@ export type Category = typeof categories.$inferInsert;
 export type Budget = typeof budgets.$inferInsert;
 export type Transaction = typeof transactions.$inferInsert;
 export type Subscription = typeof subscriptions.$inferInsert;
+

@@ -108,3 +108,5 @@ declare type AppColor =
 	| 'Onyx'
 	| 'Citrine'
 	| 'Rose Quartz';
+
+declare type SubscriptionBillingTypes = 'monthly' | 'yearly';

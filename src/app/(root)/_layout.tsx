@@ -57,6 +57,10 @@ export default function Layout() {
 					),
 				}}
 			/>
+			<Stack.Screen
+				name="new-subscription"
+				options={{ title: 'New subscription' }}
+			/>
 			<Stack.Screen name="edit-expense" />
 			<Stack.Screen name="edit-income" />
 			<Stack.Screen name="edit-transfer" />

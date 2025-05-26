@@ -52,6 +52,8 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		gap: 16,
 		alignItems: 'center',
+		paddingVertical: 8,
+		// backgroundColor: 'red',
 	},
 	indicator: {
 		width: 20,
