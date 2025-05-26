@@ -109,7 +109,7 @@ const EMERALD_DARK = {
 		onError: 'rgb(105, 0, 5)',
 		errorContainer: 'rgb(147, 0, 10)',
 		onErrorContainer: 'rgb(255, 180, 171)',
-		background: 'rgb(26, 28, 24)',
+		background: 'rgb(14, 14, 14)',
 		onBackground: 'rgb(227, 227, 220)',
 		surface: 'rgb(26, 28, 24)',
 		onSurface: 'rgb(227, 227, 220)',
@@ -289,7 +289,7 @@ const CITRINE_DARK = {
 		onError: 'rgb(105, 0, 5)',
 		errorContainer: 'rgb(147, 0, 10)',
 		onErrorContainer: 'rgb(255, 180, 171)',
-		background: 'rgb(30, 27, 22)',
+		background: 'rgb(14, 14, 14)',
 		onBackground: 'rgb(233, 225, 216)',
 		surface: 'rgb(30, 27, 22)',
 		onSurface: 'rgb(233, 225, 216)',
@@ -379,7 +379,7 @@ const ROSE_QUARTZ_DARK = {
 		onError: 'rgb(105, 0, 5)',
 		errorContainer: 'rgb(147, 0, 10)',
 		onErrorContainer: 'rgb(255, 180, 171)',
-		background: 'rgb(32, 26, 26)',
+		background: 'rgb(14, 14, 14)',
 		onBackground: 'rgb(236, 224, 223)',
 		surface: 'rgb(32, 26, 26)',
 		onSurface: 'rgb(236, 224, 223)',
@@ -544,3 +544,4 @@ export {
 	CITRINE_DARK,
 	CITRINE_LIGHT,
 };
+
