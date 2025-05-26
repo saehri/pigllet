@@ -12,6 +12,7 @@ interface TransactionCard {
 	category: Category;
 	disableFirstButton?: boolean;
 	disableSecondButton?: boolean;
+	showDate?: boolean;
 }
 
 export default function TransactionCard({
@@ -22,6 +23,7 @@ export default function TransactionCard({
 	disableSecondButton = false,
 	disableFirstButton = false,
 	relatedAccount,
+	showDate,
 }: TransactionCard) {
 	if (transactionType === 'expense')
 		return (
@@ -31,11 +33,20 @@ export default function TransactionCard({
 				category={category}
 				data={data}
 				accountName={account.name}
+				showDate={showDate}
 			/>
 		);
 
 	if (transactionType === 'income')
-		return <IncomeCard accounts={account} category={category} data={data} />;
+		return (
+			<IncomeCard
+				accounts={account}
+				category={category}
+				data={data}
+				showDate={showDate}
+				disableFirstButton={disableFirstButton}
+			/>
+		);
 
 	return (
 		<TransferCard
@@ -43,6 +54,8 @@ export default function TransactionCard({
 			accounts={account}
 			category={category}
 			data={data}
+			showDate={showDate}
+			disableFirstButton={disableFirstButton}
 		/>
 	);
 }
