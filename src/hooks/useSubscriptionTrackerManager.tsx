@@ -99,19 +99,6 @@ export default function useSubscriptionTrackerManager({
 
 			await drizzleDb.insert(schema.subscriptions).values(payload);
 
-			// ---- reduce the selected account balance if the user start their subscription today
-			if (subscriptionStartedAt.getDate() === new Date().getDate()) {
-				await drizzleDb
-					.update(schema.accounts)
-					.set({
-						balance:
-							subscriptionsPaymentAccount.balance - Number(subscriptionAmmount),
-					})
-					.where(
-						eq(schema.accounts.id, Number(subscriptionsPaymentAccount.id))
-					);
-			}
-
 			setSubscriptionTitle('');
 			setSubscriptionAmmount('');
 			setSubscriptionAmmount('');
