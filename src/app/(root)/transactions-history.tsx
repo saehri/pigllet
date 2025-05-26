@@ -7,6 +7,7 @@ import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
 
 import TransactionCard from '@/src/components/reusables/transaction-card';
+import NoItemNotice from '@/src/components/reusables/no-items-notice';
 
 export default function TransactionHistory() {
 	const db = useSQLiteContext();
@@ -75,6 +76,7 @@ export default function TransactionHistory() {
 		<FlatList
 			showsVerticalScrollIndicator={false}
 			data={transactions}
+			ListEmptyComponent={<NoItemNotice />}
 			renderItem={({ item }) => (
 				<TransactionCard
 					key={item.transaction?.id}

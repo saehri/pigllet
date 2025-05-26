@@ -13,6 +13,7 @@ import { ChevronRightIcon } from 'lucide-react-native';
 import TransactionCard from '@/src/components/reusables/transaction-card';
 import BudgetStatsWidget from '@/src/components/home/budget-stats-widget';
 import AccountOverviewWidget from '@/src/components/home/account-overview-widget';
+import NoItemNotice from '@/src/components/reusables/no-items-notice';
 
 export default function TransactionScreen() {
 	const db = useSQLiteContext();
@@ -84,6 +85,7 @@ export default function TransactionScreen() {
 		<FlatList
 			showsVerticalScrollIndicator={false}
 			data={transactions}
+			ListEmptyComponent={<NoItemNotice />}
 			ListHeaderComponent={
 				<View>
 					<AccountOverviewWidget />
