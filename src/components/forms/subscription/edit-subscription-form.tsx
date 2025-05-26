@@ -16,7 +16,11 @@ import {
 import DatePicker from '../date-picker';
 import SelectInput from '../select-input';
 
-export default function NewSubscriptionForm() {
+type Props = {
+	subscriptionId: number;
+};
+
+export default function EditSubscriptionForm({ subscriptionId }: Props) {
 	const theme = useTheme();
 	const { currentCurrencySymbol } = useContext(
 		UserPreferenceContext
@@ -33,9 +37,9 @@ export default function NewSubscriptionForm() {
 		setSubscriptionBilled,
 		setSubscriptionDueDate,
 		setSubscriptionAmount,
-		createSubscriptionRecord,
+		updateSubscriptionRecord,
 		setSubscriptionStartedAt,
-	} = useSubscriptionTrackerManager({ actionType: 'create' });
+	} = useSubscriptionTrackerManager({ actionType: 'update', subscriptionId });
 
 	const isUserPickedTheSameDate = true;
 
@@ -120,13 +124,13 @@ export default function NewSubscriptionForm() {
 				mode="contained"
 				style={styles.button}
 				labelStyle={styles.buttonLabel}
-				onPress={createSubscriptionRecord}
+				onPress={updateSubscriptionRecord}
 				disabled={!subscriptionAmount.length || !subscriptionTitle.length}
 			>
 				{loading ? (
 					<ActivityIndicator size={20} color={theme.colors.onPrimary} />
 				) : (
-					'Create subscription record'
+					'Save changes'
 				)}
 			</Button>
 		</View>

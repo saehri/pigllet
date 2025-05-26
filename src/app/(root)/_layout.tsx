@@ -68,6 +68,7 @@ export default function Layout() {
 			<Stack.Screen name="edit-expense" />
 			<Stack.Screen name="edit-income" />
 			<Stack.Screen name="edit-transfer" />
+			<Stack.Screen name="edit-subscription" />
 			<Stack.Screen name="transaction-by-category" />
 		</Stack>
 	);
