@@ -8,10 +8,7 @@ export default function BudgetStatsWidget() {
 	const router = useRouter();
 
 	return (
-		<WidgetWrapper
-			title="Your budget stats"
-			customStyle={{ marginHorizontal: 16, marginVertical: 5 }}
-		>
+		<WidgetWrapper customStyle={{ marginHorizontal: 16, marginVertical: 5 }}>
 			<View style={{ gap: 10 }}>
 				<Text variant="titleMedium" style={{ fontFamily: 'Inter-Regular' }}>
 					You have no budget set
@@ -20,8 +17,8 @@ export default function BudgetStatsWidget() {
 				<Button
 					onPress={() => router.push('/budget')}
 					mode="contained"
-					contentStyle={{ flexDirection: 'row-reverse' }}
-					labelStyle={{ fontFamily: 'Inter-Regular', fontSize: 16 }}
+					contentStyle={{ flexDirection: 'row-reverse', padding: 8 }}
+					labelStyle={{ fontFamily: 'Inter-Medium', fontSize: 16 }}
 					style={{ borderRadius: 10 }}
 				>
 					Add budget
@@ -30,3 +27,4 @@ export default function BudgetStatsWidget() {
 		</WidgetWrapper>
 	);
 }
+
