@@ -30,7 +30,7 @@ export default function EditAccountScreen() {
 
 	const { accountId } = useLocalSearchParams();
 
-	const [accounts, setAccounts] = useState<schema.Accounts[]>([]);
+	const [accounts, setAccounts] = useState<schema.Account[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
 
 	useEffect(() => {
@@ -85,7 +85,7 @@ type FormProps = {
 	drizzleDb: ExpoSQLiteDatabase<typeof schema> & {
 		$client: SQLiteDatabase;
 	};
-	initialFormValue: schema.Accounts;
+	initialFormValue: schema.Account;
 };
 
 function Form({ theme, drizzleDb, initialFormValue }: FormProps) {
@@ -274,3 +274,4 @@ function DeleteButton({ theme, formLoading, handleDelete }: DeleteButtonProps) {
 		</>
 	);
 }
+

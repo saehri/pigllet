@@ -9,9 +9,9 @@ import * as schema from '@/db/schema';
 import AccountCard from '../settings/account-card';
 
 interface AccountSelector {
-	accounts: schema.Accounts[];
-	selectedAccount: schema.Accounts;
-	handleSelect: (selected: schema.Accounts) => void;
+	accounts: schema.Account[];
+	selectedAccount: schema.Account;
+	handleSelect: (selected: schema.Account) => void;
 }
 
 export default function AccountSelector({
@@ -25,7 +25,7 @@ export default function AccountSelector({
 	const showDialog = () => setVisible(true);
 	const hideDialog = () => setVisible(false);
 
-	function selectItem(selected: schema.Accounts) {
+	function selectItem(selected: schema.Account) {
 		handleSelect(selected);
 		hideDialog();
 	}
@@ -52,16 +52,7 @@ export default function AccountSelector({
 									<Pressable
 										key={account.id}
 										style={{
-											borderRadius: 20,
-											backgroundColor:
-												account.id === selectedAccount?.id
-													? theme.colors.elevation.level5
-													: theme.colors.elevation.level3,
-											borderWidth: 1,
-											borderColor:
-												account.id === selectedAccount.id
-													? theme.colors.primary
-													: theme.colors.elevation.level3,
+											opacity: account.id === selectedAccount.id ? 1 : 0.7,
 										}}
 										onPress={() => selectItem(account)}
 									>
@@ -147,3 +138,4 @@ function DialogTrigger({
 		</Pressable>
 	);
 }
+

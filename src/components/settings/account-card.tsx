@@ -1,4 +1,4 @@
-import { Image, Pressable, View } from 'react-native';
+import { Dimensions, Image, Pressable, View } from 'react-native';
 import { useContext } from 'react';
 import { Surface, Text, useTheme } from 'react-native-paper';
 import {
@@ -10,7 +10,7 @@ import * as schema from '@/db/schema';
 import getLocaleByCurrencySymbol from '@/utils/locale-getter';
 import { useRouter } from 'expo-router';
 
-interface Props extends schema.Accounts {
+interface Props extends schema.Account {
 	compact?: boolean;
 	clickable?: boolean;
 }
@@ -19,8 +19,6 @@ export default function AccountCard({
 	name,
 	number,
 	balance,
-	image,
-	is_cash,
 	id,
 	compact,
 	clickable,
@@ -37,65 +35,61 @@ export default function AccountCard({
 				mode="elevated"
 				elevation={4}
 				style={{
-					flex: 1,
-					height: compact ? 120 : 200,
-					borderRadius: 20,
+					height: compact ? 150 : 200,
+					borderRadius: 16,
 					overflow: 'hidden',
-					padding: 20,
-					justifyContent: 'space-between',
+					padding: 8,
+					paddingHorizontal: 25,
+					justifyContent: 'flex-end',
+					flexDirection: 'column',
 				}}
 			>
-				<View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-					<Text
-						style={{ fontFamily: 'Inter-Regular' }}
-						variant={compact ? 'bodyLarge' : 'headlineSmall'}
-					>
+				<View
+					style={{
+						flexDirection: 'row',
+						justifyContent: 'space-between',
+						marginBottom: 6,
+					}}
+				>
+					{number.match(/.{1,4}/g)?.map((t) => (
+						<Text
+							key={t}
+							style={{ fontFamily: 'Inter-Regular' }}
+							variant="bodySmall"
+						>
+							{t}
+						</Text>
+					))}
+				</View>
+
+				<View
+					style={{
+						flexDirection: 'row',
+						justifyContent: 'space-between',
+					}}
+				>
+					<Text style={{ fontFamily: 'Inter-Regular' }} variant="bodySmall">
+						{name}
+					</Text>
+
+					<Text style={{ fontFamily: 'Inter-Regular' }} variant="bodySmall">
 						{`${currentCurrencySymbol} ${balance.toLocaleString(
 							getLocaleByCurrencySymbol(currentCurrencySymbol)
 						)}`}
 					</Text>
 				</View>
 
-				<View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-					<Text
-						style={{ fontFamily: 'Inter-Regular' }}
-						variant={compact ? 'bodyMedium' : 'bodyLarge'}
-					>
-						{name}
-					</Text>
-
-					<Text
-						style={{ fontFamily: 'Inter-Regular' }}
-						variant={compact ? 'bodyMedium' : 'bodyLarge'}
-					>
-						{number}
-					</Text>
-				</View>
-
 				<Image
-					source={require('@/assets/icons/adaptive-icon.png')}
+					source={require('@/assets/images/cards/default-card-design.png')}
 					style={{
-						width: compact ? 60 : 80,
-						height: compact ? 60 : 80,
 						position: 'absolute',
 						top: 0,
-						right: 0,
-						zIndex: 5,
+						left: 0,
+						zIndex: -1,
+						width: Dimensions.get('screen').width - 100,
+						height: 150,
 					}}
 				/>
-
-				<View
-					style={{
-						backgroundColor: theme.colors.elevation.level5,
-						position: 'absolute',
-						top: -100,
-						right: -50,
-						width: 200,
-						height: 200,
-						borderRadius: 1000,
-						zIndex: -1,
-					}}
-				></View>
 			</Surface>
 		);
 
@@ -112,57 +106,63 @@ export default function AccountCard({
 				mode="elevated"
 				elevation={4}
 				style={{
-					flex: 1,
 					height: compact ? 120 : 200,
-					borderRadius: 20,
+					borderRadius: 16,
 					overflow: 'hidden',
-					padding: 20,
-					justifyContent: 'space-between',
+					padding: 16,
+					paddingHorizontal: 30,
+					justifyContent: 'flex-end',
+					flexDirection: 'column',
 				}}
 			>
-				<View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-					<Text style={{ fontFamily: 'Inter-Regular' }} variant="headlineSmall">
+				<View
+					style={{
+						flexDirection: 'row',
+						justifyContent: 'space-between',
+						marginBottom: 4,
+					}}
+				>
+					{number.match(/.{1,4}/g)?.map((t) => (
+						<Text
+							key={t}
+							style={{ fontFamily: 'Inter-Regular' }}
+							variant="bodyLarge"
+						>
+							{t}
+						</Text>
+					))}
+				</View>
+
+				<View
+					style={{
+						flexDirection: 'row',
+						justifyContent: 'space-between',
+					}}
+				>
+					<Text style={{ fontFamily: 'Inter-Regular' }} variant="bodyLarge">
+						{name}
+					</Text>
+
+					<Text style={{ fontFamily: 'Inter-Regular' }} variant="bodyLarge">
 						{`${currentCurrencySymbol} ${balance.toLocaleString(
 							getLocaleByCurrencySymbol(currentCurrencySymbol)
 						)}`}
 					</Text>
 				</View>
 
-				<View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-					<Text style={{ fontFamily: 'Inter-Regular' }} variant="bodyLarge">
-						{name}
-					</Text>
-
-					<Text style={{ fontFamily: 'Inter-Regular' }} variant="bodyLarge">
-						{number}
-					</Text>
-				</View>
-
 				<Image
-					source={require('@/assets/icons/adaptive-icon.png')}
+					source={require('@/assets/images/cards/default-card-design.png')}
 					style={{
-						width: 80,
-						height: 80,
 						position: 'absolute',
 						top: 0,
-						right: 0,
-						zIndex: 5,
+						left: 0,
+						zIndex: -1,
+						width: Dimensions.get('screen').width - 32,
+						height: 200,
 					}}
 				/>
-
-				<View
-					style={{
-						backgroundColor: theme.colors.elevation.level5,
-						position: 'absolute',
-						top: -100,
-						right: -50,
-						width: 200,
-						height: 200,
-						borderRadius: 1000,
-						zIndex: -1,
-					}}
-				></View>
 			</Surface>
 		</Pressable>
 	);
 }
+
