@@ -131,26 +131,19 @@ export default function NewSubscriptionForm() {
 				/>
 			</View>
 
-			<View>
-				<Button
-					mode="contained"
-					style={styles.button}
-					labelStyle={styles.buttonLabel}
-					onPress={createSubscriptionRecord}
-					disabled={!subscriptionAmmount.length || !subscriptionTitle.length}
-				>
-					{loading ? (
-						<ActivityIndicator size={20} color={theme.colors.onPrimary} />
-					) : (
-						'Create subscription record'
-					)}
-				</Button>
-
-				<Text style={styles.inputInfo} variant="bodySmall">
-					If you set your subscription to start today, we’ll charge you right
-					away — no waiting around!
-				</Text>
-			</View>
+			<Button
+				mode="contained"
+				style={styles.button}
+				labelStyle={styles.buttonLabel}
+				onPress={createSubscriptionRecord}
+				disabled={!subscriptionAmmount.length || !subscriptionTitle.length}
+			>
+				{loading ? (
+					<ActivityIndicator size={20} color={theme.colors.onPrimary} />
+				) : (
+					'Create subscription record'
+				)}
+			</Button>
 		</View>
 	);
 }
