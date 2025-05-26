@@ -90,7 +90,7 @@ export default function SelectInput({
 
 const styles = StyleSheet.create({
 	listContainer: {
-		gap: 16,
+		gap: 4,
 	},
 	itemContainer: {
 		flexDirection: 'row',

@@ -158,13 +158,14 @@ export default function Layout() {
 								alignItems: 'center',
 							}}
 						>
-							<Button>
+							<Button onPress={() => router.push('/(root)/new-subscription')}>
 								<Plus
 									strokeWidth={1.5}
 									color={theme.colors.onBackground}
 									size={24}
 								/>
 							</Button>
+
 							<Button onPress={() => router.push('/(root)/settings')}>
 								<Settings
 									strokeWidth={1.5}
@@ -217,3 +218,4 @@ export default function Layout() {
 		</Tabs>
 	);
 }
+
