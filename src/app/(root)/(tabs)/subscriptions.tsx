@@ -103,7 +103,7 @@ export default function SubscriptionScreen(props: any) {
 								]}
 							/>
 
-							<Text style={styles.amount} variant="labelLarge">
+							<Text style={styles.amount} variant="titleMedium">
 								{`${currentCurrencySymbol} ${item.amount.toLocaleString(
 									getLocaleByCurrencySymbol(currentCurrencySymbol)
 								)}`}
