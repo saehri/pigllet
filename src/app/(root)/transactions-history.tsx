@@ -1,24 +1,16 @@
-import { useRouter } from 'expo-router';
-import { Button, Text } from 'react-native-paper';
-import { FlatList, StyleSheet, View } from 'react-native';
+import { FlatList } from 'react-native';
 
 import * as schema from '@/db/schema';
-import { alias } from 'drizzle-orm/sqlite-core';
 import { desc, eq } from 'drizzle-orm';
+import { alias } from 'drizzle-orm/sqlite-core';
 import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
 
-import { ChevronRightIcon } from 'lucide-react-native';
-
 import TransactionCard from '@/src/components/reusables/transaction-card';
-import BudgetStatsWidget from '@/src/components/home/budget-stats-widget';
-import AccountOverviewWidget from '@/src/components/home/account-overview-widget';
 
-export default function TransactionScreen() {
+export default function TransactionHistory() {
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
-	const router = useRouter();
-
 	const relatedAccounts = alias(schema.accounts, 'related_accounts'); // Alias for related accounts
 
 	const { data: transactions } = useLiveQuery(
@@ -76,7 +68,6 @@ export default function TransactionScreen() {
 				relatedAccounts,
 				eq(schema.transactions.related_account_id, relatedAccounts.id)
 			)
-			.limit(15)
 			.orderBy(desc(schema.transactions.created_at))
 	);
 
@@ -84,31 +75,6 @@ export default function TransactionScreen() {
 		<FlatList
 			showsVerticalScrollIndicator={false}
 			data={transactions}
-			ListHeaderComponent={
-				<View>
-					<AccountOverviewWidget />
-					<BudgetStatsWidget />
-
-					<View style={styles.headerContainer}>
-						<Text variant="titleLarge" style={styles.title}>
-							Recent transactions
-						</Text>
-
-						<Button
-							mode="text"
-							compact
-							icon={({ color, size }) => (
-								<ChevronRightIcon size={size} color={color} />
-							)}
-							contentStyle={styles.buttonContent}
-							labelStyle={styles.buttonLabel}
-							onPress={() => router.push('/transactions-history')}
-						>
-							See all
-						</Button>
-					</View>
-				</View>
-			}
 			renderItem={({ item }) => (
 				<TransactionCard
 					key={item.transaction?.id}
@@ -123,31 +89,4 @@ export default function TransactionScreen() {
 		/>
 	);
 }
-
-const styles = StyleSheet.create({
-	container: {
-		marginTop: 28,
-		gap: 10,
-	},
-	headerContainer: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-		paddingHorizontal: 16,
-		paddingRight: 13,
-		marginTop: 16,
-	},
-	title: {
-		fontFamily: 'Inter-Regular',
-		lineHeight: 23,
-	},
-	subtitle: {
-		fontFamily: 'Inter-Regular',
-		opacity: 0.8,
-		paddingHorizontal: 10,
-		borderRadius: 100,
-	},
-	buttonContent: { flexDirection: 'row-reverse' },
-	buttonLabel: { fontFamily: 'Inter-Regular', fontSize: 16 },
-});
 

@@ -19,6 +19,7 @@ interface Props {
 	relatedAccount: Account;
 	disableFirstButton?: boolean;
 	disableSecondButton?: boolean;
+	showDate?: boolean;
 }
 
 export default function TransferCard({
@@ -28,6 +29,7 @@ export default function TransferCard({
 	relatedAccount,
 	disableFirstButton = false,
 	disableSecondButton = false,
+	showDate,
 }: Props) {
 	const { currentCurrencySymbol } = useContext(
 		UserPreferenceContext
@@ -102,30 +104,40 @@ export default function TransferCard({
 						justifyContent: 'space-between',
 					}}
 				>
-					<View
-						style={{
-							flexDirection: 'row',
-							gap: 8,
-							alignItems: 'center',
-						}}
-					>
-						{data.image && (
-							<Image
-								size={14}
-								strokeWidth={1}
-								color={theme.colors.onBackground}
-							/>
-						)}
-
-						{data.note && (
-							<Text
-								variant="labelLarge"
-								style={[styles.bodyMedium, { flex: 1, maxWidth: 100 }]}
-								numberOfLines={1}
-							>
-								{data.note}
+					<View style={{ flex: 1 }}>
+						{showDate && (
+							<Text variant="labelLarge" style={styles.bodyMedium}>
+								{new Date(data.created_at).toLocaleDateString('en-US', {
+									dateStyle: 'medium',
+								})}
 							</Text>
 						)}
+
+						<View
+							style={{
+								flexDirection: 'row',
+								gap: 8,
+								alignItems: 'center',
+							}}
+						>
+							{data.image && (
+								<Image
+									size={14}
+									strokeWidth={1}
+									color={theme.colors.onBackground}
+								/>
+							)}
+
+							{data.note && (
+								<Text
+									variant="labelLarge"
+									style={[styles.bodyMedium, { flex: 1, maxWidth: 100 }]}
+									numberOfLines={1}
+								>
+									{data.note}
+								</Text>
+							)}
+						</View>
 					</View>
 
 					<View style={{ flexDirection: 'row', gap: 6, alignItems: 'center' }}>
@@ -182,7 +194,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		gap: 12,
 		alignItems: 'center',
-		paddingVertical: 8,
+		paddingVertical: 10,
 		paddingHorizontal: 16,
 	},
 	iconContainer: {
