@@ -15,6 +15,13 @@
       "when": 1748176777480,
       "tag": "0001_perpetual_cassandra_nova",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1748278620095,
+      "tag": "0002_romantic_talisman",
+      "breakpoints": true
     }
   ]
 }

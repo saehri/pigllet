@@ -3,10 +3,11 @@ import { useSQLiteContext } from 'expo-sqlite';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 import * as schema from '@/db/schema';
+import { eq, sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 import { SubscriptionBillingTypes } from '@/types/type';
 import { toYYYYMMDD } from '@/utils/utils';
-import { eq } from 'drizzle-orm';
+import { useRouter } from 'expo-router';
 
 type Props = {
 	actionType: 'read' | 'create' | 'delete' | 'update';
@@ -16,18 +17,15 @@ type Props = {
 type UseSubscriptionTrackerManagerTypes = {
 	loading: boolean;
 	loadSubscriptionsData: () => any;
-	userAccounts: schema.Account[];
 	createSubscriptionRecord: () => Promise<void>;
+	updateSubscriptionRecord: () => Promise<void>;
+	deleteSubscriptionRecord: () => Promise<void>;
 	subscriptionTitle: string;
 	setSubscriptionTitle: Dispatch<SetStateAction<string>>;
-	subscriptionAmmount: string;
-	setSubscriptionAmmount: Dispatch<SetStateAction<string>>;
+	subscriptionAmount: string;
+	setSubscriptionAmount: Dispatch<SetStateAction<string>>;
 	subscriptionBilled: SubscriptionBillingTypes;
 	setSubscriptionBilled: Dispatch<SetStateAction<SubscriptionBillingTypes>>;
-	subscriptionsPaymentAccount: schema.Account | undefined;
-	setSubscriptionPaymentAccount: Dispatch<
-		SetStateAction<schema.Account | undefined>
-	>;
 	subscriptionDueDate: Date;
 	setSubscriptionDueDate: Dispatch<SetStateAction<Date>>;
 	subscriptionStartedAt: Date;
@@ -36,22 +34,22 @@ type UseSubscriptionTrackerManagerTypes = {
 
 export default function useSubscriptionTrackerManager({
 	actionType,
+	subscriptionId,
 }: Props): UseSubscriptionTrackerManagerTypes {
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
+	const router = useRouter();
 
 	// ----- form state
 	const [loading, setLoading] = useState<boolean>(false);
-
-	const [userAccounts, setUserAccounts] = useState<schema.Account[]>([]);
+	const [initialFormValue, setInitialFormValue] =
+		useState<schema.Subscription>();
 
 	// ---- form input state
 	const [subscriptionTitle, setSubscriptionTitle] = useState<string>('');
-	const [subscriptionAmmount, setSubscriptionAmmount] = useState<string>('');
+	const [subscriptionAmount, setSubscriptionAmount] = useState<string>('');
 	const [subscriptionBilled, setSubscriptionBilled] =
 		useState<SubscriptionBillingTypes>('monthly');
-	const [subscriptionsPaymentAccount, setSubscriptionPaymentAccount] =
-		useState<schema.Account>();
 	const [subscriptionDueDate, setSubscriptionDueDate] = useState<Date>(
 		new Date()
 	);
@@ -59,39 +57,54 @@ export default function useSubscriptionTrackerManager({
 		new Date()
 	);
 
-	// ---- set up the form
 	useEffect(() => {
 		async function populateForm() {
 			try {
-				const userAccounts = await drizzleDb.select().from(schema.accounts);
+				const data = await drizzleDb
+					.select()
+					.from(schema.subscriptions)
+					.where(eq(schema.subscriptions.id, Number(subscriptionId)));
 
-				setUserAccounts(userAccounts);
-				setSubscriptionPaymentAccount(userAccounts[0]);
+				setInitialFormValue(data[0]);
+				const { amount, billed, due_date, name, started_at } = data[0];
+
+				setSubscriptionTitle(name);
+				setSubscriptionAmount(amount.toString());
+				setSubscriptionBilled(billed as any);
+				setSubscriptionDueDate(new Date(due_date));
+				setSubscriptionStartedAt(new Date(started_at));
 			} catch (error: any) {
 				ToastAndroid.show(error.message, ToastAndroid.SHORT);
 			}
 		}
 
-		if (actionType !== 'read') {
+		if (actionType === 'update') {
 			populateForm();
 		}
 	}, []);
 
 	// ----- READ
 	const loadSubscriptionsData = () =>
-		drizzleDb.select().from(schema.subscriptions);
+		drizzleDb
+			.select({
+				id: schema.subscriptions.id,
+				name: schema.subscriptions.name,
+				amount: schema.subscriptions.amount,
+				billed: schema.subscriptions.billed,
+				started_at: schema.subscriptions.started_at,
+				due_date: schema.subscriptions.due_date,
+				elapsed_due_date: sql<number>`julianday(subscriptions.due_date) - julianday(${toYYYYMMDD(new Date())})`,
+			})
+			.from(schema.subscriptions);
 
 	// ----- CREATE
 	async function createSubscriptionRecord() {
 		try {
 			setLoading(true);
 
-			if (!subscriptionsPaymentAccount) return;
-
 			const payload: schema.Subscription = {
 				name: subscriptionTitle,
-				account_id: Number(subscriptionsPaymentAccount?.id),
-				amount: Number(subscriptionAmmount),
+				amount: Number(subscriptionAmount),
 				started_at: toYYYYMMDD(subscriptionStartedAt),
 				due_date: toYYYYMMDD(subscriptionDueDate),
 				billed: subscriptionBilled,
@@ -100,8 +113,8 @@ export default function useSubscriptionTrackerManager({
 			await drizzleDb.insert(schema.subscriptions).values(payload);
 
 			setSubscriptionTitle('');
-			setSubscriptionAmmount('');
-			setSubscriptionAmmount('');
+			setSubscriptionAmount('');
+			setSubscriptionAmount('');
 
 			ToastAndroid.show('Subscriptions tracker created!', ToastAndroid.SHORT);
 		} catch (error: any) {
@@ -111,23 +124,65 @@ export default function useSubscriptionTrackerManager({
 		}
 	}
 
+	// ------ UPDATE
+	async function updateSubscriptionRecord() {
+		try {
+			if (!initialFormValue) return;
+			setLoading(true);
+
+			await drizzleDb
+				.update(schema.subscriptions)
+				.set({
+					amount: Number(subscriptionAmount),
+					billed: subscriptionBilled,
+					name: subscriptionTitle,
+					due_date: toYYYYMMDD(subscriptionDueDate),
+					started_at: toYYYYMMDD(subscriptionStartedAt),
+				})
+				.where(eq(schema.subscriptions.id, Number(initialFormValue.id)));
+
+			ToastAndroid.show('Changes saved!', ToastAndroid.SHORT);
+		} catch (error: any) {
+			ToastAndroid.show(error.message, ToastAndroid.SHORT);
+		} finally {
+			setLoading(false);
+		}
+	}
+
+	// ----- DELETE
+	async function deleteSubscriptionRecord() {
+		try {
+			setLoading(true);
+
+			await drizzleDb
+				.delete(schema.subscriptions)
+				.where(eq(schema.subscriptions.id, Number(subscriptionId)));
+
+			ToastAndroid.show('Subscription record deleted!', ToastAndroid.SHORT);
+		} catch (error: any) {
+			ToastAndroid.show(error.message, ToastAndroid.SHORT);
+		} finally {
+			setLoading(false);
+			router.back();
+		}
+	}
+
 	return {
-		subscriptionsPaymentAccount,
 		subscriptionStartedAt,
 		subscriptionDueDate,
-		subscriptionAmmount,
+		subscriptionAmount,
 		subscriptionBilled,
 		subscriptionTitle,
-		userAccounts,
 		loading,
 		setSubscriptionTitle,
 		setSubscriptionBilled,
 		loadSubscriptionsData,
 		setSubscriptionDueDate,
-		setSubscriptionAmmount,
+		setSubscriptionAmount,
 		setSubscriptionStartedAt,
+		updateSubscriptionRecord,
 		createSubscriptionRecord,
-		setSubscriptionPaymentAccount,
+		deleteSubscriptionRecord,
 	};
 }
 

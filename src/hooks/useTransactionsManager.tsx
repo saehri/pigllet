@@ -739,11 +739,13 @@ export default function useTransactionsManager({
 				if (transactionType === 'income') {
 					await drizzleDb
 						.update(schema.accounts)
-						.set({ balance: mainAccount.balance - transaction.amount });
+						.set({ balance: mainAccount.balance - transaction.amount })
+						.where(eq(schema.accounts.id, mainAccount.id));
 				} else if (transactionType === 'expense') {
 					await drizzleDb
 						.update(schema.accounts)
-						.set({ balance: mainAccount.balance + transaction.amount });
+						.set({ balance: mainAccount.balance + transaction.amount })
+						.where(eq(schema.accounts.id, mainAccount.id));
 				}
 			}
 		} catch (error: any) {

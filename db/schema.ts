@@ -69,9 +69,6 @@ export const subscriptions = sqliteTable('subscriptions', {
 	name: text('name').notNull().unique(),
 	amount: integer('amount').notNull(),
 	billed: text('billed').notNull(), // Enforce in app: 'monthly', etc.
-	account_id: integer('account_id')
-		.notNull()
-		.references(() => accounts.id),
 	due_date: text('due_date').notNull(), // ISO date
 	started_at: text('started_at').notNull(), // ISO date
 });
