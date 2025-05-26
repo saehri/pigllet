@@ -31,7 +31,7 @@ export default function EditExpenseForm() {
 		transactionUsedAccount,
 		transactionCreatedAt,
 		transactionCategory,
-		transactionAmmount,
+		transactionAmount,
 		transactionCategories,
 		transactionImage,
 		transactionNote,
@@ -71,7 +71,7 @@ export default function EditExpenseForm() {
 					<TextInput
 						keyboardType="number-pad"
 						onChangeText={setTransactionAmount}
-						value={transactionAmmount}
+						value={transactionAmount}
 						contentStyle={styles.inputContent}
 					/>
 				</View>
@@ -124,7 +124,7 @@ export default function EditExpenseForm() {
 				style={styles.button}
 				labelStyle={styles.buttonLabel}
 				onPress={updateExpenseRecord}
-				disabled={!transactionAmmount.length}
+				disabled={!transactionAmount.length}
 			>
 				{loading ? (
 					<ActivityIndicator size={20} color={theme.colors.onPrimary} />

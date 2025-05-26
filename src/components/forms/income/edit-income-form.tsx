@@ -31,7 +31,7 @@ export default function EditIncomeForm() {
 		transactionUsedAccount,
 		transactionCreatedAt,
 		transactionCategory,
-		transactionAmmount,
+		transactionAmount,
 		transactionCategories,
 		transactionImage,
 		transactionNote,
@@ -72,7 +72,7 @@ export default function EditIncomeForm() {
 					<TextInput
 						keyboardType="number-pad"
 						onChangeText={setTransactionAmount}
-						value={transactionAmmount}
+						value={transactionAmount}
 						contentStyle={styles.inputContent}
 					/>
 				</View>
@@ -125,7 +125,7 @@ export default function EditIncomeForm() {
 				style={styles.button}
 				labelStyle={styles.buttonLabel}
 				onPress={updateIncomeRecord}
-				disabled={!transactionAmmount.length}
+				disabled={!transactionAmount.length}
 			>
 				{loading ? (
 					<ActivityIndicator size={20} color={theme.colors.onPrimary} />

@@ -33,7 +33,7 @@ export default function NewTransferForm() {
 		transactionCategories,
 		transactionCreatedAt,
 		transactionCategory,
-		transactionAmmount,
+		transactionAmount,
 		transactionImage,
 		transactionNote,
 		userAccounts,
@@ -82,7 +82,7 @@ export default function NewTransferForm() {
 				</Text>
 				<TextInput
 					keyboardType="number-pad"
-					value={transactionAmmount}
+					value={transactionAmount}
 					onChangeText={setTransactionAmount}
 					contentStyle={styles.inputContent}
 				/>
@@ -135,7 +135,7 @@ export default function NewTransferForm() {
 				style={styles.button}
 				labelStyle={styles.buttonLabel}
 				onPress={createTransferRecord}
-				disabled={!transactionAmmount.length}
+				disabled={!transactionAmount.length}
 			>
 				{loading ? (
 					<ActivityIndicator size={20} color={theme.colors.onPrimary} />

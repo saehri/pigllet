@@ -43,7 +43,7 @@ type UseExpenseManagerTypes = {
 	>;
 	transactionNote: string;
 	setTransactionNote: Dispatch<SetStateAction<string>>;
-	transactionAmmount: string;
+	transactionAmount: string;
 	setTransactionAmount: Dispatch<SetStateAction<string>>;
 	transactionImage: string;
 	setTransactionImage: Dispatch<SetStateAction<string>>;
@@ -91,7 +91,7 @@ export default function useTransactionsManager({
 	const [transactionUsedRelatedAccount, setTransactionUsedRelatedAccount] =
 		useState<schema.Account>();
 	const [transactionNote, setTransactionNote] = useState<string>('');
-	const [transactionAmmount, setTransactionAmount] = useState<string>('');
+	const [transactionAmount, setTransactionAmount] = useState<string>('');
 	const [transactionImage, setTransactionImage] = useState<string>('');
 
 	// ----- set up the form
@@ -296,7 +296,7 @@ export default function useTransactionsManager({
 
 			if (!transactionUsedAccount || !transactionCategory) return;
 
-			if (!transactionAmmount.length || isNaN(Number(transactionAmmount))) {
+			if (!transactionAmount.length || isNaN(Number(transactionAmount))) {
 				ToastAndroid.show('Please enter a valid amount', ToastAndroid.SHORT);
 				return;
 			}
@@ -304,7 +304,7 @@ export default function useTransactionsManager({
 			// ---- Idk what happend but if I don't do this and instead insert it directly to the query, it throwing types error.
 			const payload: schema.Transaction = {
 				account_id: Number(transactionUsedAccount.id),
-				amount: Number(transactionAmmount),
+				amount: Number(transactionAmount),
 				category_id: Number(transactionCategory.id),
 				created_at: transactionCreatedAt.toISOString(),
 				type: transactionType,
@@ -322,7 +322,7 @@ export default function useTransactionsManager({
 			await drizzleDb
 				.update(schema.accounts)
 				.set({
-					balance: transactionUsedAccount.balance - Number(transactionAmmount),
+					balance: transactionUsedAccount.balance - Number(transactionAmount),
 				})
 				.where(eq(schema.accounts.id, transactionUsedAccount.id as number));
 
@@ -344,13 +344,13 @@ export default function useTransactionsManager({
 
 			if (!transactionUsedAccount || !transactionCategory) return;
 
-			if (!transactionAmmount.length || isNaN(Number(transactionAmmount))) {
-				ToastAndroid.show('Invalid transaction ammount', ToastAndroid.SHORT);
+			if (!transactionAmount.length || isNaN(Number(transactionAmount))) {
+				ToastAndroid.show('Invalid transaction amount', ToastAndroid.SHORT);
 				return;
 			}
 
 			const payload: schema.Transaction = {
-				amount: Number(transactionAmmount),
+				amount: Number(transactionAmount),
 				account_id: transactionUsedAccount.id as number,
 				category_id: transactionCategory.id as number,
 				created_at: transactionCreatedAt.toISOString(),
@@ -365,7 +365,7 @@ export default function useTransactionsManager({
 			await drizzleDb
 				.update(schema.accounts)
 				.set({
-					balance: transactionUsedAccount.balance + Number(transactionAmmount),
+					balance: transactionUsedAccount.balance + Number(transactionAmount),
 				})
 				.where(eq(schema.accounts.id, transactionUsedAccount.id as number));
 
@@ -394,7 +394,7 @@ export default function useTransactionsManager({
 			// moved the payload into its own variable because the little shit keep screaming the types is invalid
 			const payload: schema.Transaction = {
 				type: transactionType,
-				amount: Number(transactionAmmount),
+				amount: Number(transactionAmount),
 				account_id: transactionUsedAccount.id as number,
 				related_account_id: transactionUsedRelatedAccount.id,
 				category_id: transactionCategory.id as number,
@@ -443,7 +443,7 @@ export default function useTransactionsManager({
 		try {
 			setLoading(true);
 
-			if (!transactionAmmount.length || isNaN(Number(transactionAmmount))) {
+			if (!transactionAmount.length || isNaN(Number(transactionAmount))) {
 				ToastAndroid.show('Invalid transaction amount', ToastAndroid.SHORT);
 				return;
 			}
@@ -453,7 +453,7 @@ export default function useTransactionsManager({
 				.set({
 					type: transactionType,
 					account_id: transactionUsedAccount?.id,
-					amount: Number(transactionAmmount),
+					amount: Number(transactionAmount),
 					category_id: transactionCategory?.id,
 					created_at: transactionCreatedAt.toISOString(),
 					image: transactionImage,
@@ -470,7 +470,7 @@ export default function useTransactionsManager({
 				return;
 			if (
 				initialFormValue.account_id !== transactionUsedAccount.id &&
-				initialFormValue.amount.toString() !== transactionAmmount
+				initialFormValue.amount.toString() !== transactionAmount
 			) {
 				// Both account and amount changed
 				// Undo old amount from old account
@@ -484,8 +484,7 @@ export default function useTransactionsManager({
 				await drizzleDb
 					.update(schema.accounts)
 					.set({
-						balance:
-							transactionUsedAccount.balance - Number(transactionAmmount),
+						balance: transactionUsedAccount.balance - Number(transactionAmount),
 					})
 					.where(eq(schema.accounts.id, transactionUsedAccount.id as number));
 			} else if (initialFormValue.account_id !== transactionUsedAccount.id) {
@@ -502,7 +501,7 @@ export default function useTransactionsManager({
 						balance: transactionUsedAccount.balance - initialFormValue.amount,
 					})
 					.where(eq(schema.accounts.id, transactionUsedAccount.id as number));
-			} else if (initialFormValue.amount.toString() !== transactionAmmount) {
+			} else if (initialFormValue.amount.toString() !== transactionAmount) {
 				// Only amount changed
 				await drizzleDb
 					.update(schema.accounts)
@@ -510,7 +509,7 @@ export default function useTransactionsManager({
 						balance:
 							previouslyUsedAccount.balance +
 							initialFormValue.amount -
-							Number(transactionAmmount),
+							Number(transactionAmount),
 					})
 					.where(eq(schema.accounts.id, previouslyUsedAccount.id as number));
 			}
@@ -527,7 +526,7 @@ export default function useTransactionsManager({
 		try {
 			setLoading(true);
 
-			if (!transactionAmmount.length || isNaN(Number(transactionAmmount))) {
+			if (!transactionAmount.length || isNaN(Number(transactionAmount))) {
 				ToastAndroid.show('Invalid transaction amount', ToastAndroid.SHORT);
 				return;
 			}
@@ -537,7 +536,7 @@ export default function useTransactionsManager({
 				.set({
 					type: transactionType,
 					account_id: transactionUsedAccount?.id,
-					amount: Number(transactionAmmount),
+					amount: Number(transactionAmount),
 					category_id: transactionCategory?.id,
 					created_at: transactionCreatedAt.toISOString(),
 					image: transactionImage,
@@ -555,7 +554,7 @@ export default function useTransactionsManager({
 			// CASE 1: Both account and amount changed
 			if (
 				initialFormValue.account_id !== transactionUsedAccount.id &&
-				initialFormValue.amount.toString() !== transactionAmmount
+				initialFormValue.amount.toString() !== transactionAmount
 			) {
 				// Subtract old income from old account
 				await drizzleDb
@@ -569,8 +568,7 @@ export default function useTransactionsManager({
 				await drizzleDb
 					.update(schema.accounts)
 					.set({
-						balance:
-							transactionUsedAccount.balance + Number(transactionAmmount),
+						balance: transactionUsedAccount.balance + Number(transactionAmount),
 					})
 					.where(eq(schema.accounts.id, transactionUsedAccount.id as number));
 			}
@@ -591,14 +589,14 @@ export default function useTransactionsManager({
 					.where(eq(schema.accounts.id, transactionUsedAccount.id as number));
 			}
 			// CASE 3: Only amount changed
-			else if (initialFormValue.amount.toString() !== transactionAmmount) {
+			else if (initialFormValue.amount.toString() !== transactionAmount) {
 				await drizzleDb
 					.update(schema.accounts)
 					.set({
 						balance:
 							previouslyUsedAccount.balance -
 							initialFormValue.amount +
-							Number(transactionAmmount),
+							Number(transactionAmount),
 					})
 					.where(eq(schema.accounts.id, previouslyUsedAccount.id as number));
 			}
@@ -621,9 +619,9 @@ export default function useTransactionsManager({
 				!transactionUsedAccount ||
 				!transactionUsedRelatedAccount ||
 				!transactionCategory ||
-				!transactionAmmount.length ||
+				!transactionAmount.length ||
 				!initialFormValue ||
-				isNaN(Number(transactionAmmount))
+				isNaN(Number(transactionAmount))
 			) {
 				ToastAndroid.show('Invalid transfer details', ToastAndroid.SHORT);
 				return;
@@ -633,7 +631,7 @@ export default function useTransactionsManager({
 				.update(schema.transactions)
 				.set({
 					type: transactionType,
-					amount: Number(transactionAmmount),
+					amount: Number(transactionAmount),
 					account_id: transactionUsedAccount.id as number,
 					related_account_id: transactionUsedRelatedAccount.id,
 					category_id: transactionCategory.id as number,
@@ -643,28 +641,28 @@ export default function useTransactionsManager({
 				})
 				.where(eq(schema.transactions.id, Number(transactionId)));
 
-			if (initialFormValue.amount.toString() !== transactionAmmount) {
+			if (initialFormValue.amount.toString() !== transactionAmount) {
 				// 01 - change the main account balance
-				// formula -> current balance + previous transactions ammount - current transaction ammount
+				// formula -> current balance + previous transactions amount - current transaction amount
 				await drizzleDb
 					.update(schema.accounts)
 					.set({
 						balance:
 							previouslyUsedAccount.balance +
 							initialFormValue.amount -
-							Number(transactionAmmount),
+							Number(transactionAmount),
 					})
 					.where(eq(schema.accounts.id, previouslyUsedAccount.id as number));
 
 				// 02 - change the related account balance
-				// formula -> current balance - previous transactions ammount + current transactions ammount
+				// formula -> current balance - previous transactions amount + current transactions amount
 				await drizzleDb
 					.update(schema.accounts)
 					.set({
 						balance:
 							previouslyUsedRelatedAccount.balance -
 							initialFormValue.amount +
-							Number(transactionAmmount),
+							Number(transactionAmount),
 					})
 					.where(
 						eq(schema.accounts.id, previouslyUsedRelatedAccount?.id as number)
@@ -717,7 +715,7 @@ export default function useTransactionsManager({
 			if (transactionType === 'transfer' && relatedAccount) {
 				if (mainAccount.id !== relatedAccount.id) {
 					// 01 - change main account balance
-					// formula -> main account balance + transaction ammount
+					// formula -> main account balance + transaction amount
 					await drizzleDb
 						.update(schema.accounts)
 						.set({
@@ -726,7 +724,7 @@ export default function useTransactionsManager({
 						.where(eq(schema.accounts.id, mainAccount.id as number));
 
 					// 02 - change related account balance
-					// formula -> related account balance - transaction ammount
+					// formula -> related account balance - transaction amount
 					await drizzleDb
 						.update(schema.accounts)
 						.set({
@@ -763,7 +761,7 @@ export default function useTransactionsManager({
 		transactionCreatedAt,
 		createExpenseRecord,
 		transactionCategory,
-		transactionAmmount,
+		transactionAmount,
 		loadTransferData,
 		transactionImage,
 		loadExpenseData,

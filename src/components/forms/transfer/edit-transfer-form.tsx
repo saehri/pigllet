@@ -31,7 +31,7 @@ export default function EditTransferForm() {
 		transactionCategories,
 		transactionCreatedAt,
 		transactionCategory,
-		transactionAmmount,
+		transactionAmount,
 		transactionImage,
 		transactionNote,
 		loading,
@@ -69,7 +69,7 @@ export default function EditTransferForm() {
 					</Text>
 					<TextInput
 						keyboardType="number-pad"
-						value={transactionAmmount}
+						value={transactionAmount}
 						onChangeText={setTransactionAmount}
 					/>
 				</View>
@@ -107,7 +107,7 @@ export default function EditTransferForm() {
 				style={styles.button}
 				labelStyle={styles.buttonLabel}
 				onPress={updateTransferRecord}
-				disabled={!transactionAmmount.length}
+				disabled={!transactionAmount.length}
 			>
 				{loading ? (
 					<ActivityIndicator size={20} color={theme.colors.onPrimary} />
