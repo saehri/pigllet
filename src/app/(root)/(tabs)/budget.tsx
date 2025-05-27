@@ -1,22 +1,28 @@
-import { ScrollView, View } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { FlatList } from 'react-native';
+import { useTheme } from 'react-native-paper';
 
-import { Workflow } from 'lucide-react-native';
+import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
+import useBudgetManager from '@/src/hooks/useBudgetManager';
+
 import BudgetCard from '@/src/components/budgets/budget-card';
+import NoItemNotice from '@/src/components/reusables/no-items-notice';
 
 export default function BudgetScreen() {
 	const theme = useTheme();
 
+	const { loadBudgetRecord } = useBudgetManager({ actionType: 'read' });
+	const { data: budgets } = useLiveQuery(loadBudgetRecord());
+
 	return (
-		<ScrollView
+		<FlatList
 			showsVerticalScrollIndicator={false}
 			style={{
 				backgroundColor: theme.colors.background,
 			}}
-		>
-			<View style={{ padding: 16 }}>
-				<BudgetCard />
-			</View>
-		</ScrollView>
+			ListEmptyComponent={<NoItemNotice />}
+			data={budgets}
+			renderItem={({ item }) => <BudgetCard key={item.id} data={item} />}
+		/>
 	);
 }
+

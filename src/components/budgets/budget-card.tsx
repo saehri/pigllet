@@ -1,177 +1,144 @@
-import { View, StyleSheet } from 'react-native';
-import { Button, ProgressBar, Text, useTheme } from 'react-native-paper';
-import { LinearGradient } from 'expo-linear-gradient';
-import { TextRef } from 'react-native-paper/lib/typescript/components/Typography/Text';
-import { useFloating, shift, flip } from '@floating-ui/react-native';
-import { useEffect, useRef, useState } from 'react';
+import { Pressable, View } from 'react-native';
+import { Surface, Text, useTheme } from 'react-native-paper';
 
-import TransactionIcons from '../reusables/transaction-icons';
+import * as schema from '@/db/schema';
+import { useContext } from 'react';
+import {
+	UserPreferenceContext,
+	UserPreferenceContextTypes,
+} from '@/context/UserPreferenceContext';
+import getLocaleByCurrencySymbol from '@/utils/locale-getter';
+import { useRouter } from 'expo-router';
 
-type MeaserResultType = {
-	x: number;
-	y: number;
-	width: number;
-	height: number;
-	pageX: number;
-	pageY: number;
-};
-
-export default function BudgetCard() {
-	const [progressBarState, setProgressBarState] = useState(0);
-
-	const theme = useTheme();
-
-	function increaseProgressBar() {
-		if (progressBarState + 0.1 <= 1) setProgressBarState((prev) => prev + 0.1);
-	}
-
-	function decreseProgressBar() {
-		if (progressBarState - 0.1 >= 0) setProgressBarState((prev) => prev - 0.1);
-	}
-
-	return (
-		<View
-			style={[styles.container, { borderColor: theme.colors.outlineVariant }]}
-		>
-			<LinearGradient
-				colors={[theme.colors.elevation.level5, theme.colors.elevation.level4]}
-				style={styles.linearGradient}
-			>
-				<View style={styles.header}>
-					<View style={styles.icon}>
-						<TransactionIcons icon="foods-and-drinks" />
-					</View>
-
-					<View>
-						<Text variant="titleMedium" style={{ fontFamily: 'Inter-Regular' }}>
-							Foods & Drinks
-						</Text>
-
-						<Text
-							variant="bodySmall"
-							style={{ fontFamily: 'Inter-Regular', opacity: 0.8 }}
-						>
-							April, 2025
-						</Text>
-					</View>
-				</View>
-
-				<ProgressBarWithLabel progressBarState={progressBarState} />
-
-				{/* <View>
-					<Text>Rp 250.000 of </Text>
-				</View> */}
-
-				<View>
-					<Button onPress={decreseProgressBar}>Reduce</Button>
-					<Button onPress={increaseProgressBar}>Increase</Button>
-				</View>
-			</LinearGradient>
-		</View>
-	);
+interface BudgetExtended extends schema.Budget {
+	category: schema.Category;
 }
 
-type ProgressBarWithLabelProps = {
-	progressBarState: number;
+type Props = {
+	data: BudgetExtended;
 };
 
-function ProgressBarWithLabel({ progressBarState }: ProgressBarWithLabelProps) {
-	const [labelIntersecting, setLabelIntersecting] = useState(false);
-	const [referenceRect, setReferenceRect] = useState();
-	const [floatingRect, setFloatingRect] = useState();
-
+export default function BudgetCard({ data }: Props) {
 	const theme = useTheme();
+	const router = useRouter();
 
-	const referenceRef = useRef<View>(null);
-	const floatingRef = useRef<View>(null);
-
-	useEffect(() => {
-		if (floatingRef.current && referenceRef.current?.measure) {
-			let referenceRefRect: MeaserResultType | undefined;
-			let floatingLabelRect: MeaserResultType | undefined;
-
-			referenceRef.current.measure((x, y, width, height, pageX, pageY) => {
-				referenceRefRect = { x, y, width, height, pageX, pageY };
-			});
-			floatingRef.current.measure((x, y, width, height, pageX, pageY) => {
-				floatingLabelRect = { x, y, width, height, pageX, pageY };
-			});
-
-			if (referenceRefRect && floatingLabelRect) {
-				const isInterSecting = referenceRefRect.width - floatingLabelRect.width;
-
-				setLabelIntersecting(isInterSecting < 0);
-			}
-		}
-	}, [floatingRef, referenceRef, progressBarState]);
+	const { currentCurrencySymbol } = useContext(
+		UserPreferenceContext
+	) as UserPreferenceContextTypes;
 
 	return (
-		<View>
-			<View ref={referenceRef}>
-				<ProgressBar animatedValue={progressBarState} />
-			</View>
-
-			<View
-				style={[
-					styles.floatingLabelContainer,
-					{
-						left: labelIntersecting ? 'auto' : `${progressBarState * 100}%`,
-						right: labelIntersecting
-							? `${(1 - progressBarState) * 100}%`
-							: 'auto',
+		<Pressable
+			onPress={() =>
+				router.push({
+					pathname: '/(root)/edit-budget',
+					params: {
+						id: data.id as any,
+						categoryId: data.category_id,
 					},
-				]}
-				ref={floatingRef}
+				})
+			}
+		>
+			<Surface
+				elevation={3}
+				style={{
+					borderWidth: 1,
+					borderColor: theme.colors.outlineVariant,
+					padding: 16,
+					marginHorizontal: 16,
+					borderRadius: 16,
+				}}
 			>
-				<Text
-					variant="labelSmall"
-					style={[
-						styles.floatingLabel,
-						{
-							color: theme.colors.onPrimary,
-							backgroundColor: theme.colors.primary,
-						},
-					]}
+				<View
+					style={{
+						flexDirection: 'row',
+						justifyContent: 'space-between',
+						alignItems: 'center',
+						marginBottom: 12,
+					}}
 				>
-					Rp 250.000
-				</Text>
-			</View>
-		</View>
+					<Text
+						style={{ fontFamily: 'Inter-Medium' }}
+						numberOfLines={1}
+						variant="titleMedium"
+					>
+						{data.category.label}
+					</Text>
+
+					<Text
+						style={{ fontFamily: 'Inter-Regular' }}
+						numberOfLines={1}
+						variant="titleMedium"
+					>
+						{new Date(data.period).toLocaleDateString('en-US', {
+							month: 'short', // or 'short' for abbreviated month
+							year: 'numeric',
+						})}
+					</Text>
+				</View>
+
+				<View
+					style={{
+						borderColor: theme.colors.outlineVariant,
+						borderWidth: 1,
+						borderRadius: 10,
+					}}
+				>
+					<View
+						style={{
+							padding: 8,
+							borderRadius: 8,
+							flex: 1,
+							alignItems: 'center',
+							borderBottomWidth: 1,
+							borderColor: theme.colors.outlineVariant,
+						}}
+					>
+						<Text style={{ fontFamily: 'Inter-Regular' }} variant="labelLarge">
+							Current{' '}
+							{`${currentCurrencySymbol} ${data.current_spending.toLocaleString(
+								getLocaleByCurrencySymbol(currentCurrencySymbol)
+							)}`}
+						</Text>
+					</View>
+
+					<View
+						style={{
+							padding: 8,
+							borderRadius: 8,
+							flex: 1,
+							alignItems: 'center',
+						}}
+					>
+						<Text style={{ fontFamily: 'Inter-Regular' }} variant="labelLarge">
+							Max{' '}
+							{`${currentCurrencySymbol} ${data.max_spending.toLocaleString(
+								getLocaleByCurrencySymbol(currentCurrencySymbol)
+							)}`}
+						</Text>
+					</View>
+
+					<View
+						style={{
+							padding: 8,
+							borderRadius: 8,
+							flex: 1,
+							alignItems: 'center',
+							borderTopWidth: 1,
+							borderColor: theme.colors.outlineVariant,
+						}}
+					>
+						<Text style={{ fontFamily: 'Inter-Regular' }} variant="labelLarge">
+							Remaining{' '}
+							{`${currentCurrencySymbol} ${(
+								data.max_spending - data.current_spending
+							).toLocaleString(
+								getLocaleByCurrencySymbol(currentCurrencySymbol)
+							)}`}
+						</Text>
+					</View>
+				</View>
+			</Surface>
+		</Pressable>
 	);
 }
-
-const styles = StyleSheet.create({
-	container: {
-		borderRadius: 20,
-		borderWidth: 1,
-		overflow: 'hidden',
-	},
-	linearGradient: {
-		padding: 16,
-	},
-	header: {
-		flexDirection: 'row',
-		gap: 8,
-		alignItems: 'center',
-		marginBottom: 16,
-	},
-	icon: {
-		width: 40,
-		height: 40,
-		borderRadius: 100,
-		alignItems: 'center',
-		justifyContent: 'center',
-		backgroundColor: 'rgba(153, 153, 153, 0.3)',
-	},
-	floatingLabel: {
-		padding: 2,
-		paddingHorizontal: 4,
-		borderRadius: 2,
-		fontFamily: 'Inter-Regular',
-	},
-	floatingLabelContainer: {
-		position: 'absolute',
-		top: 8,
-	},
-});
 

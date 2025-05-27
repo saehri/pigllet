@@ -287,7 +287,7 @@ export function MakePaymentButton({ subscription }: MakePaymentButtonTypes) {
 				<AccountSelector
 					accounts={accounts}
 					handleSelect={setSelectedAccount}
-					selectedAccount={selectedAccount}
+					selectedAccount={selectedAccount!}
 				/>
 			</View>
 
