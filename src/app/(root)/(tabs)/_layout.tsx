@@ -10,8 +10,6 @@ import {
 	Settings,
 } from 'lucide-react-native';
 
-import AddBudgetModal from '@/src/components/modals/add-budget-modal';
-
 export default function Layout() {
 	const theme = useTheme();
 	const router = useRouter();
@@ -203,7 +201,13 @@ export default function Layout() {
 								alignItems: 'center',
 							}}
 						>
-							<AddBudgetModal />
+							<Button onPress={() => router.push('/(root)/new-budget')}>
+								<Plus
+									strokeWidth={1.5}
+									color={theme.colors.onBackground}
+									size={24}
+								/>
+							</Button>
 							<Button onPress={() => router.push('/(root)/settings')}>
 								<Settings
 									strokeWidth={1.5}

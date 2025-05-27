@@ -58,7 +58,7 @@ export default function CreateExpenseForm() {
 					<AccountSelector
 						accounts={userAccounts}
 						handleSelect={setTransactionUsedAccount}
-						selectedAccount={transactionUsedAccount}
+						selectedAccount={transactionUsedAccount!}
 					/>
 				</View>
 

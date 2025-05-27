@@ -35,9 +35,12 @@ export const categories = sqliteTable('categories', {
 // --- BUDGETS ---
 export const budgets = sqliteTable('budgets', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
-	period: text('period').notNull(), // e.g., '2025-01', '2025-Q1'
+	category_id: integer('category_id')
+		.notNull()
+		.references(() => categories.id, { onDelete: 'cascade' }),
+	period: text('period').notNull(), // e.g. "2025-05"
 	max_spending: integer('max_spending').notNull(),
-	current_spending: integer('current_spending').notNull(),
+	current_spending: integer('current_spending').notNull(), // Optional if you compute dynamically
 	note: text('note'),
 	created_at: text('created_at').notNull(),
 });

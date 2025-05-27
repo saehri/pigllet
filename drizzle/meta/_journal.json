@@ -22,6 +22,13 @@
       "when": 1748278620095,
       "tag": "0002_romantic_talisman",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1748285179135,
+      "tag": "0003_greedy_sally_floyd",
+      "breakpoints": true
     }
   ]
 }
