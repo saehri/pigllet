@@ -93,12 +93,15 @@ export default function useBudgetManager({
 					}
 				}
 
-				const categories = await drizzleDb.select().from(schema.categories);
+				const categories = await drizzleDb
+					.select()
+					.from(schema.categories)
+					.where(eq(schema.categories.type, 'expense'));
 
 				setTransactionCategories(categories);
 
-				if (actionType !== 'update') {
-					setBudgetCategory(transactionCategories[0]);
+				if (actionType === 'create') {
+					setBudgetCategory(categories[0]);
 				}
 			} catch (error: any) {
 				ToastAndroid.show(error.message, ToastAndroid.SHORT);

@@ -28,6 +28,7 @@ export default function BudgetCard({ data }: Props) {
 
 	return (
 		<Pressable
+			style={{ marginBottom: 12 }}
 			onPress={() =>
 				router.push({
 					pathname: '/(root)/edit-budget',
