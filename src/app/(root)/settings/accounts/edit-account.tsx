@@ -162,42 +162,52 @@ function Form({ theme, drizzleDb, initialFormValue }: FormProps) {
 		<View style={{ padding: 16, gap: 16 }}>
 			<View style={{ flexDirection: 'row', gap: 8 }}>
 				<View style={{ gap: 8, flex: 1 }}>
-					<Text variant="bodyLarge">Account name</Text>
+					<Text style={{ fontFamily: 'Inter-Regular' }} variant="bodyLarge">
+						Account name
+					</Text>
 					<TextInput
 						keyboardType="default"
 						onChangeText={setAccountName}
 						value={accountName}
 						maxLength={12}
+						contentStyle={{ fontFamily: 'Inter-Regular' }}
 					/>
 				</View>
 
 				<View style={{ gap: 8, flex: 1 }}>
-					<Text variant="bodyLarge">
+					<Text style={{ fontFamily: 'Inter-Regular' }} variant="bodyLarge">
 						Account balance ({currentCurrencySymbol})
 					</Text>
 					<TextInput
 						keyboardType="number-pad"
 						onChangeText={setAccountBalance}
 						value={accountBalance}
+						contentStyle={{ fontFamily: 'Inter-Regular' }}
 					/>
 				</View>
 			</View>
 
 			{!initialFormValue.is_cash && (
 				<View style={{ gap: 8 }}>
-					<Text variant="bodyLarge">Account number</Text>
+					<Text style={{ fontFamily: 'Inter-Regular' }} variant="bodyLarge">
+						Account number
+					</Text>
 					<TextInput
 						keyboardType="default"
 						onChangeText={setAccountNumber}
 						value={accountNumber}
+						contentStyle={{ fontFamily: 'Inter-Regular' }}
 					/>
+					<Text style={{ fontFamily: 'Inter-Regular' }} variant="labelSmall">
+						Don't worry your account number is stored localy
+					</Text>
 				</View>
 			)}
 
 			<Button
 				mode="contained"
-				style={{ borderRadius: 10, marginTop: 16 }}
-				labelStyle={{ fontFamily: 'Inter-Regular', fontSize: 16 }}
+				style={{ borderRadius: 10, marginTop: 16, padding: 8 }}
+				labelStyle={{ fontFamily: 'Inter-Medium', fontSize: 16 }}
 				onPress={editAccount}
 				disabled={!accountBalance.length || !accountName.length}
 			>
