@@ -120,6 +120,7 @@ export default function CreateExpenseForm() {
 			<Button
 				mode="contained"
 				style={styles.button}
+				contentStyle={styles.buttonContent}
 				labelStyle={styles.buttonLabel}
 				onPress={createExpenseRecord}
 				disabled={!transactionAmount.length}
@@ -141,7 +142,10 @@ const styles = StyleSheet.create({
 	inputContent: {
 		fontFamily: 'Inter-Regular',
 	},
-	button: { borderRadius: 10, marginTop: 16, padding: 8 },
+	button: { borderRadius: 10, marginTop: 16 },
+	buttonContent: {
+		padding: 8,
+	},
 	buttonLabel: {
 		fontFamily: 'Inter-Medium',
 		fontSize: 16,
