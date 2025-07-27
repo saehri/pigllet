@@ -55,7 +55,7 @@ export default function TransactionCard({
 			<Pressable
 				onPress={() =>
 					router.push({
-						pathname: '/(root)/edit-expense',
+						pathname: `/(root)/edit-${transaction.type}` as any,
 						params: {
 							id: transaction.id as any,
 							type: transaction.type,
@@ -135,23 +135,14 @@ export default function TransactionCard({
 					</View>
 
 					<View style={{ flexDirection: 'row', gap: 6, alignItems: 'center' }}>
-						<View
-							style={{
-								maxWidth: 80,
-								backgroundColor: theme.colors.elevation.level4,
-								paddingHorizontal: 5,
-								borderRadius: 6,
-							}}
+						<Text
+							variant="labelMedium"
+							style={styles.cardNote}
+							adjustsFontSizeToFit
+							numberOfLines={1}
 						>
-							<Text
-								variant="labelMedium"
-								style={styles.cardNote}
-								adjustsFontSizeToFit
-								numberOfLines={1}
-							>
-								{account.name}
-							</Text>
-						</View>
+							{account.name}
+						</Text>
 					</View>
 				</View>
 			</Pressable>

@@ -27,6 +27,11 @@ export default function HomeScreenLayout() {
 					fontFamily: 'Manrope-Medium',
 					fontSize: 14,
 				},
+				headerTitleStyle: {
+					fontFamily: 'Manrope-Bold',
+					textTransform: 'capitalize',
+					letterSpacing: -1,
+				},
 				tabBarItemStyle: {
 					overflow: 'hidden',
 					borderRadius: 12,
@@ -43,8 +48,8 @@ export default function HomeScreenLayout() {
 			}}
 		>
 			<Tabs.Screen name="index" />
-			<Tabs.Screen name="monthly" />
-			<Tabs.Screen name="yearly" />
+			<Tabs.Screen name="monthly" options={{ title: 'Monthly' }} />
+			<Tabs.Screen name="yearly" options={{ title: 'Yearly' }} />
 		</Tabs>
 	);
 }

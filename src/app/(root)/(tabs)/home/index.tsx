@@ -1,7 +1,8 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigation, useRouter } from 'expo-router';
 import { Button, Divider, Surface, Text, useTheme } from 'react-native-paper';
 import { FlatList, StyleSheet, View } from 'react-native';
+import { HouseIcon, PlusIcon, SettingsIcon } from 'lucide-react-native';
 
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { groupedTransactionsByDate } from '@/utils/group-transactions';
@@ -9,7 +10,7 @@ import { groupedTransactionsByDate } from '@/utils/group-transactions';
 import TransactionCard from '@/src/components/reusables/transaction-card';
 import NoItemNotice from '@/src/components/reusables/no-items-notice';
 import useTransactionsManager from '@/src/hooks/useTransactionsManager';
-import { HouseIcon, PlusIcon, SettingsIcon } from 'lucide-react-native';
+import TransactionsSummaryChart from '@/src/components/charts/transactions-summary-chart';
 
 export default function HomeScreen() {
 	const navigation = useNavigation();
@@ -23,6 +24,17 @@ export default function HomeScreen() {
 	useEffect(() => {
 		navigation.setOptions({
 			title: 'All',
+			headerTitle: () => (
+				<Text
+					style={{
+						fontFamily: 'Manrope-Bold',
+						letterSpacing: -1,
+						fontSize: 20,
+					}}
+				>
+					All transactions
+				</Text>
+			),
 			tabBarIcon: (props: any) => (
 				<HouseIcon
 					size={20}
@@ -34,18 +46,9 @@ export default function HomeScreen() {
 					}
 				/>
 			),
-			headerTitle: () => (
-				<Text
-					variant="titleLarge"
-					style={{ fontFamily: 'Manrope-Bold', letterSpacing: -1 }}
-				>
-					Pigllet
-				</Text>
-			),
 			headerRight: (props: any) => (
 				<View
 					style={{
-						backgroundColor: theme.colors.background,
 						paddingRight: 16,
 						flexDirection: 'row',
 						alignItems: 'center',
@@ -58,7 +61,7 @@ export default function HomeScreen() {
 					>
 						<PlusIcon
 							strokeWidth={1.5}
-							color={theme.colors.onBackground}
+							color={theme.colors.onSecondaryContainer}
 							size={24}
 						/>
 					</Button>
@@ -66,33 +69,65 @@ export default function HomeScreen() {
 					<Button
 						mode="contained-tonal"
 						onPress={() => router.push('/(root)/settings')}
-						contentStyle={{ height: 40 }}
+						contentStyle={{
+							height: 40,
+						}}
 					>
 						<SettingsIcon
 							strokeWidth={1.5}
-							color={theme.colors.onBackground}
-							size={20}
+							color={theme.colors.onSecondaryContainer}
+							size={props.size}
 						/>
 					</Button>
 				</View>
 			),
 		});
-	}, []);
+	}, [theme]);
 
 	return (
 		<FlatList
-			style={{ backgroundColor: theme.colors.background }}
+			style={{
+				backgroundColor: theme.colors.elevation.level1,
+			}}
+			contentContainerStyle={{ paddingBottom: 70 }}
 			showsVerticalScrollIndicator={false}
 			data={groupedTransactionsByDate(transactions)}
 			ListEmptyComponent={<NoItemNotice />}
-			ListHeaderComponent={<View style={styles.headerContainer}></View>}
+			ListHeaderComponent={
+				<View>
+					<View
+						style={[
+							styles.headerContainer,
+							{ backgroundColor: theme.colors.background },
+						]}
+					>
+						<TransactionsSummaryChart
+							groupBy="date"
+							transactions={transactions}
+						/>
+					</View>
+
+					<View
+						style={{
+							height: 20,
+							backgroundColor: theme.colors.elevation.level1,
+							borderTopLeftRadius: 200,
+							borderTopRightRadius: 200,
+							position: 'absolute',
+							bottom: 0,
+							left: 0,
+							width: '100%',
+						}}
+					></View>
+				</View>
+			}
 			renderItem={({ item }) => (
 				<View style={styles.transactionListContainer}>
 					<Text style={styles.transactionListTitle} variant="bodyMedium">
 						{item.created_date}
 					</Text>
 
-					<Surface elevation={2} mode="flat" style={styles.transactionList}>
+					<Surface elevation={3} mode="flat" style={styles.transactionList}>
 						{item.transactions.map((data, index) => (
 							<View key={data.transaction.id}>
 								<TransactionCard
@@ -117,13 +152,10 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-	container: {
-		marginTop: 28,
-		gap: 10,
-	},
 	headerContainer: {
+		paddingTop: 70,
 		paddingHorizontal: 16,
-		paddingTop: 60,
+		paddingBottom: 50,
 	},
 	title: {
 		fontFamily: 'Manrope-Regular',
@@ -140,7 +172,7 @@ const styles = StyleSheet.create({
 	transactionListTitle: {
 		fontFamily: 'Manrope-Bold',
 		letterSpacing: -0.3,
-		opacity: 0.5,
+		opacity: 0.6,
 	},
 	transactionListContainer: {
 		paddingHorizontal: 16,

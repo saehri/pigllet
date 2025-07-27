@@ -1,12 +1,11 @@
-import { Tabs, usePathname, useRouter } from 'expo-router';
+import { Tabs, useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { Button, Text, useTheme } from 'react-native-paper';
+import { Button, useTheme } from 'react-native-paper';
 import {
 	CalendarSync,
-	HomeIcon,
+	ChartPieIcon,
 	House,
 	Plus,
-	Receipt,
 	ScrollText,
 	Settings,
 } from 'lucide-react-native';
@@ -14,28 +13,19 @@ import {
 export default function Layout() {
 	const theme = useTheme();
 	const router = useRouter();
-	const pathname = usePathname();
-
-	function navigateTo(): any {
-		if (pathname === '/transactions/expense')
-			return '/(root)/new-transactions/expense';
-		if (pathname === '/transactions/income')
-			return '/(root)/new-transactions/income';
-		if (pathname === '/transactions/transfer')
-			return '/(root)/new-transactions/transfer';
-	}
 
 	return (
 		<Tabs
 			initialRouteName="home"
 			screenOptions={{
 				tabBarActiveTintColor: theme.colors.onPrimary,
-				tabBarInactiveBackgroundColor: theme.colors.elevation.level5,
 				tabBarActiveBackgroundColor: theme.colors.primary,
+				tabBarInactiveBackgroundColor: theme.colors.primaryContainer,
+				tabBarInactiveTintColor: theme.colors.onPrimaryContainer,
 				tabBarStyle: {
-					backgroundColor: theme.colors.elevation.level2,
+					backgroundColor: theme.colors.elevation.level1,
 					height: 52,
-					marginHorizontal: 30,
+					marginHorizontal: 50,
 					bottom: 16,
 					elevation: 0,
 					shadowOpacity: 0,
@@ -49,9 +39,9 @@ export default function Layout() {
 					borderColor: theme.colors.outlineVariant,
 				},
 				headerTitleStyle: {
-					fontFamily: 'Manrope-Regular',
-					color: theme.colors.onBackground,
+					fontFamily: 'Manrope-Bold',
 					textTransform: 'capitalize',
+					letterSpacing: -1,
 				},
 				tabBarItemStyle: {
 					overflow: 'hidden',
@@ -66,15 +56,17 @@ export default function Layout() {
 				sceneStyle: {
 					backgroundColor: theme.colors.background,
 				},
+				headerStyle: {
+					backgroundColor: theme.colors.background,
+				},
 				headerShadowVisible: false,
 				tabBarShowLabel: false,
-				headerShown: false,
 			}}
 		>
 			<Tabs.Screen
 				name="home"
 				options={{
-					title: 'Home',
+					headerShown: false,
 					tabBarIcon: (props) => (
 						<House
 							size={20}
@@ -89,11 +81,11 @@ export default function Layout() {
 				}}
 			/>
 			<Tabs.Screen
-				name="transactions"
+				name="statistics"
 				options={{
-					title: 'Transactions',
+					title: 'Statistics',
 					tabBarIcon: (props) => (
-						<Receipt
+						<ChartPieIcon
 							size={20}
 							color={props.color}
 							strokeWidth={1.5}
@@ -103,9 +95,6 @@ export default function Layout() {
 							}
 						/>
 					),
-					headerStyle: {
-						backgroundColor: theme.colors.background,
-					},
 					headerRight: (props) => (
 						<View
 							style={{
@@ -114,13 +103,6 @@ export default function Layout() {
 								alignItems: 'center',
 							}}
 						>
-							<Button onPress={() => router.push(navigateTo())}>
-								<Plus
-									strokeWidth={1.5}
-									color={theme.colors.onBackground}
-									size={24}
-								/>
-							</Button>
 							<Button onPress={() => router.push('/(root)/settings')}>
 								<Settings
 									strokeWidth={1.5}
@@ -147,9 +129,6 @@ export default function Layout() {
 							}
 						/>
 					),
-					headerStyle: {
-						backgroundColor: theme.colors.background,
-					},
 					headerRight: (props) => (
 						<View
 							style={{
@@ -192,9 +171,6 @@ export default function Layout() {
 							}
 						/>
 					),
-					headerStyle: {
-						backgroundColor: theme.colors.background,
-					},
 					headerRight: (props) => (
 						<View
 							style={{

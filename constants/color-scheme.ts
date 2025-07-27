@@ -48,7 +48,7 @@ const DEFAULT_LIGHT = {
 
 const DEFAULT_DARK = {
 	colors: {
-		primary: 'rgb(255, 181, 160)',
+		primary: 'rgba(247, 133, 101, 1)',
 		onPrimary: 'rgb(96, 21, 0)',
 		primaryContainer: 'rgb(135, 33, 0)',
 		onPrimaryContainer: 'rgb(255, 219, 209)',

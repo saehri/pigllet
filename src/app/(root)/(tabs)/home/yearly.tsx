@@ -16,6 +16,7 @@ import { groupedTransactionsByDate } from '@/utils/group-transactions';
 import TransactionCard from '@/src/components/reusables/transaction-card';
 import NoItemNotice from '@/src/components/reusables/no-items-notice';
 import useTransactionsManager from '@/src/hooks/useTransactionsManager';
+import TransactionsSummaryChart from '@/src/components/charts/transactions-summary-chart';
 
 export default function HomeYearlyTransactionScreen() {
 	const navigation = useNavigation();
@@ -28,6 +29,7 @@ export default function HomeYearlyTransactionScreen() {
 
 	useEffect(() => {
 		navigation.setOptions({
+			title: 'Yearly',
 			headerTitle: () => (
 				<View
 					style={{
@@ -87,22 +89,52 @@ export default function HomeYearlyTransactionScreen() {
 				</View>
 			),
 		});
-	}, []);
+	}, [theme]);
 
 	return (
 		<FlatList
-			style={{ backgroundColor: theme.colors.background }}
+			style={{
+				backgroundColor: theme.colors.elevation.level1,
+			}}
+			contentContainerStyle={{ paddingBottom: 70 }}
 			showsVerticalScrollIndicator={false}
 			data={groupedTransactionsByDate(transactions)}
 			ListEmptyComponent={<NoItemNotice />}
-			ListHeaderComponent={<View style={styles.headerContainer}></View>}
+			ListHeaderComponent={
+				<View>
+					<View
+						style={[
+							styles.headerContainer,
+							{ backgroundColor: theme.colors.background },
+						]}
+					>
+						<TransactionsSummaryChart
+							groupBy="type"
+							transactions={transactions}
+						/>
+					</View>
+
+					<View
+						style={{
+							height: 20,
+							backgroundColor: theme.colors.elevation.level1,
+							borderTopLeftRadius: 200,
+							borderTopRightRadius: 200,
+							position: 'absolute',
+							bottom: 0,
+							left: 0,
+							width: '100%',
+						}}
+					></View>
+				</View>
+			}
 			renderItem={({ item }) => (
 				<View style={styles.transactionListContainer}>
 					<Text style={styles.transactionListTitle} variant="bodyMedium">
 						{item.created_date}
 					</Text>
 
-					<Surface elevation={2} mode="flat" style={styles.transactionList}>
+					<Surface elevation={3} mode="flat" style={styles.transactionList}>
 						{item.transactions.map((data, index) => (
 							<View key={data.transaction.id}>
 								<TransactionCard
@@ -127,14 +159,10 @@ export default function HomeYearlyTransactionScreen() {
 }
 
 const styles = StyleSheet.create({
-	container: {
-		marginTop: 28,
-		gap: 10,
-	},
 	headerContainer: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		paddingTop: 60,
+		paddingTop: 70,
+		paddingHorizontal: 16,
+		paddingBottom: 50,
 	},
 	title: {
 		fontFamily: 'Manrope-Regular',
@@ -151,7 +179,7 @@ const styles = StyleSheet.create({
 	transactionListTitle: {
 		fontFamily: 'Manrope-Bold',
 		letterSpacing: -0.3,
-		opacity: 0.5,
+		opacity: 0.6,
 	},
 	transactionListContainer: {
 		paddingHorizontal: 16,
