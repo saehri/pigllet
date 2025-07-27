@@ -68,6 +68,7 @@ export default function Layout() {
 				},
 				headerShadowVisible: false,
 				tabBarShowLabel: false,
+				headerShown: false,
 			}}
 		>
 			<Tabs.Screen
@@ -84,51 +85,6 @@ export default function Layout() {
 								props.focused ? theme.colors.onPrimary : theme.colors.background
 							}
 						/>
-					),
-					headerStyle: {
-						backgroundColor: theme.colors.background,
-					},
-					headerTitle: () => (
-						<Text
-							variant="titleLarge"
-							style={{ fontFamily: 'Manrope-Bold', letterSpacing: -1 }}
-						>
-							Pigllet
-						</Text>
-					),
-					headerRight: (props) => (
-						<View
-							style={{
-								backgroundColor: theme.colors.background,
-								paddingRight: 16,
-								flexDirection: 'row',
-								alignItems: 'center',
-							}}
-						>
-							<Button
-								mode="contained-tonal"
-								onPress={() => router.push('/(root)/new-transactions/expense')}
-								contentStyle={{ height: 40 }}
-							>
-								<Plus
-									strokeWidth={1.5}
-									color={theme.colors.onBackground}
-									size={24}
-								/>
-							</Button>
-
-							<Button
-								mode="contained-tonal"
-								onPress={() => router.push('/(root)/settings')}
-								contentStyle={{ height: 40 }}
-							>
-								<Settings
-									strokeWidth={1.5}
-									color={theme.colors.onBackground}
-									size={20}
-								/>
-							</Button>
-						</View>
 					),
 				}}
 			/>

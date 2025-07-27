@@ -1,5 +1,13 @@
-import { Divider, Surface, Text, useTheme } from 'react-native-paper';
+import { useEffect } from 'react';
+import {
+	CalendarFoldIcon,
+	HouseIcon,
+	PlusIcon,
+	SettingsIcon,
+} from 'lucide-react-native';
+import { useNavigation, useRouter } from 'expo-router';
 import { FlatList, StyleSheet, View } from 'react-native';
+import { Button, Divider, Surface, Text, useTheme } from 'react-native-paper';
 
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { groupedTransactionsByDate } from '@/utils/group-transactions';
@@ -9,10 +17,87 @@ import NoItemNotice from '@/src/components/reusables/no-items-notice';
 import useTransactionsManager from '@/src/hooks/useTransactionsManager';
 
 export default function HomeMonthlyTransactionScreen() {
+	const navigation = useNavigation();
+	const router = useRouter();
 	const theme = useTheme();
+
 	const { loadTransactionsData } = useTransactionsManager({});
 
 	const { data: transactions } = useLiveQuery(loadTransactionsData());
+
+	useEffect(() => {
+		navigation.setOptions({
+			tabBarIcon: (props: any) => (
+				<HouseIcon
+					size={20}
+					color={props.color}
+					strokeWidth={1.5}
+					fillOpacity={props.focused ? 0.3 : 0}
+					fill={
+						props.focused ? theme.colors.onPrimary : theme.colors.background
+					}
+				/>
+			),
+			headerTitle: () => (
+				<View
+					style={{
+						backgroundColor: theme.colors.background,
+						paddingRight: 16,
+						flexDirection: 'row',
+						alignItems: 'center',
+					}}
+				>
+					<Button
+						mode="contained-tonal"
+						contentStyle={{ height: 40 }}
+						icon={(props) => (
+							<CalendarFoldIcon
+								size={props.size}
+								strokeWidth={1.5}
+								color={props.color}
+							/>
+						)}
+					>
+						July, 2025
+					</Button>
+				</View>
+			),
+			headerRight: (props: any) => (
+				<View
+					style={{
+						backgroundColor: theme.colors.background,
+						paddingRight: 16,
+						flexDirection: 'row',
+						alignItems: 'center',
+					}}
+				>
+					<Button
+						mode="contained-tonal"
+						onPress={() => router.push('/(root)/new-transactions/expense')}
+						contentStyle={{ height: 40 }}
+					>
+						<PlusIcon
+							strokeWidth={1.5}
+							color={theme.colors.onBackground}
+							size={24}
+						/>
+					</Button>
+
+					<Button
+						mode="contained-tonal"
+						onPress={() => router.push('/(root)/settings')}
+						contentStyle={{ height: 40 }}
+					>
+						<SettingsIcon
+							strokeWidth={1.5}
+							color={theme.colors.onBackground}
+							size={20}
+						/>
+					</Button>
+				</View>
+			),
+		});
+	}, []);
 
 	return (
 		<FlatList
@@ -58,12 +143,8 @@ const styles = StyleSheet.create({
 	},
 	headerContainer: {
 		flexDirection: 'row',
-		justifyContent: 'space-between',
 		alignItems: 'center',
-		paddingHorizontal: 16,
-		paddingRight: 13,
-		marginTop: 16,
-		paddingTop: 50,
+		paddingTop: 60,
 	},
 	title: {
 		fontFamily: 'Manrope-Regular',

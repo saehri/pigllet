@@ -7,7 +7,6 @@ export default function HomeScreenLayout() {
 	return (
 		<Tabs
 			screenOptions={{
-				headerShown: false,
 				tabBarActiveTintColor: theme.colors.onPrimary,
 				tabBarActiveBackgroundColor: theme.colors.primary,
 				tabBarInactiveBackgroundColor: theme.colors.primaryContainer,
@@ -15,7 +14,7 @@ export default function HomeScreenLayout() {
 				tabBarStyle: {
 					position: 'absolute',
 					backgroundColor: theme.colors.background,
-					top: 0,
+					top: 65,
 					borderTopWidth: 0,
 					marginHorizontal: 16,
 					elevation: 0,
@@ -38,26 +37,14 @@ export default function HomeScreenLayout() {
 					display: 'none',
 				},
 				headerShadowVisible: false,
+				headerStyle: {
+					backgroundColor: theme.colors.background,
+				},
 			}}
 		>
-			<Tabs.Screen
-				name="index"
-				options={{
-					title: 'All',
-				}}
-			/>
-			<Tabs.Screen
-				name="monthly"
-				options={{
-					title: 'Monthly',
-				}}
-			/>
-			<Tabs.Screen
-				name="yearly"
-				options={{
-					title: 'Yearly',
-				}}
-			/>
+			<Tabs.Screen name="index" />
+			<Tabs.Screen name="monthly" />
+			<Tabs.Screen name="yearly" />
 		</Tabs>
 	);
 }
