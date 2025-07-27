@@ -71,7 +71,7 @@ export default function HomeMonthlyTransactionScreen() {
 						<PlusIcon
 							strokeWidth={1.5}
 							color={theme.colors.onSecondaryContainer}
-							size={24}
+							size={20}
 						/>
 					</Button>
 
@@ -108,10 +108,7 @@ export default function HomeMonthlyTransactionScreen() {
 							{ backgroundColor: theme.colors.background },
 						]}
 					>
-						<TransactionsSummaryChart
-							groupBy="type"
-							transactions={transactions}
-						/>
+						<TransactionsSummaryChart transactions={transactions} />
 					</View>
 
 					<View

@@ -11,12 +11,19 @@ import {
 
 type Props = {
 	transactions: TransactionWithDetails[];
-	groupBy: 'date' | 'category' | 'type';
+	groupBy?: 'date' | 'category' | 'type';
+};
+
+// Simple color mapping per category type
+const colorMap: Record<string, string> = {
+	income: 'rgba(21, 179, 15, 1)',
+	expense: 'rgba(248, 110, 30, 1)',
+	transfer: 'rgba(0, 150, 150, 1)',
 };
 
 export default function TransactionsSummaryChart({
 	transactions,
-	groupBy,
+	groupBy = 'date',
 }: Props) {
 	const theme = useTheme();
 
@@ -74,7 +81,7 @@ export default function TransactionsSummaryChart({
 				spacing={groupBy === 'category' ? 6 : 17}
 				rulesThickness={0} // Thin grid lines for subtlety
 				noOfSections={7}
-				stepHeight={30}
+				stepHeight={27}
 				xAxisThickness={0}
 				yAxisThickness={0}
 				yAxisTextStyle={{
@@ -90,6 +97,35 @@ export default function TransactionsSummaryChart({
 				}}
 				isAnimated // Adds smooth animation for better UX
 			/>
+
+			<View style={styles.legend}>
+				<View style={styles.legendItem}>
+					<View
+						style={[styles.dot, { backgroundColor: colorMap.expense }]}
+					></View>
+					<Text style={styles.legendLabel} variant="labelSmall">
+						Expense
+					</Text>
+				</View>
+
+				<View style={styles.legendItem}>
+					<View
+						style={[styles.dot, { backgroundColor: colorMap.income }]}
+					></View>
+					<Text style={styles.legendLabel} variant="labelSmall">
+						Income
+					</Text>
+				</View>
+
+				<View style={styles.legendItem}>
+					<View
+						style={[styles.dot, { backgroundColor: colorMap.transfer }]}
+					></View>
+					<Text style={styles.legendLabel} variant="labelSmall">
+						Transfer
+					</Text>
+				</View>
+			</View>
 		</View>
 	);
 }
@@ -100,11 +136,31 @@ const styles = StyleSheet.create({
 		width: '100%',
 		alignItems: 'center',
 		justifyContent: 'center',
-		height: 180,
+		height: 254,
 	},
 	chartContainer: {
-		paddingHorizontal: 16,
+		paddingLeft: 16,
 		width: '100%',
+	},
+	legend: {
+		gap: 12,
+		flexDirection: 'row',
+		justifyContent: 'center',
+		marginTop: 16,
+		paddingRight: 16,
+	},
+	legendItem: {
+		flexDirection: 'row',
+		gap: 6,
+	},
+	legendLabel: {
+		fontFamily: 'Manrope-Regular',
+		opacity: 0.89,
+	},
+	dot: {
+		width: 15,
+		height: 15,
+		borderRadius: 200,
 	},
 });
 

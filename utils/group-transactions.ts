@@ -68,7 +68,7 @@ export function groupedTransactionsByDate(
 const colorMap: Record<string, string> = {
 	income: 'rgba(21, 179, 15, 1)',
 	expense: 'rgba(248, 110, 30, 1)',
-	transfer: '#009696ff',
+	transfer: 'rgba(0, 150, 150, 1)',
 };
 
 export async function getStackedChartDataByDate(

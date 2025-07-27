@@ -70,8 +70,8 @@ export default function HomeYearlyTransactionScreen() {
 					>
 						<PlusIcon
 							strokeWidth={1.5}
-							color={theme.colors.onBackground}
-							size={24}
+							color={theme.colors.onSecondaryContainer}
+							size={20}
 						/>
 					</Button>
 
@@ -82,7 +82,7 @@ export default function HomeYearlyTransactionScreen() {
 					>
 						<SettingsIcon
 							strokeWidth={1.5}
-							color={theme.colors.onBackground}
+							color={theme.colors.onSecondaryContainer}
 							size={20}
 						/>
 					</Button>
@@ -108,10 +108,7 @@ export default function HomeYearlyTransactionScreen() {
 							{ backgroundColor: theme.colors.background },
 						]}
 					>
-						<TransactionsSummaryChart
-							groupBy="type"
-							transactions={transactions}
-						/>
+						<TransactionsSummaryChart transactions={transactions} />
 					</View>
 
 					<View

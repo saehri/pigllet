@@ -62,7 +62,7 @@ export default function HomeScreen() {
 						<PlusIcon
 							strokeWidth={1.5}
 							color={theme.colors.onSecondaryContainer}
-							size={24}
+							size={20}
 						/>
 					</Button>
 
@@ -76,7 +76,7 @@ export default function HomeScreen() {
 						<SettingsIcon
 							strokeWidth={1.5}
 							color={theme.colors.onSecondaryContainer}
-							size={props.size}
+							size={20}
 						/>
 					</Button>
 				</View>
@@ -101,10 +101,7 @@ export default function HomeScreen() {
 							{ backgroundColor: theme.colors.background },
 						]}
 					>
-						<TransactionsSummaryChart
-							groupBy="date"
-							transactions={transactions}
-						/>
+						<TransactionsSummaryChart transactions={transactions} />
 					</View>
 
 					<View
