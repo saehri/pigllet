@@ -16,6 +16,7 @@ import TransactionCard from '@/src/components/reusables/transaction-card';
 import NoItemNotice from '@/src/components/reusables/no-items-notice';
 import useTransactionsManager from '@/src/hooks/useTransactionsManager';
 import TransactionsSummaryChart from '@/src/components/charts/transactions-summary-chart';
+import MonthYearSelectorDialog from '@/src/components/reusables/month-year-selector-dialog';
 
 export default function HomeMonthlyTransactionScreen() {
 	const navigation = useNavigation();
@@ -40,21 +41,7 @@ export default function HomeMonthlyTransactionScreen() {
 					}
 				/>
 			),
-			headerTitle: () => (
-				<Button
-					mode="contained-tonal"
-					contentStyle={{ height: 40 }}
-					icon={(props) => (
-						<CalendarFoldIcon
-							size={props.size}
-							strokeWidth={1.5}
-							color={props.color}
-						/>
-					)}
-				>
-					July, 2025
-				</Button>
-			),
+			headerTitle: () => <MonthYearSelectorDialog />,
 			headerRight: (props: any) => (
 				<View
 					style={{

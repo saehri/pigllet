@@ -13,7 +13,7 @@ export default function HomeScreenLayout() {
 				tabBarInactiveTintColor: theme.colors.onPrimaryContainer,
 				tabBarStyle: {
 					position: 'absolute',
-					backgroundColor: theme.colors.background,
+					backgroundColor: 'rgba(0,0,0,0)',
 					top: 65,
 					borderTopWidth: 0,
 					marginHorizontal: 16,

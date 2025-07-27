@@ -87,7 +87,7 @@ const DEFAULT_DARK = {
 		},
 		surfaceDisabled: 'rgba(237, 224, 221, 0.12)',
 		onSurfaceDisabled: 'rgba(237, 224, 221, 0.38)',
-		backdrop: 'rgba(59, 45, 41, 0.4)',
+		backdrop: 'rgba(19, 16, 15, 0.8)',
 	},
 };
 
