@@ -14,6 +14,7 @@ import TransactionCard from '@/src/components/reusables/transaction-card';
 import BudgetStatsWidget from '@/src/components/home/budget-stats-widget';
 import AccountOverviewWidget from '@/src/components/home/account-overview-widget';
 import NoItemNotice from '@/src/components/reusables/no-items-notice';
+import TransactionsStartsWidget from '@/src/components/home/transactions-stats-widget';
 
 export default function TransactionScreen() {
 	const db = useSQLiteContext();
@@ -90,6 +91,7 @@ export default function TransactionScreen() {
 				<View>
 					<AccountOverviewWidget />
 					<BudgetStatsWidget />
+					<TransactionsStartsWidget />
 
 					<View style={styles.headerContainer}>
 						<Text variant="titleLarge" style={styles.title}>
