@@ -78,7 +78,7 @@ function App({ colorScheme }: AppProps) {
 	}, []);
 
 	return (
-		<PaperProvider theme={theme}>
+		<PaperProvider theme={theme} settings={{ rippleEffectEnabled: false }}>
 			<ThemeProvider theme={theme}>
 				<Stack
 					screenOptions={{
@@ -93,10 +93,6 @@ function App({ colorScheme }: AppProps) {
 					<Stack.Screen name="(root)" />
 				</Stack>
 			</ThemeProvider>
-
-			<StatusBar
-				barStyle={colorScheme === 'dark' ? 'dark-content' : 'light-content'}
-			/>
 		</PaperProvider>
 	);
 }
@@ -104,12 +100,13 @@ function App({ colorScheme }: AppProps) {
 export default function RootLayout() {
 	// ---- fonts
 	const [loaded, fontLoaderError] = useFonts({
-		'Inter-Black': require('@/assets/fonts//Inter_18pt-Black.ttf'),
-		'Inter-Bold': require('@/assets/fonts/Inter_18pt-Bold.ttf'),
-		'Inter-Light': require('@/assets/fonts/Inter_18pt-Light.ttf'),
-		'Inter-Medium': require('@/assets/fonts/Inter_18pt-Medium.ttf'),
-		'Inter-SemiBold': require('@/assets/fonts/Inter_18pt-SemiBold.ttf'),
-		'Inter-Regular': require('@/assets/fonts/Inter_24pt-Regular.ttf'),
+		'Manrope-Bold': require('@/assets/fonts/Manrope-Bold.ttf'),
+		'Manrope-ExtraBold': require('@/assets/fonts/Manrope-ExtraBold.ttf'),
+		'Manrope-ExtraLight': require('@/assets/fonts/Manrope-ExtraLight.ttf'),
+		'Manrope-Light': require('@/assets/fonts/Manrope-Light.ttf'),
+		'Manrope-Medium': require('@/assets/fonts/Manrope-Medium.ttf'),
+		'Manrope-Regular': require('@/assets/fonts/Manrope-Regular.ttf'),
+		'Manrope-SemiBold': require('@/assets/fonts/Manrope-SemiBold.ttf'),
 	});
 
 	const colorScheme = useColorScheme();

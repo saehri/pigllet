@@ -1,62 +1,200 @@
-import { Account, Transaction, Category } from '@/db/schema';
+import { useContext } from 'react';
+import { useRouter } from 'expo-router';
+import { ImageIcon } from 'lucide-react-native';
+import { Text, useTheme } from 'react-native-paper';
+import { Pressable, StyleSheet, View } from 'react-native';
 
-import IncomeCard from './income-card';
-import ExpenseCard from './expense-card';
-import TransferCard from './transfer-card';
+import { TransactionWithDetails } from '@/utils/group-transactions';
+import {
+	UserPreferenceContext,
+	UserPreferenceContextTypes,
+} from '@/context/UserPreferenceContext';
 
-interface TransactionCard {
-	transactionType: 'expense' | 'income' | 'transfer';
-	data: Transaction;
-	account: Account;
-	relatedAccount?: Account;
-	category: Category;
-	disableFirstButton?: boolean;
-	disableSecondButton?: boolean;
-	showDate?: boolean;
-}
+import getLocaleByCurrencySymbol from '@/utils/locale-getter';
+import TransactionIcons from './transaction-icons';
+
+type Props = {
+	data: TransactionWithDetails;
+	disableFirstButton: boolean;
+	disableSecondButton: boolean;
+	showDate: boolean;
+};
 
 export default function TransactionCard({
-	transactionType,
 	data,
-	account,
-	category,
-	disableSecondButton = false,
-	disableFirstButton = false,
-	relatedAccount,
+	disableFirstButton,
+	disableSecondButton,
 	showDate,
-}: TransactionCard) {
-	if (transactionType === 'expense')
-		return (
-			<ExpenseCard
-				disableSecondButton={disableSecondButton}
-				disableFirstButton={disableFirstButton}
-				category={category}
-				data={data}
-				accountName={account.name}
-				showDate={showDate}
-			/>
-		);
+}: Props) {
+	const router = useRouter();
+	const theme = useTheme();
+	const { currentCurrencySymbol } = useContext(
+		UserPreferenceContext
+	) as UserPreferenceContextTypes;
 
-	if (transactionType === 'income')
-		return (
-			<IncomeCard
-				accounts={account}
-				category={category}
-				data={data}
-				showDate={showDate}
-				disableFirstButton={disableFirstButton}
-			/>
-		);
+	const { account, category, related_account, transaction } = data;
 
 	return (
-		<TransferCard
-			relatedAccount={relatedAccount!}
-			accounts={account}
-			category={category}
-			data={data}
-			showDate={showDate}
-			disableFirstButton={disableFirstButton}
-		/>
+		<View style={styles.container}>
+			<Pressable
+				style={styles.iconContainer}
+				onPress={() =>
+					router.push({
+						pathname: '/(root)/transaction-by-category',
+						params: {
+							categoryId: data.category.id,
+							categoryName: data.category.label,
+						},
+					})
+				}
+				disabled={disableFirstButton}
+			>
+				<TransactionIcons icon={category.icon_name as any} size={20} />
+			</Pressable>
+
+			<Pressable
+				onPress={() =>
+					router.push({
+						pathname: '/(root)/edit-expense',
+						params: {
+							id: transaction.id as any,
+							type: transaction.type,
+							categoryId: category.id,
+						},
+					})
+				}
+				style={[styles.contentContainer]}
+				disabled={disableSecondButton}
+			>
+				<View style={{ flex: 1, flexDirection: 'row' }}>
+					<View style={styles.row}>
+						<Text
+							numberOfLines={1}
+							variant="bodyMedium"
+							style={styles.cardLabel}
+						>
+							{category.label}
+						</Text>
+					</View>
+
+					<Text style={styles.cardPrice} variant="bodyMedium">
+						{transaction.type === 'expense'
+							? '- '
+							: transaction.type === 'income'
+								? '+ '
+								: ''}
+
+						{`${currentCurrencySymbol} ${data.transaction.amount.toLocaleString(
+							getLocaleByCurrencySymbol(currentCurrencySymbol)
+						)}`}
+					</Text>
+				</View>
+
+				<View
+					style={{
+						alignItems: showDate ? 'center' : 'flex-end',
+						flexDirection: 'row',
+						justifyContent: 'space-between',
+					}}
+				>
+					<View style={{ flex: 1 }}>
+						{showDate && (
+							<Text variant="labelLarge" style={styles.cardNote}>
+								{new Date(transaction.created_at).toLocaleDateString('en-US', {
+									dateStyle: 'medium',
+								})}
+							</Text>
+						)}
+
+						<View
+							style={{
+								flexDirection: 'row',
+								gap: 4,
+								alignItems: 'center',
+							}}
+						>
+							{transaction.image && (
+								<ImageIcon
+									size={14}
+									strokeWidth={1}
+									color={theme.colors.onBackground}
+								/>
+							)}
+
+							<Text
+								variant="labelMedium"
+								style={[
+									styles.cardNote,
+									{ flex: 1, maxWidth: 150, fontStyle: 'italic' },
+								]}
+								numberOfLines={1}
+							>
+								{transaction.note || ''}
+							</Text>
+						</View>
+					</View>
+
+					<View style={{ flexDirection: 'row', gap: 6, alignItems: 'center' }}>
+						<View
+							style={{
+								maxWidth: 80,
+								backgroundColor: theme.colors.elevation.level4,
+								paddingHorizontal: 5,
+								borderRadius: 6,
+							}}
+						>
+							<Text
+								variant="labelMedium"
+								style={styles.cardNote}
+								adjustsFontSizeToFit
+								numberOfLines={1}
+							>
+								{account.name}
+							</Text>
+						</View>
+					</View>
+				</View>
+			</Pressable>
+		</View>
 	);
 }
+
+const styles = StyleSheet.create({
+	container: {
+		flexDirection: 'row',
+		gap: 10,
+		alignItems: 'center',
+		paddingVertical: 9,
+		paddingHorizontal: 12,
+	},
+	iconContainer: {
+		width: 40,
+		height: 40,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	contentContainer: {
+		flex: 1,
+	},
+	row: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		gap: 2,
+		flex: 1,
+	},
+	bodyLarge: {
+		fontFamily: 'Manrope-Medium',
+	},
+	cardLabel: {
+		fontFamily: 'Manrope-SemiBold',
+	},
+	cardPrice: {
+		fontFamily: 'Manrope-SemiBold',
+		letterSpacing: -0.2,
+	},
+	cardNote: {
+		fontFamily: 'Manrope-Regular',
+		opacity: 0.9,
+	},
+});
 

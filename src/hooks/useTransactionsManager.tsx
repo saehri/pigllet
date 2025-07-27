@@ -11,13 +11,14 @@ import { useRouter } from 'expo-router';
 type Props = {
 	actionType?: 'create' | 'read' | 'update' | 'delete';
 	transactionId?: number;
-	transactionType: schema.TransactionType;
+	transactionType?: schema.TransactionType;
 };
 
 type UseExpenseManagerTypes = {
 	loadExpenseData: (startDate: string, endDate: string) => any;
 	loadIncomeData: (startDate: string, endDate: string) => any;
 	loadTransferData: (startDate: string, endDate: string) => any;
+	loadTransactionsData: () => any;
 	createExpenseRecord: () => Promise<void>;
 	createIncomeRecord: () => Promise<void>;
 	createTransferRecord: () => Promise<void>;
@@ -178,6 +179,60 @@ export default function useTransactionsManager({
 	}, []);
 
 	// ----- READ
+	const loadTransactionsData = () =>
+		drizzleDb
+			.select({
+				transaction: {
+					id: schema.transactions.id,
+					amount: schema.transactions.amount,
+					note: schema.transactions.note,
+					account_id: schema.transactions.account_id,
+					related_account_id: schema.transactions.related_account_id,
+					category_id: schema.transactions.category_id,
+					type: schema.transactions.type,
+					image: schema.transactions.image,
+					created_at: schema.transactions.created_at,
+				},
+				account: {
+					id: schema.accounts.id,
+					name: schema.accounts.name,
+					number: schema.accounts.number,
+					balance: schema.accounts.balance,
+					is_cash: schema.accounts.is_cash,
+					image: schema.accounts.image,
+					created_at: schema.accounts.created_at,
+				},
+				category: {
+					id: schema.categories.id,
+					label: schema.categories.label,
+					icon_name: schema.categories.icon_name,
+					type: schema.categories.type,
+				},
+				related_account: {
+					id: relatedAccountsAlias.id,
+					name: relatedAccountsAlias.name,
+					number: relatedAccountsAlias.number,
+					balance: relatedAccountsAlias.balance,
+					is_cash: relatedAccountsAlias.is_cash,
+					image: relatedAccountsAlias.image,
+					created_at: relatedAccountsAlias.created_at,
+				},
+			})
+			.from(schema.transactions)
+			.leftJoin(
+				schema.categories,
+				eq(schema.transactions.category_id, schema.categories.id)
+			)
+			.leftJoin(
+				schema.accounts,
+				eq(schema.transactions.account_id, schema.accounts.id)
+			)
+			.leftJoin(
+				relatedAccountsAlias,
+				eq(schema.transactions.related_account_id, relatedAccountsAlias.id)
+			)
+			.orderBy(desc(schema.transactions.created_at));
+
 	const loadExpenseData = (startDate: string, endDate: string) =>
 		drizzleDb
 			.select({
@@ -195,7 +250,6 @@ export default function useTransactionsManager({
 			.from(schema.transactions)
 			.where(
 				and(
-					eq(schema.transactions.type, transactionType),
 					sql`DATE(transactions.created_at) BETWEEN DATE(${startDate}) AND DATE(${endDate})`
 				)
 			)
@@ -859,6 +913,7 @@ export default function useTransactionsManager({
 		transactionNote,
 		loadIncomeData,
 		userAccounts,
+		loadTransactionsData,
 		loading,
 		setLoading,
 		deleteTransaction,

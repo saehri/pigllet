@@ -3,6 +3,7 @@ import { View } from 'react-native';
 import { Button, Text, useTheme } from 'react-native-paper';
 import {
 	CalendarSync,
+	HomeIcon,
 	House,
 	Plus,
 	Receipt,
@@ -28,26 +29,45 @@ export default function Layout() {
 		<Tabs
 			initialRouteName="home"
 			screenOptions={{
-				tabBarActiveTintColor: theme.colors.primary,
+				tabBarActiveTintColor: theme.colors.onPrimary,
+				tabBarInactiveBackgroundColor: theme.colors.elevation.level5,
+				tabBarActiveBackgroundColor: theme.colors.primary,
 				tabBarStyle: {
-					backgroundColor: theme.colors.background,
-					height: 60,
-					borderTopWidth: 0,
-					paddingBottom: 10,
+					backgroundColor: theme.colors.elevation.level2,
+					height: 52,
+					marginHorizontal: 30,
+					bottom: 16,
+					elevation: 0,
+					shadowOpacity: 0,
+					position: 'absolute',
+					borderRadius: 12,
+					overflow: 'hidden',
+					alignItems: 'center',
+					paddingHorizontal: 5,
+					borderTopWidth: 1,
+					borderWidth: 1,
+					borderColor: theme.colors.outlineVariant,
 				},
 				headerTitleStyle: {
-					fontFamily: 'Inter-Regular',
+					fontFamily: 'Manrope-Regular',
 					color: theme.colors.onBackground,
 					textTransform: 'capitalize',
 				},
-				tabBarLabelStyle: {
-					fontFamily: 'Inter-Regular',
-					fontSize: 14,
+				tabBarItemStyle: {
+					overflow: 'hidden',
+					borderRadius: 9,
+					height: 40,
+					marginTop: 5,
 				},
-				headerShadowVisible: false,
+				tabBarLabelStyle: {
+					fontFamily: 'Manrope-Bold',
+					fontSize: 10,
+				},
 				sceneStyle: {
 					backgroundColor: theme.colors.background,
 				},
+				headerShadowVisible: false,
+				tabBarShowLabel: false,
 			}}
 		>
 			<Tabs.Screen
@@ -56,30 +76,56 @@ export default function Layout() {
 					title: 'Home',
 					tabBarIcon: (props) => (
 						<House
-							size={props.size}
+							size={20}
 							color={props.color}
 							strokeWidth={1.5}
 							fillOpacity={props.focused ? 0.3 : 0}
 							fill={
-								props.focused ? theme.colors.primary : theme.colors.background
+								props.focused ? theme.colors.onPrimary : theme.colors.background
 							}
 						/>
 					),
 					headerStyle: {
 						backgroundColor: theme.colors.background,
 					},
-					headerTitle: (props) => (
-						<Text variant="titleLarge" style={{ fontFamily: 'Inter-Bold' }}>
+					headerTitle: () => (
+						<Text
+							variant="titleLarge"
+							style={{ fontFamily: 'Manrope-Bold', letterSpacing: -1 }}
+						>
 							Pigllet
 						</Text>
 					),
 					headerRight: (props) => (
-						<View style={{ backgroundColor: theme.colors.background }}>
-							<Button onPress={() => router.push('/(root)/settings')}>
-								<Settings
+						<View
+							style={{
+								backgroundColor: theme.colors.background,
+								paddingRight: 16,
+								flexDirection: 'row',
+								alignItems: 'center',
+							}}
+						>
+							<Button
+								mode="contained-tonal"
+								onPress={() => router.push('/(root)/new-transactions/expense')}
+								contentStyle={{ height: 40 }}
+							>
+								<Plus
 									strokeWidth={1.5}
 									color={theme.colors.onBackground}
 									size={24}
+								/>
+							</Button>
+
+							<Button
+								mode="contained-tonal"
+								onPress={() => router.push('/(root)/settings')}
+								contentStyle={{ height: 40 }}
+							>
+								<Settings
+									strokeWidth={1.5}
+									color={theme.colors.onBackground}
+									size={20}
 								/>
 							</Button>
 						</View>
@@ -92,12 +138,12 @@ export default function Layout() {
 					title: 'Transactions',
 					tabBarIcon: (props) => (
 						<Receipt
-							size={props.size}
+							size={20}
 							color={props.color}
 							strokeWidth={1.5}
 							fillOpacity={props.focused ? 0.3 : 0}
 							fill={
-								props.focused ? theme.colors.primary : theme.colors.background
+								props.focused ? theme.colors.onPrimary : theme.colors.background
 							}
 						/>
 					),
@@ -136,12 +182,12 @@ export default function Layout() {
 					title: 'Subscriptions',
 					tabBarIcon: (props) => (
 						<CalendarSync
-							size={props.size}
+							size={20}
 							color={props.color}
 							strokeWidth={1.5}
 							fillOpacity={props.focused ? 0.3 : 0}
 							fill={
-								props.focused ? theme.colors.primary : theme.colors.background
+								props.focused ? theme.colors.onPrimary : theme.colors.background
 							}
 						/>
 					),
@@ -181,12 +227,12 @@ export default function Layout() {
 					title: 'Budgets',
 					tabBarIcon: (props) => (
 						<ScrollText
-							size={props.size}
+							size={20}
 							color={props.color}
 							strokeWidth={1.5}
 							fillOpacity={props.focused ? 0.3 : 0}
 							fill={
-								props.focused ? theme.colors.primary : theme.colors.background
+								props.focused ? theme.colors.onPrimary : theme.colors.background
 							}
 						/>
 					),

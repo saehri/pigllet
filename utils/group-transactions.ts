@@ -1,8 +1,10 @@
 import { Account, Transaction as BaseTransaction, Category } from '@/db/schema';
 
-interface Transaction extends BaseTransaction {
-	category?: Category;
-	account?: Account;
+export interface TransactionWithDetails {
+	transaction: BaseTransaction;
+	account: Account;
+	category: Category;
+	related_account: Account;
 }
 
 interface GroupedTransactionByCategory {
@@ -10,36 +12,49 @@ interface GroupedTransactionByCategory {
 	value: number;
 }
 
-interface GroupedTransactionByDate {
+type GroupedTransactionsByDateInput = {
+	transaction: BaseTransaction;
+	account: Account;
+	category: Category;
+	related_account: Account;
+};
+
+export type GroupedTransactionByDateOutput = {
 	created_date: string;
-	transactions: Transaction[];
-}
+	transactions: GroupedTransactionsByDateInput[];
+};
 
 export function groupedTransactionsByDate(
-	transactions: Transaction[]
-): GroupedTransactionByDate[] {
-	return transactions.reduce((acc: GroupedTransactionByDate[], transaction) => {
-		const date = new Date(transaction.created_at).toLocaleDateString('en-US', {
-			dateStyle: 'long',
-			month: 'short',
-		});
-		const existingGroup = acc.find((group) => group.created_date === date);
-
-		if (existingGroup) {
-			existingGroup.transactions.push(transaction);
-		} else {
-			acc.push({
-				created_date: date,
-				transactions: [transaction],
+	transactions: GroupedTransactionsByDateInput[]
+): GroupedTransactionByDateOutput[] {
+	return transactions.reduce(
+		(acc: GroupedTransactionByDateOutput[], transaction) => {
+			const date = new Date(
+				transaction.transaction.created_at
+			).toLocaleDateString('en-US', {
+				dateStyle: 'long',
+				month: 'short',
 			});
-		}
 
-		return acc;
-	}, []);
+			const existingGroup = acc.find((group) => group.created_date === date);
+
+			if (existingGroup) {
+				existingGroup.transactions.push(transaction);
+			} else {
+				acc.push({
+					created_date: date,
+					transactions: [transaction],
+				});
+			}
+
+			return acc;
+		},
+		[]
+	);
 }
 
 export async function getChartDataByCategory(
-	transactions: Transaction[]
+	transactions: TransactionWithDetails[]
 ): Promise<GroupedTransactionByCategory[]> {
 	return transactions.reduce<GroupedTransactionByCategory[]>(
 		(acc, transaction) => {
@@ -64,7 +79,7 @@ export async function getChartDataByCategory(
 }
 
 export async function getChartDataByDate(
-	transactions: Transaction[]
+	transactions: TransactionWithDetails[]
 ): Promise<GroupedTransactionByCategory[]> {
 	return transactions.reduce<GroupedTransactionByCategory[]>(
 		(acc, transaction) => {

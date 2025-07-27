@@ -52,307 +52,531 @@ import { TransactionIconsCatalogue } from '@/types/type';
 
 type Props = {
 	icon: keyof TransactionIconsCatalogue;
+	size?: number;
 };
 
-export default function TransactionIcons({ icon }: Props) {
+export default function TransactionIcons({ icon, size = 20 }: Props) {
 	const theme = useTheme();
 
 	const icons: Record<keyof TransactionIconsCatalogue, JSX.Element> = {
 		other: (
 			<CircleDot
-				size={20}
+				size={size}
 				strokeWidth={1.5}
 				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
 			/>
 		),
 		advertising: (
 			<Megaphone
-				size={20}
+				size={size}
 				strokeWidth={1.5}
 				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
 			/>
 		),
 		airlines: (
-			<Plane size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+			<Plane size={size} strokeWidth={1.5} color={theme.colors.onBackground} />
 		),
 		'alcohol-and-bars': (
-			<Martini size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+			<Martini
+				size={size}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
+			/>
 		),
 		'books-and-newspaper': (
-			<Book size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+			<Book
+				size={size}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
+			/>
 		),
 		'car-rental': (
-			<Car size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+			<Car
+				size={size}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
+			/>
 		),
 		charity: (
 			<HandCoins
-				size={20}
+				size={size}
 				strokeWidth={1.5}
 				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
 			/>
 		),
 		clothing: (
-			<Shirt size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+			<Shirt
+				size={size}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
+			/>
 		),
 		conferences: (
 			<LaptopMinimalCheck
-				size={20}
+				size={size}
 				strokeWidth={1.5}
 				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
 			/>
 		),
 		education: (
 			<GraduationCap
-				size={20}
+				size={size}
 				strokeWidth={1.5}
 				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
 			/>
 		),
 		entertainment: (
 			<Clapperboard
-				size={20}
+				size={size}
 				strokeWidth={1.5}
 				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
 			/>
 		),
 		'facilities-expense': (
 			<KeySquare
-				size={20}
+				size={size}
 				strokeWidth={1.5}
 				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
 			/>
 		),
 		'financial-institution-and-fees': (
-			<Landmark size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+			<Landmark
+				size={size}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
+			/>
 		),
 		'fuel-and-gas': (
-			<Fuel size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+			<Fuel
+				size={size}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
+			/>
 		),
 		'government-service': (
-			<Landmark size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+			<Landmark
+				size={size}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
+			/>
 		),
 		grocery: (
 			<ShoppingBasket
-				size={20}
+				size={size}
 				strokeWidth={1.5}
 				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
 			/>
 		),
 		'food-delivery': (
 			<ShoppingCart
-				size={20}
+				size={size}
 				strokeWidth={1.5}
 				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
 			/>
 		),
 		transportation: (
 			<RailSymbol
-				size={20}
+				size={size}
 				strokeWidth={1.5}
 				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
 			/>
 		),
 		insurance: (
 			<ShieldPlus
-				size={20}
+				size={size}
 				strokeWidth={1.5}
 				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
 			/>
 		),
 		medical: (
-			<Hospital size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+			<Hospital
+				size={size}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
+			/>
 		),
 		internet: (
-			<Wifi size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+			<Wifi
+				size={size}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
+			/>
 		),
 		parking: (
 			<SquareParking
-				size={20}
+				size={size}
 				strokeWidth={1.5}
 				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
 			/>
 		),
 		'office-supplies': (
-			<LampDesk size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+			<LampDesk
+				size={size}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
+			/>
 		),
 		restaurant: (
-			<Utensils size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+			<Utensils
+				size={size}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
+			/>
 		),
 		software: (
-			<Computer size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+			<Computer
+				size={size}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
+			/>
 		),
 		taxes: (
-			<Coins size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+			<Coins
+				size={size}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
+			/>
 		),
 		utilities: (
-			<Drill size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+			<Drill
+				size={size}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
+			/>
 		),
 		'vehicle-expenses': (
-			<CarFront size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+			<CarFront
+				size={size}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
+			/>
 		),
 		salary: (
 			<CircleDollarSign
-				size={20}
+				size={size}
 				strokeWidth={1.5}
 				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
 			/>
 		),
 		royalties: (
 			<Megaphone
-				size={20}
+				size={size}
 				strokeWidth={1.5}
 				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
 			/>
 		),
 		'affiliate-marketing': (
-			<Store size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+			<Store
+				size={size}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
+			/>
 		),
 		'bank-transfer': (
-			<Landmark size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+			<Landmark
+				size={size}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
+			/>
 		),
 		'bonuses-and-commission': (
 			<HandCoins
-				size={20}
+				size={size}
 				strokeWidth={1.5}
 				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
 			/>
 		),
 		'business-income': (
 			<BriefcaseBusiness
-				size={20}
+				size={size}
 				strokeWidth={1.5}
 				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
 			/>
 		),
 		'capital-gains': (
 			<ChartCandlestick
-				size={20}
+				size={size}
 				strokeWidth={1.5}
 				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
 			/>
 		),
 		'cash-deposit': (
-			<Vault size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+			<Vault
+				size={size}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
+			/>
 		),
 		'cash-withdrawal': (
 			<ArrowDownLeft
-				size={20}
+				size={size}
 				strokeWidth={1.5}
 				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
 			/>
 		),
 		'child-support': (
-			<Baby size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+			<Baby
+				size={size}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
+			/>
 		),
 		'credit-card-payment': (
 			<CreditCard
-				size={20}
+				size={size}
 				strokeWidth={1.5}
 				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
 			/>
 		),
 		'gifts-and-donations': (
-			<Gift size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+			<Gift
+				size={size}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
+			/>
 		),
 		'interest-income': (
-			<Blend size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+			<Blend
+				size={size}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
+			/>
 		),
 		'loan-payment': (
 			<HandHelping
-				size={20}
+				size={size}
 				strokeWidth={1.5}
 				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
 			/>
 		),
 		'loan-received': (
 			<HandHelping
-				size={20}
+				size={size}
 				strokeWidth={1.5}
 				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
 			/>
 		),
 		'lottery-and-gambling': (
-			<Dices size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+			<Dices
+				size={size}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
+			/>
 		),
 		'overtime-pay': (
-			<Clock10 size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+			<Clock10
+				size={size}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
+			/>
 		),
 		'received-from-family': (
-			<BookUser size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+			<BookUser
+				size={size}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
+			/>
 		),
 		pension: (
 			<PiggyBank
-				size={20}
+				size={size}
 				strokeWidth={1.5}
 				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
 			/>
 		),
 		dropshipping: (
-			<Store size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+			<Store
+				size={size}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
+			/>
 		),
 		freelance: (
-			<Laptop size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+			<Laptop
+				size={size}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
+			/>
 		),
 		dividens: (
 			<Waypoints
-				size={20}
+				size={size}
 				strokeWidth={1.5}
 				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
 			/>
 		),
 		alimony: (
 			<PersonStanding
-				size={20}
+				size={size}
 				strokeWidth={1.5}
 				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
 			/>
 		),
 		'rental-income': (
 			<CircleDot
-				size={20}
+				size={size}
 				strokeWidth={1.5}
 				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
 			/>
 		),
 		'savings-contribution': (
 			<CircleDot
-				size={20}
+				size={size}
 				strokeWidth={1.5}
 				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
 			/>
 		),
 		'sent-to-family': (
 			<CircleDot
-				size={20}
+				size={size}
 				strokeWidth={1.5}
 				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
 			/>
 		),
 		'side-hustles': (
 			<CircleDot
-				size={20}
+				size={size}
 				strokeWidth={1.5}
 				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
 			/>
 		),
 		'unemployment-benefits': (
 			<CircleDot
-				size={20}
+				size={size}
 				strokeWidth={1.5}
 				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
 			/>
 		),
 		'foods-and-drinks': (
-			<Salad size={20} strokeWidth={1.5} color={theme.colors.onBackground} />
+			<Salad
+				size={size}
+				strokeWidth={1.5}
+				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
+			/>
 		),
 		takeout: (
 			<HandPlatter
-				size={20}
+				size={size}
 				strokeWidth={1.5}
 				color={theme.colors.onBackground}
+				fillOpacity={0.3}
+				fill={theme.colors.onBackground}
 			/>
 		),
 	};
 
 	return icons[icon];
 }
+

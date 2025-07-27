@@ -6,7 +6,7 @@ import {
 	ShoppingBasket,
 } from 'lucide-react-native';
 
-export default function Layout() {
+export default function TransactionsScreenLayout() {
 	const theme = useTheme();
 
 	return (
@@ -76,3 +76,4 @@ export default function Layout() {
 		</Tabs>
 	);
 }
+
