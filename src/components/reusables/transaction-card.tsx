@@ -1,6 +1,11 @@
 import { useContext } from 'react';
 import { useRouter } from 'expo-router';
-import { ImageIcon } from 'lucide-react-native';
+import {
+	ArrowRightLeftIcon,
+	ImageIcon,
+	MinusIcon,
+	PlusIcon,
+} from 'lucide-react-native';
 import { Text, useTheme } from 'react-native-paper';
 import { Pressable, StyleSheet, View } from 'react-native';
 
@@ -12,6 +17,7 @@ import {
 
 import getLocaleByCurrencySymbol from '@/utils/locale-getter';
 import TransactionIcons from './transaction-icons';
+import { transactionColorMap } from '@/utils/utils';
 
 type Props = {
 	data: TransactionWithDetails;
@@ -49,7 +55,11 @@ export default function TransactionCard({
 				}
 				disabled={disableFirstButton}
 			>
-				<TransactionIcons icon={category.icon_name as any} size={20} />
+				<TransactionIcons
+					color={transactionColorMap[transaction.type]}
+					icon={category.icon_name as any}
+					size={20}
+				/>
 			</Pressable>
 
 			<Pressable
@@ -77,17 +87,37 @@ export default function TransactionCard({
 						</Text>
 					</View>
 
-					<Text style={styles.cardPrice} variant="bodyMedium">
-						{transaction.type === 'expense'
-							? '- '
-							: transaction.type === 'income'
-								? '+ '
-								: ''}
+					<View style={{ flexDirection: 'row', alignItems: 'center', gap: 2 }}>
+						{transaction.type === 'transfer' && (
+							<ArrowRightLeftIcon
+								size={14}
+								strokeWidth={1}
+								color={theme.colors.onBackground}
+							/>
+						)}
 
-						{`${currentCurrencySymbol} ${data.transaction.amount.toLocaleString(
-							getLocaleByCurrencySymbol(currentCurrencySymbol)
-						)}`}
-					</Text>
+						{transaction.type === 'income' && (
+							<PlusIcon
+								size={14}
+								strokeWidth={1}
+								color={theme.colors.onBackground}
+							/>
+						)}
+
+						{transaction.type === 'expense' && (
+							<MinusIcon
+								size={14}
+								strokeWidth={1}
+								color={theme.colors.onBackground}
+							/>
+						)}
+
+						<Text style={styles.cardPrice} variant="bodyMedium">
+							{`${currentCurrencySymbol} ${data.transaction.amount.toLocaleString(
+								getLocaleByCurrencySymbol(currentCurrencySymbol)
+							)}`}
+						</Text>
+					</View>
 				</View>
 
 				<View
@@ -129,7 +159,7 @@ export default function TransactionCard({
 								]}
 								numberOfLines={1}
 							>
-								{transaction.note || ''}
+								{transaction.note || 'Undefined'}
 							</Text>
 						</View>
 					</View>
@@ -143,6 +173,17 @@ export default function TransactionCard({
 						>
 							{account.name}
 						</Text>
+
+						{related_account && (
+							<Text
+								variant="labelMedium"
+								style={styles.cardNote}
+								adjustsFontSizeToFit
+								numberOfLines={1}
+							>
+								to {related_account.name}
+							</Text>
+						)}
 					</View>
 				</View>
 			</Pressable>

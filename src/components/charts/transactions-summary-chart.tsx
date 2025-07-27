@@ -8,17 +8,11 @@ import {
 	getStackedChartDataByDate,
 	TransactionWithDetails,
 } from '@/utils/group-transactions';
+import { transactionColorMap } from '@/utils/utils';
 
 type Props = {
 	transactions: TransactionWithDetails[];
 	groupBy?: 'date' | 'category' | 'type';
-};
-
-// Simple color mapping per category type
-const colorMap: Record<string, string> = {
-	income: 'rgba(21, 179, 15, 1)',
-	expense: 'rgba(248, 110, 30, 1)',
-	transfer: 'rgba(0, 150, 150, 1)',
 };
 
 export default function TransactionsSummaryChart({
@@ -101,7 +95,10 @@ export default function TransactionsSummaryChart({
 			<View style={styles.legend}>
 				<View style={styles.legendItem}>
 					<View
-						style={[styles.dot, { backgroundColor: colorMap.expense }]}
+						style={[
+							styles.dot,
+							{ backgroundColor: transactionColorMap.expense },
+						]}
 					></View>
 					<Text style={styles.legendLabel} variant="labelSmall">
 						Expense
@@ -110,7 +107,10 @@ export default function TransactionsSummaryChart({
 
 				<View style={styles.legendItem}>
 					<View
-						style={[styles.dot, { backgroundColor: colorMap.income }]}
+						style={[
+							styles.dot,
+							{ backgroundColor: transactionColorMap.income },
+						]}
 					></View>
 					<Text style={styles.legendLabel} variant="labelSmall">
 						Income
@@ -119,7 +119,10 @@ export default function TransactionsSummaryChart({
 
 				<View style={styles.legendItem}>
 					<View
-						style={[styles.dot, { backgroundColor: colorMap.transfer }]}
+						style={[
+							styles.dot,
+							{ backgroundColor: transactionColorMap.transfer },
+						]}
 					></View>
 					<Text style={styles.legendLabel} variant="labelSmall">
 						Transfer
