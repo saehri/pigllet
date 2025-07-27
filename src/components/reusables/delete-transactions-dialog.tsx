@@ -32,11 +32,14 @@ export default function DeleteTransactionsDialog({
 		<>
 			<Portal>
 				<Dialog visible={visible} onDismiss={closeDialog}>
-					<Dialog.Title style={{ fontFamily: 'Inter-Regular' }}>
+					<Dialog.Title style={{ fontFamily: 'Manrope-Regular' }}>
 						Delete transaction
 					</Dialog.Title>
 					<Dialog.Content>
-						<Text style={{ fontFamily: 'Inter-Regular' }} variant="bodyMedium">
+						<Text
+							style={{ fontFamily: 'Manrope-Regular' }}
+							variant="bodyMedium"
+						>
 							This action cannot be undone.
 						</Text>
 					</Dialog.Content>
@@ -45,7 +48,7 @@ export default function DeleteTransactionsDialog({
 						<Button
 							onPress={closeDialog}
 							disabled={loading}
-							labelStyle={{ fontFamily: 'Inter-Regular' }}
+							labelStyle={{ fontFamily: 'Manrope-Regular' }}
 						>
 							Cancel
 						</Button>
@@ -53,7 +56,7 @@ export default function DeleteTransactionsDialog({
 						<Button
 							onPress={deleteTransaction}
 							disabled={loading}
-							labelStyle={{ fontFamily: 'Inter-Regular' }}
+							labelStyle={{ fontFamily: 'Manrope-Regular' }}
 						>
 							{loading ? 'Deleting' : 'I understand'}
 						</Button>

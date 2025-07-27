@@ -11,31 +11,38 @@ export default function TransactionsScreenLayout() {
 
 	return (
 		<Tabs
-			initialRouteName="expense"
 			screenOptions={{
 				headerShown: false,
 				tabBarActiveTintColor: theme.colors.onPrimary,
 				tabBarActiveBackgroundColor: theme.colors.primary,
+				tabBarInactiveBackgroundColor: theme.colors.primaryContainer,
+				tabBarInactiveTintColor: theme.colors.onPrimaryContainer,
 				tabBarStyle: {
-					backgroundColor: theme.colors.elevation.level1,
-					height: 40,
 					position: 'absolute',
+					backgroundColor: theme.colors.background,
 					top: 0,
-					borderWidth: 1,
-					borderTopWidth: 1,
-					borderRadius: 1000,
-					borderColor: theme.colors.outlineVariant,
+					borderTopWidth: 0,
 					marginHorizontal: 16,
-					overflow: 'hidden',
+					elevation: 0,
+					shadowOpacity: 0,
+					gap: 12,
+					borderRadius: 8,
+					height: 40,
+				},
+				tabBarLabelStyle: {
+					fontFamily: 'Manrope-Medium',
+					fontSize: 14,
 				},
 				tabBarItemStyle: {
 					overflow: 'hidden',
-				},
-				tabBarLabelStyle: {
-					fontFamily: 'Inter-Regular',
-					fontSize: 14,
+					borderRadius: 12,
+					height: 40,
 				},
 				tabBarLabelPosition: 'beside-icon',
+				tabBarIconStyle: {
+					display: 'none',
+				},
+				headerShadowVisible: false,
 			}}
 		>
 			<Tabs.Screen

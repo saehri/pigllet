@@ -106,12 +106,12 @@ function ResetUserPreference() {
 
 			<Portal>
 				<Dialog visible={visible} onDismiss={hideDialog}>
-					<Dialog.Title style={{ fontFamily: 'Inter-Regular' }}>
+					<Dialog.Title style={{ fontFamily: 'Manrope-Regular' }}>
 						Warning
 					</Dialog.Title>
 
 					<Dialog.Content>
-						<Text variant="bodyLarge" style={{ fontFamily: 'Inter-Regular' }}>
+						<Text variant="bodyLarge" style={{ fontFamily: 'Manrope-Regular' }}>
 							This will erase all your data, giving you a fresh start. This
 							action cannot be undone.
 						</Text>
@@ -120,14 +120,14 @@ function ResetUserPreference() {
 					<Dialog.Actions>
 						<Button
 							onPress={hideDialog}
-							labelStyle={{ fontFamily: 'Inter-Regular', fontSize: 16 }}
+							labelStyle={{ fontFamily: 'Manrope-Regular', fontSize: 16 }}
 						>
 							Cancel
 						</Button>
 
 						<Button
 							onPress={resetUserData}
-							labelStyle={{ fontFamily: 'Inter-Regular', fontSize: 16 }}
+							labelStyle={{ fontFamily: 'Manrope-Regular', fontSize: 16 }}
 						>
 							Ok
 						</Button>

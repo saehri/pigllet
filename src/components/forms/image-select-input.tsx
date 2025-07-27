@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
 		minHeight: 60,
 	},
 	selectText: {
-		fontFamily: 'Inter-Regular',
+		fontFamily: 'Manrope-Regular',
 		fontSize: 16,
 		color: '#fff',
 		textTransform: 'capitalize',
@@ -96,3 +96,4 @@ const styles = StyleSheet.create({
 		right: 8,
 	},
 });
+

@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
 	},
 	renderItem: { paddingBottom: 18, gap: 8 },
 	renderItemHeader: {
-		fontFamily: 'Inter-Regular',
+		fontFamily: 'Manrope-Regular',
 		paddingHorizontal: 16,
 		fontSize: 18,
 	},

@@ -14,7 +14,7 @@ export default function Layout() {
 					backgroundColor: theme.colors.background,
 				},
 				headerTitleStyle: {
-					fontFamily: 'Inter-Regular',
+					fontFamily: 'Manrope-Regular',
 					fontSize: 20,
 				},
 				contentStyle: {
@@ -62,3 +62,4 @@ export default function Layout() {
 		</Stack>
 	);
 }
+

@@ -39,7 +39,7 @@ export default function SelectInputItem({
 
 			<Text
 				variant="bodyLarge"
-				style={{ textTransform: 'capitalize', fontFamily: 'Inter-Regular' }}
+				style={{ textTransform: 'capitalize', fontFamily: 'Manrope-Regular' }}
 			>
 				{label}
 			</Text>

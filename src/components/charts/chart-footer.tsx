@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
 		marginTop: 16,
 	},
 	title: {
-		fontFamily: 'Inter-Regular',
+		fontFamily: 'Manrope-Regular',
 		// borderBottomWidth: 1,
 		// paddingBottom: 8,
 	},
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
 		borderBottomWidth: 1,
 	},
 	summaryItemText: {
-		fontFamily: 'Inter-Regular',
+		fontFamily: 'Manrope-Regular',
 		maxWidth: 200,
 	},
 	totalItem: {

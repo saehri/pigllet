@@ -54,7 +54,7 @@ export default function AccountCard({
 					{number.match(/.{1,4}/g)?.map((t) => (
 						<Text
 							key={t}
-							style={{ fontFamily: 'Inter-Regular' }}
+							style={{ fontFamily: 'Manrope-Regular' }}
 							variant="bodySmall"
 						>
 							{t}
@@ -68,11 +68,11 @@ export default function AccountCard({
 						justifyContent: 'space-between',
 					}}
 				>
-					<Text style={{ fontFamily: 'Inter-Regular' }} variant="bodySmall">
+					<Text style={{ fontFamily: 'Manrope-Regular' }} variant="bodySmall">
 						{name}
 					</Text>
 
-					<Text style={{ fontFamily: 'Inter-Regular' }} variant="bodySmall">
+					<Text style={{ fontFamily: 'Manrope-Regular' }} variant="bodySmall">
 						{`${currentCurrencySymbol} ${balance.toLocaleString(
 							getLocaleByCurrencySymbol(currentCurrencySymbol)
 						)}`}
@@ -125,7 +125,7 @@ export default function AccountCard({
 					{number.match(/.{1,4}/g)?.map((t) => (
 						<Text
 							key={t}
-							style={{ fontFamily: 'Inter-Regular' }}
+							style={{ fontFamily: 'Manrope-Regular' }}
 							variant="bodyLarge"
 						>
 							{t}
@@ -139,11 +139,11 @@ export default function AccountCard({
 						justifyContent: 'space-between',
 					}}
 				>
-					<Text style={{ fontFamily: 'Inter-Regular' }} variant="bodyLarge">
+					<Text style={{ fontFamily: 'Manrope-Regular' }} variant="bodyLarge">
 						{name}
 					</Text>
 
-					<Text style={{ fontFamily: 'Inter-Regular' }} variant="bodyLarge">
+					<Text style={{ fontFamily: 'Manrope-Regular' }} variant="bodyLarge">
 						{`${currentCurrencySymbol} ${balance.toLocaleString(
 							getLocaleByCurrencySymbol(currentCurrencySymbol)
 						)}`}

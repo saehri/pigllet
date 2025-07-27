@@ -28,7 +28,7 @@ export default function Security() {
 				/>
 				<Text
 					style={{
-						fontFamily: 'Inter-Regular',
+						fontFamily: 'Manrope-Regular',
 						textAlign: 'center',
 						maxWidth: 280,
 					}}
@@ -41,3 +41,4 @@ export default function Security() {
 		</ScrollView>
 	);
 }
+

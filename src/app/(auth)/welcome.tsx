@@ -148,14 +148,18 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 	},
 	labelSmall: {
-		fontFamily: 'Inter-Regular',
+		fontFamily: 'Manrope-Regular',
 		opacity: 0.6,
 		textAlign: 'center',
 	},
 	button: { borderRadius: 10, padding: 8 },
-	buttonLabel: { fontFamily: 'Inter-Medium', fontSize: 16 },
-	bodyLarge: { fontFamily: 'Inter-Regular', textAlign: 'center', opacity: 0.8 },
+	buttonLabel: { fontFamily: 'Manrope-Medium', fontSize: 16 },
+	bodyLarge: {
+		fontFamily: 'Manrope-Regular',
+		textAlign: 'center',
+		opacity: 0.8,
+	},
 	image: { width: 264, height: 302 },
-	headlineLarge: { fontFamily: 'Inter-Black', textAlign: 'center' },
+	headlineLarge: { fontFamily: 'Manrope-Black', textAlign: 'center' },
 });
 

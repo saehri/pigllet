@@ -40,9 +40,9 @@ export default function CreateMainAccountForm() {
 
 const styles = StyleSheet.create({
 	inputContent: {
-		fontFamily: 'Inter-Regular',
+		fontFamily: 'Manrope-Regular',
 	},
 	button: { borderRadius: 10, padding: 8 },
-	buttonLabel: { fontFamily: 'Inter-Medium', fontSize: 16 },
+	buttonLabel: { fontFamily: 'Manrope-Medium', fontSize: 16 },
 });
 

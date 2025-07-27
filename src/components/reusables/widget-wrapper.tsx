@@ -38,7 +38,7 @@ export default function WidgetWrapper({ title, customStyle, children }: Props) {
 
 const styles = StyleSheet.create({
 	title: {
-		fontFamily: 'Inter-Regular',
+		fontFamily: 'Manrope-Regular',
 		marginBottom: 8,
 	},
 	surface: {

@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
 		padding: 16,
 	},
 	buttonLabel: {
-		fontFamily: 'Inter-Regular',
+		fontFamily: 'Manrope-Regular',
 		width: '100%',
 	},
 	button: {

@@ -138,14 +138,14 @@ export default function EditExpenseForm() {
 
 const styles = StyleSheet.create({
 	inputLabel: {
-		fontFamily: 'Inter-Regular',
+		fontFamily: 'Manrope-Regular',
 	},
 	inputContent: {
-		fontFamily: 'Inter-Regular',
+		fontFamily: 'Manrope-Regular',
 	},
 	button: { borderRadius: 10, marginTop: 16, padding: 8 },
 	buttonLabel: {
-		fontFamily: 'Inter-Medium',
+		fontFamily: 'Manrope-Medium',
 		fontSize: 16,
 	},
 	inputContainer: {

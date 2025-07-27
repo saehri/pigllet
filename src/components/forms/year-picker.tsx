@@ -113,7 +113,7 @@ export default function YearPicker({ selectedYear, setSelectedYear }: Props) {
 												borderRadius: 10,
 											}}
 											labelStyle={{
-												fontFamily: 'Inter-Regular',
+												fontFamily: 'Manrope-Regular',
 												fontSize: 16,
 												color:
 													selectedYear === year
@@ -158,7 +158,7 @@ export default function YearPicker({ selectedYear, setSelectedYear }: Props) {
 					alignItems: 'center',
 				}}
 				mode="outlined"
-				labelStyle={{ fontFamily: 'Inter-Regular', fontSize: 16 }}
+				labelStyle={{ fontFamily: 'Manrope-Regular', fontSize: 16 }}
 				icon={(props) => <ChevronDown size={props.size} color={props.color} />}
 			>
 				{selectedYear}
@@ -166,3 +166,4 @@ export default function YearPicker({ selectedYear, setSelectedYear }: Props) {
 		</>
 	);
 }
+

@@ -34,7 +34,7 @@ export default function BudgetStatsWidget() {
 
 const styles = StyleSheet.create({
 	title: {
-		fontFamily: 'Inter-Regular',
+		fontFamily: 'Manrope-Regular',
 		opacity: 0.8,
 	},
 });

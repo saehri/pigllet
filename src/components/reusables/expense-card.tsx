@@ -70,7 +70,7 @@ export default function ExpenseCard({
 						<Text
 							numberOfLines={1}
 							variant="bodyLarge"
-							style={{ fontFamily: 'Inter-Regular' }}
+							style={{ fontFamily: 'Manrope-Regular' }}
 						>
 							{category.label}
 						</Text>
@@ -185,11 +185,11 @@ const styles = StyleSheet.create({
 	},
 	bodyLarge: {
 		letterSpacing: -0.1,
-		fontFamily: 'Inter-Regular',
+		fontFamily: 'Manrope-Regular',
 	},
 	bodyMedium: {
 		letterSpacing: -0.1,
-		fontFamily: 'Inter-Light',
+		fontFamily: 'Manrope-Light',
 		opacity: 0.8,
 	},
 });

@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 	},
 	cardText: {
-		fontFamily: 'Inter-Regular',
+		fontFamily: 'Manrope-Regular',
 	},
 	linearGradient: {
 		position: 'absolute',

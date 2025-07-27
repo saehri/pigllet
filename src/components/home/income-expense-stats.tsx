@@ -1,34 +1,33 @@
-import { StyleSheet, View } from "react-native";
-import { Surface, Text, useTheme } from "react-native-paper";
-import { MoveUpRight } from "lucide-react-native";
+import { StyleSheet, View } from 'react-native';
+import { Surface, Text, useTheme } from 'react-native-paper';
+import { MoveUpRight } from 'lucide-react-native';
 
 interface Props {
-	label: 'Income' | 'Expense'
+	label: 'Income' | 'Expense';
 }
 
 export default function IncomeExpenseStats({ label }: Props) {
-	const theme = useTheme()
+	const theme = useTheme();
 
 	return (
-		<Surface
-			elevation={5}
-			mode="flat"
-			style={styles.container}
-		>
-			<View
-				style={styles.headerContainer}
-			>
-				<MoveUpRight
-					size={14}
-					color={theme.colors.primary}
-				/>
+		<Surface elevation={5} mode="flat" style={styles.container}>
+			<View style={styles.headerContainer}>
+				<MoveUpRight size={14} color={theme.colors.primary} />
 
-				<Text style={[styles.headerText, { color: theme.colors.primary, }]}>{label}</Text>
+				<Text style={[styles.headerText, { color: theme.colors.primary }]}>
+					{label}
+				</Text>
 			</View>
 
 			<View style={styles.contentContainer}>
-				<Text variant="bodyLarge" style={styles.contentText}>Rp 25.000.000</Text>
-				<Text numberOfLines={2} variant="labelSmall" style={styles.contentCaption}>
+				<Text variant="bodyLarge" style={styles.contentText}>
+					Rp 25.000.000
+				</Text>
+				<Text
+					numberOfLines={2}
+					variant="labelSmall"
+					style={styles.contentCaption}
+				>
 					5% inrease from last month
 				</Text>
 			</View>
@@ -40,7 +39,7 @@ const styles = StyleSheet.create({
 	container: {
 		borderRadius: 8,
 		padding: 6,
-		flex: 1
+		flex: 1,
 	},
 	headerContainer: {
 		flexDirection: 'row',
@@ -49,15 +48,16 @@ const styles = StyleSheet.create({
 		opacity: 0.8,
 	},
 	headerText: {
-		fontFamily: 'Inter-Light'
+		fontFamily: 'Manrope-Light',
 	},
 	contentContainer: {
-		paddingLeft: 18
+		paddingLeft: 18,
 	},
 	contentText: {
-		fontFamily: 'Inter-Regular'
+		fontFamily: 'Manrope-Regular',
 	},
 	contentCaption: {
-		opacity: 0.8, fontFamily: 'Inter-Light'
-	}
-})
+		opacity: 0.8,
+		fontFamily: 'Manrope-Light',
+	},
+});

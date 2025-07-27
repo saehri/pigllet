@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		color: '#fff',
 		textTransform: 'capitalize',
-		fontFamily: 'Inter-Regular',
+		fontFamily: 'Manrope-Regular',
 	},
 	icon: {
 		position: 'absolute',

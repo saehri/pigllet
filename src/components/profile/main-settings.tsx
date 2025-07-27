@@ -19,8 +19,8 @@ export default function MainSetting() {
 			<List.Item
 				title="User"
 				description="Email, password, delete data"
-				titleStyle={{ fontFamily: 'Inter-Regular' }}
-				descriptionStyle={{ fontFamily: 'Inter-Light' }}
+				titleStyle={{ fontFamily: 'Manrope-Regular' }}
+				descriptionStyle={{ fontFamily: 'Manrope-Light' }}
 				onPress={() => router.push('/(root)/settings/user')}
 				left={(props) => (
 					<User {...props} size={24} strokeWidth={1.5} color={props.color} />
@@ -30,8 +30,8 @@ export default function MainSetting() {
 			<List.Item
 				title="Customizations"
 				description="Theme, color, language, motion"
-				titleStyle={{ fontFamily: 'Inter-Regular' }}
-				descriptionStyle={{ fontFamily: 'Inter-Light' }}
+				titleStyle={{ fontFamily: 'Manrope-Regular' }}
+				descriptionStyle={{ fontFamily: 'Manrope-Light' }}
 				onPress={() => router.push('/(root)/settings/customization')}
 				left={(props) => (
 					<SwatchBook
@@ -46,8 +46,8 @@ export default function MainSetting() {
 			<List.Item
 				title="Transaction category"
 				description="Income, expense, transfer"
-				titleStyle={{ fontFamily: 'Inter-Regular' }}
-				descriptionStyle={{ fontFamily: 'Inter-Light' }}
+				titleStyle={{ fontFamily: 'Manrope-Regular' }}
+				descriptionStyle={{ fontFamily: 'Manrope-Light' }}
 				onPress={() => router.push('/(root)/settings/transaction-categories')}
 				left={(props) => (
 					<Notebook
@@ -62,8 +62,8 @@ export default function MainSetting() {
 			<List.Item
 				title="Cloud sync (coming soon)"
 				description="You are up to date"
-				titleStyle={{ fontFamily: 'Inter-Regular' }}
-				descriptionStyle={{ fontFamily: 'Inter-Light' }}
+				titleStyle={{ fontFamily: 'Manrope-Regular' }}
+				descriptionStyle={{ fontFamily: 'Manrope-Light' }}
 				left={(props) => (
 					<CloudUpload
 						{...props}
@@ -77,8 +77,8 @@ export default function MainSetting() {
 			<List.Item
 				title="Security"
 				description="App lock, fingerprint"
-				titleStyle={{ fontFamily: 'Inter-Regular' }}
-				descriptionStyle={{ fontFamily: 'Inter-Light' }}
+				titleStyle={{ fontFamily: 'Manrope-Regular' }}
+				descriptionStyle={{ fontFamily: 'Manrope-Light' }}
 				onPress={() => router.push('/(root)/settings/security')}
 				left={(props) => (
 					<LockKeyhole
@@ -92,8 +92,8 @@ export default function MainSetting() {
 
 			<List.Item
 				title="Accounts"
-				titleStyle={{ fontFamily: 'Inter-Regular' }}
-				descriptionStyle={{ fontFamily: 'Inter-Light' }}
+				titleStyle={{ fontFamily: 'Manrope-Regular' }}
+				descriptionStyle={{ fontFamily: 'Manrope-Light' }}
 				onPress={() => router.push('/(root)/settings/accounts')}
 				left={(props) => (
 					<Wallet2 {...props} size={24} strokeWidth={1.5} color={props.color} />
@@ -102,8 +102,8 @@ export default function MainSetting() {
 
 			<List.Item
 				title="Currency symbols"
-				titleStyle={{ fontFamily: 'Inter-Regular' }}
-				descriptionStyle={{ fontFamily: 'Inter-Light' }}
+				titleStyle={{ fontFamily: 'Manrope-Regular' }}
+				descriptionStyle={{ fontFamily: 'Manrope-Light' }}
 				onPress={() => router.push('/(root)/settings/currency')}
 				left={(props) => (
 					<CurrencyIcon
@@ -117,3 +117,4 @@ export default function MainSetting() {
 		</View>
 	);
 }
+

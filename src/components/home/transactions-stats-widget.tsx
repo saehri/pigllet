@@ -67,12 +67,12 @@ function Stats() {
 			color3="rgb(0, 0, 255)"
 			xAxisLabelTextStyle={{
 				color: theme.colors.onBackground,
-				fontFamily: 'Inter-Regular',
+				fontFamily: 'Manrope-Regular',
 				fontSize: 9,
 			}}
 			yAxisTextStyle={{
 				color: theme.colors.onBackground,
-				fontFamily: 'Inter-Regular',
+				fontFamily: 'Manrope-Regular',
 				fontSize: 9,
 			}}
 			isAnimated
@@ -84,7 +84,7 @@ function Stats() {
 
 const styles = StyleSheet.create({
 	title: {
-		fontFamily: 'Inter-Regular',
+		fontFamily: 'Manrope-Regular',
 		opacity: 0.8,
 	},
 	innerContainer: {

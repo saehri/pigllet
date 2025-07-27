@@ -37,15 +37,16 @@ export default function BalanceStats({ balance }: Props) {
 
 const styles = StyleSheet.create({
 	title: {
-		fontFamily: 'Inter-Regular',
+		fontFamily: 'Manrope-Regular',
 		opacity: 0.8,
 	},
 	mainText: {
-		fontFamily: 'Inter-Regular',
+		fontFamily: 'Manrope-Regular',
 	},
 	caption: {
-		fontFamily: 'Inter-Light',
+		fontFamily: 'Manrope-Light',
 		opacity: 0.8,
 		marginTop: 10,
 	},
 });
+

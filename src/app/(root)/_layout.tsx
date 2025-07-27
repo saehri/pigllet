@@ -16,7 +16,7 @@ export default function Layout() {
 				headerShadowVisible: false,
 				headerTintColor: theme.colors.onBackground,
 				headerTitleStyle: {
-					fontFamily: 'Inter-Regular',
+					fontFamily: 'Manrope-Regular',
 					fontSize: 20,
 				},
 				headerStyle: { backgroundColor: theme.colors.background },

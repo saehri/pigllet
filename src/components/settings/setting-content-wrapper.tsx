@@ -14,7 +14,7 @@ export default function SettingContentWrapper({
 		<View style={{ gap: 12 }}>
 			<Text
 				variant="bodyMedium"
-				style={{ opacity: 0.8, marginLeft: 16, fontFamily: 'Inter-Regular' }}
+				style={{ opacity: 0.8, marginLeft: 16, fontFamily: 'Manrope-Regular' }}
 			>
 				{headerTitle}
 			</Text>
@@ -29,3 +29,4 @@ export default function SettingContentWrapper({
 		</View>
 	);
 }
+

@@ -70,7 +70,7 @@ export default function IncomeCard({
 			>
 				<View style={{ flex: 1, flexDirection: 'row' }}>
 					<View style={styles.row}>
-						<Text variant="bodyLarge" style={{ fontFamily: 'Inter-Regular' }}>
+						<Text variant="bodyLarge" style={{ fontFamily: 'Manrope-Regular' }}>
 							{category.label}
 						</Text>
 					</View>
@@ -184,11 +184,11 @@ const styles = StyleSheet.create({
 	},
 	bodyLarge: {
 		letterSpacing: -0.1,
-		fontFamily: 'Inter-Regular',
+		fontFamily: 'Manrope-Regular',
 	},
 	bodyMedium: {
 		letterSpacing: -0.1,
-		fontFamily: 'Inter-Light',
+		fontFamily: 'Manrope-Light',
 		opacity: 0.8,
 	},
 });

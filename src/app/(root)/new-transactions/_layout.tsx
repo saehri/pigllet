@@ -32,7 +32,7 @@ export default function Layout() {
 					overflow: 'hidden',
 				},
 				tabBarLabelStyle: {
-					fontFamily: 'Inter-Regular',
+					fontFamily: 'Manrope-Regular',
 					fontSize: 14,
 				},
 				tabBarLabelPosition: 'beside-icon',
@@ -77,3 +77,4 @@ export default function Layout() {
 		</Tabs>
 	);
 }
+

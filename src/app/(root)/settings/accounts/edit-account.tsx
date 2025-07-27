@@ -162,7 +162,7 @@ function Form({ theme, drizzleDb, initialFormValue }: FormProps) {
 		<View style={{ padding: 16, gap: 16 }}>
 			<View style={{ flexDirection: 'row', gap: 8 }}>
 				<View style={{ gap: 8, flex: 1 }}>
-					<Text style={{ fontFamily: 'Inter-Regular' }} variant="bodyLarge">
+					<Text style={{ fontFamily: 'Manrope-Regular' }} variant="bodyLarge">
 						Account name
 					</Text>
 					<TextInput
@@ -170,35 +170,35 @@ function Form({ theme, drizzleDb, initialFormValue }: FormProps) {
 						onChangeText={setAccountName}
 						value={accountName}
 						maxLength={12}
-						contentStyle={{ fontFamily: 'Inter-Regular' }}
+						contentStyle={{ fontFamily: 'Manrope-Regular' }}
 					/>
 				</View>
 
 				<View style={{ gap: 8, flex: 1 }}>
-					<Text style={{ fontFamily: 'Inter-Regular' }} variant="bodyLarge">
+					<Text style={{ fontFamily: 'Manrope-Regular' }} variant="bodyLarge">
 						Account balance ({currentCurrencySymbol})
 					</Text>
 					<TextInput
 						keyboardType="number-pad"
 						onChangeText={setAccountBalance}
 						value={accountBalance}
-						contentStyle={{ fontFamily: 'Inter-Regular' }}
+						contentStyle={{ fontFamily: 'Manrope-Regular' }}
 					/>
 				</View>
 			</View>
 
 			{!initialFormValue.is_cash && (
 				<View style={{ gap: 8 }}>
-					<Text style={{ fontFamily: 'Inter-Regular' }} variant="bodyLarge">
+					<Text style={{ fontFamily: 'Manrope-Regular' }} variant="bodyLarge">
 						Account number
 					</Text>
 					<TextInput
 						keyboardType="default"
 						onChangeText={setAccountNumber}
 						value={accountNumber}
-						contentStyle={{ fontFamily: 'Inter-Regular' }}
+						contentStyle={{ fontFamily: 'Manrope-Regular' }}
 					/>
-					<Text style={{ fontFamily: 'Inter-Regular' }} variant="labelSmall">
+					<Text style={{ fontFamily: 'Manrope-Regular' }} variant="labelSmall">
 						Don't worry your account number is stored localy
 					</Text>
 				</View>
@@ -207,7 +207,7 @@ function Form({ theme, drizzleDb, initialFormValue }: FormProps) {
 			<Button
 				mode="contained"
 				style={{ borderRadius: 10, marginTop: 16, padding: 8 }}
-				labelStyle={{ fontFamily: 'Inter-Medium', fontSize: 16 }}
+				labelStyle={{ fontFamily: 'Manrope-Medium', fontSize: 16 }}
 				onPress={editAccount}
 				disabled={!accountBalance.length || !accountName.length}
 			>
@@ -247,20 +247,20 @@ function DeleteButton({ theme, formLoading, handleDelete }: DeleteButtonProps) {
 				<Dialog visible={visible} onDismiss={hideModal}>
 					<Dialog.Title>Delete account</Dialog.Title>
 					<Dialog.Content>
-						<Text variant="bodyLarge" style={{ fontFamily: 'Inter-Regular' }}>
+						<Text variant="bodyLarge" style={{ fontFamily: 'Manrope-Regular' }}>
 							All item records linked to this account will be deleted
 							permanently. This action cannot be undone.
 						</Text>
 					</Dialog.Content>
 					<Dialog.Actions>
 						<Button
-							labelStyle={{ fontFamily: 'Inter-Regular', fontSize: 16 }}
+							labelStyle={{ fontFamily: 'Manrope-Regular', fontSize: 16 }}
 							onPress={hideModal}
 						>
 							Cancel
 						</Button>
 						<Button
-							labelStyle={{ fontFamily: 'Inter-Regular', fontSize: 16 }}
+							labelStyle={{ fontFamily: 'Manrope-Regular', fontSize: 16 }}
 							onPress={handleDelete}
 						>
 							Ok
@@ -272,7 +272,7 @@ function DeleteButton({ theme, formLoading, handleDelete }: DeleteButtonProps) {
 			<Button
 				mode="outlined"
 				style={{ borderRadius: 10 }}
-				labelStyle={{ fontFamily: 'Inter-Regular', fontSize: 16 }}
+				labelStyle={{ fontFamily: 'Manrope-Regular', fontSize: 16 }}
 				onPress={showModal}
 			>
 				{formLoading ? (

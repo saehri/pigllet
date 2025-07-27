@@ -85,7 +85,8 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 	},
 	title: {
-		fontFamily: 'Inter-Regular',
+		fontFamily: 'Manrope-Regular',
 		textTransform: 'capitalize',
 	},
 });
+

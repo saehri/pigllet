@@ -61,17 +61,17 @@ const styles = StyleSheet.create({
 		gap: 16,
 	},
 	labelSmall: {
-		fontFamily: 'Inter-Regular',
+		fontFamily: 'Manrope-Regular',
 		opacity: 0.6,
 		textAlign: 'center',
 		marginTop: 16,
 	},
 	headlineLarge: {
-		fontFamily: 'Inter-Black',
+		fontFamily: 'Manrope-Black',
 		textAlign: 'center',
 	},
 	bodyLarge: {
-		fontFamily: 'Inter-Regular',
+		fontFamily: 'Manrope-Regular',
 		textAlign: 'center',
 		opacity: 0.8,
 	},

@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
 		paddingTop: 60,
 	},
 	transactionListTitle: {
-		fontFamily: 'Inter-Regular',
+		fontFamily: 'Manrope-Regular',
 		paddingHorizontal: 16,
 		fontSize: 18,
 	},

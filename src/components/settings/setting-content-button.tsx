@@ -46,7 +46,7 @@ export default function SettingContentButton({
 			<Text
 				variant="bodyLarge"
 				style={{
-					fontFamily: 'Inter-Regular',
+					fontFamily: 'Manrope-Regular',
 					...(labelStyle as object),
 					color: higlight ? theme.colors.primary : theme.colors.onSurface,
 				}}
@@ -58,7 +58,7 @@ export default function SettingContentButton({
 				buttonRight
 			) : (
 				<View style={styles.buttonRight}>
-					<Text variant="bodyLarge" style={{ fontFamily: 'Inter-Light' }}>
+					<Text variant="bodyLarge" style={{ fontFamily: 'Manrope-Light' }}>
 						{buttonRightTitle}
 					</Text>
 					<ChevronsUpDown

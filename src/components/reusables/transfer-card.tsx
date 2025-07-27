@@ -81,7 +81,7 @@ export default function TransferCard({
 						<Text
 							variant="bodyLarge"
 							style={{
-								fontFamily: 'Inter-Regular',
+								fontFamily: 'Manrope-Regular',
 								overflow: 'hidden',
 							}}
 							numberOfLines={1}
@@ -219,11 +219,11 @@ const styles = StyleSheet.create({
 	},
 	bodyLarge: {
 		letterSpacing: -0.1,
-		fontFamily: 'Inter-Regular',
+		fontFamily: 'Manrope-Regular',
 	},
 	bodyMedium: {
 		letterSpacing: -0.1,
-		fontFamily: 'Inter-Light',
+		fontFamily: 'Manrope-Light',
 		opacity: 0.8,
 	},
 });

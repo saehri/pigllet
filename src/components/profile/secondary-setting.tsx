@@ -4,15 +4,15 @@ import { BadgeInfo, Heart, Mail, Smartphone } from 'lucide-react-native';
 export default function SecondarySetting() {
 	return (
 		<List.Section>
-			<List.Subheader style={{ fontFamily: 'Inter-SemiBold' }}>
+			<List.Subheader style={{ fontFamily: 'Manrope-SemiBold' }}>
 				Billing and support
 			</List.Subheader>
 
 			<List.Item
 				title="Write a review"
 				description="if you are enjoying Pigllet please leave a review on the Play Store"
-				titleStyle={{ fontFamily: 'Inter-Regular' }}
-				descriptionStyle={{ fontFamily: 'Inter-Light' }}
+				titleStyle={{ fontFamily: 'Manrope-Regular' }}
+				descriptionStyle={{ fontFamily: 'Manrope-Light' }}
 				left={(props) => (
 					<Heart
 						{...props}
@@ -27,8 +27,8 @@ export default function SecondarySetting() {
 			<List.Item
 				title="Contact us"
 				description="If you need help or have some advice"
-				titleStyle={{ fontFamily: 'Inter-Regular' }}
-				descriptionStyle={{ fontFamily: 'Inter-Light' }}
+				titleStyle={{ fontFamily: 'Manrope-Regular' }}
+				descriptionStyle={{ fontFamily: 'Manrope-Light' }}
 				left={(props) => (
 					<Mail {...props} size={24} strokeWidth={1.5} color={props.color} />
 				)}
@@ -36,8 +36,8 @@ export default function SecondarySetting() {
 
 			<List.Item
 				title="About"
-				titleStyle={{ fontFamily: 'Inter-Regular' }}
-				descriptionStyle={{ fontFamily: 'Inter-Light' }}
+				titleStyle={{ fontFamily: 'Manrope-Regular' }}
+				descriptionStyle={{ fontFamily: 'Manrope-Light' }}
 				left={(props) => (
 					<BadgeInfo
 						{...props}
@@ -51,8 +51,8 @@ export default function SecondarySetting() {
 			<List.Item
 				title="App version"
 				description="1.0.0"
-				titleStyle={{ fontFamily: 'Inter-Regular' }}
-				descriptionStyle={{ fontFamily: 'Inter-Light' }}
+				titleStyle={{ fontFamily: 'Manrope-Regular' }}
+				descriptionStyle={{ fontFamily: 'Manrope-Light' }}
 				left={(props) => (
 					<Smartphone
 						{...props}
@@ -65,3 +65,4 @@ export default function SecondarySetting() {
 		</List.Section>
 	);
 }
+

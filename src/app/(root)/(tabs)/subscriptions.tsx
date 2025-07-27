@@ -314,7 +314,7 @@ export function MakePaymentButton({ subscription }: MakePaymentButtonTypes) {
 					mode="contained"
 					contentStyle={{ padding: 8 }}
 					style={{ borderRadius: 10 }}
-					labelStyle={{ fontFamily: 'Inter-Medium', fontSize: 16 }}
+					labelStyle={{ fontFamily: 'Manrope-Medium', fontSize: 16 }}
 				>
 					Make payment
 				</Button>
@@ -325,7 +325,7 @@ export function MakePaymentButton({ subscription }: MakePaymentButtonTypes) {
 						mode="contained"
 						contentStyle={{ padding: 8 }}
 						style={{ borderRadius: 10 }}
-						labelStyle={{ fontFamily: 'Inter-Medium', fontSize: 16 }}
+						labelStyle={{ fontFamily: 'Manrope-Medium', fontSize: 16 }}
 					>
 						{loading ? (
 							<ActivityIndicator size={20} color={theme.colors.onPrimary} />
@@ -338,7 +338,7 @@ export function MakePaymentButton({ subscription }: MakePaymentButtonTypes) {
 						mode="outlined"
 						contentStyle={{ padding: 8 }}
 						style={{ borderRadius: 10 }}
-						labelStyle={{ fontFamily: 'Inter-Medium', fontSize: 16 }}
+						labelStyle={{ fontFamily: 'Manrope-Medium', fontSize: 16 }}
 					>
 						Cancel payment
 					</Button>
@@ -361,11 +361,11 @@ const styles = StyleSheet.create({
 		marginBottom: 12,
 	},
 	title: {
-		fontFamily: 'Inter-Medium',
+		fontFamily: 'Manrope-Medium',
 		marginBottom: 8,
 	},
 	amount: {
-		fontFamily: 'Inter-Regular',
+		fontFamily: 'Manrope-Regular',
 	},
 	headerRow: {
 		flexDirection: 'row',
@@ -404,11 +404,11 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 5,
 	},
 	text: {
-		fontFamily: 'Inter-Regular',
+		fontFamily: 'Manrope-Regular',
 		textAlign: 'center',
 	},
 	inputLabel: {
-		fontFamily: 'Inter-Regular',
+		fontFamily: 'Manrope-Regular',
 	},
 });
 

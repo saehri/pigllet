@@ -54,7 +54,7 @@ export default function TransactionsSummaryChart({
 	if (!chartData.length) {
 		return (
 			<View style={styles.emptyAndLoadingContainer}>
-				<Text variant="bodyLarge" style={{ fontFamily: 'Inter-Regular' }}>
+				<Text variant="bodyLarge" style={{ fontFamily: 'Manrope-Regular' }}>
 					No data.
 				</Text>
 			</View>
@@ -78,12 +78,12 @@ export default function TransactionsSummaryChart({
 				xAxisThickness={0}
 				yAxisThickness={0}
 				yAxisTextStyle={{
-					fontFamily: 'Inter-Regular',
+					fontFamily: 'Manrope-Regular',
 					fontSize: 9, // Adjust axis labels for clarity
 					color: theme.colors.onSurfaceVariant,
 				}}
 				xAxisLabelTextStyle={{
-					fontFamily: 'Inter-Regular',
+					fontFamily: 'Manrope-Regular',
 					fontSize: 10,
 					color: theme.colors.onSurfaceVariant,
 				}}

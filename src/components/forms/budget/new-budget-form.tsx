@@ -104,14 +104,14 @@ export default function NewBudgetForm() {
 
 const styles = StyleSheet.create({
 	inputLabel: {
-		fontFamily: 'Inter-Regular',
+		fontFamily: 'Manrope-Regular',
 	},
 	inputContent: {
-		fontFamily: 'Inter-Regular',
+		fontFamily: 'Manrope-Regular',
 	},
 	button: { borderRadius: 10, marginTop: 16, padding: 8, marginBottom: 8 },
 	buttonLabel: {
-		fontFamily: 'Inter-Medium',
+		fontFamily: 'Manrope-Medium',
 		fontSize: 16,
 	},
 	inputContainer: {
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
 	},
 	inputInfo: {
 		opacity: 0.8,
-		fontFamily: 'Inter-Regular',
+		fontFamily: 'Manrope-Regular',
 	},
 	inputInfoContainer: {
 		marginTop: 8,

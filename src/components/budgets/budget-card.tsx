@@ -58,7 +58,7 @@ export default function BudgetCard({ data }: Props) {
 					}}
 				>
 					<Text
-						style={{ fontFamily: 'Inter-Medium' }}
+						style={{ fontFamily: 'Manrope-Medium' }}
 						numberOfLines={1}
 						variant="titleMedium"
 					>
@@ -66,7 +66,7 @@ export default function BudgetCard({ data }: Props) {
 					</Text>
 
 					<Text
-						style={{ fontFamily: 'Inter-Regular' }}
+						style={{ fontFamily: 'Manrope-Regular' }}
 						numberOfLines={1}
 						variant="titleMedium"
 					>
@@ -94,7 +94,10 @@ export default function BudgetCard({ data }: Props) {
 							borderColor: theme.colors.outlineVariant,
 						}}
 					>
-						<Text style={{ fontFamily: 'Inter-Regular' }} variant="labelLarge">
+						<Text
+							style={{ fontFamily: 'Manrope-Regular' }}
+							variant="labelLarge"
+						>
 							Current{' '}
 							{`${currentCurrencySymbol} ${data.current_spending.toLocaleString(
 								getLocaleByCurrencySymbol(currentCurrencySymbol)
@@ -110,7 +113,10 @@ export default function BudgetCard({ data }: Props) {
 							alignItems: 'center',
 						}}
 					>
-						<Text style={{ fontFamily: 'Inter-Regular' }} variant="labelLarge">
+						<Text
+							style={{ fontFamily: 'Manrope-Regular' }}
+							variant="labelLarge"
+						>
 							Max{' '}
 							{`${currentCurrencySymbol} ${data.max_spending.toLocaleString(
 								getLocaleByCurrencySymbol(currentCurrencySymbol)
@@ -128,7 +134,10 @@ export default function BudgetCard({ data }: Props) {
 							borderColor: theme.colors.outlineVariant,
 						}}
 					>
-						<Text style={{ fontFamily: 'Inter-Regular' }} variant="labelLarge">
+						<Text
+							style={{ fontFamily: 'Manrope-Regular' }}
+							variant="labelLarge"
+						>
 							Remaining{' '}
 							{`${currentCurrencySymbol} ${(
 								data.max_spending - data.current_spending

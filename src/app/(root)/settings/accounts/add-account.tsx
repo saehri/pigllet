@@ -103,7 +103,7 @@ export default function AddAccountScreen() {
 				<Button
 					mode="contained"
 					style={{ borderRadius: 10, marginTop: 16 }}
-					labelStyle={{ fontFamily: 'Inter-Regular', fontSize: 16 }}
+					labelStyle={{ fontFamily: 'Manrope-Regular', fontSize: 16 }}
 					onPress={createAccount}
 					disabled={!accountBalance.length || !accountName.length}
 				>

@@ -117,7 +117,7 @@ function DialogTrigger({
 		>
 			<Text
 				style={{
-					fontFamily: 'Inter-Regular',
+					fontFamily: 'Manrope-Regular',
 					fontSize: 16,
 					color: '#fff',
 					textTransform: 'capitalize',

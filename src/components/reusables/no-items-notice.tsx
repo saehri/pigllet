@@ -25,7 +25,7 @@ export default function NoItemNotice() {
 
 			<Text
 				variant="bodyLarge"
-				style={{ fontFamily: 'Inter-Regular', textAlign: 'center' }}
+				style={{ fontFamily: 'Manrope-Regular', textAlign: 'center' }}
 			>
 				No item found.
 			</Text>
