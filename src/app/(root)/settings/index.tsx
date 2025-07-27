@@ -1,8 +1,8 @@
 import { useTheme } from 'react-native-paper';
 import { ScrollView } from 'react-native';
 
-import MainSetting from '@/src/components/profile/main-settings';
-import SecondarySetting from '@/src/components/profile/secondary-setting';
+import MainSetting from '@/src/components/settings/main-settings';
+import SecondarySetting from '@/src/components/settings/secondary-setting';
 
 export default function ProfileScreen() {
 	const theme = useTheme();
@@ -17,3 +17,4 @@ export default function ProfileScreen() {
 		</ScrollView>
 	);
 }
+

@@ -22,10 +22,8 @@ export default function HomeMonthlyTransactionScreen() {
 	const router = useRouter();
 	const theme = useTheme();
 
-	const [count, setCount] = useState(0);
-
+	//   load the transactions data
 	const { loadTransactionsData } = useTransactionsManager({});
-
 	const { data: transactions } = useLiveQuery(loadTransactionsData());
 
 	useEffect(() => {
@@ -44,7 +42,6 @@ export default function HomeMonthlyTransactionScreen() {
 			),
 			headerTitle: () => (
 				<Button
-					onPress={() => setCount((prev) => (prev += 1))}
 					mode="contained-tonal"
 					contentStyle={{ height: 40 }}
 					icon={(props) => (

@@ -4,10 +4,10 @@ import { EyeClosedIcon, EyeIcon } from 'lucide-react-native';
 import { StyleSheet, ToastAndroid, View } from 'react-native';
 import { Button, Text, useTheme } from 'react-native-paper';
 
-import { Category, Transaction } from '@/db/schema';
 import {
 	getChartDataByCategory,
 	getChartDataByDate,
+	TransactionWithDetails,
 } from '@/utils/group-transactions';
 import {
 	UserPreferenceContext,
@@ -15,12 +15,8 @@ import {
 } from '@/context/UserPreferenceContext';
 import getLocaleByCurrencySymbol from '@/utils/locale-getter';
 
-interface TransactionWithCategory extends Transaction {
-	category?: Category;
-}
-
 type Props = {
-	transactions: TransactionWithCategory[];
+	transactions: TransactionWithDetails[];
 	groupBy: 'date' | 'category';
 };
 

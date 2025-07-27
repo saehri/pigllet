@@ -1,10 +1,9 @@
+import { useEffect, useState } from 'react';
+import { BarChart } from 'react-native-gifted-charts';
 import { StyleSheet, ToastAndroid, View } from 'react-native';
 import { ActivityIndicator, Text, useTheme } from 'react-native-paper';
-import { useEffect, useState } from 'react';
-import { BarChart, barDataItem } from 'react-native-gifted-charts';
 import {
 	getChartDataByCategory,
-	getChartDataByDate,
 	getChartDataByType,
 	getStackedChartDataByDate,
 	TransactionWithDetails,
@@ -27,16 +26,16 @@ export default function TransactionsSummaryChart({
 	useEffect(() => {
 		async function load() {
 			try {
-				const data = await getStackedChartDataByDate(transactions);
-				setChartData(data);
-				// if (groupBy === 'category') {
-				// 	const data = await getChartDataByCategory(transactions);
-				// 	setChartData(data);
-				// } else if (groupBy === 'date') {
-				// } else {
-				// 	const data = await getChartDataByType(transactions);
-				// 	setChartData(data);
-				// }
+				if (groupBy === 'category') {
+					const data = await getChartDataByCategory(transactions);
+					setChartData(data);
+				} else if (groupBy === 'type') {
+					const data = await getChartDataByType(transactions);
+					setChartData(data);
+				} else {
+					const data = await getStackedChartDataByDate(transactions);
+					setChartData(data);
+				}
 			} catch (error: any) {
 				ToastAndroid.show(error.message, ToastAndroid.SHORT);
 			} finally {
