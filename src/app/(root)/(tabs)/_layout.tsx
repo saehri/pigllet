@@ -84,6 +84,7 @@ export default function Layout() {
 			<Tabs.Screen
 				name="statistics"
 				options={{
+					headerShown: false,
 					tabBarIcon: (props) => (
 						<ChartPieIcon
 							size={20}

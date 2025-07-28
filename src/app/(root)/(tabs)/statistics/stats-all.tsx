@@ -10,7 +10,7 @@ import { useEffect } from 'react';
 import { Dimensions, ScrollView, StyleSheet, View } from 'react-native';
 import { Button, Surface, Text, useTheme } from 'react-native-paper';
 
-export default function Statistics() {
+export default function StatsAllScreen() {
 	const navigation = useNavigation();
 	const router = useRouter();
 	const theme = useTheme();
