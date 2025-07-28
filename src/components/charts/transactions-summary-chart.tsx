@@ -68,11 +68,11 @@ export default function TransactionsSummaryChart({
 	return (
 		<View style={styles.chartContainer}>
 			<BarChart
-				barWidth={60} // Adjust bar width for proportionate spacing
+				barWidth={65} // Adjust bar width for proportionate spacing
 				barBorderRadius={100}
 				stackData={chartData}
 				frontColor={theme.colors.secondary} // Main color for bars
-				spacing={groupBy === 'category' ? 6 : 17}
+				spacing={groupBy === 'category' ? 6 : 13}
 				rulesThickness={0} // Thin grid lines for subtlety
 				noOfSections={7}
 				stepHeight={27}
