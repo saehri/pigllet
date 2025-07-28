@@ -11,8 +11,8 @@ export function toYYYYMMDD(date: Date): string {
 
 // Simple color mapping per category type
 export const transactionColorMap: Record<string, string> = {
-	income: 'rgba(21, 179, 15, 1)',
-	expense: 'rgba(248, 110, 30, 1)',
-	transfer: 'rgba(0, 150, 150, 1)',
+	income: 'rgba(51, 206, 46, 1)',
+	expense: 'rgba(248, 81, 30, 1)',
+	transfer: 'rgba(96, 118, 216, 1)',
 };
 

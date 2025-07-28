@@ -74,8 +74,8 @@ export default function TransactionsSummaryChart({
 				frontColor={theme.colors.secondary} // Main color for bars
 				spacing={13}
 				rulesThickness={0} // Thin grid lines for subtlety
-				noOfSections={9}
-				stepHeight={27}
+				noOfSections={7}
+				stepHeight={25}
 				xAxisThickness={0}
 				yAxisThickness={0}
 				yAxisTextStyle={{
@@ -135,15 +135,16 @@ export default function TransactionsSummaryChart({
 
 const styles = StyleSheet.create({
 	emptyAndLoadingContainer: {
-		flex: 1,
 		width: '100%',
 		alignItems: 'center',
 		justifyContent: 'center',
+		height: 255,
 	},
 	chartContainer: {
 		paddingLeft: 16,
 		width: '100%',
-		height: '50%',
+		overflow: 'hidden',
+		height: 255,
 	},
 	legend: {
 		gap: 12,
