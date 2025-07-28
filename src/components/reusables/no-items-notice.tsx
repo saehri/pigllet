@@ -10,24 +10,44 @@ export default function NoItemNotice() {
 			style={{
 				paddingHorizontal: 16,
 				alignItems: 'center',
-				justifyContent: 'center',
-				gap: 16,
-				minHeight: 300,
+				justifyContent: 'flex-end',
+				gap: 8,
+				flex: 1,
+				minHeight: 200,
 			}}
 		>
-			<SearchX
-				size={64}
-				color={theme.colors.primary}
-				strokeWidth={0.5}
-				fill={theme.colors.primary}
-				fillOpacity={0.3}
-			/>
+			<View
+				style={{
+					width: 80,
+					height: 80,
+					borderRadius: 100,
+					backgroundColor: theme.colors.secondaryContainer,
+					alignItems: 'center',
+					justifyContent: 'center',
+					marginBottom: 12,
+				}}
+			>
+				<SearchX
+					size={50}
+					color={theme.colors.onSecondaryContainer}
+					strokeWidth={0.5}
+					fill={theme.colors.onSecondaryContainer}
+					fillOpacity={0.3}
+				/>
+			</View>
+
+			<Text
+				variant="headlineMedium"
+				style={{ fontFamily: 'Manrope-SemiBold', textAlign: 'center' }}
+			>
+				Whoops!
+			</Text>
 
 			<Text
 				variant="bodyLarge"
 				style={{ fontFamily: 'Manrope-Regular', textAlign: 'center' }}
 			>
-				No item found.
+				Looks like there's nothing to show at the moment.
 			</Text>
 		</View>
 	);

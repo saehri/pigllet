@@ -59,7 +59,7 @@ export default function TransactionsSummaryChart({
 		return (
 			<View style={styles.emptyAndLoadingContainer}>
 				<Text variant="bodyLarge" style={{ fontFamily: 'Manrope-Regular' }}>
-					No data.
+					No data available to display at the moment.
 				</Text>
 			</View>
 		);

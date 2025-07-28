@@ -84,7 +84,6 @@ export default function Layout() {
 			<Tabs.Screen
 				name="statistics"
 				options={{
-					title: 'Statistics',
 					tabBarIcon: (props) => (
 						<ChartPieIcon
 							size={20}
@@ -95,29 +94,6 @@ export default function Layout() {
 								props.focused ? theme.colors.onPrimary : theme.colors.background
 							}
 						/>
-					),
-					headerRight: (props) => (
-						<View
-							style={{
-								flexDirection: 'row',
-								alignItems: 'center',
-								paddingRight: 16,
-							}}
-						>
-							<Button
-								mode="contained-tonal"
-								onPress={() => router.push('/(root)/settings')}
-								contentStyle={{
-									height: 40,
-								}}
-							>
-								<Settings
-									strokeWidth={1.5}
-									color={theme.colors.onSecondaryContainer}
-									size={20}
-								/>
-							</Button>
-						</View>
 					),
 				}}
 			/>
