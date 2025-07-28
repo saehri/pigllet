@@ -1,17 +1,14 @@
 import { Text, useTheme } from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
 
-import {
-	groupedTransactionsByDate,
-	TransactionWithDetails,
-} from '@/utils/group-transactions';
+import { GroupedTransactionByDateOutput } from '@/utils/group-transactions';
 
 import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import TransactionCard from '../reusables/transaction-card';
 import NoItemNotice from '../reusables/no-items-notice';
 
 type Props = {
-	transactions: TransactionWithDetails[];
+	transactions: GroupedTransactionByDateOutput[];
 };
 
 export default function HomeBottomSheets({ transactions }: Props) {
@@ -38,7 +35,7 @@ export default function HomeBottomSheets({ transactions }: Props) {
 				contentContainerStyle={{ paddingBottom: 180 }}
 				showsVerticalScrollIndicator={false}
 				ListEmptyComponent={<NoItemNotice />}
-				data={groupedTransactionsByDate(transactions)}
+				data={transactions}
 				renderItem={({ item }) => (
 					<View style={styles.transactionListContainer} key={item.created_date}>
 						<Text style={styles.transactionListTitle} variant="bodyMedium">

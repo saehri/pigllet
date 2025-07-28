@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
-import { useNavigation, useRouter } from 'expo-router';
 import { View } from 'react-native';
+import { useNavigation, useRouter } from 'expo-router';
 import { Button, Text, useTheme } from 'react-native-paper';
 import { HouseIcon, SettingsIcon } from 'lucide-react-native';
 
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
+import { groupedTransactionsByDate } from '@/utils/group-transactions';
 
 import useTransactionsManager from '@/src/hooks/useTransactionsManager';
 import TransactionsSummaryChart from '@/src/components/charts/transactions-summary-chart';
@@ -66,11 +67,16 @@ export default function HomeScreen() {
 	return (
 		<View style={{ flex: 1 }}>
 			<HomeHeaderContainer>
-				<TransactionsSummaryChart transactions={transactions} />
+				<TransactionsSummaryChart
+					transactions={transactions}
+					dateFormat="YYYY"
+				/>
 				<TransactionsSummary />
 			</HomeHeaderContainer>
 
-			<HomeBottomSheets transactions={transactions} />
+			<HomeBottomSheets
+				transactions={groupedTransactionsByDate(transactions, 'YYYY')}
+			/>
 		</View>
 	);
 }

@@ -54,8 +54,8 @@ export default function HomeScreenLayout() {
 					},
 				}}
 			>
-				<Tabs.Screen name="monthly" options={{ title: 'Monthly' }} />
-				<Tabs.Screen name="yearly" options={{ title: 'Yearly' }} />
+				<Tabs.Screen name="monthly" options={{ title: 'Month' }} />
+				<Tabs.Screen name="yearly" options={{ title: 'Year' }} />
 				<Tabs.Screen name="all" options={{ title: 'All' }} />
 			</Tabs>
 

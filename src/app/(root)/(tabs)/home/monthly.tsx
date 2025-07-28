@@ -4,11 +4,12 @@ import {
 	ChevronRightIcon,
 	SettingsIcon,
 } from 'lucide-react-native';
-import { useNavigation, useRouter } from 'expo-router';
 import { View } from 'react-native';
 import { Button, useTheme } from 'react-native-paper';
+import { useNavigation, useRouter } from 'expo-router';
 
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
+import { groupedTransactionsByDate } from '@/utils/group-transactions';
 
 import HomeBottomSheets from '@/src/components/home/home-bottom-sheets';
 import useTransactionsManager from '@/src/hooks/useTransactionsManager';
@@ -104,11 +105,16 @@ export default function HomeMonthlyTransactionScreen() {
 	return (
 		<View style={{ flex: 1 }}>
 			<HomeHeaderContainer>
-				<TransactionsSummaryChart transactions={transactions} />
+				<TransactionsSummaryChart
+					transactions={transactions}
+					dateFormat="MMM D, YYYY"
+				/>
 				<TransactionsSummary />
 			</HomeHeaderContainer>
 
-			<HomeBottomSheets transactions={transactions} />
+			<HomeBottomSheets
+				transactions={groupedTransactionsByDate(transactions, 'MMMM D, YYYY')}
+			/>
 		</View>
 	);
 }

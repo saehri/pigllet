@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 import { Account, Transaction as BaseTransaction, Category } from '@/db/schema';
 
 export interface TransactionWithDetails {
@@ -36,16 +38,14 @@ export type GroupedTransactionByDateOutput = {
 };
 
 export function groupedTransactionsByDate(
-	transactions: GroupedTransactionsByDateInput[]
+	transactions: GroupedTransactionsByDateInput[],
+	dateFormat: string
 ): GroupedTransactionByDateOutput[] {
 	return transactions.reduce(
 		(acc: GroupedTransactionByDateOutput[], transaction) => {
-			const date = new Date(
-				transaction.transaction.created_at
-			).toLocaleDateString('en-US', {
-				dateStyle: 'long',
-				month: 'short',
-			});
+			const date = moment(transaction.transaction.created_at).format(
+				dateFormat
+			);
 
 			const existingGroup = acc.find((group) => group.created_date === date);
 
@@ -72,7 +72,8 @@ const colorMap: Record<string, string> = {
 };
 
 export async function getStackedChartDataByDate(
-	transactions: TransactionWithDetails[]
+	transactions: TransactionWithDetails[],
+	dateFormat: string
 ): Promise<StackDataItem[]> {
 	// Only allow valid transaction types as keys
 	type TxType = 'income' | 'expense' | 'transfer';
@@ -81,10 +82,7 @@ export async function getStackedChartDataByDate(
 	const grouped: Record<string, Record<TxType, number>> = {};
 
 	for (const tx of transactions) {
-		const date = new Date(tx.transaction.created_at);
-		const label = date.toLocaleString('en-US', {
-			dateStyle: 'medium',
-		}); // e.g., "Jul 2025"
+		const label = moment(tx.transaction.created_at).format(dateFormat);
 		const type = tx.transaction.type;
 
 		// Only process valid types

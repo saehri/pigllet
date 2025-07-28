@@ -3,8 +3,6 @@ import { BarChart } from 'react-native-gifted-charts';
 import { StyleSheet, ToastAndroid, View } from 'react-native';
 import { ActivityIndicator, Text, useTheme } from 'react-native-paper';
 import {
-	getChartDataByCategory,
-	getChartDataByType,
 	getStackedChartDataByDate,
 	TransactionWithDetails,
 } from '@/utils/group-transactions';
@@ -12,12 +10,12 @@ import { transactionColorMap } from '@/utils/utils';
 
 type Props = {
 	transactions: TransactionWithDetails[];
-	groupBy?: 'date' | 'category' | 'type';
+	dateFormat: string;
 };
 
 export default function TransactionsSummaryChart({
 	transactions,
-	groupBy = 'date',
+	dateFormat,
 }: Props) {
 	const theme = useTheme();
 
@@ -27,16 +25,8 @@ export default function TransactionsSummaryChart({
 	useEffect(() => {
 		async function load() {
 			try {
-				if (groupBy === 'category') {
-					const data = await getChartDataByCategory(transactions);
-					setChartData(data);
-				} else if (groupBy === 'type') {
-					const data = await getChartDataByType(transactions);
-					setChartData(data);
-				} else {
-					const data = await getStackedChartDataByDate(transactions);
-					setChartData(data);
-				}
+				const data = await getStackedChartDataByDate(transactions, dateFormat);
+				setChartData(data);
 			} catch (error: any) {
 				ToastAndroid.show(error.message, ToastAndroid.SHORT);
 			} finally {

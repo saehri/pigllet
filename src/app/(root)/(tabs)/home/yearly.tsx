@@ -9,6 +9,7 @@ import { View } from 'react-native';
 import { Button, useTheme } from 'react-native-paper';
 
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
+import { groupedTransactionsByDate } from '@/utils/group-transactions';
 
 import YearSelectorDialog from '@/src/components/reusables/year-selector-dialog';
 import useTransactionsManager from '@/src/hooks/useTransactionsManager';
@@ -45,7 +46,6 @@ export default function HomeYearlyTransactionScreen() {
 
 	useEffect(() => {
 		navigation.setOptions({
-			title: 'Yearly',
 			headerTitle: () => (
 				<View style={{ flexDirection: 'row', gap: 2 }}>
 					<YearSelectorDialog
@@ -106,11 +106,16 @@ export default function HomeYearlyTransactionScreen() {
 	return (
 		<View style={{ flex: 1 }}>
 			<HomeHeaderContainer>
-				<TransactionsSummaryChart transactions={transactions} />
+				<TransactionsSummaryChart
+					transactions={transactions}
+					dateFormat="MMM, YYYY"
+				/>
 				<TransactionsSummary />
 			</HomeHeaderContainer>
 
-			<HomeBottomSheets transactions={transactions} />
+			<HomeBottomSheets
+				transactions={groupedTransactionsByDate(transactions, 'MMMM, YYYY')}
+			/>
 		</View>
 	);
 }
