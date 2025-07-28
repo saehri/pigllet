@@ -42,6 +42,7 @@ export default function Layout() {
 					fontFamily: 'Manrope-Bold',
 					textTransform: 'capitalize',
 					letterSpacing: -1,
+					color: theme.colors.onBackground,
 				},
 				tabBarItemStyle: {
 					overflow: 'hidden',
@@ -98,16 +99,22 @@ export default function Layout() {
 					headerRight: (props) => (
 						<View
 							style={{
-								backgroundColor: theme.colors.background,
 								flexDirection: 'row',
 								alignItems: 'center',
+								paddingRight: 16,
 							}}
 						>
-							<Button onPress={() => router.push('/(root)/settings')}>
+							<Button
+								mode="contained-tonal"
+								onPress={() => router.push('/(root)/settings')}
+								contentStyle={{
+									height: 40,
+								}}
+							>
 								<Settings
 									strokeWidth={1.5}
-									color={theme.colors.onBackground}
-									size={24}
+									color={theme.colors.onSecondaryContainer}
+									size={20}
 								/>
 							</Button>
 						</View>
@@ -132,12 +139,16 @@ export default function Layout() {
 					headerRight: (props) => (
 						<View
 							style={{
-								backgroundColor: theme.colors.background,
 								flexDirection: 'row',
 								alignItems: 'center',
+								paddingRight: 16,
 							}}
 						>
-							<Button onPress={() => router.push('/(root)/new-subscription')}>
+							<Button
+								mode="contained-tonal"
+								onPress={() => router.push('/(root)/new-subscription')}
+								contentStyle={{ height: 40 }}
+							>
 								<Plus
 									strokeWidth={1.5}
 									color={theme.colors.onBackground}
@@ -145,11 +156,17 @@ export default function Layout() {
 								/>
 							</Button>
 
-							<Button onPress={() => router.push('/(root)/settings')}>
+							<Button
+								mode="contained-tonal"
+								onPress={() => router.push('/(root)/settings')}
+								contentStyle={{
+									height: 40,
+								}}
+							>
 								<Settings
 									strokeWidth={1.5}
-									color={theme.colors.onBackground}
-									size={24}
+									color={theme.colors.onSecondaryContainer}
+									size={20}
 								/>
 							</Button>
 						</View>
@@ -174,23 +191,35 @@ export default function Layout() {
 					headerRight: (props) => (
 						<View
 							style={{
-								backgroundColor: theme.colors.background,
 								flexDirection: 'row',
 								alignItems: 'center',
+								paddingRight: 16,
 							}}
 						>
-							<Button onPress={() => router.push('/(root)/new-budget')}>
+							<Button
+								onPress={() => router.push('/(root)/new-budget')}
+								mode="contained-tonal"
+								contentStyle={{
+									height: 40,
+								}}
+							>
 								<Plus
 									strokeWidth={1.5}
 									color={theme.colors.onBackground}
 									size={24}
 								/>
 							</Button>
-							<Button onPress={() => router.push('/(root)/settings')}>
+							<Button
+								onPress={() => router.push('/(root)/settings')}
+								mode="contained-tonal"
+								contentStyle={{
+									height: 40,
+								}}
+							>
 								<Settings
 									strokeWidth={1.5}
-									color={theme.colors.onBackground}
-									size={24}
+									color={theme.colors.onSecondaryContainer}
+									size={20}
 								/>
 							</Button>
 						</View>
