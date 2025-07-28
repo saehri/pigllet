@@ -38,6 +38,9 @@ export default function HomeScreenLayout() {
 					borderRadius: 12,
 					height: 40,
 				},
+				sceneStyle: {
+					backgroundColor: theme.colors.elevation.level1,
+				},
 				tabBarLabelPosition: 'beside-icon',
 				tabBarIconStyle: {
 					display: 'none',

@@ -1,6 +1,13 @@
 import React, { useEffect } from 'react';
 import { useNavigation, useRouter } from 'expo-router';
-import { Button, Divider, Surface, Text, useTheme } from 'react-native-paper';
+import {
+	Button,
+	Divider,
+	FAB,
+	Surface,
+	Text,
+	useTheme,
+} from 'react-native-paper';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { HouseIcon, PlusIcon, SettingsIcon } from 'lucide-react-native';
 
@@ -46,105 +53,97 @@ export default function HomeScreen() {
 					}
 				/>
 			),
-			headerRight: (props: any) => (
-				<View
-					style={{
-						paddingRight: 16,
-						flexDirection: 'row',
-						alignItems: 'center',
-					}}
+			headerRight: () => (
+				<Button
+					mode="contained-tonal"
+					onPress={() => router.push('/(root)/settings')}
+					contentStyle={{ height: 40 }}
+					style={{ marginRight: 16 }}
 				>
-					<Button
-						mode="contained-tonal"
-						onPress={() => router.push('/(root)/new-transactions/expense')}
-						contentStyle={{ height: 40 }}
-					>
-						<PlusIcon
-							strokeWidth={1.5}
-							color={theme.colors.onSecondaryContainer}
-							size={20}
-						/>
-					</Button>
-
-					<Button
-						mode="contained-tonal"
-						onPress={() => router.push('/(root)/settings')}
-						contentStyle={{
-							height: 40,
-						}}
-					>
-						<SettingsIcon
-							strokeWidth={1.5}
-							color={theme.colors.onSecondaryContainer}
-							size={20}
-						/>
-					</Button>
-				</View>
+					<SettingsIcon
+						strokeWidth={1.5}
+						color={theme.colors.onSecondaryContainer}
+						size={20}
+					/>
+				</Button>
 			),
 		});
 	}, [theme]);
 
 	return (
-		<FlatList
-			style={{
-				backgroundColor: theme.colors.elevation.level1,
-			}}
-			contentContainerStyle={{ paddingBottom: 70 }}
-			showsVerticalScrollIndicator={false}
-			data={groupedTransactionsByDate(transactions)}
-			ListEmptyComponent={<NoItemNotice />}
-			ListHeaderComponent={
-				<View>
-					<View
-						style={[
-							styles.headerContainer,
-							{ backgroundColor: theme.colors.background },
-						]}
-					>
-						<TransactionsSummaryChart transactions={transactions} />
+		<View style={{ flex: 1 }}>
+			<FlatList
+				style={{
+					backgroundColor: theme.colors.elevation.level1,
+				}}
+				contentContainerStyle={{ paddingBottom: 180 }}
+				showsVerticalScrollIndicator={false}
+				data={groupedTransactionsByDate(transactions)}
+				ListEmptyComponent={<NoItemNotice />}
+				ListHeaderComponent={
+					<View>
+						<View
+							style={[
+								styles.headerContainer,
+								{ backgroundColor: theme.colors.background },
+							]}
+						>
+							<TransactionsSummaryChart transactions={transactions} />
+						</View>
+
+						<View
+							style={{
+								height: 20,
+								backgroundColor: theme.colors.elevation.level1,
+								borderTopLeftRadius: 200,
+								borderTopRightRadius: 200,
+								position: 'absolute',
+								bottom: 0,
+								left: 0,
+								width: '100%',
+							}}
+						></View>
 					</View>
+				}
+				renderItem={({ item }) => (
+					<View style={styles.transactionListContainer}>
+						<Text style={styles.transactionListTitle} variant="bodyMedium">
+							{item.created_date}
+						</Text>
 
-					<View
-						style={{
-							height: 20,
-							backgroundColor: theme.colors.elevation.level1,
-							borderTopLeftRadius: 200,
-							borderTopRightRadius: 200,
-							position: 'absolute',
-							bottom: 0,
-							left: 0,
-							width: '100%',
-						}}
-					></View>
-				</View>
-			}
-			renderItem={({ item }) => (
-				<View style={styles.transactionListContainer}>
-					<Text style={styles.transactionListTitle} variant="bodyMedium">
-						{item.created_date}
-					</Text>
+						<Surface elevation={3} mode="flat" style={styles.transactionList}>
+							{item.transactions.map((data, index) => (
+								<View key={data.transaction.id}>
+									<TransactionCard
+										data={data}
+										disableFirstButton={false}
+										disableSecondButton={false}
+										showDate={false}
+									/>
+									<Divider
+										style={{
+											display:
+												item.transactions.length - 1 === index
+													? 'none'
+													: 'flex',
+										}}
+									/>
+								</View>
+							))}
+						</Surface>
+					</View>
+				)}
+			/>
 
-					<Surface elevation={3} mode="flat" style={styles.transactionList}>
-						{item.transactions.map((data, index) => (
-							<View key={data.transaction.id}>
-								<TransactionCard
-									data={data}
-									disableFirstButton={false}
-									disableSecondButton={false}
-									showDate={false}
-								/>
-								<Divider
-									style={{
-										display:
-											item.transactions.length - 1 === index ? 'none' : 'flex',
-									}}
-								/>
-							</View>
-						))}
-					</Surface>
-				</View>
-			)}
-		/>
+			<FAB
+				icon="plus"
+				style={styles.fab}
+				onPress={() => router.push('/(root)/new-transactions/expense')}
+				mode="flat"
+				variant="secondary"
+				size="medium"
+			/>
+		</View>
 	);
 }
 
@@ -178,6 +177,12 @@ const styles = StyleSheet.create({
 	},
 	transactionList: {
 		borderRadius: 16,
+	},
+	fab: {
+		position: 'absolute',
+		margin: 16,
+		right: 0,
+		bottom: 80,
 	},
 });
 

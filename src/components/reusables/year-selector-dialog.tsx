@@ -3,7 +3,7 @@ import { Picker } from '@react-native-picker/picker';
 import { Dispatch, SetStateAction, useRef, useState } from 'react';
 
 import { CalendarRangeIcon } from 'lucide-react-native';
-import { Button, Dialog, Portal, useTheme } from 'react-native-paper';
+import { Button, useTheme } from 'react-native-paper';
 import { View } from 'react-native';
 
 const years = Array.from(
@@ -23,7 +23,6 @@ export default function YearSelectorDialog({
 	const theme = useTheme();
 
 	const [pickedYear, setYear] = useState<number>(new Date().getFullYear());
-	const [buttonLabel, setButtonLabel] = useState(new Date());
 
 	const onChange = (year: number) => {
 		setYear(year);
@@ -31,7 +30,6 @@ export default function YearSelectorDialog({
 		const date = new Date();
 		date.setFullYear(year);
 
-		setButtonLabel(date);
 		onValueChange(date);
 	};
 
@@ -103,7 +101,7 @@ export default function YearSelectorDialog({
 					/>
 				)}
 			>
-				{moment(buttonLabel).format('YYYY')}
+				{moment(selectedValue).format('YYYY')}
 			</Button>
 		</>
 	);

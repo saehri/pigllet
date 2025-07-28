@@ -39,17 +39,19 @@ export default function MonthYearSelectorDialog({
 
 	const [visible, setVisible] = useState<boolean>(false);
 	const [pickedMonth, setMonths] = useState<number>(selectedValue.getMonth());
-	const [pickedYear, setYear] = useState<number>(new Date().getFullYear());
-	const [buttonLabel, setButtonLabel] = useState(new Date());
+	const [pickedYear, setYear] = useState<number>(selectedValue.getFullYear());
 
-	const openDialog = () => setVisible(true);
+	const openDialog = () => {
+		setMonths(selectedValue.getMonth());
+		setYear(selectedValue.getFullYear());
+		setVisible(true);
+	};
 	const closeDialog = () => setVisible(false);
 	const onConfirm = () => {
 		const date = new Date();
 		date.setMonth(pickedMonth);
 		date.setFullYear(pickedYear);
 
-		setButtonLabel(date);
 		onValueChange(date);
 		closeDialog();
 	};
@@ -79,7 +81,7 @@ export default function MonthYearSelectorDialog({
 						>
 							<Picker
 								mode="dropdown"
-								selectedValue={pickedMonth}
+								selectedValue={selectedValue.getMonth()}
 								onValueChange={(itemValue) => setMonths(itemValue)}
 								style={{
 									color: theme.colors.onSurface,
@@ -119,7 +121,7 @@ export default function MonthYearSelectorDialog({
 						>
 							<Picker
 								mode="dropdown"
-								selectedValue={pickedYear}
+								selectedValue={selectedValue.getFullYear()}
 								onValueChange={(itemValue) => setYear(itemValue)}
 								style={{
 									color: theme.colors.onSurface,
@@ -171,6 +173,7 @@ export default function MonthYearSelectorDialog({
 				mode="contained-tonal"
 				onPress={openDialog}
 				contentStyle={{ height: 40 }}
+				style={{ width: 130 }}
 				icon={(props) => (
 					<CalendarFoldIcon
 						size={props.size}
@@ -179,7 +182,7 @@ export default function MonthYearSelectorDialog({
 					/>
 				)}
 			>
-				{moment(buttonLabel).format('MMMM, YYYY')}
+				{moment(selectedValue).format('MMM, YYYY')}
 			</Button>
 		</>
 	);
