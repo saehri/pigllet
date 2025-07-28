@@ -6,6 +6,7 @@ export default function HomeScreenLayout() {
 
 	return (
 		<Tabs
+			initialRouteName="monthly"
 			screenOptions={{
 				tabBarActiveTintColor: theme.colors.onPrimary,
 				tabBarActiveBackgroundColor: theme.colors.primary,
@@ -47,9 +48,9 @@ export default function HomeScreenLayout() {
 				},
 			}}
 		>
-			<Tabs.Screen name="index" />
 			<Tabs.Screen name="monthly" options={{ title: 'Monthly' }} />
 			<Tabs.Screen name="yearly" options={{ title: 'Yearly' }} />
+			<Tabs.Screen name="all" options={{ title: 'All' }} />
 		</Tabs>
 	);
 }

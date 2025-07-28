@@ -1,11 +1,5 @@
-import { useEffect } from 'react';
-import {
-	CalendarFoldIcon,
-	CalendarRangeIcon,
-	HouseIcon,
-	PlusIcon,
-	SettingsIcon,
-} from 'lucide-react-native';
+import { useEffect, useState } from 'react';
+import { PlusIcon, SettingsIcon } from 'lucide-react-native';
 import { useNavigation, useRouter } from 'expo-router';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { Button, Divider, Surface, Text, useTheme } from 'react-native-paper';
@@ -13,46 +7,34 @@ import { Button, Divider, Surface, Text, useTheme } from 'react-native-paper';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { groupedTransactionsByDate } from '@/utils/group-transactions';
 
-import TransactionCard from '@/src/components/reusables/transaction-card';
 import NoItemNotice from '@/src/components/reusables/no-items-notice';
+import TransactionCard from '@/src/components/reusables/transaction-card';
+import YearSelectorDialog from '@/src/components/reusables/year-selector-dialog';
 import useTransactionsManager from '@/src/hooks/useTransactionsManager';
 import TransactionsSummaryChart from '@/src/components/charts/transactions-summary-chart';
 
 export default function HomeYearlyTransactionScreen() {
-	const navigation = useNavigation();
-	const router = useRouter();
 	const theme = useTheme();
+	const router = useRouter();
+	const navigation = useNavigation();
 
-	const { loadTransactionsData } = useTransactionsManager({});
+	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
-	const { data: transactions } = useLiveQuery(loadTransactionsData());
+	//   load the transactions data
+	const { loadTransactionsDataDate } = useTransactionsManager({});
+	const { data: transactions } = useLiveQuery(
+		loadTransactionsDataDate(selectedDate, 'year'),
+		[selectedDate]
+	);
 
 	useEffect(() => {
 		navigation.setOptions({
 			title: 'Yearly',
 			headerTitle: () => (
-				<View
-					style={{
-						backgroundColor: theme.colors.background,
-						paddingRight: 16,
-						flexDirection: 'row',
-						alignItems: 'center',
-					}}
-				>
-					<Button
-						mode="contained-tonal"
-						contentStyle={{ height: 40 }}
-						icon={(props) => (
-							<CalendarRangeIcon
-								size={props.size}
-								strokeWidth={1.5}
-								color={props.color}
-							/>
-						)}
-					>
-						2025
-					</Button>
-				</View>
+				<YearSelectorDialog
+					onValueChange={setSelectedDate}
+					selectedValue={selectedDate}
+				/>
 			),
 			headerRight: (props: any) => (
 				<View

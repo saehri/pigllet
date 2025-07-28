@@ -1,10 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-	CalendarFoldIcon,
-	HouseIcon,
-	PlusIcon,
-	SettingsIcon,
-} from 'lucide-react-native';
+import { HouseIcon, PlusIcon, SettingsIcon } from 'lucide-react-native';
 import { useNavigation, useRouter } from 'expo-router';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { Button, Divider, Surface, Text, useTheme } from 'react-native-paper';
@@ -22,10 +17,14 @@ export default function HomeMonthlyTransactionScreen() {
 	const navigation = useNavigation();
 	const router = useRouter();
 	const theme = useTheme();
+	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
 	//   load the transactions data
-	const { loadTransactionsData } = useTransactionsManager({});
-	const { data: transactions } = useLiveQuery(loadTransactionsData());
+	const { loadTransactionsDataDate } = useTransactionsManager({});
+	const { data: transactions } = useLiveQuery(
+		loadTransactionsDataDate(selectedDate, 'month'),
+		[selectedDate]
+	);
 
 	useEffect(() => {
 		navigation.setOptions({
@@ -41,7 +40,12 @@ export default function HomeMonthlyTransactionScreen() {
 					}
 				/>
 			),
-			headerTitle: () => <MonthYearSelectorDialog />,
+			headerTitle: () => (
+				<MonthYearSelectorDialog
+					onValueChange={setSelectedDate}
+					selectedValue={selectedDate}
+				/>
+			),
 			headerRight: (props: any) => (
 				<View
 					style={{
