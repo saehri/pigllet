@@ -3,7 +3,6 @@ import { useFonts } from 'expo-font';
 import { Suspense, useContext, useEffect } from 'react';
 import {
 	ColorSchemeName,
-	StatusBar,
 	useColorScheme,
 	View,
 	ScrollView,
@@ -23,6 +22,7 @@ import {
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 import { useDrizzleStudio } from 'expo-drizzle-studio-plugin';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import migrations from '@/drizzle/migrations';
 
 import * as schema from '@/db/schema';
@@ -156,7 +156,9 @@ export default function RootLayout() {
 				useSuspense
 			>
 				<UserPreferenceProvider>
-					<App colorScheme={colorScheme} />
+					<GestureHandlerRootView style={{ flex: 1 }}>
+						<App colorScheme={colorScheme} />
+					</GestureHandlerRootView>
 				</UserPreferenceProvider>
 			</SQLiteProvider>
 		</Suspense>

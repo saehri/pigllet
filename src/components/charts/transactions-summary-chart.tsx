@@ -72,9 +72,9 @@ export default function TransactionsSummaryChart({
 				barBorderRadius={100}
 				stackData={chartData}
 				frontColor={theme.colors.secondary} // Main color for bars
-				spacing={groupBy === 'category' ? 6 : 13}
+				spacing={13}
 				rulesThickness={0} // Thin grid lines for subtlety
-				noOfSections={7}
+				noOfSections={9}
 				stepHeight={27}
 				xAxisThickness={0}
 				yAxisThickness={0}
@@ -139,11 +139,11 @@ const styles = StyleSheet.create({
 		width: '100%',
 		alignItems: 'center',
 		justifyContent: 'center',
-		height: 254,
 	},
 	chartContainer: {
 		paddingLeft: 16,
 		width: '100%',
+		height: '50%',
 	},
 	legend: {
 		gap: 12,

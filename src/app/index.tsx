@@ -15,6 +15,6 @@ export default function Page() {
 
 	if (firstTimer) return <Redirect href="/(auth)/welcome" />;
 
-	return <Redirect href="/(root)/(tabs)/home" />;
+	return <Redirect href="/(root)/(tabs)/home/monthly" />;
 }
 

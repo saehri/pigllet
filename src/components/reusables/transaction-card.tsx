@@ -6,7 +6,7 @@ import {
 	MinusIcon,
 	PlusIcon,
 } from 'lucide-react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { Surface, Text, useTheme } from 'react-native-paper';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { TransactionWithDetails } from '@/utils/group-transactions';
@@ -24,6 +24,7 @@ type Props = {
 	disableFirstButton: boolean;
 	disableSecondButton: boolean;
 	showDate: boolean;
+	position: 'first' | 'middle' | 'last' | 'only';
 };
 
 export default function TransactionCard({
@@ -31,6 +32,7 @@ export default function TransactionCard({
 	disableFirstButton,
 	disableSecondButton,
 	showDate,
+	position,
 }: Props) {
 	const router = useRouter();
 	const theme = useTheme();
@@ -41,7 +43,47 @@ export default function TransactionCard({
 	const { account, category, related_account, transaction } = data;
 
 	return (
-		<View style={styles.container}>
+		<Surface
+			mode="flat"
+			elevation={3}
+			style={[
+				styles.container,
+				{
+					borderTopRightRadius:
+						position === 'first'
+							? 16
+							: position === 'middle'
+								? 6
+								: position === 'only'
+									? 16
+									: 6,
+					borderTopLeftRadius:
+						position === 'first'
+							? 16
+							: position === 'middle'
+								? 6
+								: position === 'only'
+									? 16
+									: 6,
+					borderBottomLeftRadius:
+						position === 'first'
+							? 6
+							: position === 'middle'
+								? 6
+								: position === 'only'
+									? 16
+									: 16,
+					borderBottomRightRadius:
+						position === 'first'
+							? 6
+							: position === 'middle'
+								? 6
+								: position === 'only'
+									? 16
+									: 16,
+				},
+			]}
+		>
 			<Pressable
 				style={styles.iconContainer}
 				onPress={() =>
@@ -187,7 +229,7 @@ export default function TransactionCard({
 					</View>
 				</View>
 			</Pressable>
-		</View>
+		</Surface>
 	);
 }
 
