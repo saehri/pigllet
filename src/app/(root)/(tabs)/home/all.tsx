@@ -100,7 +100,6 @@ export default function HomeScreen() {
 					showsVerticalScrollIndicator={false}
 					ListEmptyComponent={<NoItemNotice />}
 					data={groupedTransactionsByDate(transactions)}
-					keyExtractor={(i) => i.created_date}
 					renderItem={({ item }) => (
 						<View
 							style={styles.transactionListContainer}
