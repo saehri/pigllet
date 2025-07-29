@@ -5,7 +5,7 @@ import moment from 'moment';
 
 import * as schema from '@/db/schema';
 import { alias } from 'drizzle-orm/sqlite-core';
-import { desc, eq, sql } from 'drizzle-orm';
+import { and, desc, eq, sql } from 'drizzle-orm';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
 
@@ -49,7 +49,8 @@ type UseExpenseManagerTypes = {
 
 export const loadTransactionsData = (
 	date?: Date,
-	range?: 'month' | 'year'
+	range?: 'month' | 'year',
+	transactionType?: 'income' | 'expense' | 'transfer'
 ): any => {
 	const relatedAccountsAlias = alias(schema.accounts, 'related_accounts'); // Alias for related accounts
 	const db = useSQLiteContext();
@@ -61,6 +62,18 @@ export const loadTransactionsData = (
 	let endOfMonth = moment(date)
 		.endOf(range || 'month')
 		.format('YYYY-MM-DD');
+
+	const whereConditions = [];
+
+	if (date) {
+		whereConditions.push(
+			sql`DATE(${schema.transactions.created_at}) BETWEEN DATE(${startOfMonth}) AND DATE(${endOfMonth})`
+		);
+	}
+
+	if (transactionType) {
+		whereConditions.push(eq(schema.transactions.type, transactionType));
+	}
 
 	return drizzleDb
 		.select({
@@ -101,11 +114,7 @@ export const loadTransactionsData = (
 			},
 		})
 		.from(schema.transactions)
-		.where(
-			date
-				? sql`DATE(${schema.transactions.created_at}) BETWEEN DATE(${startOfMonth}) AND DATE(${endOfMonth})`
-				: undefined
-		)
+		.where(and(...whereConditions))
 		.innerJoin(
 			schema.categories,
 			eq(schema.transactions.category_id, schema.categories.id)

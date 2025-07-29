@@ -1,6 +1,4 @@
-import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
 import { useTheme } from 'react-native-paper';
 
 type Props = {

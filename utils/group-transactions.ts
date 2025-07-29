@@ -137,11 +137,11 @@ export async function getChartDataByCategory(
 			);
 
 			if (existingCategory) {
-				existingCategory.value += transaction.transaction.amount;
+				existingCategory.value += transaction.transaction.amount / 1000;
 			} else {
 				acc.push({
 					label: categoryName,
-					value: transaction.transaction.amount,
+					value: transaction.transaction.amount / 1000,
 				});
 			}
 
