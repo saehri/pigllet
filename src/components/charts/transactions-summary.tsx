@@ -1,8 +1,71 @@
 import { StyleSheet, View } from 'react-native';
 import { Surface, Text, useTheme } from 'react-native-paper';
+import { useContext } from 'react';
 
-export default function TransactionsSummary() {
+import moment from 'moment';
+
+import * as schema from '@/db/schema';
+import { useSQLiteContext } from 'expo-sqlite';
+import { and, gte, lte, sql } from 'drizzle-orm';
+import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
+
+import {
+	UserPreferenceContext,
+	UserPreferenceContextTypes,
+} from '@/context/UserPreferenceContext';
+import getLocaleByCurrencySymbol from '@/utils/locale-getter';
+
+type Props = {
+	selectedDate?: Date;
+	range?: 'month' | 'year';
+};
+
+export default function TransactionsSummary({ selectedDate, range }: Props) {
 	const theme = useTheme();
+
+	const { currentCurrencySymbol } = useContext(
+		UserPreferenceContext
+	) as UserPreferenceContextTypes;
+
+	const db = useSQLiteContext();
+	const drizzleDb = drizzle(db, { schema });
+
+	const getSumByTypeInDateRange = (selectedDate?: Date) => {
+		const whereConditions = [];
+
+		if (selectedDate && range) {
+			whereConditions.push(
+				gte(
+					schema.transactions.created_at,
+					moment(selectedDate).startOf(range).toISOString()
+				)
+			);
+			whereConditions.push(
+				lte(
+					schema.transactions.created_at,
+					moment(selectedDate).endOf(range).toISOString()
+				)
+			);
+		}
+
+		return drizzleDb
+			.select({
+				expense: sql<number>`SUM(CASE WHEN ${schema.transactions.type} = 'expense' THEN ${schema.transactions.amount} ELSE 0 END)`,
+				income: sql<number>`SUM(CASE WHEN ${schema.transactions.type} = 'income' THEN ${schema.transactions.amount} ELSE 0 END)`,
+				transfer: sql<number>`SUM(CASE WHEN ${schema.transactions.type} = 'transfer' THEN ${schema.transactions.amount} ELSE 0 END)`,
+			})
+			.from(schema.transactions)
+			.where(whereConditions.length > 0 ? and(...whereConditions) : undefined);
+	};
+
+	const { data } = useLiveQuery(getSumByTypeInDateRange(selectedDate), [
+		selectedDate,
+	]);
+
+	const totalExpense = data[0]?.expense || 0;
+	const totalIncome = data[0]?.income || 0;
+	const totalTransfer = data[0]?.transfer || 0;
+	const netBalance = totalIncome - totalExpense;
 
 	return (
 		<View style={styles.container}>
@@ -21,7 +84,9 @@ export default function TransactionsSummary() {
 					Total income
 				</Text>
 				<Text style={styles.itemText} variant="bodyMedium">
-					Rp 100.000
+					{`${currentCurrencySymbol} ${totalIncome.toLocaleString(
+						getLocaleByCurrencySymbol(currentCurrencySymbol)
+					)}`}
 				</Text>
 			</Surface>
 
@@ -30,7 +95,9 @@ export default function TransactionsSummary() {
 					Total expense
 				</Text>
 				<Text style={styles.itemText} variant="bodyMedium">
-					Rp 100.000
+					{`${currentCurrencySymbol} ${totalExpense.toLocaleString(
+						getLocaleByCurrencySymbol(currentCurrencySymbol)
+					)}`}
 				</Text>
 			</Surface>
 
@@ -39,7 +106,9 @@ export default function TransactionsSummary() {
 					Total transfer
 				</Text>
 				<Text style={styles.itemText} variant="bodyMedium">
-					Rp 100.000
+					{`${currentCurrencySymbol} ${totalTransfer.toLocaleString(
+						getLocaleByCurrencySymbol(currentCurrencySymbol)
+					)}`}
 				</Text>
 			</Surface>
 
@@ -59,7 +128,9 @@ export default function TransactionsSummary() {
 					Net balance
 				</Text>
 				<Text style={styles.itemText} variant="bodyMedium">
-					Rp 50.000
+					{`${currentCurrencySymbol} ${netBalance.toLocaleString(
+						getLocaleByCurrencySymbol(currentCurrencySymbol)
+					)}`}
 				</Text>
 			</Surface>
 		</View>

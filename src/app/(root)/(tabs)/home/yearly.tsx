@@ -10,9 +10,9 @@ import { Button, useTheme } from 'react-native-paper';
 
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { groupedTransactionsByDate } from '@/utils/group-transactions';
+import { loadTransactionsData } from '@/src/hooks/useTransactionsManager';
 
 import YearSelectorDialog from '@/src/components/reusables/year-selector-dialog';
-import useTransactionsManager from '@/src/hooks/useTransactionsManager';
 import TransactionsSummaryChart from '@/src/components/charts/transactions-summary-chart';
 import HomeBottomSheets from '@/src/components/home/home-bottom-sheets';
 import HomeHeaderContainer from '@/src/components/home/home-header-container';
@@ -26,9 +26,8 @@ export default function HomeYearlyTransactionScreen() {
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
 	//   load the transactions data
-	const { loadTransactionsDataDate } = useTransactionsManager({});
 	const { data: transactions } = useLiveQuery(
-		loadTransactionsDataDate(selectedDate, 'year'),
+		loadTransactionsData(selectedDate, 'year'),
 		[selectedDate]
 	);
 
@@ -110,7 +109,7 @@ export default function HomeYearlyTransactionScreen() {
 					transactions={transactions}
 					dateFormat="MMM, YYYY"
 				/>
-				<TransactionsSummary />
+				<TransactionsSummary selectedDate={selectedDate} range="year" />
 			</HomeHeaderContainer>
 
 			<HomeBottomSheets

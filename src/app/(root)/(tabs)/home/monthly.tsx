@@ -10,9 +10,9 @@ import { useNavigation, useRouter } from 'expo-router';
 
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { groupedTransactionsByDate } from '@/utils/group-transactions';
+import { loadTransactionsData } from '@/src/hooks/useTransactionsManager';
 
 import HomeBottomSheets from '@/src/components/home/home-bottom-sheets';
-import useTransactionsManager from '@/src/hooks/useTransactionsManager';
 import TransactionsSummaryChart from '@/src/components/charts/transactions-summary-chart';
 import MonthYearSelectorDialog from '@/src/components/reusables/month-year-selector-dialog';
 import HomeHeaderContainer from '@/src/components/home/home-header-container';
@@ -25,9 +25,9 @@ export default function HomeMonthlyTransactionScreen() {
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
 	//   load the transactions data
-	const { loadTransactionsDataDate } = useTransactionsManager({});
+	// const { loadTransactionsDataDate } = useTransactionsManager({});
 	const { data: transactions } = useLiveQuery(
-		loadTransactionsDataDate(selectedDate, 'month'),
+		loadTransactionsData(selectedDate, 'month'),
 		[selectedDate]
 	);
 
@@ -109,7 +109,7 @@ export default function HomeMonthlyTransactionScreen() {
 					transactions={transactions}
 					dateFormat="MMM D, YYYY"
 				/>
-				<TransactionsSummary />
+				<TransactionsSummary selectedDate={selectedDate} range="month" />
 			</HomeHeaderContainer>
 
 			<HomeBottomSheets

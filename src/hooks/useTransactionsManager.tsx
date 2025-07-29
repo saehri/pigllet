@@ -16,8 +16,6 @@ type Props = {
 };
 
 type UseExpenseManagerTypes = {
-	loadTransactionsDataDate: (date: Date, range: 'month' | 'year') => any;
-	loadTransactionsData: () => any;
 	createExpenseRecord: () => Promise<void>;
 	createIncomeRecord: () => Promise<void>;
 	createTransferRecord: () => Promise<void>;
@@ -47,6 +45,80 @@ type UseExpenseManagerTypes = {
 	setTransactionAmount: Dispatch<SetStateAction<string>>;
 	transactionImage: string;
 	setTransactionImage: Dispatch<SetStateAction<string>>;
+};
+
+export const loadTransactionsData = (
+	date?: Date,
+	range?: 'month' | 'year'
+): any => {
+	const relatedAccountsAlias = alias(schema.accounts, 'related_accounts'); // Alias for related accounts
+	const db = useSQLiteContext();
+	const drizzleDb = drizzle(db, { schema });
+
+	let startOfMonth = moment(date)
+		.startOf(range || 'month')
+		.format('YYYY-MM-DD');
+	let endOfMonth = moment(date)
+		.endOf(range || 'month')
+		.format('YYYY-MM-DD');
+
+	return drizzleDb
+		.select({
+			transaction: {
+				id: schema.transactions.id,
+				amount: schema.transactions.amount,
+				note: schema.transactions.note,
+				account_id: schema.transactions.account_id,
+				related_account_id: schema.transactions.related_account_id,
+				category_id: schema.transactions.category_id,
+				type: schema.transactions.type,
+				image: schema.transactions.image,
+				created_at: schema.transactions.created_at,
+			},
+			account: {
+				id: schema.accounts.id,
+				name: schema.accounts.name,
+				number: schema.accounts.number,
+				balance: schema.accounts.balance,
+				is_cash: schema.accounts.is_cash,
+				image: schema.accounts.image,
+				created_at: schema.accounts.created_at,
+			},
+			category: {
+				id: schema.categories.id,
+				label: schema.categories.label,
+				icon_name: schema.categories.icon_name,
+				type: schema.categories.type,
+			},
+			related_account: {
+				id: relatedAccountsAlias.id,
+				name: relatedAccountsAlias.name,
+				number: relatedAccountsAlias.number,
+				balance: relatedAccountsAlias.balance,
+				is_cash: relatedAccountsAlias.is_cash,
+				image: relatedAccountsAlias.image,
+				created_at: relatedAccountsAlias.created_at,
+			},
+		})
+		.from(schema.transactions)
+		.where(
+			date
+				? sql`DATE(${schema.transactions.created_at}) BETWEEN DATE(${startOfMonth}) AND DATE(${endOfMonth})`
+				: undefined
+		)
+		.innerJoin(
+			schema.categories,
+			eq(schema.transactions.category_id, schema.categories.id)
+		)
+		.innerJoin(
+			schema.accounts,
+			eq(schema.transactions.account_id, schema.accounts.id)
+		)
+		.leftJoin(
+			relatedAccountsAlias,
+			eq(schema.transactions.related_account_id, relatedAccountsAlias.id)
+		)
+		.orderBy(desc(schema.transactions.created_at));
 };
 
 export default function useTransactionsManager({
@@ -148,7 +220,7 @@ export default function useTransactionsManager({
 				const transactionCategories = await drizzleDb
 					.select()
 					.from(schema.categories)
-					.where(eq(schema.categories.type, transactionType));
+					.where(eq(schema.categories.type, transactionType as string));
 
 				setUserAccounts(userAccounts);
 				setTransactionCategories(transactionCategories);
@@ -177,122 +249,6 @@ export default function useTransactionsManager({
 		}
 	}, []);
 
-	// ----- READ
-	const loadTransactionsData = () =>
-		drizzleDb
-			.select({
-				transaction: {
-					id: schema.transactions.id,
-					amount: schema.transactions.amount,
-					note: schema.transactions.note,
-					account_id: schema.transactions.account_id,
-					related_account_id: schema.transactions.related_account_id,
-					category_id: schema.transactions.category_id,
-					type: schema.transactions.type,
-					image: schema.transactions.image,
-					created_at: schema.transactions.created_at,
-				},
-				account: {
-					id: schema.accounts.id,
-					name: schema.accounts.name,
-					number: schema.accounts.number,
-					balance: schema.accounts.balance,
-					is_cash: schema.accounts.is_cash,
-					image: schema.accounts.image,
-					created_at: schema.accounts.created_at,
-				},
-				category: {
-					id: schema.categories.id,
-					label: schema.categories.label,
-					icon_name: schema.categories.icon_name,
-					type: schema.categories.type,
-				},
-				related_account: {
-					id: relatedAccountsAlias.id,
-					name: relatedAccountsAlias.name,
-					number: relatedAccountsAlias.number,
-					balance: relatedAccountsAlias.balance,
-					is_cash: relatedAccountsAlias.is_cash,
-					image: relatedAccountsAlias.image,
-					created_at: relatedAccountsAlias.created_at,
-				},
-			})
-			.from(schema.transactions)
-			.leftJoin(
-				schema.categories,
-				eq(schema.transactions.category_id, schema.categories.id)
-			)
-			.leftJoin(
-				schema.accounts,
-				eq(schema.transactions.account_id, schema.accounts.id)
-			)
-			.leftJoin(
-				relatedAccountsAlias,
-				eq(schema.transactions.related_account_id, relatedAccountsAlias.id)
-			)
-			.orderBy(desc(schema.transactions.created_at));
-
-	const loadTransactionsDataDate = (date: Date, range: 'month' | 'year') => {
-		let startOfMonth = moment(date).startOf(range).toISOString();
-		let endOfMonth = moment(date).endOf(range).toISOString();
-
-		return drizzleDb
-			.select({
-				transaction: {
-					id: schema.transactions.id,
-					amount: schema.transactions.amount,
-					note: schema.transactions.note,
-					account_id: schema.transactions.account_id,
-					related_account_id: schema.transactions.related_account_id,
-					category_id: schema.transactions.category_id,
-					type: schema.transactions.type,
-					image: schema.transactions.image,
-					created_at: schema.transactions.created_at,
-				},
-				account: {
-					id: schema.accounts.id,
-					name: schema.accounts.name,
-					number: schema.accounts.number,
-					balance: schema.accounts.balance,
-					is_cash: schema.accounts.is_cash,
-					image: schema.accounts.image,
-					created_at: schema.accounts.created_at,
-				},
-				category: {
-					id: schema.categories.id,
-					label: schema.categories.label,
-					icon_name: schema.categories.icon_name,
-					type: schema.categories.type,
-				},
-				related_account: {
-					id: relatedAccountsAlias.id,
-					name: relatedAccountsAlias.name,
-					number: relatedAccountsAlias.number,
-					balance: relatedAccountsAlias.balance,
-					is_cash: relatedAccountsAlias.is_cash,
-					image: relatedAccountsAlias.image,
-					created_at: relatedAccountsAlias.created_at,
-				},
-			})
-			.from(schema.transactions)
-			.where(
-				sql`DATE(${schema.transactions.created_at}) BETWEEN DATE(${startOfMonth}) AND DATE(${endOfMonth})`
-			)
-			.innerJoin(
-				schema.categories,
-				eq(schema.transactions.category_id, schema.categories.id)
-			)
-			.innerJoin(
-				schema.accounts,
-				eq(schema.transactions.account_id, schema.accounts.id)
-			)
-			.leftJoin(
-				relatedAccountsAlias,
-				eq(schema.transactions.related_account_id, relatedAccountsAlias.id)
-			)
-			.orderBy(desc(schema.transactions.created_at));
-	};
-
 	// ----- CREATE
 	async function createExpenseRecord() {
 		try {
@@ -311,7 +267,7 @@ export default function useTransactionsManager({
 				amount: Number(transactionAmount),
 				category_id: Number(transactionCategory.id),
 				created_at: transactionCreatedAt.toISOString(),
-				type: transactionType,
+				type: transactionType as string,
 				image: transactionImage,
 				note: transactionNote,
 			};
@@ -380,7 +336,7 @@ export default function useTransactionsManager({
 				created_at: transactionCreatedAt.toISOString(),
 				image: transactionImage,
 				note: transactionNote,
-				type: transactionType,
+				type: transactionType as string,
 			};
 
 			await drizzleDb.insert(schema.transactions).values(payload);
@@ -417,7 +373,7 @@ export default function useTransactionsManager({
 
 			// moved the payload into its own variable because the little shit keep screaming the types is invalid
 			const payload: schema.Transaction = {
-				type: transactionType,
+				type: transactionType as string,
 				amount: Number(transactionAmount),
 				account_id: transactionUsedAccount.id as number,
 				related_account_id: transactionUsedRelatedAccount.id,
@@ -858,10 +814,8 @@ export default function useTransactionsManager({
 		transactionCategory,
 		transactionAmount,
 		transactionImage,
-		loadTransactionsDataDate,
 		transactionNote,
 		userAccounts,
-		loadTransactionsData,
 		loading,
 		setLoading,
 		deleteTransaction,

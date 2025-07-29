@@ -6,8 +6,8 @@ import { HouseIcon, SettingsIcon } from 'lucide-react-native';
 
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { groupedTransactionsByDate } from '@/utils/group-transactions';
+import { loadTransactionsData } from '@/src/hooks/useTransactionsManager';
 
-import useTransactionsManager from '@/src/hooks/useTransactionsManager';
 import TransactionsSummaryChart from '@/src/components/charts/transactions-summary-chart';
 import HomeBottomSheets from '@/src/components/home/home-bottom-sheets';
 import HomeHeaderContainer from '@/src/components/home/home-header-container';
@@ -17,8 +17,6 @@ export default function HomeScreen() {
 	const navigation = useNavigation();
 	const router = useRouter();
 	const theme = useTheme();
-
-	const { loadTransactionsData } = useTransactionsManager({});
 
 	const { data: transactions } = useLiveQuery(loadTransactionsData());
 
