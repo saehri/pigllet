@@ -16,25 +16,13 @@ export default function NoItemNotice() {
 				minHeight: 200,
 			}}
 		>
-			<View
-				style={{
-					width: 80,
-					height: 80,
-					borderRadius: 100,
-					backgroundColor: theme.colors.secondaryContainer,
-					alignItems: 'center',
-					justifyContent: 'center',
-					marginBottom: 12,
-				}}
-			>
-				<SearchX
-					size={50}
-					color={theme.colors.onSecondaryContainer}
-					strokeWidth={0.5}
-					fill={theme.colors.onSecondaryContainer}
-					fillOpacity={0.3}
-				/>
-			</View>
+			<SearchX
+				size={36}
+				color={theme.colors.onSecondaryContainer}
+				strokeWidth={0.5}
+				fill={theme.colors.onSecondaryContainer}
+				fillOpacity={0.3}
+			/>
 
 			<Text
 				variant="headlineMedium"
