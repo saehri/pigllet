@@ -72,7 +72,7 @@ export default function TransactionCard({
 	return (
 		<Surface
 			mode="flat"
-			elevation={3}
+			elevation={5}
 			style={[
 				styles.container,
 				{

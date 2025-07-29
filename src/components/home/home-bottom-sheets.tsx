@@ -25,10 +25,12 @@ export default function HomeBottomSheets({ transactions }: Props) {
 			index={0}
 			enableDynamicSizing={false}
 			backgroundStyle={{
-				backgroundColor: theme.colors.elevation.level1,
+				backgroundColor: theme.colors.elevation.level2,
 			}}
 			handleIndicatorStyle={{
 				backgroundColor: theme.colors.secondary,
+				height: 6,
+				width: 35,
 			}}
 		>
 			<BottomSheetFlatList
