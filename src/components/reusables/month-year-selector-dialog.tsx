@@ -1,4 +1,3 @@
-import moment from 'moment';
 import { Picker } from '@react-native-picker/picker';
 import { Dispatch, SetStateAction, useState } from 'react';
 
@@ -81,7 +80,7 @@ export default function MonthYearSelectorDialog({
 						>
 							<Picker
 								mode="dropdown"
-								selectedValue={selectedValue.getMonth()}
+								selectedValue={pickedMonth}
 								onValueChange={(itemValue) => setMonths(itemValue)}
 								style={{
 									color: theme.colors.onSurface,
@@ -121,7 +120,7 @@ export default function MonthYearSelectorDialog({
 						>
 							<Picker
 								mode="dropdown"
-								selectedValue={selectedValue.getFullYear()}
+								selectedValue={pickedYear}
 								onValueChange={(itemValue) => setYear(itemValue)}
 								style={{
 									color: theme.colors.onSurface,
@@ -171,18 +170,15 @@ export default function MonthYearSelectorDialog({
 
 			<Button
 				mode="contained-tonal"
-				onPress={openDialog}
 				contentStyle={{ height: 40 }}
-				style={{ width: 130 }}
-				icon={(props) => (
-					<CalendarFoldIcon
-						size={props.size}
-						strokeWidth={1.5}
-						color={props.color}
-					/>
-				)}
+				onPress={openDialog}
+				style={{ backgroundColor: theme.colors.elevation.level2 }}
 			>
-				{moment(selectedValue).format('MMM, YYYY')}
+				<CalendarFoldIcon
+					strokeWidth={1.5}
+					color={theme.colors.onSurface}
+					size={20}
+				/>
 			</Button>
 		</>
 	);

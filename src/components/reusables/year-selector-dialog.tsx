@@ -1,4 +1,3 @@
-import moment from 'moment';
 import { Picker } from '@react-native-picker/picker';
 import { Dispatch, SetStateAction, useRef, useState } from 'react';
 
@@ -91,17 +90,15 @@ export default function YearSelectorDialog({
 
 			<Button
 				mode="contained-tonal"
-				onPress={open}
 				contentStyle={{ height: 40 }}
-				icon={(props) => (
-					<CalendarRangeIcon
-						size={props.size}
-						strokeWidth={1.5}
-						color={props.color}
-					/>
-				)}
+				onPress={open}
+				style={{ backgroundColor: theme.colors.elevation.level2 }}
 			>
-				{moment(selectedValue).format('YYYY')}
+				<CalendarRangeIcon
+					strokeWidth={1.5}
+					color={theme.colors.onSurface}
+					size={20}
+				/>
 			</Button>
 		</>
 	);

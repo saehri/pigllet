@@ -42,6 +42,33 @@ export default function TransactionCard({
 
 	const { account, category, related_account, transaction } = data;
 
+	const borderRadius = {
+		tr: {
+			first: 16,
+			middle: 6,
+			only: 16,
+			last: 6,
+		},
+		tl: {
+			first: 16,
+			middle: 6,
+			only: 16,
+			last: 6,
+		},
+		br: {
+			first: 6,
+			middle: 6,
+			only: 16,
+			last: 16,
+		},
+		bl: {
+			first: 6,
+			middle: 6,
+			only: 16,
+			last: 16,
+		},
+	};
+
 	return (
 		<Surface
 			mode="flat"
@@ -49,38 +76,10 @@ export default function TransactionCard({
 			style={[
 				styles.container,
 				{
-					borderTopRightRadius:
-						position === 'first'
-							? 16
-							: position === 'middle'
-								? 6
-								: position === 'only'
-									? 16
-									: 6,
-					borderTopLeftRadius:
-						position === 'first'
-							? 16
-							: position === 'middle'
-								? 6
-								: position === 'only'
-									? 16
-									: 6,
-					borderBottomLeftRadius:
-						position === 'first'
-							? 6
-							: position === 'middle'
-								? 6
-								: position === 'only'
-									? 16
-									: 16,
-					borderBottomRightRadius:
-						position === 'first'
-							? 6
-							: position === 'middle'
-								? 6
-								: position === 'only'
-									? 16
-									: 16,
+					borderTopRightRadius: borderRadius.tr[position],
+					borderTopLeftRadius: borderRadius.tl[position],
+					borderBottomLeftRadius: borderRadius.bl[position],
+					borderBottomRightRadius: borderRadius.br[position],
 				},
 			]}
 		>

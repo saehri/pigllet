@@ -6,8 +6,8 @@ import moment from 'moment';
 
 import * as schema from '@/db/schema';
 import { useSQLiteContext } from 'expo-sqlite';
-import { and, gte, lte, sql } from 'drizzle-orm';
 import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
+import { and, gte, lte, sql } from 'drizzle-orm';
 
 import {
 	UserPreferenceContext,
@@ -23,12 +23,10 @@ type Props = {
 export default function TransactionsSummary({ selectedDate, range }: Props) {
 	const theme = useTheme();
 
-	const { currentCurrencySymbol } = useContext(
-		UserPreferenceContext
-	) as UserPreferenceContextTypes;
-
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
+
+	// const startDate =
 
 	const getSumByTypeInDateRange = (selectedDate?: Date) => {
 		const whereConditions = [];
@@ -69,71 +67,84 @@ export default function TransactionsSummary({ selectedDate, range }: Props) {
 
 	return (
 		<View style={styles.container}>
-			<Surface
-				mode="flat"
-				elevation={1}
-				style={[
-					styles.itemContainer,
-					{
-						borderTopRightRadius: 16,
-						borderTopLeftRadius: 16,
-					},
-				]}
-			>
-				<Text style={styles.itemText} variant="bodyMedium">
-					Total income
-				</Text>
-				<Text style={styles.itemText} variant="bodyMedium">
-					{`${currentCurrencySymbol} ${totalIncome.toLocaleString(
-						getLocaleByCurrencySymbol(currentCurrencySymbol)
-					)}`}
-				</Text>
-			</Surface>
-
-			<Surface mode="flat" elevation={1} style={[styles.itemContainer]}>
-				<Text style={styles.itemText} variant="bodyMedium">
-					Total expense
-				</Text>
-				<Text style={styles.itemText} variant="bodyMedium">
-					{`${currentCurrencySymbol} ${totalExpense.toLocaleString(
-						getLocaleByCurrencySymbol(currentCurrencySymbol)
-					)}`}
-				</Text>
-			</Surface>
-
-			<Surface mode="flat" elevation={1} style={[styles.itemContainer]}>
-				<Text style={styles.itemText} variant="bodyMedium">
-					Total transfer
-				</Text>
-				<Text style={styles.itemText} variant="bodyMedium">
-					{`${currentCurrencySymbol} ${totalTransfer.toLocaleString(
-						getLocaleByCurrencySymbol(currentCurrencySymbol)
-					)}`}
-				</Text>
-			</Surface>
-
-			<Surface
-				mode="flat"
-				elevation={1}
-				style={[
-					styles.itemContainer,
-					{
-						borderBottomRightRadius: 16,
-						borderBottomLeftRadius: 16,
-						backgroundColor: theme.colors.tertiaryContainer,
-					},
-				]}
-			>
-				<Text style={styles.itemText} variant="bodyMedium">
-					Net balance
-				</Text>
-				<Text style={styles.itemText} variant="bodyMedium">
-					{`${currentCurrencySymbol} ${netBalance.toLocaleString(
-						getLocaleByCurrencySymbol(currentCurrencySymbol)
-					)}`}
-				</Text>
-			</Surface>
+			<Card label="Total income" value={totalIncome} position="first" />
+			<Card label="Total expenses" value={totalExpense} position="middle" />
+			<Card label="Total transfer" value={totalTransfer} position="middle" />
+			<Card label="Net balance" value={netBalance} position="last" />
 		</View>
+	);
+}
+
+type CardProps = {
+	label: string;
+	value: number;
+	position: 'first' | 'middle' | 'last' | 'only';
+};
+
+function Card({ label, value, position }: CardProps) {
+	const theme = useTheme();
+
+	const { currentCurrencySymbol } = useContext(
+		UserPreferenceContext
+	) as UserPreferenceContextTypes;
+
+	const borderRadius = {
+		tr: {
+			first: 16,
+			middle: 3,
+			only: 16,
+			last: 3,
+		},
+		tl: {
+			first: 16,
+			middle: 3,
+			only: 16,
+			last: 3,
+		},
+		br: {
+			first: 3,
+			middle: 3,
+			only: 16,
+			last: 16,
+		},
+		bl: {
+			first: 3,
+			middle: 3,
+			only: 16,
+			last: 16,
+		},
+	};
+
+	return (
+		<Surface
+			mode="flat"
+			elevation={1}
+			style={[
+				styles.itemContainer,
+				{
+					backgroundColor: theme.colors.tertiaryContainer,
+					borderTopRightRadius: borderRadius.tr[position],
+					borderTopLeftRadius: borderRadius.tl[position],
+					borderBottomLeftRadius: borderRadius.bl[position],
+					borderBottomRightRadius: borderRadius.br[position],
+				},
+			]}
+		>
+			<Text
+				style={[styles.itemText, { color: theme.colors.onTertiaryContainer }]}
+				variant="bodyMedium"
+			>
+				{label}
+			</Text>
+			<Text
+				style={[styles.itemText, { color: theme.colors.onTertiaryContainer }]}
+				variant="bodyMedium"
+			>
+				{`${currentCurrencySymbol} ${value.toLocaleString(
+					getLocaleByCurrencySymbol(currentCurrencySymbol)
+				)}`}
+			</Text>
+		</Surface>
 	);
 }
 
@@ -142,14 +153,13 @@ const styles = StyleSheet.create({
 		width: '100%',
 		gap: 2,
 		overflow: 'hidden',
-		height: 198,
+		paddingHorizontal: 24,
 	},
 	itemContainer: {
 		flexDirection: 'row',
-		padding: 14,
+		paddingVertical: 12,
 		paddingHorizontal: 16,
 		justifyContent: 'space-between',
-		borderRadius: 6,
 	},
 	itemText: {
 		fontFamily: 'Manrope-Regular',

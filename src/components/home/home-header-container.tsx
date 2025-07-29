@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import { useTheme } from 'react-native-paper';
 
 type Props = {
@@ -24,9 +25,8 @@ export default function HomeHeaderContainer({ children }: Props) {
 const styles = StyleSheet.create({
 	headerContainer: {
 		paddingTop: 60,
-		paddingHorizontal: 16,
 		flex: 0.7,
-		gap: 6,
+		gap: 8,
 	},
 });
 

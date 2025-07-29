@@ -65,7 +65,7 @@ export default function TransactionsSummaryChart({
 				spacing={13}
 				rulesThickness={0} // Thin grid lines for subtlety
 				noOfSections={7}
-				stepHeight={25}
+				stepHeight={23}
 				xAxisThickness={0}
 				yAxisThickness={0}
 				yAxisTextStyle={{
@@ -128,13 +128,13 @@ const styles = StyleSheet.create({
 		width: '100%',
 		alignItems: 'center',
 		justifyContent: 'center',
-		height: 255,
+		height: 230,
 	},
 	chartContainer: {
 		paddingLeft: 16,
 		width: '100%',
 		overflow: 'hidden',
-		height: 255,
+		height: 230,
 	},
 	legend: {
 		gap: 12,
@@ -145,6 +145,7 @@ const styles = StyleSheet.create({
 	},
 	legendItem: {
 		flexDirection: 'row',
+		alignItems: 'center',
 		gap: 6,
 	},
 	legendLabel: {
@@ -152,8 +153,8 @@ const styles = StyleSheet.create({
 		opacity: 0.89,
 	},
 	dot: {
-		width: 15,
-		height: 15,
+		width: 10,
+		height: 10,
 		borderRadius: 200,
 	},
 });

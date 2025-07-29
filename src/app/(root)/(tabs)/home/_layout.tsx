@@ -1,13 +1,8 @@
 import { Tabs, useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
-import { FAB, useTheme } from 'react-native-paper';
+import { Button, FAB, useTheme } from 'react-native-paper';
 
-import {
-	AllTransScreenHeaderTitlePlaceholder,
-	MonthScreenHeaderRightPlaceholder,
-	MonthScreenHeaderTitlePlaceholder,
-	YearlyScreenHeaderTitlePlaceholder,
-} from '@/src/components/home/home-header-placeholder';
+import { SettingsIcon } from 'lucide-react-native';
 
 export default function HomeScreenLayout() {
 	const theme = useTheme();
@@ -59,30 +54,40 @@ export default function HomeScreenLayout() {
 					headerStyle: {
 						backgroundColor: theme.colors.background,
 					},
+					headerRight: () => (
+						<Button
+							mode="contained-tonal"
+							onPress={() => router.push('/(root)/settings')}
+							style={{ marginRight: 16, borderRadius: 12 }}
+						>
+							<SettingsIcon
+								strokeWidth={1.5}
+								color={theme.colors.onSecondaryContainer}
+								size={20}
+							/>
+						</Button>
+					),
 				}}
 			>
 				<Tabs.Screen
 					name="monthly"
 					options={{
 						title: 'Month',
-						headerRight: () => <MonthScreenHeaderRightPlaceholder />,
-						headerTitle: () => <MonthScreenHeaderTitlePlaceholder />,
+						// headerTitle: () => <MonthScreenHeaderTitlePlaceholder />,
 					}}
 				/>
 				<Tabs.Screen
 					name="yearly"
 					options={{
 						title: 'Year',
-						headerRight: () => <MonthScreenHeaderRightPlaceholder />,
-						headerTitle: () => <YearlyScreenHeaderTitlePlaceholder />,
+						// headerTitle: () => <YearlyScreenHeaderTitlePlaceholder />,
 					}}
 				/>
 				<Tabs.Screen
 					name="all"
 					options={{
 						title: 'All',
-						headerRight: () => <MonthScreenHeaderRightPlaceholder />,
-						headerTitle: () => <AllTransScreenHeaderTitlePlaceholder />,
+						// headerTitle: () => <AllTransScreenHeaderTitlePlaceholder />,
 					}}
 				/>
 			</Tabs>

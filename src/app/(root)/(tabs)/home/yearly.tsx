@@ -1,12 +1,8 @@
-import { useEffect, useState } from 'react';
-import {
-	ChevronLeftIcon,
-	ChevronRightIcon,
-	SettingsIcon,
-} from 'lucide-react-native';
-import { useNavigation, useRouter } from 'expo-router';
+import { useState } from 'react';
 import { View } from 'react-native';
-import { Button, useTheme } from 'react-native-paper';
+import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react-native';
+import { Button, Text, useTheme } from 'react-native-paper';
+import moment from 'moment';
 
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { groupedTransactionsByDate } from '@/utils/group-transactions';
@@ -20,8 +16,6 @@ import TransactionsSummary from '@/src/components/charts/transactions-summary';
 
 export default function HomeYearlyTransactionScreen() {
 	const theme = useTheme();
-	const router = useRouter();
-	const navigation = useNavigation();
 
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
@@ -43,68 +37,69 @@ export default function HomeYearlyTransactionScreen() {
 		setSelectedDate(updatedDate);
 	}
 
-	useEffect(() => {
-		navigation.setOptions({
-			headerTitle: () => (
-				<View style={{ flexDirection: 'row', gap: 2 }}>
-					<YearSelectorDialog
-						onValueChange={setSelectedDate}
-						selectedValue={selectedDate}
-					/>
-					<Button
-						compact
-						mode="contained-tonal"
-						contentStyle={{ height: 40 }}
-						style={{
-							borderTopRightRadius: 6,
-							borderBottomRightRadius: 6,
-						}}
-						onPress={goToPreviousYear}
-					>
-						<ChevronLeftIcon
-							size={20}
-							strokeWidth={1.5}
-							color={theme.colors.onSecondaryContainer}
-						/>
-					</Button>
-					<Button
-						compact
-						mode="contained-tonal"
-						contentStyle={{ height: 40 }}
-						style={{
-							borderTopLeftRadius: 6,
-							borderBottomLeftRadius: 6,
-						}}
-						onPress={gotToNextYear}
-					>
-						<ChevronRightIcon
-							size={20}
-							strokeWidth={1.5}
-							color={theme.colors.onSecondaryContainer}
-						/>
-					</Button>
-				</View>
-			),
-			headerRight: () => (
-				<Button
-					mode="contained-tonal"
-					onPress={() => router.push('/(root)/settings')}
-					contentStyle={{ height: 40 }}
-					style={{ marginRight: 16 }}
-				>
-					<SettingsIcon
-						strokeWidth={1.5}
-						color={theme.colors.onSecondaryContainer}
-						size={20}
-					/>
-				</Button>
-			),
-		});
-	}, [theme, selectedDate]);
-
 	return (
 		<View style={{ flex: 1 }}>
 			<HomeHeaderContainer>
+				<View
+					style={{
+						flexDirection: 'row',
+						justifyContent: 'space-between',
+						paddingHorizontal: 16,
+						alignItems: 'center',
+						height: 40,
+					}}
+				>
+					<Text
+						style={{ fontFamily: 'Manrope-Medium', letterSpacing: -0.5 }}
+						variant="titleLarge"
+					>
+						{moment(selectedDate).format('YYYY')}
+					</Text>
+
+					<View style={{ flexDirection: 'row' }}>
+						<Button
+							compact
+							mode="contained-tonal"
+							contentStyle={{ height: 40 }}
+							style={{
+								borderTopRightRadius: 6,
+								borderBottomRightRadius: 6,
+								marginRight: 2,
+								backgroundColor: theme.colors.elevation.level2,
+							}}
+							onPress={goToPreviousYear}
+						>
+							<ChevronLeftIcon
+								size={20}
+								strokeWidth={1.5}
+								color={theme.colors.onSurface}
+							/>
+						</Button>
+						<Button
+							compact
+							mode="contained-tonal"
+							contentStyle={{ height: 40 }}
+							style={{
+								borderTopLeftRadius: 6,
+								borderBottomLeftRadius: 6,
+								backgroundColor: theme.colors.elevation.level2,
+							}}
+							onPress={gotToNextYear}
+						>
+							<ChevronRightIcon
+								size={20}
+								strokeWidth={1.5}
+								color={theme.colors.onSurface}
+							/>
+						</Button>
+
+						<YearSelectorDialog
+							onValueChange={setSelectedDate}
+							selectedValue={selectedDate}
+						/>
+					</View>
+				</View>
+
 				<TransactionsSummaryChart
 					transactions={transactions}
 					dateFormat="MMM, YYYY"
