@@ -1,9 +1,9 @@
-import { useState } from 'react';
 import { View } from 'react-native';
+import { useState } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react-native';
 import { Button, Text, useTheme } from 'react-native-paper';
-import moment from 'moment';
 
+import moment from 'moment';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { groupedTransactionsByDate } from '@/utils/group-transactions';
 import { loadTransactionsData } from '@/src/hooks/useTransactionsManager';
@@ -49,10 +49,7 @@ export default function HomeYearlyTransactionScreen() {
 						height: 40,
 					}}
 				>
-					<Text
-						style={{ fontFamily: 'Manrope-Medium', letterSpacing: -0.5 }}
-						variant="titleLarge"
-					>
+					<Text style={{ fontFamily: 'Manrope-Medium' }} variant="titleLarge">
 						{moment(selectedDate).format('YYYY')}
 					</Text>
 

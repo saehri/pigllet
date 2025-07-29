@@ -48,7 +48,10 @@ export default function TransactionsSummaryChart({
 	if (!chartData.length) {
 		return (
 			<View style={styles.emptyAndLoadingContainer}>
-				<Text variant="bodyLarge" style={{ fontFamily: 'Manrope-Regular' }}>
+				<Text
+					variant="bodyLarge"
+					style={{ fontFamily: 'Manrope-Regular', opacity: 0.5 }}
+				>
 					No data available to display at the moment.
 				</Text>
 			</View>

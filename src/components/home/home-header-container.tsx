@@ -24,7 +24,7 @@ export default function HomeHeaderContainer({ children }: Props) {
 
 const styles = StyleSheet.create({
 	headerContainer: {
-		paddingTop: 60,
+		paddingTop: 55,
 		gap: 8,
 		flex: 1,
 	},

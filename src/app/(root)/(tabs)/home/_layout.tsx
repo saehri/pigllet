@@ -1,8 +1,9 @@
 import { Tabs, useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { Button, FAB, useTheme } from 'react-native-paper';
-
 import { SettingsIcon } from 'lucide-react-native';
+
+import AccountMiniViewer from '@/src/components/reusables/account-mini-viewer';
 
 export default function HomeScreenLayout() {
 	const theme = useTheme();
@@ -11,7 +12,7 @@ export default function HomeScreenLayout() {
 	return (
 		<View style={styles.container}>
 			<Tabs
-				initialRouteName="monthly"
+				initialRouteName="month"
 				screenOptions={{
 					tabBarActiveTintColor: theme.colors.onPrimary,
 					tabBarActiveBackgroundColor: theme.colors.primary,
@@ -20,7 +21,7 @@ export default function HomeScreenLayout() {
 					tabBarStyle: {
 						position: 'absolute',
 						backgroundColor: 'rgba(0,0,0,0)',
-						top: 65,
+						top: 63,
 						borderTopWidth: 0,
 						marginHorizontal: 16,
 						elevation: 0,
@@ -32,11 +33,7 @@ export default function HomeScreenLayout() {
 					tabBarLabelStyle: {
 						fontFamily: 'Manrope-Medium',
 						fontSize: 14,
-					},
-					headerTitleStyle: {
-						fontFamily: 'Manrope-Bold',
 						textTransform: 'capitalize',
-						letterSpacing: -1,
 					},
 					tabBarItemStyle: {
 						overflow: 'hidden',
@@ -59,6 +56,7 @@ export default function HomeScreenLayout() {
 							mode="contained-tonal"
 							onPress={() => router.push('/(root)/settings')}
 							style={{ marginRight: 16, borderRadius: 12 }}
+							contentStyle={{ height: 40 }}
 						>
 							<SettingsIcon
 								strokeWidth={1.5}
@@ -67,29 +65,12 @@ export default function HomeScreenLayout() {
 							/>
 						</Button>
 					),
+					headerTitle: () => <AccountMiniViewer />,
 				}}
 			>
-				<Tabs.Screen
-					name="monthly"
-					options={{
-						title: 'Month',
-						// headerTitle: () => <MonthScreenHeaderTitlePlaceholder />,
-					}}
-				/>
-				<Tabs.Screen
-					name="yearly"
-					options={{
-						title: 'Year',
-						// headerTitle: () => <YearlyScreenHeaderTitlePlaceholder />,
-					}}
-				/>
-				<Tabs.Screen
-					name="all"
-					options={{
-						title: 'All',
-						// headerTitle: () => <AllTransScreenHeaderTitlePlaceholder />,
-					}}
-				/>
+				<Tabs.Screen name="month" />
+				<Tabs.Screen name="year" />
+				<Tabs.Screen name="all" />
 			</Tabs>
 
 			<FAB

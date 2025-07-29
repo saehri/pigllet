@@ -49,11 +49,8 @@ export default function HomeMonthlyTransactionScreen() {
 						height: 40,
 					}}
 				>
-					<Text
-						style={{ fontFamily: 'Manrope-Medium', letterSpacing: -0.5 }}
-						variant="titleLarge"
-					>
-						{moment(selectedDate).format('MMMM, YYYY')}
+					<Text style={{ fontFamily: 'Manrope-Medium' }} variant="titleLarge">
+						{moment(selectedDate).format('MMM, YYYY')}
 					</Text>
 
 					<View style={{ flexDirection: 'row' }}>

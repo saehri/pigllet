@@ -18,7 +18,11 @@ export default function NoItemNotice() {
 		>
 			<Text
 				variant="bodyLarge"
-				style={{ fontFamily: 'Manrope-Regular', textAlign: 'center' }}
+				style={{
+					fontFamily: 'Manrope-Regular',
+					textAlign: 'center',
+					opacity: 0.5,
+				}}
 			>
 				No data available to display at the moment.
 			</Text>

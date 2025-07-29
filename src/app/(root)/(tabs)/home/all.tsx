@@ -24,10 +24,7 @@ export default function HomeScreen() {
 						height: 40,
 					}}
 				>
-					<Text
-						style={{ fontFamily: 'Manrope-Medium', letterSpacing: -0.5 }}
-						variant="titleLarge"
-					>
+					<Text style={{ fontFamily: 'Manrope-Medium' }} variant="titleLarge">
 						All transactions
 					</Text>
 				</View>
