@@ -2,6 +2,13 @@ import { Tabs, useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { FAB, useTheme } from 'react-native-paper';
 
+import {
+	AllTransScreenHeaderTitlePlaceholder,
+	MonthScreenHeaderRightPlaceholder,
+	MonthScreenHeaderTitlePlaceholder,
+	YearlyScreenHeaderTitlePlaceholder,
+} from '@/src/components/home/home-header-placeholder';
+
 export default function HomeScreenLayout() {
 	const theme = useTheme();
 	const router = useRouter();
@@ -54,9 +61,30 @@ export default function HomeScreenLayout() {
 					},
 				}}
 			>
-				<Tabs.Screen name="monthly" options={{ title: 'Month' }} />
-				<Tabs.Screen name="yearly" options={{ title: 'Year' }} />
-				<Tabs.Screen name="all" options={{ title: 'All' }} />
+				<Tabs.Screen
+					name="monthly"
+					options={{
+						title: 'Month',
+						headerRight: () => <MonthScreenHeaderRightPlaceholder />,
+						headerTitle: () => <MonthScreenHeaderTitlePlaceholder />,
+					}}
+				/>
+				<Tabs.Screen
+					name="yearly"
+					options={{
+						title: 'Year',
+						headerRight: () => <MonthScreenHeaderRightPlaceholder />,
+						headerTitle: () => <YearlyScreenHeaderTitlePlaceholder />,
+					}}
+				/>
+				<Tabs.Screen
+					name="all"
+					options={{
+						title: 'All',
+						headerRight: () => <MonthScreenHeaderRightPlaceholder />,
+						headerTitle: () => <AllTransScreenHeaderTitlePlaceholder />,
+					}}
+				/>
 			</Tabs>
 
 			<FAB
