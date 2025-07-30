@@ -1,7 +1,7 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { BarChart } from 'react-native-gifted-charts';
-import { Surface, Text, useTheme } from 'react-native-paper';
+import { Button, Surface, Text, useTheme } from 'react-native-paper';
 
 import {
 	UserPreferenceContext,
@@ -11,7 +11,7 @@ import getLocaleByCurrencySymbol from '@/utils/locale-getter';
 
 import * as schema from '@/db/schema';
 import { useSQLiteContext } from 'expo-sqlite';
-import { and, eq, gte, lte, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, gte, lte, sql } from 'drizzle-orm';
 import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
 
 import moment from 'moment';
@@ -19,6 +19,7 @@ import { transactionColorMap } from '@/utils/utils';
 import { TransactionIconsCatalogue } from '@/types/type';
 
 import TransactionIcons from '../reusables/transaction-icons';
+import { ArrowDownIcon, ArrowUpIcon } from 'lucide-react-native';
 
 type Props = {
 	selectedDate: Date;
@@ -58,6 +59,9 @@ export default function SpendingByCategory({ selectedDate, range }: Props) {
 		UserPreferenceContext
 	) as UserPreferenceContextTypes;
 
+	// for ordering the data
+	const [order, setOrder] = useState<'asc' | 'desc'>('desc');
+
 	// set up the database
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
@@ -92,7 +96,12 @@ export default function SpendingByCategory({ selectedDate, range }: Props) {
 				eq(schema.transactions.category_id, schema.categories.id)
 			)
 			.where(whereConditions.length > 0 ? and(...whereConditions) : undefined)
-			.groupBy(schema.categories.label);
+			.groupBy(schema.categories.label)
+			.orderBy(
+				order === 'desc'
+					? desc(sql<number>`SUM(${schema.transactions.amount})`)
+					: asc(sql<number>`SUM(${schema.transactions.amount})`)
+			);
 	};
 
 	const getMaxValue = () => {
@@ -123,79 +132,138 @@ export default function SpendingByCategory({ selectedDate, range }: Props) {
 
 	const { data: chartData } = useLiveQuery(getSumByTypeInDateRange(), [
 		selectedDate,
+		order,
 	]);
 	const { data: chartMaxValue } = useLiveQuery(getMaxValue(), [selectedDate]);
 
 	if (!chartData.length) {
 		return (
-			<View style={styles.emptyAndLoadingContainer}>
-				<Text
-					variant="bodyLarge"
-					style={{ fontFamily: 'Manrope-Regular', opacity: 0.5 }}
-				>
-					No data available to display at the moment.
-				</Text>
-			</View>
+			<Surface mode="flat" elevation={2} style={[styles.chart]}>
+				<View style={styles.chartHeader}>
+					<Text style={styles.chartTitle} variant="bodyLarge">
+						Spending by category
+					</Text>
+
+					<Button
+						mode="contained-tonal"
+						contentStyle={{ height: 40 }}
+						onPress={() =>
+							setOrder((prev) => (prev === 'desc' ? 'asc' : 'desc'))
+						}
+					>
+						{order === 'desc' ? (
+							<ArrowDownIcon
+								size={20}
+								strokeWidth={1.5}
+								color={theme.colors.onSecondaryContainer}
+							/>
+						) : (
+							<ArrowUpIcon
+								size={20}
+								strokeWidth={1.5}
+								color={theme.colors.onSecondaryContainer}
+							/>
+						)}
+					</Button>
+				</View>
+
+				<View style={styles.emptyAndLoadingContainer}>
+					<Text
+						variant="bodyLarge"
+						style={{ fontFamily: 'Manrope-Regular', opacity: 0.5 }}
+					>
+						No data available to display at the moment.
+					</Text>
+				</View>
+			</Surface>
 		);
 	}
 
 	return (
-		<View style={styles.chartContainer}>
-			<BarChart
-				barWidth={65}
-				barBorderRadius={120}
-				formatYLabel={(label) =>
-					`${Number(label).toLocaleString(
-						getLocaleByCurrencySymbol(currentCurrencySymbol)
-					)}`
-				}
-				height={200}
-				maxValue={chartMaxValue[0].maxValue}
-				data={chartData}
-				frontColor={transactionColorMap.expense}
-				spacing={10}
-				rulesThickness={0}
-				xAxisThickness={0}
-				yAxisThickness={0}
-				yAxisTextStyle={{
-					fontFamily: 'Manrope-Regular',
-					fontSize: 9,
-					color: theme.colors.onBackground,
-				}}
-				xAxisLabelTextStyle={{
-					fontFamily: 'Manrope-Regular',
-					textTransform: 'capitalize',
-					fontSize: 10,
-					color: theme.colors.onBackground,
-				}}
-				isAnimated
-				animationDuration={0.5}
-				autoCenterTooltip
-				adjustToWidth
-			/>
+		<Surface mode="flat" elevation={2} style={[styles.chart]}>
+			<View style={styles.chartHeader}>
+				<Text style={styles.chartTitle} variant="bodyLarge">
+					Spending by category
+				</Text>
 
-			<View style={styles.cardContainer}>
-				{chartData.map((data, index) => (
-					<CategoryCard
-						key={data.label}
-						iconName={data.iconName as keyof TransactionIconsCatalogue}
-						label={data.label}
-						value={`${currentCurrencySymbol} ${data.value.toLocaleString(
-							getLocaleByCurrencySymbol(currentCurrencySymbol)
-						)}`}
-						position={
-							chartData.length === 1
-								? 'only'
-								: index > 0 && index < chartData.length - 1
-									? 'middle'
-									: index === 0
-										? 'first'
-										: 'last'
-						}
-					/>
-				))}
+				<Button
+					mode="contained-tonal"
+					contentStyle={{ height: 40 }}
+					onPress={() => setOrder((prev) => (prev === 'desc' ? 'asc' : 'desc'))}
+				>
+					{order === 'desc' ? (
+						<ArrowDownIcon
+							size={20}
+							strokeWidth={1.5}
+							color={theme.colors.onSecondaryContainer}
+						/>
+					) : (
+						<ArrowUpIcon
+							size={20}
+							strokeWidth={1.5}
+							color={theme.colors.onSecondaryContainer}
+						/>
+					)}
+				</Button>
 			</View>
-		</View>
+
+			<View style={styles.chartContainer}>
+				<BarChart
+					barWidth={65}
+					barBorderRadius={120}
+					formatYLabel={(label) =>
+						`${Number(label).toLocaleString(
+							getLocaleByCurrencySymbol(currentCurrencySymbol)
+						)}`
+					}
+					height={200}
+					maxValue={chartMaxValue[0].maxValue}
+					data={chartData}
+					frontColor={transactionColorMap.expense}
+					spacing={10}
+					rulesThickness={0}
+					xAxisThickness={0}
+					yAxisThickness={0}
+					yAxisTextStyle={{
+						fontFamily: 'Manrope-Regular',
+						fontSize: 9,
+						color: theme.colors.onBackground,
+					}}
+					xAxisLabelTextStyle={{
+						fontFamily: 'Manrope-Regular',
+						textTransform: 'capitalize',
+						fontSize: 10,
+						color: theme.colors.onBackground,
+					}}
+					isAnimated
+					animationDuration={0.5}
+					autoCenterTooltip
+					adjustToWidth
+				/>
+
+				<View style={styles.cardContainer}>
+					{chartData.map((data, index) => (
+						<CategoryCard
+							key={data.label}
+							iconName={data.iconName as keyof TransactionIconsCatalogue}
+							label={data.label}
+							value={`${currentCurrencySymbol} ${data.value.toLocaleString(
+								getLocaleByCurrencySymbol(currentCurrencySymbol)
+							)}`}
+							position={
+								chartData.length === 1
+									? 'only'
+									: index > 0 && index < chartData.length - 1
+										? 'middle'
+										: index === 0
+											? 'first'
+											: 'last'
+							}
+						/>
+					))}
+				</View>
+			</View>
+		</Surface>
 	);
 }
 
@@ -243,6 +311,20 @@ function CategoryCard({ iconName, label, value, position }: CategoryCardProps) {
 }
 
 const styles = StyleSheet.create({
+	chart: {
+		padding: 24,
+		borderRadius: 40,
+		gap: 16,
+	},
+	chartHeader: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		// alignItems: 'center',
+		// backgroundColor: 'red',
+	},
+	chartTitle: {
+		fontFamily: 'Manrope-SemiBold',
+	},
 	emptyAndLoadingContainer: {
 		width: '100%',
 		alignItems: 'center',

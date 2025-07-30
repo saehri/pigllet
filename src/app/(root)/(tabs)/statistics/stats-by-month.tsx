@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Surface, Text, useTheme } from 'react-native-paper';
+import { useTheme } from 'react-native-paper';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
 import MonthSelectorBar from '@/src/components/reusables/month-selector-bar';
@@ -39,13 +39,8 @@ export default function StatsMonthlyScreen() {
 					setSelectedDate={setSelectedDate}
 				/>
 
-				<View style={styles.cardContainer}>
-					<Surface mode="flat" elevation={2} style={[styles.card]}>
-						<Text style={styles.cardTitle} variant="bodyLarge">
-							Spending by category
-						</Text>
-						<SpendingByCategory range="month" selectedDate={selectedDate} />
-					</Surface>
+				<View style={styles.chartsContainer}>
+					<SpendingByCategory range="month" selectedDate={selectedDate} />
 				</View>
 			</View>
 		</ScrollView>
@@ -53,17 +48,9 @@ export default function StatsMonthlyScreen() {
 }
 
 const styles = StyleSheet.create({
-	card: {
-		padding: 24,
-		borderRadius: 40,
-		gap: 16,
-	},
-	cardContainer: {
+	chartsContainer: {
 		marginTop: 24,
 		gap: 4,
-	},
-	cardTitle: {
-		fontFamily: 'Manrope-SemiBold',
 	},
 });
 
