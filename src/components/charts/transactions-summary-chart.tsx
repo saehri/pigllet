@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { BarChart } from 'react-native-gifted-charts';
 import { StyleSheet, ToastAndroid, View } from 'react-native';
 import { ActivityIndicator, Text, useTheme } from 'react-native-paper';
@@ -7,6 +7,11 @@ import {
 	TransactionWithDetails,
 } from '@/utils/group-transactions';
 import { transactionColorMap } from '@/utils/utils';
+import getLocaleByCurrencySymbol from '@/utils/locale-getter';
+import {
+	UserPreferenceContext,
+	UserPreferenceContextTypes,
+} from '@/context/UserPreferenceContext';
 
 type Props = {
 	transactions: TransactionWithDetails[];
@@ -18,6 +23,9 @@ export default function TransactionsSummaryChart({
 	dateFormat,
 }: Props) {
 	const theme = useTheme();
+	const { currentCurrencySymbol } = useContext(
+		UserPreferenceContext
+	) as UserPreferenceContextTypes;
 
 	const [loading, setLoading] = useState(true);
 	const [chartData, setChartData] = useState<any[]>([]);
@@ -83,6 +91,11 @@ export default function TransactionsSummaryChart({
 					color: theme.colors.onBackground,
 				}}
 				isAnimated // Adds smooth animation for better UX
+				formatYLabel={(label) =>
+					`${Number(label).toLocaleString(
+						getLocaleByCurrencySymbol(currentCurrencySymbol)
+					)}`
+				}
 			/>
 
 			<View style={styles.legend}>
