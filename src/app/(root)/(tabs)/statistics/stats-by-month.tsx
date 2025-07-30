@@ -5,6 +5,7 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import AverageSpending from '@/src/components/statistics/average-spending';
 import MonthSelectorBar from '@/src/components/reusables/month-selector-bar';
 import SpendingByCategory from '@/src/components/charts/spending-by-category';
+import SpendingOverTime from '@/src/components/statistics/spending-over-time';
 
 export default function StatsMonthlyScreen() {
 	const theme = useTheme();
@@ -42,6 +43,7 @@ export default function StatsMonthlyScreen() {
 				<View style={styles.chartsContainer}>
 					<AverageSpending selectedDate={selectedDate} range="month" />
 					<SpendingByCategory range="month" selectedDate={selectedDate} />
+					<SpendingOverTime range="month" selectedDate={selectedDate} />
 				</View>
 			</View>
 		</ScrollView>

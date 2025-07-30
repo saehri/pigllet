@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { BarChart, barDataItem } from 'react-native-gifted-charts';
+import { BarChart } from 'react-native-gifted-charts';
 import { Button, Surface, Text, useTheme } from 'react-native-paper';
 
 import {
@@ -53,7 +53,7 @@ const borderRadius = {
 	},
 };
 
-export default function SpendingByCategory({ selectedDate, range }: Props) {
+export default function SpendingOverTime({ selectedDate, range }: Props) {
 	const theme = useTheme();
 
 	// for ordering the data
@@ -84,8 +84,7 @@ export default function SpendingByCategory({ selectedDate, range }: Props) {
 		return drizzleDb
 			.select({
 				value: sql<number>`SUM(${schema.transactions.amount})`,
-				label: schema.categories.label,
-				iconName: schema.categories.icon_name,
+				label: schema.transactions.created_at,
 			})
 			.from(schema.transactions)
 			.innerJoin(
@@ -137,7 +136,7 @@ export default function SpendingByCategory({ selectedDate, range }: Props) {
 		<Surface mode="flat" elevation={2} style={styles.chart}>
 			<View style={styles.chartHeader}>
 				<Text style={styles.chartTitle} variant="bodyLarge">
-					Spending by category
+					Spending over time
 				</Text>
 
 				<Button
@@ -181,7 +180,7 @@ export default function SpendingByCategory({ selectedDate, range }: Props) {
 }
 
 type ChartRendererProps = {
-	chartData: { value: number; label: string; iconName: string }[];
+	chartData: { value: number; label: string }[];
 	chartMaxValue: number;
 };
 
@@ -203,7 +202,10 @@ function ChartRenderer({ chartData, chartMaxValue }: ChartRendererProps) {
 				}
 				height={200}
 				maxValue={chartMaxValue}
-				data={chartData}
+				data={chartData.map((data) => ({
+					...data,
+					label: moment(data.label).format('MMM D, YYYY'),
+				}))}
 				frontColor={transactionColorMap.expense}
 				spacing={10}
 				rulesThickness={0}
@@ -230,7 +232,6 @@ function ChartRenderer({ chartData, chartMaxValue }: ChartRendererProps) {
 				{chartData.map((data, index) => (
 					<CategoryCard
 						key={data.label}
-						iconName={data.iconName as keyof TransactionIconsCatalogue}
 						label={data.label}
 						value={`${currentCurrencySymbol} ${data.value.toLocaleString(
 							getLocaleByCurrencySymbol(currentCurrencySymbol)
@@ -253,13 +254,12 @@ function ChartRenderer({ chartData, chartMaxValue }: ChartRendererProps) {
 
 // =================================================
 type CategoryCardProps = {
-	iconName: keyof TransactionIconsCatalogue;
 	label: string;
 	value: string;
 	position: 'only' | 'first' | 'middle' | 'last';
 };
 
-function CategoryCard({ iconName, label, value, position }: CategoryCardProps) {
+function CategoryCard({ label, value, position }: CategoryCardProps) {
 	return (
 		<Surface
 			mode="flat"
@@ -274,17 +274,9 @@ function CategoryCard({ iconName, label, value, position }: CategoryCardProps) {
 				},
 			]}
 		>
-			<View style={styles.categoryCardIcon}>
-				<TransactionIcons
-					icon={iconName}
-					color={transactionColorMap.expense}
-					size={20}
-				/>
-			</View>
-
 			<View style={styles.categoryCardContent}>
 				<Text style={styles.categoryCardText} variant="bodyMedium">
-					{label}
+					{moment(label).format('MMM D, YYYY')}
 				</Text>
 
 				<Text style={styles.categoryCardText} variant="bodyMedium">
@@ -326,7 +318,7 @@ const styles = StyleSheet.create({
 		gap: 10,
 		alignItems: 'center',
 		paddingVertical: 9,
-		paddingHorizontal: 12,
+		paddingHorizontal: 17,
 	},
 	categoryCardIcon: {
 		width: 30,
