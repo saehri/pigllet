@@ -15,22 +15,49 @@ import {
 	UserPreferenceContextTypes,
 } from '@/context/UserPreferenceContext';
 
+import moment from 'moment';
+import { transactionColorMap } from '@/utils/utils';
+
 import getLocaleByCurrencySymbol from '@/utils/locale-getter';
 import TransactionIcons from './transaction-icons';
-import { transactionColorMap } from '@/utils/utils';
 
 type Props = {
 	data: TransactionWithDetails;
-	disableFirstButton: boolean;
-	disableSecondButton: boolean;
+	pressable?: boolean;
 	showDate: boolean;
 	position: 'first' | 'middle' | 'last' | 'only';
 };
 
+const borderRadius = {
+	tr: {
+		first: 16,
+		middle: 6,
+		only: 16,
+		last: 6,
+	},
+	tl: {
+		first: 16,
+		middle: 6,
+		only: 16,
+		last: 6,
+	},
+	br: {
+		first: 6,
+		middle: 6,
+		only: 16,
+		last: 16,
+	},
+	bl: {
+		first: 6,
+		middle: 6,
+		only: 16,
+		last: 16,
+	},
+};
+
 export default function TransactionCard({
 	data,
-	disableFirstButton,
-	disableSecondButton,
+	pressable = false,
 	showDate,
 	position,
 }: Props) {
@@ -42,193 +69,157 @@ export default function TransactionCard({
 
 	const { account, category, related_account, transaction } = data;
 
-	const borderRadius = {
-		tr: {
-			first: 16,
-			middle: 6,
-			only: 16,
-			last: 6,
-		},
-		tl: {
-			first: 16,
-			middle: 6,
-			only: 16,
-			last: 6,
-		},
-		br: {
-			first: 6,
-			middle: 6,
-			only: 16,
-			last: 16,
-		},
-		bl: {
-			first: 6,
-			middle: 6,
-			only: 16,
-			last: 16,
-		},
-	};
-
 	return (
-		<Surface
-			mode="flat"
-			elevation={5}
-			style={[
-				styles.container,
-				{
-					borderTopRightRadius: borderRadius.tr[position],
-					borderTopLeftRadius: borderRadius.tl[position],
-					borderBottomLeftRadius: borderRadius.bl[position],
-					borderBottomRightRadius: borderRadius.br[position],
-				},
-			]}
+		<Pressable
+			disabled={pressable}
+			onPress={() =>
+				router.push({
+					pathname: `/(root)/edit-${transaction.type}` as any,
+					params: {
+						id: transaction.id as any,
+						type: transaction.type,
+						categoryId: category.id,
+					},
+				})
+			}
 		>
-			<Pressable
-				style={styles.iconContainer}
-				onPress={() =>
-					router.push({
-						pathname: '/(root)/transaction-by-category',
-						params: {
-							categoryId: data.category.id,
-							categoryName: data.category.label,
-						},
-					})
-				}
-				disabled={disableFirstButton}
+			<Surface
+				mode="flat"
+				elevation={5}
+				style={[
+					styles.container,
+					{
+						borderTopRightRadius: borderRadius.tr[position],
+						borderTopLeftRadius: borderRadius.tl[position],
+						borderBottomLeftRadius: borderRadius.bl[position],
+						borderBottomRightRadius: borderRadius.br[position],
+					},
+				]}
 			>
-				<TransactionIcons
-					color={transactionColorMap[transaction.type]}
-					icon={category.icon_name as any}
-					size={20}
-				/>
-			</Pressable>
-
-			<Pressable
-				onPress={() =>
-					router.push({
-						pathname: `/(root)/edit-${transaction.type}` as any,
-						params: {
-							id: transaction.id as any,
-							type: transaction.type,
-							categoryId: category.id,
-						},
-					})
-				}
-				style={[styles.contentContainer]}
-				disabled={disableSecondButton}
-			>
-				<View style={{ flex: 1, flexDirection: 'row' }}>
-					<View style={styles.row}>
-						<Text
-							numberOfLines={1}
-							variant="bodyMedium"
-							style={styles.cardLabel}
-						>
-							{category.label}
-						</Text>
-					</View>
-
-					<View style={{ flexDirection: 'row', alignItems: 'center', gap: 2 }}>
-						{transaction.type === 'transfer' && (
-							<ArrowRightLeftIcon
-								size={14}
-								strokeWidth={1}
-								color={theme.colors.onBackground}
-							/>
-						)}
-
-						{transaction.type === 'income' && (
-							<PlusIcon
-								size={14}
-								strokeWidth={1}
-								color={theme.colors.onBackground}
-							/>
-						)}
-
-						{transaction.type === 'expense' && (
-							<MinusIcon
-								size={14}
-								strokeWidth={1}
-								color={theme.colors.onBackground}
-							/>
-						)}
-
-						<Text style={styles.cardPrice} variant="bodyMedium">
-							{`${currentCurrencySymbol} ${data.transaction.amount.toLocaleString(
-								getLocaleByCurrencySymbol(currentCurrencySymbol)
-							)}`}
-						</Text>
-					</View>
+				<View style={styles.iconContainer}>
+					<TransactionIcons
+						color={transactionColorMap[transaction.type]}
+						icon={category.icon_name as any}
+						size={20}
+					/>
 				</View>
 
-				<View
-					style={{
-						alignItems: showDate ? 'center' : 'flex-end',
-						flexDirection: 'row',
-						justifyContent: 'space-between',
-					}}
-				>
-					<View style={{ flex: 1 }}>
-						{showDate && (
-							<Text variant="labelLarge" style={styles.cardNote}>
-								{new Date(transaction.created_at).toLocaleDateString('en-US', {
-									dateStyle: 'medium',
-								})}
+				<View style={styles.contentContainer}>
+					<View style={{ flex: 1, flexDirection: 'row' }}>
+						<View style={styles.row}>
+							<Text
+								numberOfLines={1}
+								variant="bodyMedium"
+								style={styles.cardLabel}
+							>
+								{category.label}
 							</Text>
-						)}
+						</View>
 
 						<View
-							style={{
-								flexDirection: 'row',
-								gap: 4,
-								alignItems: 'center',
-							}}
+							style={{ flexDirection: 'row', alignItems: 'center', gap: 2 }}
 						>
-							{transaction.image && (
-								<ImageIcon
+							{transaction.type === 'transfer' && (
+								<ArrowRightLeftIcon
 									size={14}
 									strokeWidth={1}
 									color={theme.colors.onBackground}
 								/>
 							)}
 
-							<Text
-								variant="labelMedium"
-								style={[
-									styles.cardNote,
-									{ flex: 1, maxWidth: 150, fontStyle: 'italic' },
-								]}
-								numberOfLines={1}
-							>
-								{transaction.note || 'Undefined'}
+							{transaction.type === 'income' && (
+								<PlusIcon
+									size={14}
+									strokeWidth={1}
+									color={theme.colors.onBackground}
+								/>
+							)}
+
+							{transaction.type === 'expense' && (
+								<MinusIcon
+									size={14}
+									strokeWidth={1}
+									color={theme.colors.onBackground}
+								/>
+							)}
+
+							<Text style={styles.cardPrice} variant="bodyMedium">
+								{`${currentCurrencySymbol} ${data.transaction.amount.toLocaleString(
+									getLocaleByCurrencySymbol(currentCurrencySymbol)
+								)}`}
 							</Text>
 						</View>
 					</View>
 
-					<View style={{ flexDirection: 'row', gap: 6, alignItems: 'center' }}>
-						<Text
-							variant="labelMedium"
-							style={styles.cardNote}
-							adjustsFontSizeToFit
-							numberOfLines={1}
-						>
-							{account.name}
-						</Text>
+					<View
+						style={{
+							alignItems: showDate ? 'center' : 'flex-end',
+							flexDirection: 'row',
+							justifyContent: 'space-between',
+						}}
+					>
+						<View style={{ flex: 1 }}>
+							{showDate && (
+								<Text variant="labelLarge" style={styles.cardNote}>
+									{moment(transaction.created_at).format('MMM D, YYYY')}
+								</Text>
+							)}
 
-						{related_account && (
+							<View
+								style={{
+									flexDirection: 'row',
+									gap: 4,
+									alignItems: 'center',
+								}}
+							>
+								{transaction.image && (
+									<ImageIcon
+										size={14}
+										strokeWidth={1}
+										color={theme.colors.onBackground}
+									/>
+								)}
+
+								<Text
+									variant="labelMedium"
+									style={[
+										styles.cardNote,
+										{ flex: 1, maxWidth: 150, fontStyle: 'italic' },
+									]}
+									numberOfLines={1}
+								>
+									{transaction.note || 'Undefined'}
+								</Text>
+							</View>
+						</View>
+
+						<View
+							style={{ flexDirection: 'row', gap: 6, alignItems: 'center' }}
+						>
 							<Text
 								variant="labelMedium"
 								style={styles.cardNote}
 								adjustsFontSizeToFit
 								numberOfLines={1}
 							>
-								to {related_account.name}
+								{account.name}
 							</Text>
-						)}
+
+							{related_account && (
+								<Text
+									variant="labelMedium"
+									style={styles.cardNote}
+									adjustsFontSizeToFit
+									numberOfLines={1}
+								>
+									to {related_account.name}
+								</Text>
+							)}
+						</View>
 					</View>
 				</View>
-			</Pressable>
-		</Surface>
+			</Surface>
+		</Pressable>
 	);
 }
 

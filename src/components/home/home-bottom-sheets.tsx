@@ -49,8 +49,6 @@ export default function HomeBottomSheets({ transactions }: Props) {
 								<TransactionCard
 									key={data.transaction.id}
 									data={data}
-									disableFirstButton={false}
-									disableSecondButton={false}
 									showDate={false}
 									position={
 										item.transactions.length === 1
