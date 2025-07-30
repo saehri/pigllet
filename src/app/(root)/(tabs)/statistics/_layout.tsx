@@ -17,7 +17,7 @@ export default function StatisticsScreenLayout() {
 					tabBarStyle: {
 						position: 'absolute',
 						backgroundColor: 'rgba(0,0,0,0)',
-						top: 0,
+						top: 4,
 						borderTopWidth: 0,
 						marginHorizontal: 16,
 						elevation: 0,
