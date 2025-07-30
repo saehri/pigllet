@@ -1,9 +1,6 @@
 import { Tabs, useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
-import { Button, FAB, useTheme } from 'react-native-paper';
-import { SettingsIcon } from 'lucide-react-native';
-
-import AccountMiniViewer from '@/src/components/reusables/account-mini-viewer';
+import { FAB, useTheme } from 'react-native-paper';
 
 export default function HomeScreenLayout() {
 	const theme = useTheme();
@@ -21,7 +18,7 @@ export default function HomeScreenLayout() {
 					tabBarStyle: {
 						position: 'absolute',
 						backgroundColor: 'rgba(0,0,0,0)',
-						top: 63,
+						top: 0,
 						borderTopWidth: 0,
 						marginHorizontal: 16,
 						elevation: 0,
@@ -47,25 +44,7 @@ export default function HomeScreenLayout() {
 					tabBarIconStyle: {
 						display: 'none',
 					},
-					headerShadowVisible: false,
-					headerStyle: {
-						backgroundColor: theme.colors.background,
-					},
-					headerRight: () => (
-						<Button
-							mode="contained-tonal"
-							onPress={() => router.push('/(root)/settings')}
-							style={{ marginRight: 16, borderRadius: 12 }}
-							contentStyle={{ height: 40 }}
-						>
-							<SettingsIcon
-								strokeWidth={1.5}
-								color={theme.colors.onSecondaryContainer}
-								size={20}
-							/>
-						</Button>
-					),
-					headerTitle: () => <AccountMiniViewer />,
+					headerShown: false,
 				}}
 			>
 				<Tabs.Screen name="month" />
@@ -92,6 +71,13 @@ const styles = StyleSheet.create({
 		margin: 16,
 		right: 0,
 		bottom: 80,
+	},
+	header: {
+		height: 64,
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'center',
+		paddingHorizontal: 16,
 	},
 });
 
