@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTheme } from 'react-native-paper';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
+import AverageSpending from '@/src/components/statistics/average-spending';
 import MonthSelectorBar from '@/src/components/reusables/month-selector-bar';
 import SpendingByCategory from '@/src/components/charts/spending-by-category';
 
@@ -25,8 +26,7 @@ export default function StatsMonthlyScreen() {
 	return (
 		<ScrollView
 			contentContainerStyle={{
-				backgroundColor: theme.colors.background,
-				paddingTop: 55,
+				paddingTop: 60,
 				paddingBottom: 80,
 			}}
 			showsVerticalScrollIndicator={false}
@@ -40,6 +40,7 @@ export default function StatsMonthlyScreen() {
 				/>
 
 				<View style={styles.chartsContainer}>
+					<AverageSpending selectedDate={selectedDate} range="month" />
 					<SpendingByCategory range="month" selectedDate={selectedDate} />
 				</View>
 			</View>

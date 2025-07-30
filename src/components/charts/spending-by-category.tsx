@@ -180,7 +180,7 @@ export default function SpendingByCategory({ selectedDate, range }: Props) {
 	}
 
 	return (
-		<Surface mode="flat" elevation={2} style={[styles.chart]}>
+		<Surface mode="flat" elevation={2} style={styles.chart}>
 			<View style={styles.chartHeader}>
 				<Text style={styles.chartTitle} variant="bodyLarge">
 					Spending by category
@@ -319,8 +319,6 @@ const styles = StyleSheet.create({
 	chartHeader: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
-		// alignItems: 'center',
-		// backgroundColor: 'red',
 	},
 	chartTitle: {
 		fontFamily: 'Manrope-SemiBold',

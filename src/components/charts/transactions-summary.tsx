@@ -46,9 +46,9 @@ export default function TransactionsSummary({ selectedDate, range }: Props) {
 
 		return drizzleDb
 			.select({
-				expense: sql<number>`SUM(CASE WHEN ${schema.transactions.type} = 'expense' THEN ${schema.transactions.amount} ELSE 0 END)`,
-				income: sql<number>`SUM(CASE WHEN ${schema.transactions.type} = 'income' THEN ${schema.transactions.amount} ELSE 0 END)`,
-				transfer: sql<number>`SUM(CASE WHEN ${schema.transactions.type} = 'transfer' THEN ${schema.transactions.amount} ELSE 0 END)`,
+				totalExpense: sql<number>`COALESCE(SUM(CASE WHEN ${schema.transactions.type} = 'expense' THEN ${schema.transactions.amount} ELSE 0 END), 0)`,
+				totalIncome: sql<number>`COALESCE(SUM(CASE WHEN ${schema.transactions.type} = 'income' THEN ${schema.transactions.amount} ELSE 0 END), 0)`,
+				totalTransfer: sql<number>`COALESCE(SUM(CASE WHEN ${schema.transactions.type} = 'transfer' THEN ${schema.transactions.amount} ELSE 0 END), 0)`,
 			})
 			.from(schema.transactions)
 			.where(whereConditions.length > 0 ? and(...whereConditions) : undefined);
@@ -58,9 +58,17 @@ export default function TransactionsSummary({ selectedDate, range }: Props) {
 		selectedDate,
 	]);
 
-	const totalExpense = data[0]?.expense || 0;
-	const totalIncome = data[0]?.income || 0;
-	const totalTransfer = data[0]?.transfer || 0;
+	if (!data.length)
+		return (
+			<View style={styles.container}>
+				<Card label="Total income" value={0} position="first" />
+				<Card label="Total expenses" value={0} position="middle" />
+				<Card label="Total transfer" value={0} position="middle" />
+				<Card label="Net balance" value={0} position="last" />
+			</View>
+		);
+
+	const { totalExpense, totalIncome, totalTransfer } = data[0];
 	const netBalance = totalIncome - totalExpense;
 
 	return (
