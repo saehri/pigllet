@@ -21,8 +21,6 @@ type Props = {
 };
 
 export default function TransactionsSummary({ selectedDate, range }: Props) {
-	const theme = useTheme();
-
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
 
@@ -35,13 +33,13 @@ export default function TransactionsSummary({ selectedDate, range }: Props) {
 			whereConditions.push(
 				gte(
 					schema.transactions.created_at,
-					moment(selectedDate).startOf(range).toISOString()
+					moment(selectedDate).startOf(range).format('YYYY-MM-DD')
 				)
 			);
 			whereConditions.push(
 				lte(
 					schema.transactions.created_at,
-					moment(selectedDate).endOf(range).toISOString()
+					moment(selectedDate).endOf(range).format('YYY-MM-DD')
 				)
 			);
 		}
