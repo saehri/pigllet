@@ -40,29 +40,11 @@ export default function StatsMonthlyScreen() {
 				/>
 
 				<View style={styles.cardContainer}>
-					<Surface mode="flat" elevation={3} style={[styles.card]}>
+					<Surface mode="flat" elevation={2} style={[styles.card]}>
 						<Text style={styles.cardTitle} variant="bodyLarge">
 							Spending by category
 						</Text>
-						<SpendingByCategory selectedDate={selectedDate} />
-					</Surface>
-					<Surface mode="flat" elevation={3} style={[styles.card]}>
-						<Text style={styles.cardTitle} variant="bodyLarge">
-							Top categories
-						</Text>
-						<SpendingByCategory selectedDate={selectedDate} />
-					</Surface>
-					<Surface mode="flat" elevation={3} style={[styles.card]}>
-						<Text style={styles.cardTitle} variant="bodyLarge">
-							Spending over time
-						</Text>
-						<SpendingByCategory selectedDate={selectedDate} />
-					</Surface>
-					<Surface mode="flat" elevation={3} style={[styles.card]}>
-						<Text style={styles.cardTitle} variant="bodyLarge">
-							Daily average spend
-						</Text>
-						<SpendingByCategory selectedDate={selectedDate} />
+						<SpendingByCategory range="month" selectedDate={selectedDate} />
 					</Surface>
 				</View>
 			</View>
