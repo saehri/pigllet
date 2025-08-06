@@ -76,6 +76,8 @@ export default function RootLayout() {
 		'Manrope-Medium': require('@/assets/fonts/Manrope-Medium.ttf'),
 		'Manrope-Regular': require('@/assets/fonts/Manrope-Regular.ttf'),
 		'Manrope-SemiBold': require('@/assets/fonts/Manrope-SemiBold.ttf'),
+		'Instrument-Regular': require('@/assets/fonts/InstrumentSerif-Regular.ttf'),
+		'Instrument-Italic': require('@/assets/fonts/InstrumentSerif-Italic.ttf'),
 	});
 
 	const colorScheme = useColorScheme();
