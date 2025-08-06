@@ -71,10 +71,10 @@ const colorMap: Record<string, string> = {
 	transfer: 'rgba(0, 150, 150, 1)',
 };
 
-export async function getStackedChartDataByDate(
+export function getStackedChartDataByDate(
 	transactions: TransactionWithDetails[],
 	dateFormat: string
-): Promise<StackDataItem[]> {
+): StackDataItem[] {
 	// Only allow valid transaction types as keys
 	type TxType = 'income' | 'expense' | 'transfer';
 	const validTypes: TxType[] = ['income', 'expense', 'transfer'];

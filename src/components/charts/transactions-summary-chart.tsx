@@ -1,59 +1,39 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { Text, useTheme } from 'react-native-paper';
 import { BarChart } from 'react-native-gifted-charts';
-import { StyleSheet, ToastAndroid, View } from 'react-native';
-import { ActivityIndicator, Text, useTheme } from 'react-native-paper';
-import {
-	getStackedChartDataByDate,
-	TransactionWithDetails,
-} from '@/utils/group-transactions';
+
 import { transactionColorMap } from '@/utils/utils';
+import { getStackedChartDataByDate } from '@/utils/group-transactions';
 import getLocaleByCurrencySymbol from '@/utils/locale-getter';
+
 import {
 	UserPreferenceContext,
 	UserPreferenceContextTypes,
 } from '@/context/UserPreferenceContext';
+import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
+import { loadTransactionsData } from '@/src/hooks/useTransactionsManager';
 
 type Props = {
-	transactions: TransactionWithDetails[];
-	dateFormat: string;
+	selectedDate: Date;
+	range?: 'month' | 'year';
 };
 
 export default function TransactionsSummaryChart({
-	transactions,
-	dateFormat,
+	selectedDate,
+	range,
 }: Props) {
 	const theme = useTheme();
 	const { currentCurrencySymbol } = useContext(
 		UserPreferenceContext
 	) as UserPreferenceContextTypes;
 
-	const [loading, setLoading] = useState(true);
-	const [chartData, setChartData] = useState<any[]>([]);
+	const { data: transactions } = useLiveQuery(
+		loadTransactionsData(selectedDate, range),
+		[selectedDate]
+	);
 
-	useEffect(() => {
-		async function load() {
-			try {
-				const data = await getStackedChartDataByDate(transactions, dateFormat);
-				setChartData(data);
-			} catch (error: any) {
-				ToastAndroid.show(error.message, ToastAndroid.SHORT);
-			} finally {
-				setLoading(false);
-			}
-		}
-
-		load();
-	}, [transactions]);
-
-	if (loading) {
-		return (
-			<View style={styles.emptyAndLoadingContainer}>
-				<ActivityIndicator />
-			</View>
-		);
-	}
-
-	if (!chartData.length) {
+	if (!transactions.length) {
 		return (
 			<View style={styles.emptyAndLoadingContainer}>
 				<Text
@@ -71,7 +51,14 @@ export default function TransactionsSummaryChart({
 			<BarChart
 				barWidth={65} // Adjust bar width for proportionate spacing
 				barBorderRadius={100}
-				stackData={chartData}
+				stackData={getStackedChartDataByDate(
+					transactions,
+					range === 'month'
+						? 'MMM D, YYYY'
+						: range === 'year'
+							? 'MMM, YYYY'
+							: 'YYYY'
+				)}
 				frontColor={theme.colors.secondary} // Main color for bars
 				spacing={13}
 				rulesThickness={0} // Thin grid lines for subtlety
@@ -145,12 +132,14 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 		height: 230,
+		marginBottom: 16,
 	},
 	chartContainer: {
 		paddingLeft: 16,
 		width: '100%',
 		overflow: 'hidden',
 		height: 230,
+		marginBottom: 16,
 	},
 	legend: {
 		gap: 12,
