@@ -16,9 +16,7 @@ import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
 
 import moment from 'moment';
 import { transactionColorMap } from '@/utils/utils';
-import { TransactionIconsCatalogue } from '@/types/type';
 
-import TransactionIcons from '../reusables/transaction-icons';
 import { ArrowDownIcon, ArrowUpIcon } from 'lucide-react-native';
 
 type Props = {
@@ -53,7 +51,7 @@ const borderRadius = {
 	},
 };
 
-export default function SpendingOverTime({ selectedDate, range }: Props) {
+export default function TransactionsOverTime({ selectedDate, range }: Props) {
 	const theme = useTheme();
 
 	// for ordering the data
@@ -136,7 +134,7 @@ export default function SpendingOverTime({ selectedDate, range }: Props) {
 		<Surface mode="flat" elevation={2} style={styles.chart}>
 			<View style={styles.chartHeader}>
 				<Text style={styles.chartTitle} variant="bodyLarge">
-					Spending over time
+					Transactions over time
 				</Text>
 
 				<Button

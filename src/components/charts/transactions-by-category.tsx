@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { BarChart, barDataItem } from 'react-native-gifted-charts';
+import { BarChart } from 'react-native-gifted-charts';
 import { Button, Surface, Text, useTheme } from 'react-native-paper';
 
 import {
@@ -24,6 +24,8 @@ import { ArrowDownIcon, ArrowUpIcon } from 'lucide-react-native';
 type Props = {
 	selectedDate: Date;
 	range: 'month' | 'year';
+	type: schema.TransactionType;
+	name: string;
 };
 
 const borderRadius = {
@@ -53,7 +55,12 @@ const borderRadius = {
 	},
 };
 
-export default function SpendingByCategory({ selectedDate, range }: Props) {
+export default function TransactionsByCategory({
+	selectedDate,
+	range,
+	type,
+	name,
+}: Props) {
 	const theme = useTheme();
 
 	// for ordering the data
@@ -64,7 +71,7 @@ export default function SpendingByCategory({ selectedDate, range }: Props) {
 	const drizzleDb = drizzle(db, { schema });
 
 	const getSumByTypeInDateRange = () => {
-		const whereConditions = [eq(schema.transactions.type, 'expense')];
+		const whereConditions = [eq(schema.transactions.type, type)];
 
 		if (selectedDate && range) {
 			whereConditions.push(
@@ -137,7 +144,7 @@ export default function SpendingByCategory({ selectedDate, range }: Props) {
 		<Surface mode="flat" elevation={2} style={styles.chart}>
 			<View style={styles.chartHeader}>
 				<Text style={styles.chartTitle} variant="bodyLarge">
-					Spending by category
+					{name}
 				</Text>
 
 				<Button
@@ -165,6 +172,7 @@ export default function SpendingByCategory({ selectedDate, range }: Props) {
 				<ChartRenderer
 					chartData={chartData}
 					chartMaxValue={chartMaxValue[0].maxValue}
+					transactionType={type}
 				/>
 			) : (
 				<View style={styles.emptyAndLoadingContainer}>
@@ -183,9 +191,14 @@ export default function SpendingByCategory({ selectedDate, range }: Props) {
 type ChartRendererProps = {
 	chartData: { value: number; label: string; iconName: string }[];
 	chartMaxValue: number;
+	transactionType: schema.TransactionType;
 };
 
-function ChartRenderer({ chartData, chartMaxValue }: ChartRendererProps) {
+function ChartRenderer({
+	chartData,
+	chartMaxValue,
+	transactionType,
+}: ChartRendererProps) {
 	const { currentCurrencySymbol } = useContext(
 		UserPreferenceContext
 	) as UserPreferenceContextTypes;
@@ -204,7 +217,7 @@ function ChartRenderer({ chartData, chartMaxValue }: ChartRendererProps) {
 				height={200}
 				maxValue={chartMaxValue}
 				data={chartData}
-				frontColor={transactionColorMap.expense}
+				frontColor={transactionColorMap[transactionType]}
 				spacing={10}
 				rulesThickness={0}
 				xAxisThickness={0}
@@ -230,6 +243,7 @@ function ChartRenderer({ chartData, chartMaxValue }: ChartRendererProps) {
 				{chartData.map((data, index) => (
 					<CategoryCard
 						key={data.label}
+						transactionType={transactionType}
 						iconName={data.iconName as keyof TransactionIconsCatalogue}
 						label={data.label}
 						value={`${currentCurrencySymbol} ${data.value.toLocaleString(
@@ -257,9 +271,16 @@ type CategoryCardProps = {
 	label: string;
 	value: string;
 	position: 'only' | 'first' | 'middle' | 'last';
+	transactionType: schema.TransactionType;
 };
 
-function CategoryCard({ iconName, label, value, position }: CategoryCardProps) {
+function CategoryCard({
+	iconName,
+	label,
+	value,
+	position,
+	transactionType,
+}: CategoryCardProps) {
 	return (
 		<Surface
 			mode="flat"
@@ -277,7 +298,7 @@ function CategoryCard({ iconName, label, value, position }: CategoryCardProps) {
 			<View style={styles.categoryCardIcon}>
 				<TransactionIcons
 					icon={iconName}
-					color={transactionColorMap.expense}
+					color={transactionColorMap[transactionType]}
 					size={20}
 				/>
 			</View>

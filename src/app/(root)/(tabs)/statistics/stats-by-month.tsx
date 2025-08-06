@@ -1,15 +1,12 @@
 import { useState } from 'react';
-import { useTheme } from 'react-native-paper';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
 import AverageSpending from '@/src/components/statistics/average-spending';
 import MonthSelectorBar from '@/src/components/reusables/month-selector-bar';
-import SpendingByCategory from '@/src/components/charts/spending-by-category';
-import SpendingOverTime from '@/src/components/statistics/spending-over-time';
+import TransactionsOverTime from '@/src/components/statistics/transactions-over-time';
+import TransactionsByCategory from '@/src/components/charts/transactions-by-category';
 
 export default function StatsMonthlyScreen() {
-	const theme = useTheme();
-
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
 	function gotToNextMonth() {
@@ -42,8 +39,25 @@ export default function StatsMonthlyScreen() {
 
 				<View style={styles.chartsContainer}>
 					<AverageSpending selectedDate={selectedDate} range="month" />
-					<SpendingByCategory range="month" selectedDate={selectedDate} />
-					<SpendingOverTime range="month" selectedDate={selectedDate} />
+					<TransactionsOverTime range="month" selectedDate={selectedDate} />
+					<TransactionsByCategory
+						type="expense"
+						range="month"
+						selectedDate={selectedDate}
+						name="Expenses by category"
+					/>
+					<TransactionsByCategory
+						type="income"
+						range="month"
+						selectedDate={selectedDate}
+						name="Incomes by category"
+					/>
+					<TransactionsByCategory
+						type="transfer"
+						range="month"
+						selectedDate={selectedDate}
+						name="Transfers by category"
+					/>
 				</View>
 			</View>
 		</ScrollView>
