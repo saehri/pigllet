@@ -1,31 +1,21 @@
-import { Stack, useRouter } from 'expo-router';
+import { Stack } from 'expo-router';
 import { useFonts } from 'expo-font';
 import { Suspense, useContext, useEffect } from 'react';
-import {
-	ColorSchemeName,
-	useColorScheme,
-	View,
-	ScrollView,
-	StyleSheet,
-} from 'react-native';
+import { useColorScheme, View, ScrollView, StyleSheet } from 'react-native';
 import {
 	DefaultTheme,
 	PaperProvider,
 	Text,
 	ThemeProvider,
 } from 'react-native-paper';
-import {
-	SQLiteProvider,
-	openDatabaseSync,
-	useSQLiteContext,
-} from 'expo-sqlite';
+import { SQLiteProvider, openDatabaseSync } from 'expo-sqlite';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 import { useDrizzleStudio } from 'expo-drizzle-studio-plugin';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
 import migrations from '@/drizzle/migrations';
 
-import * as schema from '@/db/schema';
 import * as SplashScreen from 'expo-splash-screen';
 
 import UserPreferenceProvider, {
@@ -46,36 +36,15 @@ SplashScreen.setOptions({
 
 const DATABASE_NAME = 'database.db';
 
-type AppProps = {
-	colorScheme: ColorSchemeName;
-};
-
-function App({ colorScheme }: AppProps) {
+function App() {
 	const { currentAppTheme, currentAppColor } = useContext(
 		UserPreferenceContext
 	) as UserPreferenceContextTypes;
 
 	const theme = {
 		...DefaultTheme,
-		colors: selectColorScheme(currentAppTheme, currentAppColor, colorScheme),
+		colors: selectColorScheme(currentAppTheme, currentAppColor),
 	};
-
-	const router = useRouter(); // -- Is used in fetchAccounts fn to redirect user to account set up screen if they does not have any account
-
-	const db = useSQLiteContext();
-	const drizzleDb = drizzle(db, { schema });
-
-	useEffect(() => {
-		const fetchAccounts = async () => {
-			const accounts = await drizzleDb.select().from(schema.accounts);
-
-			if (!accounts.length) {
-				router.replace('/(auth)/welcome');
-			}
-		};
-
-		fetchAccounts();
-	}, []);
 
 	return (
 		<PaperProvider theme={theme} settings={{ rippleEffectEnabled: false }}>
@@ -157,7 +126,7 @@ export default function RootLayout() {
 			>
 				<UserPreferenceProvider>
 					<GestureHandlerRootView style={{ flex: 1 }}>
-						<App colorScheme={colorScheme} />
+						<App />
 					</GestureHandlerRootView>
 				</UserPreferenceProvider>
 			</SQLiteProvider>

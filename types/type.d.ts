@@ -102,11 +102,5 @@ declare type CurrencySymbols =
 
 declare type AppTheme = 'Light' | 'Dark' | 'Device';
 
-declare type AppColor =
-	| 'Default'
-	| 'Emerald'
-	| 'Onyx'
-	| 'Citrine'
-	| 'Rose Quartz';
-
 declare type SubscriptionBillingTypes = 'monthly' | 'yearly';
+
