@@ -88,22 +88,6 @@ export default function AverageSpending({ selectedDate, range }: Props) {
 		[selectedDate]
 	);
 
-	if (!averageSpending.length && !averageSpending.length)
-		return (
-			<Surface mode="flat" elevation={2} style={[styles.chart]}>
-				<Text style={styles.chartTitle} variant="bodyLarge">
-					{range === 'month' ? 'Daily' : 'Monthly'} average spending
-				</Text>
-
-				<Text
-					variant="bodyLarge"
-					style={{ fontFamily: 'Manrope-Regular', opacity: 0.5 }}
-				>
-					No data available to display at the moment.
-				</Text>
-			</Surface>
-		);
-
 	// format current average spending according to user preference
 	const formattedAverageSpending = `${currentCurrencySymbol} ${averageSpending[0]?.value.toLocaleString(getLocaleByCurrencySymbol(currentCurrencySymbol))}`;
 
