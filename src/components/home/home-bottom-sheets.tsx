@@ -14,7 +14,7 @@ type Props = {
 export default function HomeBottomSheets({ transactions }: Props) {
 	const theme = useTheme();
 
-	const snapPoints = ['30%', '93%'];
+	const snapPoints = ['55%', '93%'];
 
 	return (
 		<BottomSheet

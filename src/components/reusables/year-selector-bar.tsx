@@ -1,11 +1,9 @@
-import { View } from 'react-native';
-import { Dispatch, SetStateAction } from 'react';
-import { Button, Text, useTheme } from 'react-native-paper';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react-native';
-
 import moment from 'moment';
-
-import MonthYearSelectorDialog from './month-year-selector-dialog';
+import { View } from 'react-native';
+import { Button, Text, useTheme } from 'react-native-paper';
+import YearSelectorDialog from './year-selector-dialog';
+import { Dispatch, SetStateAction } from 'react';
 
 type Props = {
 	selectedDate: Date;
@@ -14,11 +12,11 @@ type Props = {
 	onPrev: () => void;
 };
 
-export default function MonthSelectorBar({
-	selectedDate,
-	setSelectedDate,
+export default function YearSelectorBar({
 	onNext,
 	onPrev,
+	selectedDate,
+	setSelectedDate,
 }: Props) {
 	const theme = useTheme();
 
@@ -34,7 +32,7 @@ export default function MonthSelectorBar({
 			}}
 		>
 			<Text style={{ fontFamily: 'Manrope-Medium' }} variant="titleLarge">
-				{moment(selectedDate).format('MMM, YYYY')}
+				{moment(selectedDate).format('YYYY')}
 			</Text>
 
 			<View style={{ flexDirection: 'row' }}>
@@ -73,7 +71,8 @@ export default function MonthSelectorBar({
 						color={theme.colors.onSecondaryContainer}
 					/>
 				</Button>
-				<MonthYearSelectorDialog
+
+				<YearSelectorDialog
 					onValueChange={setSelectedDate}
 					selectedValue={selectedDate}
 				/>
@@ -81,4 +80,3 @@ export default function MonthSelectorBar({
 		</View>
 	);
 }
-

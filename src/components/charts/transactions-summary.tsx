@@ -1,6 +1,6 @@
+import { useContext } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Surface, Text, useTheme } from 'react-native-paper';
-import { useContext } from 'react';
 
 import moment from 'moment';
 
@@ -39,7 +39,7 @@ export default function TransactionsSummary({ selectedDate, range }: Props) {
 			whereConditions.push(
 				lte(
 					schema.transactions.created_at,
-					moment(selectedDate).endOf(range).format('YYY-MM-DD')
+					moment(selectedDate).endOf(range).format('YYYY-MM-DD')
 				)
 			);
 		}
@@ -61,10 +61,16 @@ export default function TransactionsSummary({ selectedDate, range }: Props) {
 	if (!data.length)
 		return (
 			<View style={styles.container}>
-				<Card label="Total income" value={0} position="first" />
-				<Card label="Total expenses" value={0} position="middle" />
-				<Card label="Total transfer" value={0} position="middle" />
-				<Card label="Net balance" value={0} position="last" />
+				<Text variant="titleLarge" style={styles.title}>
+					Overview
+				</Text>
+
+				<View style={styles.list}>
+					<Card label="Total income" value={0} />
+					<Card label="Total expenses" value={0} />
+					<Card label="Total transfer" value={0} />
+					<Card label="Net balance" value={0} />
+				</View>
 			</View>
 		);
 
@@ -73,10 +79,16 @@ export default function TransactionsSummary({ selectedDate, range }: Props) {
 
 	return (
 		<View style={styles.container}>
-			<Card label="Total income" value={totalIncome} position="first" />
-			<Card label="Total expenses" value={totalExpense} position="middle" />
-			<Card label="Total transfer" value={totalTransfer} position="middle" />
-			<Card label="Net balance" value={netBalance} position="last" />
+			<Text variant="titleLarge" style={styles.title}>
+				Overview
+			</Text>
+
+			<View style={styles.list}>
+				<Card label="Total income" value={totalIncome} />
+				<Card label="Total expenses" value={totalExpense} />
+				<Card label="Total transfer" value={totalTransfer} />
+				<Card label="Net balance" value={netBalance} />
+			</View>
 		</View>
 	);
 }
@@ -84,66 +96,31 @@ export default function TransactionsSummary({ selectedDate, range }: Props) {
 type CardProps = {
 	label: string;
 	value: number;
-	position: 'first' | 'middle' | 'last' | 'only';
 };
 
-function Card({ label, value, position }: CardProps) {
+function Card({ label, value }: CardProps) {
 	const theme = useTheme();
 
 	const { currentCurrencySymbol } = useContext(
 		UserPreferenceContext
 	) as UserPreferenceContextTypes;
 
-	const borderRadius = {
-		tr: {
-			first: 16,
-			middle: 3,
-			only: 16,
-			last: 3,
-		},
-		tl: {
-			first: 16,
-			middle: 3,
-			only: 16,
-			last: 3,
-		},
-		br: {
-			first: 3,
-			middle: 3,
-			only: 16,
-			last: 16,
-		},
-		bl: {
-			first: 3,
-			middle: 3,
-			only: 16,
-			last: 16,
-		},
-	};
-
 	return (
-		<Surface
-			mode="flat"
-			elevation={1}
-			style={[
-				styles.itemContainer,
-				{
-					backgroundColor: theme.colors.tertiaryContainer,
-					borderTopRightRadius: borderRadius.tr[position],
-					borderTopLeftRadius: borderRadius.tl[position],
-					borderBottomLeftRadius: borderRadius.bl[position],
-					borderBottomRightRadius: borderRadius.br[position],
-				},
-			]}
-		>
+		<Surface mode="flat" elevation={3} style={[styles.itemContainer]}>
 			<Text
-				style={[styles.itemText, { color: theme.colors.onTertiaryContainer }]}
+				style={[styles.itemText, { color: theme.colors.onSurface }]}
 				variant="bodyMedium"
 			>
 				{label}
 			</Text>
 			<Text
-				style={[styles.itemText, { color: theme.colors.onTertiaryContainer }]}
+				style={[
+					{
+						color: theme.colors.onSurface,
+						fontFamily: 'Manrope-Medium',
+						opacity: 1,
+					},
+				]}
 				variant="bodyMedium"
 			>
 				{`${currentCurrencySymbol} ${value.toLocaleString(
@@ -156,18 +133,24 @@ function Card({ label, value, position }: CardProps) {
 
 const styles = StyleSheet.create({
 	container: {
-		width: '100%',
+		gap: 12,
+		paddingHorizontal: 16,
+	},
+	list: {
 		gap: 2,
-		overflow: 'hidden',
-		paddingHorizontal: 24,
 	},
 	itemContainer: {
 		flexDirection: 'row',
-		paddingVertical: 12,
-		paddingHorizontal: 16,
+		paddingVertical: 16,
+		paddingHorizontal: 24,
 		justifyContent: 'space-between',
+		borderRadius: 1000,
 	},
 	itemText: {
+		fontFamily: 'Manrope-Regular',
+		opacity: 0.7,
+	},
+	title: {
 		fontFamily: 'Manrope-Regular',
 	},
 });

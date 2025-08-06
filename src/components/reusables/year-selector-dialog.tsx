@@ -38,16 +38,11 @@ export default function YearSelectorDialog({
 		pickerRef.current.focus();
 	}
 
-	function close() {
-		pickerRef.current.blur();
-	}
-
 	return (
 		<>
 			<View
 				style={{
 					backgroundColor: theme.colors.elevation.level5,
-					// paddingHorizontal: 6,
 					borderRadius: 12,
 					overflow: 'hidden',
 					height: 0,
@@ -92,11 +87,11 @@ export default function YearSelectorDialog({
 				mode="contained-tonal"
 				contentStyle={{ height: 40 }}
 				onPress={open}
-				style={{ backgroundColor: theme.colors.elevation.level2 }}
+				style={{ backgroundColor: theme.colors.secondaryContainer }}
 			>
 				<CalendarRangeIcon
 					strokeWidth={1.5}
-					color={theme.colors.onSurface}
+					color={theme.colors.onSecondaryContainer}
 					size={20}
 				/>
 			</Button>

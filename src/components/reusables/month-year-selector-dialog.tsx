@@ -172,11 +172,11 @@ export default function MonthYearSelectorDialog({
 				mode="contained-tonal"
 				contentStyle={{ height: 40 }}
 				onPress={openDialog}
-				style={{ backgroundColor: theme.colors.elevation.level2 }}
+				style={{ backgroundColor: theme.colors.secondaryContainer }}
 			>
 				<CalendarFoldIcon
 					strokeWidth={1.5}
-					color={theme.colors.onSurface}
+					color={theme.colors.onSecondaryContainer}
 					size={20}
 				/>
 			</Button>
