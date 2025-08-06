@@ -19,11 +19,6 @@ import { transactionColorMap } from '@/utils/utils';
 
 import { ArrowDownIcon, ArrowUpIcon } from 'lucide-react-native';
 
-type Props = {
-	selectedDate: Date;
-	range: 'month' | 'year';
-};
-
 const borderRadius = {
 	tr: {
 		first: 24,
@@ -51,7 +46,19 @@ const borderRadius = {
 	},
 };
 
-export default function TransactionsOverTime({ selectedDate, range }: Props) {
+type Props = {
+	selectedDate: Date;
+	range: 'month' | 'year';
+	transactionType: schema.TransactionType;
+	name: string;
+};
+
+export default function TransactionsOverTime({
+	selectedDate,
+	range,
+	transactionType,
+	name,
+}: Props) {
 	const theme = useTheme();
 
 	// for ordering the data
@@ -62,7 +69,7 @@ export default function TransactionsOverTime({ selectedDate, range }: Props) {
 	const drizzleDb = drizzle(db, { schema });
 
 	const getSumByTypeInDateRange = () => {
-		const whereConditions = [eq(schema.transactions.type, 'expense')];
+		const whereConditions = [eq(schema.transactions.type, transactionType)];
 
 		if (selectedDate && range) {
 			whereConditions.push(
@@ -134,7 +141,7 @@ export default function TransactionsOverTime({ selectedDate, range }: Props) {
 		<Surface mode="flat" elevation={2} style={styles.chart}>
 			<View style={styles.chartHeader}>
 				<Text style={styles.chartTitle} variant="bodyLarge">
-					Transactions over time
+					{name}
 				</Text>
 
 				<Button
@@ -162,6 +169,7 @@ export default function TransactionsOverTime({ selectedDate, range }: Props) {
 				<ChartRenderer
 					chartData={chartData}
 					chartMaxValue={chartMaxValue[0].maxValue}
+					transactionType={transactionType}
 				/>
 			) : (
 				<View style={styles.emptyAndLoadingContainer}>
@@ -180,9 +188,14 @@ export default function TransactionsOverTime({ selectedDate, range }: Props) {
 type ChartRendererProps = {
 	chartData: { value: number; label: string }[];
 	chartMaxValue: number;
+	transactionType: schema.TransactionType;
 };
 
-function ChartRenderer({ chartData, chartMaxValue }: ChartRendererProps) {
+function ChartRenderer({
+	chartData,
+	chartMaxValue,
+	transactionType,
+}: ChartRendererProps) {
 	const { currentCurrencySymbol } = useContext(
 		UserPreferenceContext
 	) as UserPreferenceContextTypes;
@@ -204,7 +217,7 @@ function ChartRenderer({ chartData, chartMaxValue }: ChartRendererProps) {
 					...data,
 					label: moment(data.label).format('MMM D, YYYY'),
 				}))}
-				frontColor={transactionColorMap.expense}
+				frontColor={transactionColorMap[transactionType]}
 				spacing={10}
 				rulesThickness={0}
 				xAxisThickness={0}
