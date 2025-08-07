@@ -26,7 +26,7 @@ export default function AccountSettingScreen() {
 			<View style={{ gap: 24 }}>
 				<SettingContentWrapper headerTitle="Account">
 					<SettingContentButton
-						label="Email (Coming soon)"
+						label="Email (coming soon)"
 						buttonRight={
 							<ChevronRight
 								strokeWidth={1.5}
@@ -35,9 +35,10 @@ export default function AccountSettingScreen() {
 								style={{ opacity: 0.6 }}
 							/>
 						}
+						position="first"
 					/>
 					<SettingContentButton
-						label="Password (Coming soon)"
+						label="Password (coming soon)"
 						buttonRight={
 							<ChevronRight
 								strokeWidth={1.5}
@@ -46,6 +47,7 @@ export default function AccountSettingScreen() {
 								style={{ opacity: 0.6 }}
 							/>
 						}
+						position="last"
 					/>
 				</SettingContentWrapper>
 
@@ -96,11 +98,13 @@ function ResetUserPreference() {
 			<SettingContentWrapper headerTitle="Danger area">
 				<SettingContentButton
 					label="Delete my data"
+					description="Delete all your saved data in this app"
 					labelStyle={{ color: '#ff0000' }}
 					buttonRight={
 						<ChevronRight strokeWidth={1.5} size={20} color={'#ff0000'} />
 					}
 					onPress={showDialog}
+					position="only"
 				/>
 			</SettingContentWrapper>
 

@@ -1,5 +1,5 @@
 import { View } from 'react-native';
-import { Surface, Text } from 'react-native-paper';
+import { Text } from 'react-native-paper';
 
 type Props = {
 	headerTitle: string;
@@ -12,20 +12,11 @@ export default function SettingContentWrapper({
 }: Props) {
 	return (
 		<View style={{ gap: 12 }}>
-			<Text
-				variant="bodyMedium"
-				style={{ opacity: 0.8, marginLeft: 16, fontFamily: 'Manrope-Regular' }}
-			>
+			<Text style={{ opacity: 0.8, fontFamily: 'Manrope-Regular' }}>
 				{headerTitle}
 			</Text>
 
-			<Surface
-				mode="flat"
-				elevation={2}
-				style={{ borderRadius: 24, overflow: 'hidden' }}
-			>
-				{children}
-			</Surface>
+			<View style={{ gap: 2 }}>{children}</View>
 		</View>
 	);
 }

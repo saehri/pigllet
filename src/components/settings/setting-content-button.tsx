@@ -1,4 +1,7 @@
+import { CardPositionsTypes } from '@/types/type';
+import { TRANSACTION_CARD_BR } from '@/utils/utils';
 import { ChevronsUpDown } from 'lucide-react-native';
+import { useMemo } from 'react';
 import {
 	Pressable,
 	StyleProp,
@@ -11,12 +14,14 @@ import { Text, useTheme } from 'react-native-paper';
 
 type Props = {
 	label: string;
+	description?: string;
 	buttonRightTitle?: string;
 	buttonRight?: React.ReactNode;
 	onPress?: () => void;
 	higlight?: boolean;
 	labelStyle?: StyleProp<TextStyle>;
 	contentStyle?: StyleProp<ViewStyle>;
+	position: CardPositionsTypes;
 };
 
 export default function SettingContentButton({
@@ -27,13 +32,26 @@ export default function SettingContentButton({
 	higlight,
 	contentStyle = {},
 	labelStyle = {},
+	position,
+	description,
 }: Props) {
 	const theme = useTheme();
+
+	const cardRadiusStyle = useMemo(
+		() => ({
+			borderTopLeftRadius: TRANSACTION_CARD_BR[position].tl,
+			borderTopRightRadius: TRANSACTION_CARD_BR[position].tr,
+			borderBottomLeftRadius: TRANSACTION_CARD_BR[position].bl,
+			borderBottomRightRadius: TRANSACTION_CARD_BR[position].br,
+		}),
+		[position]
+	);
 
 	return (
 		<Pressable
 			style={[
 				styles.container,
+				cardRadiusStyle,
 				{
 					...(contentStyle as object),
 					backgroundColor: higlight
@@ -43,16 +61,29 @@ export default function SettingContentButton({
 			]}
 			onPress={onPress}
 		>
-			<Text
-				variant="bodyLarge"
-				style={{
-					fontFamily: 'Manrope-Regular',
-					...(labelStyle as object),
-					color: higlight ? theme.colors.primary : theme.colors.onSurface,
-				}}
-			>
-				{label}
-			</Text>
+			<View>
+				<Text
+					variant="bodyLarge"
+					style={{
+						fontFamily: 'Manrope-Regular',
+						...(labelStyle as object),
+						color: higlight ? theme.colors.primary : theme.colors.onSurface,
+					}}
+				>
+					{label}
+				</Text>
+
+				{description && (
+					<Text
+						style={{
+							fontFamily: 'Manrope-Light',
+							opacity: 0.7,
+						}}
+					>
+						{description}
+					</Text>
+				)}
+			</View>
 
 			{buttonRight ? (
 				buttonRight
