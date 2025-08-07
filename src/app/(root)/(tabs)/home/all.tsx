@@ -9,6 +9,7 @@ import NoItemNotice from '@/src/components/reusables/no-items-notice';
 import TransactionCard from '@/src/components/reusables/transaction-card';
 import HomeHeaderContainer from '@/src/components/home/home-header-container';
 import TransactionsSummary from '@/src/components/charts/transactions-summary';
+import { getCardPosition } from '@/utils/utils';
 
 export default function HomeScreen() {
 	const theme = useTheme();
@@ -38,7 +39,7 @@ export default function HomeScreen() {
 			contentContainerStyle={{ paddingBottom: transactions.length ? 180 : 0 }}
 			ListEmptyComponent={<NoItemNotice />}
 			showsVerticalScrollIndicator={false}
-			data={groupedTransactionsByDate(transactions, 'MMMM D, YYYY')}
+			data={groupedTransactionsByDate(transactions, 'YYYY')}
 			renderItem={({ item }) => (
 				<View style={styles.transactionListContainer} key={item.created_date}>
 					<Text style={styles.transactionListTitle} variant="bodySmall">
@@ -51,15 +52,7 @@ export default function HomeScreen() {
 								key={data.transaction.id}
 								data={data}
 								showDate={false}
-								position={
-									item.transactions.length === 1
-										? 'only'
-										: index > 0 && index < item.transactions.length - 1
-											? 'middle'
-											: index === 0
-												? 'first'
-												: 'last'
-								}
+								position={getCardPosition(index, item.transactions.length)}
 							/>
 						))}
 					</View>
