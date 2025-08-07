@@ -12,6 +12,7 @@ import {
 } from 'lucide-react-native';
 
 import AccountMiniViewer from '@/src/components/reusables/account-mini-viewer';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function Layout() {
 	const theme = useTheme();
@@ -67,6 +68,7 @@ export default function Layout() {
 						borderTopWidth: 1,
 						borderWidth: 1,
 						borderColor: theme.colors.outlineVariant,
+						zIndex: 10,
 					},
 					tabBarItemStyle: {
 						overflow: 'hidden',
@@ -231,6 +233,20 @@ export default function Layout() {
 					}}
 				/>
 			</Tabs>
+
+			<LinearGradient
+				colors={['black', 'transparent']}
+				start={{ x: 0.5, y: 1 }}
+				end={{ x: 0.5, y: 0 }}
+				style={{
+					position: 'absolute',
+					bottom: 0,
+					zIndex: 1,
+					left: 0,
+					width: '100%',
+					height: 100,
+				}}
+			/>
 		</View>
 	);
 }
