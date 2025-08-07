@@ -51,7 +51,7 @@ const UserPreferenceProvider = ({ children }: { children: ReactNode }) => {
 			setLoading(true);
 
 			const resettedData: UserPreference = {
-				currentAppTheme: 'Device',
+				currentAppTheme: 'Dark',
 				currentCurrencySymbol: 'Rp',
 				firstTimer: true,
 			};

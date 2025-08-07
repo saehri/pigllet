@@ -101,7 +101,7 @@ declare type CurrencySymbols =
 	| 'kr'
 	| 'ƒ';
 
-declare type AppTheme = 'Light' | 'Dark' | 'Device';
+declare type AppTheme = 'Light' | 'Dark';
 
 declare type SubscriptionBillingTypes = 'monthly' | 'yearly';
 
