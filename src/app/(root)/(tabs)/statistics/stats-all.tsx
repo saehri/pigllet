@@ -1,11 +1,12 @@
+import { useRef, useState } from 'react';
 import { LayoutDashboardIcon } from 'lucide-react-native';
 import { Button, Text, useTheme } from 'react-native-paper';
-import { Dispatch, SetStateAction, useRef, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import TransactionsOverTime from '@/src/components/statistics/transactions-over-time';
 import TransactionsByCategory from '@/src/components/charts/transactions-by-category';
+import BottomSheetToggleButton from '@/src/components/statistics/bottom-sheet-toggle-button';
 
 export default function StatsAllScreen() {
 	const theme = useTheme();
@@ -117,19 +118,19 @@ export default function StatsAllScreen() {
 			>
 				<BottomSheetView style={{ paddingHorizontal: 16, gap: 2 }}>
 					<Text style={styles.checkboxSectionTitle}>By date</Text>
-					<ToggleButton
+					<BottomSheetToggleButton
 						currentValue={showExpenseByDate}
 						setCurrentValue={setShowExpenseByDate}
 						label="Expenses by date"
 						position="first"
 					/>
-					<ToggleButton
+					<BottomSheetToggleButton
 						currentValue={showIncomeByDate}
 						setCurrentValue={setShowIncomeByDate}
 						label="Incomes by date"
 						position="middle"
 					/>
-					<ToggleButton
+					<BottomSheetToggleButton
 						currentValue={showTransferByDate}
 						setCurrentValue={setShowTransferByDate}
 						label="Transfers by date"
@@ -139,19 +140,19 @@ export default function StatsAllScreen() {
 					<Text style={[styles.checkboxSectionTitle, { marginTop: 16 }]}>
 						By category
 					</Text>
-					<ToggleButton
+					<BottomSheetToggleButton
 						currentValue={showExpenseByCategory}
 						setCurrentValue={setShowExpenseByCategory}
 						label="Expenses by category"
 						position="first"
 					/>
-					<ToggleButton
+					<BottomSheetToggleButton
 						currentValue={showIncomeByCategory}
 						setCurrentValue={setShowIncomeByCategory}
 						label="Incomes by category"
 						position="middle"
 					/>
-					<ToggleButton
+					<BottomSheetToggleButton
 						currentValue={showTransferByCategory}
 						setCurrentValue={setShowTransferByCategory}
 						label="Transfers by category"
@@ -163,115 +164,10 @@ export default function StatsAllScreen() {
 	);
 }
 
-type ToggleButtonProps = {
-	label: string;
-	currentValue: boolean;
-	setCurrentValue: Dispatch<SetStateAction<boolean>>;
-	position: 'first' | 'middle' | 'last' | 'only';
-};
-
-const borderRadius = {
-	tr: {
-		first: 16,
-		middle: 6,
-		only: 16,
-		last: 6,
-	},
-	tl: {
-		first: 16,
-		middle: 6,
-		only: 16,
-		last: 6,
-	},
-	br: {
-		first: 6,
-		middle: 6,
-		only: 16,
-		last: 16,
-	},
-	bl: {
-		first: 6,
-		middle: 6,
-		only: 16,
-		last: 16,
-	},
-};
-
-function ToggleButton({
-	currentValue,
-	label,
-	setCurrentValue,
-	position,
-}: ToggleButtonProps) {
-	const theme = useTheme();
-
-	return (
-		<View
-			style={[
-				styles.checkboxContainer,
-				{
-					backgroundColor: theme.colors.elevation.level4,
-					borderTopRightRadius: borderRadius.tr[position],
-					borderTopLeftRadius: borderRadius.tl[position],
-					borderBottomLeftRadius: borderRadius.bl[position],
-					borderBottomRightRadius: borderRadius.br[position],
-				},
-			]}
-		>
-			<Text variant="bodyLarge" style={styles.checkboxTitle}>
-				{label}
-			</Text>
-
-			<Pressable
-				onPress={() => setCurrentValue((prev) => !prev)}
-				style={[
-					styles.checkboxButton,
-					{
-						borderColor: theme.colors.outlineVariant,
-						backgroundColor: theme.colors.elevation.level2,
-						justifyContent: currentValue ? 'flex-end' : 'flex-start',
-					},
-				]}
-			>
-				<View
-					style={[
-						styles.checkboxButtonIndicator,
-						{ backgroundColor: theme.colors.secondary },
-					]}
-				></View>
-			</Pressable>
-		</View>
-	);
-}
-
 const styles = StyleSheet.create({
 	chartsContainer: {
 		marginTop: 24,
 		gap: 4,
-	},
-	checkboxContainer: {
-		padding: 16,
-		borderRadius: 6,
-		alignItems: 'center',
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-	},
-	checkboxTitle: {
-		fontFamily: 'Manrope-Regular',
-	},
-	checkboxButton: {
-		height: 24,
-		width: 60,
-		borderWidth: 1,
-		borderRadius: 100,
-		alignItems: 'center',
-		flexDirection: 'row',
-		paddingHorizontal: 3,
-	},
-	checkboxButtonIndicator: {
-		width: 35,
-		height: 15,
-		borderRadius: 100,
 	},
 	checkboxSectionTitle: {
 		fontFamily: 'Manrope-Regular',
