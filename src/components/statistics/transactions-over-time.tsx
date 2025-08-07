@@ -47,10 +47,11 @@ const borderRadius = {
 };
 
 type Props = {
-	selectedDate: Date;
-	range: 'month' | 'year';
+	selectedDate?: Date;
+	range?: 'month' | 'year';
 	transactionType: schema.TransactionType;
 	name: string;
+	descriptions?: string;
 };
 
 export default function TransactionsOverTime({
@@ -58,6 +59,7 @@ export default function TransactionsOverTime({
 	range,
 	transactionType,
 	name,
+	descriptions,
 }: Props) {
 	const theme = useTheme();
 
@@ -106,7 +108,7 @@ export default function TransactionsOverTime({
 	};
 
 	const getMaxValue = () => {
-		const whereConditions = [eq(schema.transactions.type, 'expense')];
+		const whereConditions = [eq(schema.transactions.type, transactionType)];
 
 		if (selectedDate && range) {
 			whereConditions.push(
@@ -125,7 +127,7 @@ export default function TransactionsOverTime({
 
 		return drizzleDb
 			.select({
-				maxValue: sql<number>`MAX(${schema.transactions.amount})`,
+				maxValue: sql<number>`SUM(${schema.transactions.amount})`,
 			})
 			.from(schema.transactions)
 			.where(whereConditions.length > 0 ? and(...whereConditions) : undefined);
@@ -135,14 +137,20 @@ export default function TransactionsOverTime({
 		selectedDate,
 		order,
 	]);
+
 	const { data: chartMaxValue } = useLiveQuery(getMaxValue(), [selectedDate]);
 
 	return (
 		<Surface mode="flat" elevation={2} style={styles.chart}>
 			<View style={styles.chartHeader}>
-				<Text style={styles.chartTitle} variant="bodyLarge">
-					{name}
-				</Text>
+				<View>
+					<Text style={styles.chartTitle} variant="bodyLarge">
+						{name}
+					</Text>
+					<Text style={styles.chartSubtitle} variant="bodyMedium">
+						{descriptions}
+					</Text>
+				</View>
 
 				<Button
 					mode="contained-tonal"
@@ -170,6 +178,7 @@ export default function TransactionsOverTime({
 					chartData={chartData}
 					chartMaxValue={chartMaxValue[0].maxValue}
 					transactionType={transactionType}
+					range={range}
 				/>
 			) : (
 				<View style={styles.emptyAndLoadingContainer}>
@@ -189,12 +198,14 @@ type ChartRendererProps = {
 	chartData: { value: number; label: string }[];
 	chartMaxValue: number;
 	transactionType: schema.TransactionType;
+	range?: 'month' | 'year';
 };
 
 function ChartRenderer({
 	chartData,
 	chartMaxValue,
 	transactionType,
+	range,
 }: ChartRendererProps) {
 	const { currentCurrencySymbol } = useContext(
 		UserPreferenceContext
@@ -215,7 +226,13 @@ function ChartRenderer({
 				maxValue={chartMaxValue}
 				data={chartData.map((data) => ({
 					...data,
-					label: moment(data.label).format('MMM D, YYYY'),
+					label: moment(data.label).format(
+						range === 'month'
+							? 'MMM D, YYYY'
+							: range === 'year'
+								? 'MMM, YYYY'
+								: 'YYYY'
+					),
 				}))}
 				frontColor={transactionColorMap[transactionType]}
 				spacing={10}
@@ -242,6 +259,7 @@ function ChartRenderer({
 			<View style={styles.cardContainer}>
 				{chartData.map((data, index) => (
 					<CategoryCard
+						range={range}
 						key={data.label}
 						label={data.label}
 						value={`${currentCurrencySymbol} ${data.value.toLocaleString(
@@ -268,9 +286,10 @@ type CategoryCardProps = {
 	label: string;
 	value: string;
 	position: 'only' | 'first' | 'middle' | 'last';
+	range?: 'month' | 'year';
 };
 
-function CategoryCard({ label, value, position }: CategoryCardProps) {
+function CategoryCard({ label, value, position, range }: CategoryCardProps) {
 	return (
 		<Surface
 			mode="flat"
@@ -287,7 +306,13 @@ function CategoryCard({ label, value, position }: CategoryCardProps) {
 		>
 			<View style={styles.categoryCardContent}>
 				<Text style={styles.categoryCardText} variant="bodyMedium">
-					{moment(label).format('MMM D, YYYY')}
+					{moment(label).format(
+						range === 'month'
+							? 'MMM D, YYYY'
+							: range === 'year'
+								? 'MMM, YYYY'
+								: 'YYYY'
+					)}
 				</Text>
 
 				<Text style={styles.categoryCardText} variant="bodyMedium">
@@ -310,6 +335,10 @@ const styles = StyleSheet.create({
 	},
 	chartTitle: {
 		fontFamily: 'Manrope-SemiBold',
+	},
+	chartSubtitle: {
+		fontFamily: 'Manrope-Regular',
+		opacity: 0.7,
 	},
 	emptyAndLoadingContainer: {
 		width: '100%',

@@ -317,9 +317,9 @@ export default function useTransactionsManager({
 
 			ToastAndroid.show('Expense added!', ToastAndroid.CENTER);
 
-			setTransactionAmount('');
-			setTransactionNote('');
-			setTransactionImage('');
+			// setTransactionAmount('');
+			// setTransactionNote('');
+			// setTransactionImage('');
 		} catch (error: any) {
 			ToastAndroid.show('Error adding expense', ToastAndroid.CENTER);
 		} finally {

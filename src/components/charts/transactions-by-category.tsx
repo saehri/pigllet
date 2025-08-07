@@ -22,10 +22,11 @@ import TransactionIcons from '../reusables/transaction-icons';
 import { ArrowDownIcon, ArrowUpIcon } from 'lucide-react-native';
 
 type Props = {
-	selectedDate: Date;
-	range: 'month' | 'year';
+	selectedDate?: Date;
+	range?: 'month' | 'year';
 	type: schema.TransactionType;
 	name: string;
+	descriptions?: string;
 };
 
 const borderRadius = {
@@ -60,6 +61,7 @@ export default function TransactionsByCategory({
 	range,
 	type,
 	name,
+	descriptions,
 }: Props) {
 	const theme = useTheme();
 
@@ -109,7 +111,7 @@ export default function TransactionsByCategory({
 	};
 
 	const getMaxValue = () => {
-		const whereConditions = [eq(schema.transactions.type, 'expense')];
+		const whereConditions = [eq(schema.transactions.type, type)];
 
 		if (selectedDate && range) {
 			whereConditions.push(
@@ -128,7 +130,7 @@ export default function TransactionsByCategory({
 
 		return drizzleDb
 			.select({
-				maxValue: sql<number>`MAX(${schema.transactions.amount})`,
+				maxValue: sql<number>`SUM(${schema.transactions.amount})`,
 			})
 			.from(schema.transactions)
 			.where(whereConditions.length > 0 ? and(...whereConditions) : undefined);
@@ -143,9 +145,14 @@ export default function TransactionsByCategory({
 	return (
 		<Surface mode="flat" elevation={2} style={styles.chart}>
 			<View style={styles.chartHeader}>
-				<Text style={styles.chartTitle} variant="bodyLarge">
-					{name}
-				</Text>
+				<View>
+					<Text style={styles.chartTitle} variant="bodyLarge">
+						{name}
+					</Text>
+					<Text style={styles.chartSubtitle} variant="bodyMedium">
+						{descriptions}
+					</Text>
+				</View>
 
 				<Button
 					mode="contained-tonal"
@@ -328,6 +335,10 @@ const styles = StyleSheet.create({
 	},
 	chartTitle: {
 		fontFamily: 'Manrope-SemiBold',
+	},
+	chartSubtitle: {
+		fontFamily: 'Manrope-Regular',
+		opacity: 0.7,
 	},
 	emptyAndLoadingContainer: {
 		width: '100%',

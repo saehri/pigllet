@@ -80,6 +80,7 @@ export default function StatsMonthlyScreen() {
 						{showExpenseByDate && (
 							<TransactionsOverTime
 								name="Expenses by date"
+								descriptions="See how much you spend daily"
 								transactionType="expense"
 								range="month"
 								selectedDate={selectedDate}
@@ -89,6 +90,7 @@ export default function StatsMonthlyScreen() {
 						{showIncomeByDate && (
 							<TransactionsOverTime
 								name="Incomes by date"
+								descriptions="See how much you earn daily"
 								transactionType="income"
 								range="month"
 								selectedDate={selectedDate}
@@ -98,6 +100,7 @@ export default function StatsMonthlyScreen() {
 						{showTransferByDate && (
 							<TransactionsOverTime
 								name="Transfers by date"
+								// descriptions="See how much you earn daily"
 								transactionType="transfer"
 								range="month"
 								selectedDate={selectedDate}
