@@ -130,6 +130,116 @@ export const loadTransactionsData = (
 		.orderBy(desc(schema.transactions.created_at));
 };
 
+export const deleteTransactions = async (db: any, transactionId: number) => {
+	const relatedAccountsAlias = alias(schema.accounts, 'related_accounts');
+	const drizzleDb = drizzle(db, { schema });
+
+	try {
+		// Fetch the transaction with its related accounts
+		const transactionData = await drizzleDb
+			.select({
+				transaction: schema.transactions,
+				account: schema.accounts,
+				related_account: relatedAccountsAlias,
+			})
+			.from(schema.transactions)
+			.where(eq(schema.transactions.id, transactionId))
+			.innerJoin(
+				schema.accounts,
+				eq(schema.transactions.account_id, schema.accounts.id)
+			)
+			.leftJoin(
+				relatedAccountsAlias,
+				eq(schema.transactions.related_account_id, relatedAccountsAlias.id)
+			);
+
+		if (!transactionData.length) {
+			throw new Error('Transaction not found');
+		}
+
+		const data = transactionData[0];
+		const {
+			transaction,
+			account: mainAccount,
+			related_account: relatedAccount,
+		} = data;
+
+		// Delete the transaction itself
+		await drizzleDb
+			.delete(schema.transactions)
+			.where(eq(schema.transactions.id, transactionId));
+
+		// Prepare balance update queries
+		const updates: Promise<any>[] = [];
+
+		if (
+			transaction.type === 'transfer' &&
+			relatedAccount &&
+			mainAccount.id !== relatedAccount.id
+		) {
+			updates.push(
+				drizzleDb
+					.update(schema.accounts)
+					.set({
+						balance: mainAccount.balance + transaction.amount,
+					})
+					.where(eq(schema.accounts.id, mainAccount.id)),
+
+				drizzleDb
+					.update(schema.accounts)
+					.set({
+						balance: relatedAccount.balance - transaction.amount,
+					})
+					.where(eq(schema.accounts.id, relatedAccount.id))
+			);
+		} else if (transaction.type === 'income') {
+			updates.push(
+				drizzleDb
+					.update(schema.accounts)
+					.set({
+						balance: mainAccount.balance - transaction.amount,
+					})
+					.where(eq(schema.accounts.id, mainAccount.id))
+			);
+		} else if (transaction.type === 'expense') {
+			updates.push(
+				drizzleDb
+					.update(schema.accounts)
+					.set({
+						balance: mainAccount.balance + transaction.amount,
+					})
+					.where(eq(schema.accounts.id, mainAccount.id))
+			);
+		}
+
+		await Promise.all(updates);
+
+		// Update the budget associated with the transaction's category
+		const budgets = await drizzleDb
+			.select()
+			.from(schema.budgets)
+			.where(eq(schema.budgets.category_id, Number(transaction.category_id)));
+
+		if (budgets.length) {
+			const budget = budgets[0];
+
+			await drizzleDb
+				.update(schema.budgets)
+				.set({
+					current_spending:
+						budget.current_spending - Number(transaction.amount),
+				})
+				.where(eq(schema.budgets.category_id, Number(transaction.category_id)));
+
+			ToastAndroid.show('Budget updated!', ToastAndroid.CENTER);
+		}
+
+		ToastAndroid.show('Transaction deleted!', ToastAndroid.CENTER);
+	} catch (error: any) {
+		ToastAndroid.show(error.message, ToastAndroid.SHORT);
+	}
+};
+
 export default function useTransactionsManager({
 	actionType = 'read',
 	transactionId,
@@ -275,7 +385,7 @@ export default function useTransactionsManager({
 				account_id: Number(transactionUsedAccount.id),
 				amount: Number(transactionAmount),
 				category_id: Number(transactionCategory.id),
-				created_at: transactionCreatedAt.toISOString(),
+				created_at: moment(transactionCreatedAt).format('YYYY-MM-DD'),
 				type: transactionType as string,
 				image: transactionImage,
 				note: transactionNote,
@@ -342,7 +452,7 @@ export default function useTransactionsManager({
 				amount: Number(transactionAmount),
 				account_id: transactionUsedAccount.id as number,
 				category_id: transactionCategory.id as number,
-				created_at: transactionCreatedAt.toISOString(),
+				created_at: moment(transactionCreatedAt).format('YYYY-MM-DD'),
 				image: transactionImage,
 				note: transactionNote,
 				type: transactionType as string,
@@ -387,7 +497,7 @@ export default function useTransactionsManager({
 				account_id: transactionUsedAccount.id as number,
 				related_account_id: transactionUsedRelatedAccount.id,
 				category_id: transactionCategory.id as number,
-				created_at: transactionCreatedAt.toISOString(),
+				created_at: moment(transactionCreatedAt).format('YYYY-MM-DD'),
 				image: transactionImage,
 				note: transactionNote,
 			};
@@ -444,7 +554,7 @@ export default function useTransactionsManager({
 					account_id: transactionUsedAccount?.id,
 					amount: Number(transactionAmount),
 					category_id: transactionCategory?.id,
-					created_at: transactionCreatedAt.toISOString(),
+					created_at: moment(transactionCreatedAt).format('YYYY-MM-DD'),
 					image: transactionImage,
 					note: transactionNote,
 				})
@@ -575,7 +685,7 @@ export default function useTransactionsManager({
 					account_id: transactionUsedAccount?.id,
 					amount: Number(transactionAmount),
 					category_id: transactionCategory?.id,
-					created_at: transactionCreatedAt.toISOString(),
+					created_at: moment(transactionCreatedAt).format('YYYY-MM-DD'),
 					image: transactionImage,
 					note: transactionNote,
 				})
@@ -672,7 +782,7 @@ export default function useTransactionsManager({
 					account_id: transactionUsedAccount.id as number,
 					related_account_id: transactionUsedRelatedAccount.id,
 					category_id: transactionCategory.id as number,
-					created_at: transactionCreatedAt.toISOString(),
+					created_at: moment(transactionCreatedAt).format('YYYY-MM-DD'),
 					image: transactionImage,
 					note: transactionNote,
 				})

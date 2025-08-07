@@ -4,8 +4,6 @@ import { Dispatch, SetStateAction, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
-import YearSelectorBar from '@/src/components/reusables/year-selector-bar';
-import AverageSpending from '@/src/components/statistics/average-spending';
 import TransactionsOverTime from '@/src/components/statistics/transactions-over-time';
 import TransactionsByCategory from '@/src/components/charts/transactions-by-category';
 
@@ -55,21 +53,24 @@ export default function StatsAllScreen() {
 
 					{showExpenseByDate && (
 						<TransactionsOverTime
-							name="Expenses by date"
+							name="All your expenses"
+							descriptions="See how much you spend each year"
 							transactionType="expense"
 						/>
 					)}
 
 					{showIncomeByDate && (
 						<TransactionsOverTime
-							name="Incomes by date"
+							name="All your incomes"
+							descriptions="See how much you earn each year"
 							transactionType="income"
 						/>
 					)}
 
 					{showTransferByDate && (
 						<TransactionsOverTime
-							name="Transfers by date"
+							name="Money transfered"
+							descriptions="See how your money moves between accounts"
 							transactionType="transfer"
 						/>
 					)}
@@ -77,23 +78,22 @@ export default function StatsAllScreen() {
 					{showExpenseByCategory && (
 						<TransactionsByCategory
 							type="expense"
-							name="Expenses by category"
-							range="year"
+							name="Where your money goes"
+							descriptions="See the distribution of expenses by category"
 						/>
 					)}
 
 					{showIncomeByCategory && (
 						<TransactionsByCategory
 							type="income"
-							name="Incomes by category"
-							range="year"
+							name="Where your money comes"
+							descriptions="See the distribution of incomes by category"
 						/>
 					)}
 					{showTransferByCategory && (
 						<TransactionsByCategory
 							type="transfer"
 							name="Transfers by category"
-							range="year"
 						/>
 					)}
 				</View>

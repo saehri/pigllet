@@ -19,7 +19,6 @@ import { CalendarIcon, RepeatIcon, TimerIcon } from 'lucide-react-native';
 import * as schema from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { useRouter } from 'expo-router';
-import { toYYYYMMDD } from '@/utils/utils';
 import { useSQLiteContext } from 'expo-sqlite';
 
 import {
@@ -33,6 +32,7 @@ import useSubscriptionTrackerManager from '@/src/hooks/useSubscriptionTrackerMan
 import NoItemNotice from '@/src/components/reusables/no-items-notice';
 import AccountSelector from '@/src/components/forms/account-selector';
 import SelectInputWithIcon from '@/src/components/forms/select-input-with-icon';
+import moment from 'moment';
 
 function addMonths(date: Date, count: number) {
 	const newDate = new Date(date);
@@ -230,7 +230,7 @@ export function MakePaymentButton({ subscription }: MakePaymentButtonTypes) {
 				amount: subscription.amount,
 				account_id: Number(selectedAccount.id),
 				category_id: Number(selectedCategory.id),
-				created_at: toYYYYMMDD(new Date()),
+				created_at: moment(new Date()).format('YYYY-MM-DD'),
 				type: transactionType,
 				image: '',
 				note: `${subscription.name} subscriptions payment for ${new Date(subscription.due_date).toLocaleDateString('en-US', { dateStyle: 'medium' })}`,
@@ -251,12 +251,12 @@ export function MakePaymentButton({ subscription }: MakePaymentButtonTypes) {
 				const newDueDate = addMonths(new Date(subscription.due_date), 1);
 				await drizzleDb
 					.update(schema.subscriptions)
-					.set({ due_date: toYYYYMMDD(newDueDate) });
+					.set({ due_date: moment(new Date()).format('YYYY-MM-DD') });
 			} else {
 				const newDueDate = addYears(new Date(subscription.due_date), 1);
 				await drizzleDb
 					.update(schema.subscriptions)
-					.set({ due_date: toYYYYMMDD(newDueDate) });
+					.set({ due_date: moment(new Date()).format('YYYY-MM-DD') });
 			}
 
 			ToastAndroid.show('Created transaction record!', ToastAndroid.SHORT);

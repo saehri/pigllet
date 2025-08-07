@@ -79,7 +79,7 @@ export default function StatsMonthlyScreen() {
 
 						{showExpenseByDate && (
 							<TransactionsOverTime
-								name="Expenses by date"
+								name="Your expenses this month"
 								descriptions="See how much you spend daily"
 								transactionType="expense"
 								range="month"
@@ -89,7 +89,7 @@ export default function StatsMonthlyScreen() {
 
 						{showIncomeByDate && (
 							<TransactionsOverTime
-								name="Incomes by date"
+								name="Your incomes this month"
 								descriptions="See how much you earn daily"
 								transactionType="income"
 								range="month"
@@ -99,8 +99,8 @@ export default function StatsMonthlyScreen() {
 
 						{showTransferByDate && (
 							<TransactionsOverTime
-								name="Transfers by date"
-								// descriptions="See how much you earn daily"
+								name="Money transfered this month"
+								descriptions="See how your money moves between accounts"
 								transactionType="transfer"
 								range="month"
 								selectedDate={selectedDate}
@@ -112,7 +112,8 @@ export default function StatsMonthlyScreen() {
 								type="expense"
 								range="month"
 								selectedDate={selectedDate}
-								name="Expenses by category"
+								name="Where your money goes"
+								descriptions="See the distribution of expenses by category"
 							/>
 						)}
 
@@ -121,7 +122,8 @@ export default function StatsMonthlyScreen() {
 								type="income"
 								range="month"
 								selectedDate={selectedDate}
-								name="Incomes by category"
+								name="Where your money comes"
+								descriptions="See the distribution of incomes by category"
 							/>
 						)}
 						{showTransferByCategory && (

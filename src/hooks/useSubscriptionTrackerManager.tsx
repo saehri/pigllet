@@ -6,8 +6,9 @@ import * as schema from '@/db/schema';
 import { eq, sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 import { SubscriptionBillingTypes } from '@/types/type';
-import { toYYYYMMDD } from '@/utils/utils';
+
 import { useRouter } from 'expo-router';
+import moment from 'moment';
 
 type Props = {
 	actionType: 'read' | 'create' | 'delete' | 'update';
@@ -93,7 +94,7 @@ export default function useSubscriptionTrackerManager({
 				billed: schema.subscriptions.billed,
 				started_at: schema.subscriptions.started_at,
 				due_date: schema.subscriptions.due_date,
-				elapsed_due_date: sql<number>`julianday(subscriptions.due_date) - julianday(${toYYYYMMDD(new Date())})`,
+				elapsed_due_date: sql<number>`julianday(subscriptions.due_date) - julianday(${moment(new Date()).format('YYYY-MM-DD')})`,
 			})
 			.from(schema.subscriptions);
 
@@ -105,8 +106,8 @@ export default function useSubscriptionTrackerManager({
 			const payload: schema.Subscription = {
 				name: subscriptionTitle,
 				amount: Number(subscriptionAmount),
-				started_at: toYYYYMMDD(subscriptionStartedAt),
-				due_date: toYYYYMMDD(subscriptionDueDate),
+				started_at: moment(subscriptionStartedAt).format('YYYY-MM-DD'),
+				due_date: moment(subscriptionDueDate).format('YYYY-MM-DD'),
 				billed: subscriptionBilled,
 			};
 
@@ -136,8 +137,8 @@ export default function useSubscriptionTrackerManager({
 					amount: Number(subscriptionAmount),
 					billed: subscriptionBilled,
 					name: subscriptionTitle,
-					due_date: toYYYYMMDD(subscriptionDueDate),
-					started_at: toYYYYMMDD(subscriptionStartedAt),
+					due_date: moment(subscriptionDueDate).format('YYYY-MM-DD'),
+					started_at: moment(subscriptionStartedAt).format('YYYY-MM-DD'),
 				})
 				.where(eq(schema.subscriptions.id, Number(initialFormValue.id)));
 

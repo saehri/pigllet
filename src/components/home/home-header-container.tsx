@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
@@ -5,7 +6,9 @@ type Props = {
 	children: React.ReactNode;
 };
 
-export default function HomeHeaderContainer({ children }: Props) {
+const HomeHeaderComponent = memo(function HomeHeaderContainer({
+	children,
+}: Props) {
 	const theme = useTheme();
 
 	return (
@@ -18,7 +21,9 @@ export default function HomeHeaderContainer({ children }: Props) {
 			{children}
 		</View>
 	);
-}
+});
+
+export default HomeHeaderComponent;
 
 const styles = StyleSheet.create({
 	headerContainer: {

@@ -79,25 +79,28 @@ export default function StatsYearlyScreen() {
 
 						{showExpenseByDate && (
 							<TransactionsOverTime
-								name="Expenses by date"
 								transactionType="expense"
 								range="year"
 								selectedDate={selectedDate}
+								name="Your expenses this year"
+								descriptions="See how much you spend each month"
 							/>
 						)}
 
 						{showIncomeByDate && (
 							<TransactionsOverTime
-								name="Incomes by date"
 								transactionType="income"
 								range="year"
 								selectedDate={selectedDate}
+								name="Your incomes this year"
+								descriptions="See how much you earn each month"
 							/>
 						)}
 
 						{showTransferByDate && (
 							<TransactionsOverTime
-								name="Transfers by date"
+								name="Money transfered this year"
+								descriptions="See how your money moves between accounts"
 								transactionType="transfer"
 								range="year"
 								selectedDate={selectedDate}
@@ -109,7 +112,8 @@ export default function StatsYearlyScreen() {
 								type="expense"
 								range="year"
 								selectedDate={selectedDate}
-								name="Expenses by category"
+								name="Where your money goes"
+								descriptions="See the distribution of expenses by category"
 							/>
 						)}
 
@@ -118,7 +122,8 @@ export default function StatsYearlyScreen() {
 								type="income"
 								range="year"
 								selectedDate={selectedDate}
-								name="Incomes by category"
+								name="Where your money comes"
+								descriptions="See the distribution of incomes by category"
 							/>
 						)}
 						{showTransferByCategory && (

@@ -5,8 +5,9 @@ import * as schema from '@/db/schema';
 import { SetStateAction, useEffect, useState } from 'react';
 import { ToastAndroid } from 'react-native';
 import { desc, eq } from 'drizzle-orm';
-import { toYYYYMMDD } from '@/utils/utils';
+
 import { useRouter } from 'expo-router';
+import moment from 'moment';
 
 type Props = {
 	actionType?: 'create' | 'read' | 'update' | 'delete';
@@ -146,10 +147,10 @@ export default function useBudgetManager({
 
 			const payload: schema.Budget = {
 				category_id: Number(budgetCategory.id),
-				created_at: toYYYYMMDD(new Date()),
+				created_at: moment(new Date()).format('YYYY-MM-DD'),
 				current_spending: 0,
 				max_spending: Number(budgetMaxSpending),
-				period: toYYYYMMDD(budgetPeriod),
+				period: moment(new Date()).format('YYYY-MM-DD'),
 				note: budgetNote,
 			};
 

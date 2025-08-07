@@ -17,34 +17,7 @@ import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import moment from 'moment';
 import { transactionColorMap } from '@/utils/utils';
 
-import { ArrowDownIcon, ArrowUpIcon } from 'lucide-react-native';
-
-const borderRadius = {
-	tr: {
-		first: 24,
-		middle: 6,
-		only: 24,
-		last: 6,
-	},
-	tl: {
-		first: 24,
-		middle: 6,
-		only: 24,
-		last: 6,
-	},
-	br: {
-		first: 6,
-		middle: 6,
-		only: 24,
-		last: 24,
-	},
-	bl: {
-		first: 6,
-		middle: 6,
-		only: 24,
-		last: 24,
-	},
-};
+import { ArrowDownIcon, ArrowUpIcon, FocusIcon } from 'lucide-react-native';
 
 type Props = {
 	selectedDate?: Date;
@@ -70,6 +43,16 @@ export default function TransactionsOverTime({
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
 
+	const getDateGroupingRule = (range?: 'month' | 'year') => {
+		if (range === 'month') {
+			return sql<string>`DATE(${schema.transactions.created_at})`;
+		}
+		if (range === 'year') {
+			return sql<string>`strftime('%Y-%m', ${schema.transactions.created_at})`;
+		}
+		return sql<string>`strftime('%Y', ${schema.transactions.created_at})`;
+	};
+
 	const getSumByTypeInDateRange = () => {
 		const whereConditions = [eq(schema.transactions.type, transactionType)];
 
@@ -94,17 +77,13 @@ export default function TransactionsOverTime({
 				label: schema.transactions.created_at,
 			})
 			.from(schema.transactions)
-			.innerJoin(
-				schema.categories,
-				eq(schema.transactions.category_id, schema.categories.id)
-			)
 			.where(whereConditions.length > 0 ? and(...whereConditions) : undefined)
-			.groupBy(schema.categories.label)
 			.orderBy(
 				order === 'desc'
-					? desc(sql<number>`SUM(${schema.transactions.amount})`)
-					: asc(sql<number>`SUM(${schema.transactions.amount})`)
-			);
+					? desc(schema.transactions.created_at)
+					: asc(schema.transactions.created_at)
+			)
+			.groupBy(getDateGroupingRule(range));
 	};
 
 	const getMaxValue = () => {
@@ -143,18 +122,19 @@ export default function TransactionsOverTime({
 	return (
 		<Surface mode="flat" elevation={2} style={styles.chart}>
 			<View style={styles.chartHeader}>
-				<View>
+				<View style={{ flex: 0.9 }}>
 					<Text style={styles.chartTitle} variant="bodyLarge">
 						{name}
 					</Text>
-					<Text style={styles.chartSubtitle} variant="bodyMedium">
+					<Text style={styles.chartSubtitle} variant="bodySmall">
 						{descriptions}
 					</Text>
 				</View>
 
 				<Button
 					mode="contained-tonal"
-					contentStyle={{ height: 40 }}
+					compact
+					style={{ height: 40 }}
 					onPress={() => setOrder((prev) => (prev === 'desc' ? 'asc' : 'desc'))}
 				>
 					{order === 'desc' ? (
@@ -215,13 +195,18 @@ function ChartRenderer({
 	return (
 		<View style={styles.chartContainer}>
 			<BarChart
-				barWidth={65}
+				barWidth={75}
 				barBorderRadius={120}
 				formatYLabel={(label) =>
 					`${Number(label).toLocaleString(
 						getLocaleByCurrencySymbol(currentCurrencySymbol)
 					)}`
 				}
+				topLabelTextStyle={{
+					fontFamily: 'Manrope-Regular',
+					color: theme.colors.onSurface,
+					fontSize: 9,
+				}}
 				height={200}
 				maxValue={chartMaxValue}
 				data={chartData.map((data) => ({
@@ -233,17 +218,20 @@ function ChartRenderer({
 								? 'MMM, YYYY'
 								: 'YYYY'
 					),
+					topLabelComponent: () => (
+						<Text style={{ color: theme.colors.onSurface, fontSize: 9 }}>
+							{currentCurrencySymbol}{' '}
+							{Number(data.value).toLocaleString(
+								getLocaleByCurrencySymbol(currentCurrencySymbol)
+							)}
+						</Text>
+					),
 				}))}
+				hideYAxisText
+				showScrollIndicator={false}
 				frontColor={transactionColorMap[transactionType]}
 				spacing={10}
-				rulesThickness={0}
-				xAxisThickness={0}
-				yAxisThickness={0}
-				yAxisTextStyle={{
-					fontFamily: 'Manrope-Regular',
-					fontSize: 9,
-					color: theme.colors.onBackground,
-				}}
+				hideAxesAndRules
 				xAxisLabelTextStyle={{
 					fontFamily: 'Manrope-Regular',
 					textTransform: 'capitalize',
@@ -252,85 +240,23 @@ function ChartRenderer({
 				}}
 				isAnimated
 				animationDuration={0.5}
-				autoCenterTooltip
 				adjustToWidth
 			/>
-
-			<View style={styles.cardContainer}>
-				{chartData.map((data, index) => (
-					<CategoryCard
-						range={range}
-						key={data.label}
-						label={data.label}
-						value={`${currentCurrencySymbol} ${data.value.toLocaleString(
-							getLocaleByCurrencySymbol(currentCurrencySymbol)
-						)}`}
-						position={
-							chartData.length === 1
-								? 'only'
-								: index > 0 && index < chartData.length - 1
-									? 'middle'
-									: index === 0
-										? 'first'
-										: 'last'
-						}
-					/>
-				))}
-			</View>
 		</View>
-	);
-}
-
-// =================================================
-type CategoryCardProps = {
-	label: string;
-	value: string;
-	position: 'only' | 'first' | 'middle' | 'last';
-	range?: 'month' | 'year';
-};
-
-function CategoryCard({ label, value, position, range }: CategoryCardProps) {
-	return (
-		<Surface
-			mode="flat"
-			elevation={5}
-			style={[
-				styles.categoryCard,
-				{
-					borderTopRightRadius: borderRadius.tr[position],
-					borderTopLeftRadius: borderRadius.tl[position],
-					borderBottomLeftRadius: borderRadius.bl[position],
-					borderBottomRightRadius: borderRadius.br[position],
-				},
-			]}
-		>
-			<View style={styles.categoryCardContent}>
-				<Text style={styles.categoryCardText} variant="bodyMedium">
-					{moment(label).format(
-						range === 'month'
-							? 'MMM D, YYYY'
-							: range === 'year'
-								? 'MMM, YYYY'
-								: 'YYYY'
-					)}
-				</Text>
-
-				<Text style={styles.categoryCardText} variant="bodyMedium">
-					{value}
-				</Text>
-			</View>
-		</Surface>
 	);
 }
 
 const styles = StyleSheet.create({
 	chart: {
-		padding: 24,
 		borderRadius: 40,
 		gap: 16,
+		paddingBottom: 24,
 	},
 	chartHeader: {
 		flexDirection: 'row',
+		padding: 24,
+		paddingBottom: 0,
+		gap: 24,
 		justifyContent: 'space-between',
 	},
 	chartTitle: {
@@ -348,32 +274,11 @@ const styles = StyleSheet.create({
 	chartContainer: {
 		width: '100%',
 		justifyContent: 'center',
+		paddingLeft: 16,
 	},
 	cardContainer: {
 		marginTop: 24,
 		gap: 2,
-	},
-	categoryCard: {
-		flexDirection: 'row',
-		gap: 10,
-		alignItems: 'center',
-		paddingVertical: 9,
-		paddingHorizontal: 17,
-	},
-	categoryCardIcon: {
-		width: 30,
-		height: 30,
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
-	categoryCardContent: {
-		flex: 1,
-		alignItems: 'center',
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-	},
-	categoryCardText: {
-		fontFamily: 'Manrope-Regular',
 	},
 });
 

@@ -64,10 +64,11 @@ declare interface TransactionIconsCatalogue {
 
 declare interface UserPreference {
 	currentAppTheme: AppTheme;
-	currentAppColor: AppColor;
 	currentCurrencySymbol: CurrencySymbols;
 	firstTimer: boolean;
 }
+
+declare type CardPositionsTypes = 'first' | 'middle' | 'last' | 'only';
 
 declare type CurrencySymbols =
 	| 'Rp'
@@ -111,3 +112,4 @@ declare type StatisticsWidget =
 	| 'expense-by-category'
 	| 'income-by-category'
 	| 'transfer-by-category';
+

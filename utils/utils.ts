@@ -1,13 +1,29 @@
-export function getYearsBetween(startYear: number, endYear: number) {
-	return Array.from(
-		{ length: endYear - startYear + 1 },
-		(_, i) => startYear + i
-	);
-}
-
-export function toYYYYMMDD(date: Date): string {
-	return date.toISOString().slice(0, 10); // Returns 'YYYY-MM-DD' in UTC
-}
+export const TRANSACTION_CARD_BR = {
+	first: {
+		tl: 16,
+		tr: 16,
+		bl: 6,
+		br: 6,
+	},
+	middle: {
+		tl: 6,
+		tr: 6,
+		bl: 6,
+		br: 6,
+	},
+	last: {
+		tl: 6,
+		tr: 6,
+		bl: 16,
+		br: 16,
+	},
+	only: {
+		tl: 16,
+		tr: 16,
+		bl: 16,
+		br: 16,
+	},
+};
 
 // Simple color mapping per category type
 export const transactionColorMap: Record<string, string> = {
@@ -15,4 +31,14 @@ export const transactionColorMap: Record<string, string> = {
 	expense: 'rgba(248, 81, 30, 1)',
 	transfer: 'rgba(96, 118, 216, 1)',
 };
+
+export function getCardPosition(
+	index: number,
+	length: number
+): 'only' | 'first' | 'middle' | 'last' {
+	if (length === 1) return 'only';
+	if (index === 0) return 'first';
+	if (index === length - 1) return 'last';
+	return 'middle';
+}
 

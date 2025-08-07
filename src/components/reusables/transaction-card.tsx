@@ -1,124 +1,152 @@
-import { useContext } from 'react';
 import { useRouter } from 'expo-router';
+import { useContext, memo, useMemo } from 'react';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { Surface, Text, useTheme } from 'react-native-paper';
 import {
 	ArrowRightLeftIcon,
+	CheckIcon,
 	ImageIcon,
 	MinusIcon,
 	PlusIcon,
 } from 'lucide-react-native';
-import { Surface, Text, useTheme } from 'react-native-paper';
-import { Pressable, StyleSheet, View } from 'react-native';
 
-import { TransactionWithDetails } from '@/utils/group-transactions';
 import {
 	UserPreferenceContext,
 	UserPreferenceContextTypes,
 } from '@/context/UserPreferenceContext';
-
 import moment from 'moment';
-import { transactionColorMap } from '@/utils/utils';
 
+import { CardPositionsTypes } from '@/types/type';
 import getLocaleByCurrencySymbol from '@/utils/locale-getter';
+import { TransactionWithDetails } from '@/utils/group-transactions';
+import { TRANSACTION_CARD_BR, transactionColorMap } from '@/utils/utils';
+import { useSelectedTransactions } from '@/store/useSelectedTransactions';
+
 import TransactionIcons from './transaction-icons';
 
 type Props = {
 	data: TransactionWithDetails;
 	pressable?: boolean;
 	showDate: boolean;
-	position: 'first' | 'middle' | 'last' | 'only';
+	position: CardPositionsTypes;
 };
 
-const borderRadius = {
-	tr: {
-		first: 16,
-		middle: 6,
-		only: 16,
-		last: 6,
-	},
-	tl: {
-		first: 16,
-		middle: 6,
-		only: 16,
-		last: 6,
-	},
-	br: {
-		first: 6,
-		middle: 6,
-		only: 16,
-		last: 16,
-	},
-	bl: {
-		first: 6,
-		middle: 6,
-		only: 16,
-		last: 16,
-	},
-};
+function TransactionCard({ data, position, showDate, pressable }: Props) {
+	const { account, category, related_account, transaction } = data;
 
-export default function TransactionCard({
-	data,
-	pressable = false,
-	showDate,
-	position,
-}: Props) {
-	const router = useRouter();
 	const theme = useTheme();
+	const router = useRouter();
+
+	const selectedTransactions = useSelectedTransactions(
+		(s) => s.selectedTransactions
+	);
+	const setSelectedTransactions = useSelectedTransactions(
+		(s) => s.setSelectedTransactions
+	);
+
 	const { currentCurrencySymbol } = useContext(
 		UserPreferenceContext
 	) as UserPreferenceContextTypes;
 
-	const { account, category, related_account, transaction } = data;
+	// used to check whether the transaction card is selected or not
+	const isSelected = selectedTransactions.includes(data.transaction.id!);
+
+	// select the card
+	const onSelect = () => {
+		setSelectedTransactions([...selectedTransactions, data.transaction.id!]);
+	};
+
+	// unselect the transaction card
+	const onUnselect = () => {
+		setSelectedTransactions(
+			selectedTransactions.filter((id) => id !== data.transaction.id!)
+		);
+	};
+
+	const formattedAmount = useMemo(() => {
+		return `${currentCurrencySymbol} ${transaction.amount.toLocaleString(
+			getLocaleByCurrencySymbol(currentCurrencySymbol)
+		)}`;
+	}, [transaction.amount, currentCurrencySymbol]);
+
+	const formattedDate = useMemo(() => {
+		return moment(transaction.created_at).format('MMM D, YYYY');
+	}, [transaction.created_at]);
+
+	const routeParams = useMemo(
+		() => ({
+			pathname: `/(root)/edit-${transaction.type}` as any,
+			params: {
+				id: transaction.id as any,
+				type: transaction.type,
+				categoryId: category.id,
+			},
+		}),
+		[transaction.id, transaction.type, category.id]
+	);
+
+	const cardRadiusStyle = useMemo(
+		() => ({
+			borderTopLeftRadius: TRANSACTION_CARD_BR[position].tl,
+			borderTopRightRadius: TRANSACTION_CARD_BR[position].tr,
+			borderBottomLeftRadius: TRANSACTION_CARD_BR[position].bl,
+			borderBottomRightRadius: TRANSACTION_CARD_BR[position].br,
+		}),
+		[position]
+	);
 
 	return (
-		<Pressable
-			disabled={pressable}
-			onPress={() =>
-				router.push({
-					pathname: `/(root)/edit-${transaction.type}` as any,
-					params: {
-						id: transaction.id as any,
-						type: transaction.type,
-						categoryId: category.id,
-					},
-				})
-			}
-		>
+		<Pressable disabled={pressable} onPress={() => router.push(routeParams)}>
 			<Surface
 				mode="flat"
 				elevation={5}
 				style={[
 					styles.container,
+					cardRadiusStyle,
 					{
-						borderTopRightRadius: borderRadius.tr[position],
-						borderTopLeftRadius: borderRadius.tl[position],
-						borderBottomLeftRadius: borderRadius.bl[position],
-						borderBottomRightRadius: borderRadius.br[position],
+						backgroundColor: isSelected
+							? theme.colors.tertiaryContainer
+							: theme.colors.elevation.level5,
 					},
 				]}
 			>
-				<View style={styles.iconContainer}>
-					<TransactionIcons
-						color={transactionColorMap[transaction.type]}
-						icon={category.icon_name as any}
-						size={20}
-					/>
-				</View>
+				<Pressable
+					style={styles.iconContainer}
+					onPress={isSelected ? onUnselect : onSelect}
+				>
+					{isSelected ? (
+						<View
+							style={[
+								styles.checkIconBox,
+								{ backgroundColor: theme.colors.tertiary },
+							]}
+						>
+							<CheckIcon
+								color={theme.colors.onTertiary}
+								size={20}
+								strokeWidth={1.5}
+							/>
+						</View>
+					) : (
+						<TransactionIcons
+							color={transactionColorMap[transaction.type]}
+							icon={category.icon_name as any}
+							size={20}
+						/>
+					)}
+				</Pressable>
 
 				<View style={styles.contentContainer}>
-					<View style={{ flex: 1, flexDirection: 'row' }}>
-						<View style={styles.row}>
-							<Text
-								numberOfLines={1}
-								variant="bodyMedium"
-								style={styles.cardLabel}
-							>
-								{category.label}
-							</Text>
-						</View>
-
-						<View
-							style={{ flexDirection: 'row', alignItems: 'center', gap: 2 }}
+					<View style={styles.row}>
+						<Text
+							numberOfLines={1}
+							variant="bodyMedium"
+							style={styles.cardLabel}
 						>
+							{category.label}
+						</Text>
+
+						<View style={styles.amountRow}>
 							{transaction.type === 'transfer' && (
 								<ArrowRightLeftIcon
 									size={14}
@@ -126,7 +154,6 @@ export default function TransactionCard({
 									color={theme.colors.onBackground}
 								/>
 							)}
-
 							{transaction.type === 'income' && (
 								<PlusIcon
 									size={14}
@@ -134,7 +161,6 @@ export default function TransactionCard({
 									color={theme.colors.onBackground}
 								/>
 							)}
-
 							{transaction.type === 'expense' && (
 								<MinusIcon
 									size={14}
@@ -142,36 +168,20 @@ export default function TransactionCard({
 									color={theme.colors.onBackground}
 								/>
 							)}
-
 							<Text style={styles.cardPrice} variant="bodyMedium">
-								{`${currentCurrencySymbol} ${data.transaction.amount.toLocaleString(
-									getLocaleByCurrencySymbol(currentCurrencySymbol)
-								)}`}
+								{formattedAmount}
 							</Text>
 						</View>
 					</View>
 
-					<View
-						style={{
-							alignItems: showDate ? 'center' : 'flex-end',
-							flexDirection: 'row',
-							justifyContent: 'space-between',
-						}}
-					>
+					<View style={styles.metaRow}>
 						<View style={{ flex: 1 }}>
 							{showDate && (
 								<Text variant="labelLarge" style={styles.cardNote}>
-									{moment(transaction.created_at).format('MMM D, YYYY')}
+									{formattedDate}
 								</Text>
 							)}
-
-							<View
-								style={{
-									flexDirection: 'row',
-									gap: 4,
-									alignItems: 'center',
-								}}
-							>
+							<View style={styles.noteRow}>
 								{transaction.image && (
 									<ImageIcon
 										size={14}
@@ -179,13 +189,9 @@ export default function TransactionCard({
 										color={theme.colors.onBackground}
 									/>
 								)}
-
 								<Text
 									variant="labelMedium"
-									style={[
-										styles.cardNote,
-										{ flex: 1, maxWidth: 150, fontStyle: 'italic' },
-									]}
+									style={[styles.cardNote, styles.noteText]}
 									numberOfLines={1}
 								>
 									{transaction.note || 'Undefined'}
@@ -193,9 +199,7 @@ export default function TransactionCard({
 							</View>
 						</View>
 
-						<View
-							style={{ flexDirection: 'row', gap: 6, alignItems: 'center' }}
-						>
+						<View style={styles.accountRow}>
 							<Text
 								variant="labelMedium"
 								style={styles.cardNote}
@@ -237,6 +241,13 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 	},
+	checkIconBox: {
+		borderRadius: 100,
+		width: 40,
+		height: 40,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
 	contentContainer: {
 		flex: 1,
 	},
@@ -245,9 +256,32 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		gap: 2,
 		flex: 1,
+		justifyContent: 'space-between',
 	},
-	bodyLarge: {
-		fontFamily: 'Manrope-Medium',
+	amountRow: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		gap: 2,
+	},
+	metaRow: {
+		alignItems: 'center',
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+	},
+	accountRow: {
+		flexDirection: 'row',
+		gap: 6,
+		alignItems: 'center',
+	},
+	noteRow: {
+		flexDirection: 'row',
+		gap: 4,
+		alignItems: 'center',
+	},
+	noteText: {
+		flex: 1,
+		maxWidth: 150,
+		fontStyle: 'italic',
 	},
 	cardLabel: {
 		fontFamily: 'Manrope-SemiBold',
@@ -261,4 +295,6 @@ const styles = StyleSheet.create({
 		opacity: 0.9,
 	},
 });
+
+export default memo(TransactionCard);
 

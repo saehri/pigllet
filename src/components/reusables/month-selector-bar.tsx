@@ -1,5 +1,5 @@
 import { View } from 'react-native';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, memo, SetStateAction } from 'react';
 import { Button, Text, useTheme } from 'react-native-paper';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react-native';
 
@@ -14,7 +14,7 @@ type Props = {
 	onPrev: () => void;
 };
 
-export default function MonthSelectorBar({
+const MonthSelectorBar = memo(function MonthSelectorBar({
 	selectedDate,
 	setSelectedDate,
 	onNext,
@@ -80,5 +80,7 @@ export default function MonthSelectorBar({
 			</View>
 		</View>
 	);
-}
+});
+
+export default MonthSelectorBar;
 

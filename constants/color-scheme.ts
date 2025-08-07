@@ -1,5 +1,4 @@
 import { AppTheme } from '@/types/type';
-import { ColorSchemeName } from 'react-native';
 
 const DEFAULT_LIGHT = {
 	colors: {
@@ -91,7 +90,7 @@ const DEFAULT_DARK = {
 	},
 };
 
-function selectColorScheme(theme: AppTheme, colorScheme: ColorSchemeName) {
+function selectColorScheme(theme: AppTheme) {
 	if (theme === 'Dark') {
 		return DEFAULT_DARK.colors;
 	}
@@ -100,17 +99,7 @@ function selectColorScheme(theme: AppTheme, colorScheme: ColorSchemeName) {
 		return DEFAULT_LIGHT.colors;
 	}
 
-	if (theme === 'Device') {
-		if (colorScheme === 'dark') {
-			return DEFAULT_DARK.colors;
-		}
-
-		if (colorScheme === 'light') {
-			return DEFAULT_LIGHT.colors;
-		}
-	}
-
-	return DEFAULT_LIGHT.colors;
+	return DEFAULT_DARK.colors;
 }
 
 export { selectColorScheme, DEFAULT_DARK, DEFAULT_LIGHT };

@@ -37,13 +37,13 @@ SplashScreen.setOptions({
 const DATABASE_NAME = 'database.db';
 
 function App() {
-	const { currentAppTheme, currentAppColor } = useContext(
+	const { currentAppTheme } = useContext(
 		UserPreferenceContext
 	) as UserPreferenceContextTypes;
 
 	const theme = {
 		...DefaultTheme,
-		colors: selectColorScheme(currentAppTheme, currentAppColor),
+		colors: selectColorScheme(currentAppTheme),
 	};
 
 	return (

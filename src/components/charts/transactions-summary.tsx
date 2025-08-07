@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { memo, useContext } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Surface, Text, useTheme } from 'react-native-paper';
 
@@ -20,11 +20,12 @@ type Props = {
 	range?: 'month' | 'year';
 };
 
-export default function TransactionsSummary({ selectedDate, range }: Props) {
+const TransactionsSummary = memo(function TransactionsSummary({
+	selectedDate,
+	range,
+}: Props) {
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
-
-	// const startDate =
 
 	const getSumByTypeInDateRange = (selectedDate?: Date) => {
 		const whereConditions = [];
@@ -91,7 +92,9 @@ export default function TransactionsSummary({ selectedDate, range }: Props) {
 			</View>
 		</View>
 	);
-}
+});
+
+export default TransactionsSummary;
 
 type CardProps = {
 	label: string;

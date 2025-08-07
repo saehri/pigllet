@@ -1,12 +1,7 @@
 import React, { createContext, ReactNode, useEffect, useState } from 'react';
 import { ToastAndroid } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-	AppColor,
-	AppTheme,
-	CurrencySymbols,
-	UserPreference,
-} from '@/types/type';
+import { AppTheme, CurrencySymbols, UserPreference } from '@/types/type';
 
 const STORAGE_KEY = 'USER_PREFERENCE';
 
@@ -14,10 +9,8 @@ export interface UserPreferenceContextTypes {
 	loading: boolean;
 	userPreference: UserPreference;
 	currentAppTheme: AppTheme;
-	currentAppColor: AppColor;
 	currentCurrencySymbol: CurrencySymbols;
 	firstTimer: boolean;
-	setAppColor: (selectedColor: AppColor) => void;
 	setAppTheme: (selectedTheme: AppTheme) => void;
 	setAppCurrencySymbol: (selectedSymbol: CurrencySymbols) => void;
 	setFirstTimer: (newState: boolean) => void;
@@ -31,7 +24,6 @@ export const UserPreferenceContext = createContext<
 const UserPreferenceProvider = ({ children }: { children: ReactNode }) => {
 	const [userPreference, setUserPreference] = useState<UserPreference>({
 		currentCurrencySymbol: 'Rp',
-		currentAppColor: 'Default',
 		currentAppTheme: 'Dark',
 		firstTimer: true,
 	});
@@ -59,7 +51,6 @@ const UserPreferenceProvider = ({ children }: { children: ReactNode }) => {
 			setLoading(true);
 
 			const resettedData: UserPreference = {
-				currentAppColor: 'Default',
 				currentAppTheme: 'Device',
 				currentCurrencySymbol: 'Rp',
 				firstTimer: true,
@@ -72,22 +63,6 @@ const UserPreferenceProvider = ({ children }: { children: ReactNode }) => {
 			setTimeout(() => {
 				setLoading(false);
 			}, 1500);
-		}
-	};
-
-	const setAppColor = async (selectedColor: AppColor) => {
-		try {
-			setLoading(true);
-			const newData = { ...userPreference, currentAppColor: selectedColor };
-			setUserPreference((prevData) => ({
-				...prevData,
-				currentAppColor: selectedColor,
-			}));
-			await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newData));
-		} catch (error: any) {
-			ToastAndroid.show(error.message, ToastAndroid.CENTER);
-		} finally {
-			setLoading(false);
 		}
 	};
 
@@ -149,9 +124,7 @@ const UserPreferenceProvider = ({ children }: { children: ReactNode }) => {
 				loading,
 				firstTimer: userPreference.firstTimer,
 				currentAppTheme: userPreference.currentAppTheme,
-				currentAppColor: userPreference.currentAppColor,
 				currentCurrencySymbol: userPreference.currentCurrencySymbol,
-				setAppColor,
 				setAppTheme,
 				setAppCurrencySymbol,
 				setFirstTimer,
@@ -164,3 +137,4 @@ const UserPreferenceProvider = ({ children }: { children: ReactNode }) => {
 };
 
 export default UserPreferenceProvider;
+
