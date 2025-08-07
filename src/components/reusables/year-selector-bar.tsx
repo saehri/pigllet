@@ -1,15 +1,17 @@
-import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react-native';
-import moment from 'moment';
 import { View } from 'react-native';
+import { Dispatch, ReactNode, SetStateAction } from 'react';
 import { Button, Text, useTheme } from 'react-native-paper';
+import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react-native';
+
+import moment from 'moment';
 import YearSelectorDialog from './year-selector-dialog';
-import { Dispatch, SetStateAction } from 'react';
 
 type Props = {
 	selectedDate: Date;
 	setSelectedDate: Dispatch<SetStateAction<Date>>;
 	onNext: () => void;
 	onPrev: () => void;
+	additionalButton?: () => ReactNode;
 };
 
 export default function YearSelectorBar({
@@ -17,6 +19,7 @@ export default function YearSelectorBar({
 	onPrev,
 	selectedDate,
 	setSelectedDate,
+	additionalButton,
 }: Props) {
 	const theme = useTheme();
 
@@ -76,7 +79,9 @@ export default function YearSelectorBar({
 					onValueChange={setSelectedDate}
 					selectedValue={selectedDate}
 				/>
+				{additionalButton ? additionalButton() : <View></View>}
 			</View>
 		</View>
 	);
 }
+

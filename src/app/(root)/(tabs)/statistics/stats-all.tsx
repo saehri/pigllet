@@ -1,4 +1,4 @@
-import { EyeIcon } from 'lucide-react-native';
+import { LayoutDashboardIcon } from 'lucide-react-native';
 import { Button, Text, useTheme } from 'react-native-paper';
 import { Dispatch, SetStateAction, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
@@ -29,79 +29,78 @@ export default function StatsAllScreen() {
 				}}
 				showsVerticalScrollIndicator={false}
 			>
-				<View style={styles.chartsContainer}>
+				<View>
 					<Button
-						onPress={() => bottomSheetRef.current?.snapToIndex(1)}
+						compact
 						mode="contained-tonal"
-						icon={(props) => (
-							<EyeIcon
-								size={props.size}
-								color={props.color}
-								strokeWidth={1.5}
-							/>
-						)}
 						style={{
 							height: 40,
-							width: 100,
+							width: 40,
 							alignSelf: 'flex-end',
 							marginRight: 16,
 						}}
-						labelStyle={{ fontFamily: 'Manrope-Regular' }}
+						onPress={() => bottomSheetRef.current?.expand()}
 					>
-						View
+						<LayoutDashboardIcon
+							size={20}
+							strokeWidth={1.5}
+							color={theme.colors.onSecondaryContainer}
+						/>
 					</Button>
 
-					{showExpenseByDate && (
-						<TransactionsOverTime
-							name="All your expenses"
-							descriptions="See how much you spend each year"
-							transactionType="expense"
-						/>
-					)}
+					<View style={styles.chartsContainer}>
+						{showExpenseByDate && (
+							<TransactionsOverTime
+								name="All your expenses"
+								descriptions="See how much you spend each year"
+								transactionType="expense"
+							/>
+						)}
 
-					{showIncomeByDate && (
-						<TransactionsOverTime
-							name="All your incomes"
-							descriptions="See how much you earn each year"
-							transactionType="income"
-						/>
-					)}
+						{showIncomeByDate && (
+							<TransactionsOverTime
+								name="All your incomes"
+								descriptions="See how much you earn each year"
+								transactionType="income"
+							/>
+						)}
 
-					{showTransferByDate && (
-						<TransactionsOverTime
-							name="Money transfered"
-							descriptions="See how your money moves between accounts"
-							transactionType="transfer"
-						/>
-					)}
+						{showTransferByDate && (
+							<TransactionsOverTime
+								name="Money transfered"
+								descriptions="See how your money moves between accounts"
+								transactionType="transfer"
+							/>
+						)}
 
-					{showExpenseByCategory && (
-						<TransactionsByCategory
-							type="expense"
-							name="Where your money goes"
-							descriptions="See the distribution of expenses by category"
-						/>
-					)}
+						{showExpenseByCategory && (
+							<TransactionsByCategory
+								type="expense"
+								name="Where your money goes"
+								descriptions="See the distribution of expenses by category"
+							/>
+						)}
 
-					{showIncomeByCategory && (
-						<TransactionsByCategory
-							type="income"
-							name="Where your money comes"
-							descriptions="See the distribution of incomes by category"
-						/>
-					)}
-					{showTransferByCategory && (
-						<TransactionsByCategory
-							type="transfer"
-							name="Transfers by category"
-						/>
-					)}
+						{showIncomeByCategory && (
+							<TransactionsByCategory
+								type="income"
+								name="Where your money comes"
+								descriptions="See the distribution of incomes by category"
+							/>
+						)}
+						{showTransferByCategory && (
+							<TransactionsByCategory
+								type="transfer"
+								name="Transfers by category"
+							/>
+						)}
+					</View>
 				</View>
 			</ScrollView>
 
 			<BottomSheet
 				ref={bottomSheetRef}
-				snapPoints={['50%', '85%']}
+				snapPoints={['50%', '93%']}
 				enableContentPanningGesture={false}
 				enablePanDownToClose={true}
 				overDragResistanceFactor={0.5}

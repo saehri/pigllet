@@ -96,13 +96,25 @@ function TransactionCard({ data, position, showDate, pressable }: Props) {
 	);
 
 	return (
-		<Pressable disabled={pressable} onPress={() => router.push(routeParams)}>
+		<Pressable
+			disabled={pressable}
+			onPress={() => router.push(routeParams)}
+			style={[
+				cardRadiusStyle,
+				{
+					overflow: 'hidden',
+					borderWidth: 1,
+					borderColor: isSelected
+						? theme.colors.tertiary
+						: theme.colors.elevation.level5,
+				},
+			]}
+		>
 			<Surface
 				mode="flat"
 				elevation={5}
 				style={[
 					styles.container,
-					cardRadiusStyle,
 					{
 						backgroundColor: isSelected
 							? theme.colors.tertiaryContainer

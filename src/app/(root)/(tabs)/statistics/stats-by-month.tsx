@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Button, Text, useTheme } from 'react-native-paper';
-import { EyeIcon } from 'lucide-react-native';
+import { EyeIcon, LayoutDashboardIcon } from 'lucide-react-native';
 
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import AverageSpending from '@/src/components/statistics/average-spending';
@@ -51,30 +51,23 @@ export default function StatsMonthlyScreen() {
 						onPrev={goToPreviousMonth}
 						selectedDate={selectedDate}
 						setSelectedDate={setSelectedDate}
+						additionalButton={() => (
+							<Button
+								compact
+								mode="contained-tonal"
+								contentStyle={{ height: 40, width: 40 }}
+								onPress={() => bottomSheetRef.current?.expand()}
+							>
+								<LayoutDashboardIcon
+									size={20}
+									strokeWidth={1.5}
+									color={theme.colors.onSecondaryContainer}
+								/>
+							</Button>
+						)}
 					/>
 
 					<View style={styles.chartsContainer}>
-						<Button
-							onPress={() => bottomSheetRef.current?.snapToIndex(1)}
-							mode="contained-tonal"
-							icon={(props) => (
-								<EyeIcon
-									size={props.size}
-									color={props.color}
-									strokeWidth={1.5}
-								/>
-							)}
-							style={{
-								height: 40,
-								width: 100,
-								alignSelf: 'flex-end',
-								marginRight: 16,
-							}}
-							labelStyle={{ fontFamily: 'Manrope-Regular' }}
-						>
-							View
-						</Button>
-
 						<AverageSpending selectedDate={selectedDate} range="month" />
 
 						{showExpenseByDate && (
@@ -140,7 +133,7 @@ export default function StatsMonthlyScreen() {
 
 			<BottomSheet
 				ref={bottomSheetRef}
-				snapPoints={['50%', '85%']}
+				snapPoints={['50%', '93%']}
 				enableContentPanningGesture={false}
 				enablePanDownToClose={true}
 				overDragResistanceFactor={0.5}

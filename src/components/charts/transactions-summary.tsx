@@ -1,4 +1,4 @@
-import { memo, useContext } from 'react';
+import { memo, useContext, useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Surface, Text, useTheme } from 'react-native-paper';
 
@@ -14,6 +14,8 @@ import {
 	UserPreferenceContextTypes,
 } from '@/context/UserPreferenceContext';
 import getLocaleByCurrencySymbol from '@/utils/locale-getter';
+import { CardPositionsTypes } from '@/types/type';
+import { TRANSACTION_CARD_BR } from '@/utils/utils';
 
 type Props = {
 	selectedDate?: Date;
@@ -67,10 +69,10 @@ const TransactionsSummary = memo(function TransactionsSummary({
 				</Text>
 
 				<View style={styles.list}>
-					<Card label="Total income" value={0} />
-					<Card label="Total expenses" value={0} />
-					<Card label="Total transfer" value={0} />
-					<Card label="Net balance" value={0} />
+					<Card position="first" label="Total income" value={0} />
+					<Card position="middle" label="Total expenses" value={0} />
+					<Card position="middle" label="Total transfer" value={0} />
+					<Card position="last" label="Net balance" value={0} />
 				</View>
 			</View>
 		);
@@ -85,10 +87,10 @@ const TransactionsSummary = memo(function TransactionsSummary({
 			</Text>
 
 			<View style={styles.list}>
-				<Card label="Total income" value={totalIncome} />
-				<Card label="Total expenses" value={totalExpense} />
-				<Card label="Total transfer" value={totalTransfer} />
-				<Card label="Net balance" value={netBalance} />
+				<Card position="first" label="Total income" value={totalIncome} />
+				<Card position="middle" label="Total expenses" value={totalExpense} />
+				<Card position="middle" label="Total transfer" value={totalTransfer} />
+				<Card position="last" label="Net balance" value={netBalance} />
 			</View>
 		</View>
 	);
@@ -99,31 +101,44 @@ export default TransactionsSummary;
 type CardProps = {
 	label: string;
 	value: number;
+	position: CardPositionsTypes;
 };
 
-function Card({ label, value }: CardProps) {
+function Card({ label, value, position }: CardProps) {
 	const theme = useTheme();
 
 	const { currentCurrencySymbol } = useContext(
 		UserPreferenceContext
 	) as UserPreferenceContextTypes;
 
+	const cardRadiusStyle = useMemo(
+		() => ({
+			borderTopLeftRadius: TRANSACTION_CARD_BR[position].tl,
+			borderTopRightRadius: TRANSACTION_CARD_BR[position].tr,
+			borderBottomLeftRadius: TRANSACTION_CARD_BR[position].bl,
+			borderBottomRightRadius: TRANSACTION_CARD_BR[position].br,
+		}),
+		[position]
+	);
+
 	return (
-		<Surface mode="flat" elevation={3} style={[styles.itemContainer]}>
+		<Surface
+			mode="flat"
+			elevation={3}
+			style={[
+				styles.itemContainer,
+				cardRadiusStyle,
+				{ backgroundColor: theme.colors.secondary },
+			]}
+		>
 			<Text
-				style={[styles.itemText, { color: theme.colors.onSurface }]}
+				style={[styles.itemText, { color: theme.colors.onSecondary }]}
 				variant="bodyMedium"
 			>
 				{label}
 			</Text>
 			<Text
-				style={[
-					{
-						color: theme.colors.onSurface,
-						fontFamily: 'Manrope-Medium',
-						opacity: 1,
-					},
-				]}
+				style={[styles.itemText, { color: theme.colors.onSecondary }]}
 				variant="bodyMedium"
 			>
 				{`${currentCurrencySymbol} ${value.toLocaleString(
@@ -150,8 +165,7 @@ const styles = StyleSheet.create({
 		borderRadius: 1000,
 	},
 	itemText: {
-		fontFamily: 'Manrope-Regular',
-		opacity: 0.7,
+		fontFamily: 'Manrope-Medium',
 	},
 	title: {
 		fontFamily: 'Manrope-Regular',
