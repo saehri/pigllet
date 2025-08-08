@@ -15,13 +15,11 @@ import {
 } from 'react-native-paper';
 
 import * as schema from '@/db/schema';
-import {
-	UserPreferenceContext,
-	UserPreferenceContextTypes,
-} from '@/context/UserPreferenceContext';
+
 import { eq, or } from 'drizzle-orm';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import NoItemNotice from '@/src/components/reusables/no-items-notice';
+import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 export default function EditAccountScreen() {
 	const db = useSQLiteContext();
@@ -89,9 +87,8 @@ type FormProps = {
 };
 
 function Form({ theme, drizzleDb, initialFormValue }: FormProps) {
-	const { currentCurrencySymbol } = useContext(
-		UserPreferenceContext
-	) as UserPreferenceContextTypes;
+	const { currentCurrencySymbol } = usePreferredCurrencyStore();
+
 	const router = useRouter();
 
 	const [formLoading, setFormLoading] = useState<boolean>(false);

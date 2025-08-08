@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router';
 import { useFonts } from 'expo-font';
-import { Suspense, useContext, useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { useColorScheme, View, ScrollView, StyleSheet } from 'react-native';
 import {
 	DefaultTheme,
@@ -18,11 +18,7 @@ import migrations from '@/drizzle/migrations';
 
 import * as SplashScreen from 'expo-splash-screen';
 
-import UserPreferenceProvider, {
-	UserPreferenceContext,
-	UserPreferenceContextTypes,
-} from '@/context/UserPreferenceContext';
-
+import { useAppThemeStore } from '@/store/useAppThemeStore';
 import { selectColorScheme } from '@/constants/color-scheme';
 
 // Prevent splash screen auto-hide
@@ -37,9 +33,7 @@ SplashScreen.setOptions({
 const DATABASE_NAME = 'database.db';
 
 function App() {
-	const { currentAppTheme } = useContext(
-		UserPreferenceContext
-	) as UserPreferenceContextTypes;
+	const { currentAppTheme } = useAppThemeStore();
 
 	const theme = {
 		...DefaultTheme,
@@ -126,11 +120,9 @@ export default function RootLayout() {
 				options={{ enableChangeListener: true }}
 				useSuspense
 			>
-				<UserPreferenceProvider>
-					<GestureHandlerRootView style={{ flex: 1 }}>
-						<App />
-					</GestureHandlerRootView>
-				</UserPreferenceProvider>
+				<GestureHandlerRootView style={{ flex: 1 }}>
+					<App />
+				</GestureHandlerRootView>
 			</SQLiteProvider>
 		</Suspense>
 	);

@@ -1,9 +1,3 @@
-import {
-	UserPreferenceContext,
-	UserPreferenceContextTypes,
-} from '@/context/UserPreferenceContext';
-import useSubscriptionTrackerManager from '@/src/hooks/useSubscriptionTrackerManager';
-import { useContext } from 'react';
 import { StyleSheet, View } from 'react-native';
 import {
 	ActivityIndicator,
@@ -12,6 +6,9 @@ import {
 	TextInput,
 	useTheme,
 } from 'react-native-paper';
+
+import useSubscriptionTrackerManager from '@/src/hooks/useSubscriptionTrackerManager';
+import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 import DatePicker from '../date-picker';
 import SelectInput from '../select-input';
@@ -22,9 +19,7 @@ type Props = {
 
 export default function EditSubscriptionForm({ subscriptionId }: Props) {
 	const theme = useTheme();
-	const { currentCurrencySymbol } = useContext(
-		UserPreferenceContext
-	) as UserPreferenceContextTypes;
+	const { currentCurrencySymbol } = usePreferredCurrencyStore();
 
 	const {
 		subscriptionStartedAt,

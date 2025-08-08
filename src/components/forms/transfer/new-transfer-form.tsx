@@ -1,4 +1,3 @@
-import { useContext } from 'react';
 import { StyleSheet, View } from 'react-native';
 import {
 	ActivityIndicator,
@@ -8,23 +7,17 @@ import {
 	useTheme,
 } from 'react-native-paper';
 
-import {
-	UserPreferenceContext,
-	UserPreferenceContextTypes,
-} from '@/context/UserPreferenceContext';
-
 import DatePicker from '../date-picker';
 import AccountSelector from '../account-selector';
 import ImageSelectorInput from '../image-select-input';
 import SelectInputWithIcon from '../select-input-with-icon';
 import useTransactionsManager from '@/src/hooks/useTransactionsManager';
+import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 export default function NewTransferForm() {
 	const theme = useTheme();
 
-	const { currentCurrencySymbol } = useContext(
-		UserPreferenceContext
-	) as UserPreferenceContextTypes;
+	const { currentCurrencySymbol } = usePreferredCurrencyStore();
 
 	const {
 		createTransferRecord,

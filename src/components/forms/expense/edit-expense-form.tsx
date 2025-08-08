@@ -1,5 +1,4 @@
-import { useContext } from 'react';
-import { StyleSheet, ToastAndroid, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import {
 	ActivityIndicator,
 	Button,
@@ -9,22 +8,17 @@ import {
 } from 'react-native-paper';
 import { useLocalSearchParams } from 'expo-router';
 
-import {
-	UserPreferenceContext,
-	UserPreferenceContextTypes,
-} from '@/context/UserPreferenceContext';
-
-import AccountSelector from '../account-selector';
-import SelectInputWithIcon from '../select-input-with-icon';
 import DatePicker from '../date-picker';
+import AccountSelector from '../account-selector';
 import ImageSelectorInput from '../image-select-input';
+import SelectInputWithIcon from '../select-input-with-icon';
 import useTransactionsManager from '@/src/hooks/useTransactionsManager';
+import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 export default function EditExpenseForm() {
 	const theme = useTheme();
-	const { currentCurrencySymbol } = useContext(
-		UserPreferenceContext
-	) as UserPreferenceContextTypes;
+	const { currentCurrencySymbol } = usePreferredCurrencyStore();
+
 	const { id } = useLocalSearchParams();
 
 	const {

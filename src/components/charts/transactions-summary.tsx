@@ -1,4 +1,4 @@
-import { memo, useContext, useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Surface, Text, useTheme } from 'react-native-paper';
 
@@ -9,13 +9,10 @@ import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { and, gte, lte, sql } from 'drizzle-orm';
 
-import {
-	UserPreferenceContext,
-	UserPreferenceContextTypes,
-} from '@/context/UserPreferenceContext';
 import getLocaleByCurrencySymbol from '@/utils/locale-getter';
 import { CardPositionsTypes } from '@/types/type';
 import { TRANSACTION_CARD_BR } from '@/utils/utils';
+import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 type Props = {
 	selectedDate?: Date;
@@ -107,9 +104,7 @@ type CardProps = {
 function Card({ label, value, position }: CardProps) {
 	const theme = useTheme();
 
-	const { currentCurrencySymbol } = useContext(
-		UserPreferenceContext
-	) as UserPreferenceContextTypes;
+	const { currentCurrencySymbol } = usePreferredCurrencyStore();
 
 	const cardRadiusStyle = useMemo(
 		() => ({

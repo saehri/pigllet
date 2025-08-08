@@ -1,14 +1,11 @@
+import { useRouter } from 'expo-router';
 import { Pressable, View } from 'react-native';
 import { Surface, Text, useTheme } from 'react-native-paper';
 
 import * as schema from '@/db/schema';
-import { useContext } from 'react';
-import {
-	UserPreferenceContext,
-	UserPreferenceContextTypes,
-} from '@/context/UserPreferenceContext';
+
 import getLocaleByCurrencySymbol from '@/utils/locale-getter';
-import { useRouter } from 'expo-router';
+import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 interface BudgetExtended extends schema.Budget {
 	category: schema.Category;
@@ -22,9 +19,7 @@ export default function BudgetCard({ data }: Props) {
 	const theme = useTheme();
 	const router = useRouter();
 
-	const { currentCurrencySymbol } = useContext(
-		UserPreferenceContext
-	) as UserPreferenceContextTypes;
+	const { currentCurrencySymbol } = usePreferredCurrencyStore();
 
 	return (
 		<Pressable

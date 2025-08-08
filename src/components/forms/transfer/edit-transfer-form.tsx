@@ -5,14 +5,10 @@ import {
 	TextInput,
 	ActivityIndicator,
 } from 'react-native-paper';
-import { useContext } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 
-import {
-	UserPreferenceContext,
-	UserPreferenceContextTypes,
-} from '@/context/UserPreferenceContext';
+import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 import DatePicker from '../date-picker';
 import ImageSelectorInput from '../image-select-input';
@@ -22,9 +18,8 @@ import useTransactionsManager from '@/src/hooks/useTransactionsManager';
 export default function EditTransferForm() {
 	const theme = useTheme();
 
-	const { currentCurrencySymbol } = useContext(
-		UserPreferenceContext
-	) as UserPreferenceContextTypes;
+	const { currentCurrencySymbol } = usePreferredCurrencyStore();
+
 	const { id } = useLocalSearchParams();
 
 	const {

@@ -1,5 +1,4 @@
 import { View } from 'react-native';
-import { useContext } from 'react';
 import { StyleSheet } from 'react-native';
 import {
 	ActivityIndicator,
@@ -9,10 +8,7 @@ import {
 	useTheme,
 } from 'react-native-paper';
 
-import {
-	UserPreferenceContext,
-	UserPreferenceContextTypes,
-} from '@/context/UserPreferenceContext';
+import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 import DatePicker from '../date-picker';
 import AccountSelector from '../account-selector';
@@ -22,9 +18,7 @@ import SelectInputWithIcon from '../select-input-with-icon';
 
 export default function CreateExpenseForm() {
 	const theme = useTheme();
-	const { currentCurrencySymbol } = useContext(
-		UserPreferenceContext
-	) as UserPreferenceContextTypes;
+	const { currentCurrencySymbol } = usePreferredCurrencyStore();
 
 	const {
 		transactionUsedAccount,

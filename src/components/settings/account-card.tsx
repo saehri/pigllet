@@ -1,10 +1,7 @@
+import { Surface, Text } from 'react-native-paper';
 import { Dimensions, Image, Pressable, View } from 'react-native';
-import { useContext } from 'react';
-import { Surface, Text, useTheme } from 'react-native-paper';
-import {
-	UserPreferenceContext,
-	UserPreferenceContextTypes,
-} from '@/context/UserPreferenceContext';
+
+import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 import * as schema from '@/db/schema';
 import getLocaleByCurrencySymbol from '@/utils/locale-getter';
@@ -23,10 +20,8 @@ export default function AccountCard({
 	compact,
 	clickable,
 }: Props) {
-	const theme = useTheme();
-	const { currentCurrencySymbol } = useContext(
-		UserPreferenceContext
-	) as UserPreferenceContextTypes;
+	const { currentCurrencySymbol } = usePreferredCurrencyStore();
+
 	const router = useRouter();
 
 	if (!clickable)

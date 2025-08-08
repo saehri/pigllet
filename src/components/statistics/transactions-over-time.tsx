@@ -1,12 +1,8 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { BarChart } from 'react-native-gifted-charts';
 import { Button, Surface, Text, useTheme } from 'react-native-paper';
 
-import {
-	UserPreferenceContext,
-	UserPreferenceContextTypes,
-} from '@/context/UserPreferenceContext';
 import getLocaleByCurrencySymbol from '@/utils/locale-getter';
 
 import * as schema from '@/db/schema';
@@ -18,6 +14,7 @@ import moment from 'moment';
 import { transactionColorMap } from '@/utils/utils';
 
 import { ArrowDownIcon, ArrowUpIcon, FocusIcon } from 'lucide-react-native';
+import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 type Props = {
 	selectedDate?: Date;
@@ -187,9 +184,8 @@ function ChartRenderer({
 	transactionType,
 	range,
 }: ChartRendererProps) {
-	const { currentCurrencySymbol } = useContext(
-		UserPreferenceContext
-	) as UserPreferenceContextTypes;
+	const { currentCurrencySymbol } = usePreferredCurrencyStore();
+
 	const theme = useTheme();
 
 	return (

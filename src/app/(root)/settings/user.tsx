@@ -1,17 +1,16 @@
-import React from 'react';
-import { Button, Dialog, Portal, Text, useTheme } from 'react-native-paper';
-import { useContext, useState } from 'react';
-import { ScrollView, ToastAndroid, View } from 'react-native';
-import { ChevronRight } from 'lucide-react-native';
-import {
-	UserPreferenceContext,
-	UserPreferenceContextTypes,
-} from '@/context/UserPreferenceContext';
-
+import { useState } from 'react';
 import { useRouter } from 'expo-router';
+import { ChevronRight } from 'lucide-react-native';
+import { ScrollView, ToastAndroid, View } from 'react-native';
+import { Button, Dialog, Portal, Text, useTheme } from 'react-native-paper';
+
+import * as schema from '@/db/schema';
 import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
-import * as schema from '@/db/schema';
+
+import { useAppThemeStore } from '@/store/useAppThemeStore';
+import { useUserFirstTimeStore } from '@/store/useUserFirstTimeStore';
+import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 import SettingContentButton from '@/src/components/settings/setting-content-button';
 import SettingContentWrapper from '@/src/components/settings/setting-content-wrapper';
@@ -58,9 +57,6 @@ export default function AccountSettingScreen() {
 }
 
 function ResetUserPreference() {
-	const { resetUserPreferenceData } = useContext(
-		UserPreferenceContext
-	) as UserPreferenceContextTypes;
 	const router = useRouter();
 	const [visible, setVisible] = useState(false);
 
@@ -70,9 +66,16 @@ function ResetUserPreference() {
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
 
+	const { setAppCurrencySymbol } = usePreferredCurrencyStore();
+	const { setAppTheme } = useAppThemeStore();
+	const { setFirstTimer } = useUserFirstTimeStore();
+
 	async function resetUserData() {
 		try {
-			resetUserPreferenceData();
+			setAppCurrencySymbol('Rp');
+			setAppTheme('Dark');
+			setFirstTimer(true);
+
 			await drizzleDb.delete(schema.accounts);
 			await drizzleDb.delete(schema.budgets);
 			await drizzleDb.delete(schema.categories);

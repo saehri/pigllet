@@ -1,4 +1,3 @@
-import { useContext } from 'react';
 import { StyleSheet, View } from 'react-native';
 import {
 	ActivityIndicator,
@@ -9,10 +8,7 @@ import {
 } from 'react-native-paper';
 import { useLocalSearchParams } from 'expo-router';
 
-import {
-	UserPreferenceContext,
-	UserPreferenceContextTypes,
-} from '@/context/UserPreferenceContext';
+import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 import AccountSelector from '../account-selector';
 import SelectInputWithIcon from '../select-input-with-icon';
@@ -22,9 +18,8 @@ import useTransactionsManager from '@/src/hooks/useTransactionsManager';
 
 export default function EditIncomeForm() {
 	const theme = useTheme();
-	const { currentCurrencySymbol } = useContext(
-		UserPreferenceContext
-	) as UserPreferenceContextTypes;
+	const { currentCurrencySymbol } = usePreferredCurrencyStore();
+
 	const { id } = useLocalSearchParams();
 
 	const {

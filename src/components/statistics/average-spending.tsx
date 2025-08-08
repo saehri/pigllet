@@ -9,12 +9,9 @@ import * as schema from '@/db/schema';
 import { and, sql } from 'drizzle-orm';
 import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
 
-import {
-	UserPreferenceContext,
-	UserPreferenceContextTypes,
-} from '@/context/UserPreferenceContext';
 import { transactionColorMap } from '@/utils/utils';
 import getLocaleByCurrencySymbol from '@/utils/locale-getter';
+import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 type Props = {
 	selectedDate?: Date;
@@ -22,9 +19,7 @@ type Props = {
 };
 
 export default function AverageSpending({ selectedDate, range }: Props) {
-	const { currentCurrencySymbol } = useContext(
-		UserPreferenceContext
-	) as UserPreferenceContextTypes;
+	const { currentCurrencySymbol } = usePreferredCurrencyStore();
 
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });

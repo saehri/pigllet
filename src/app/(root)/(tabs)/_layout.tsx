@@ -10,13 +10,16 @@ import {
 	Settings,
 	SettingsIcon,
 } from 'lucide-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+
+import { useAppThemeStore } from '@/store/useAppThemeStore';
 
 import AccountMiniViewer from '@/src/components/reusables/account-mini-viewer';
-import { LinearGradient } from 'expo-linear-gradient';
 
 export default function Layout() {
 	const theme = useTheme();
 	const router = useRouter();
+	const { currentAppTheme } = useAppThemeStore();
 
 	return (
 		<View style={{ flex: 1 }}>
@@ -235,7 +238,11 @@ export default function Layout() {
 			</Tabs>
 
 			<LinearGradient
-				colors={['black', 'transparent']}
+				colors={
+					currentAppTheme === 'Dark'
+						? ['black', 'transparent']
+						: ['white', 'transparent']
+				}
 				start={{ x: 0.5, y: 1 }}
 				end={{ x: 0.5, y: 0 }}
 				style={{

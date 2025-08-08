@@ -1,23 +1,18 @@
 import { Check } from 'lucide-react-native';
-import { ScrollView, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
+import { ScrollView, View } from 'react-native';
 
 import SettingContentButton from '@/src/components/settings/setting-content-button';
 import SettingContentWrapper from '@/src/components/settings/setting-content-wrapper';
 
 import { currencySymbols } from '@/constants/currency-symbols';
-import { useContext } from 'react';
-import {
-	UserPreferenceContext,
-	UserPreferenceContextTypes,
-} from '@/context/UserPreferenceContext';
+import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 export default function Currency() {
 	const theme = useTheme();
 
-	const { currentCurrencySymbol, setAppCurrencySymbol } = useContext(
-		UserPreferenceContext
-	) as UserPreferenceContextTypes;
+	const { currentCurrencySymbol, setAppCurrencySymbol } =
+		usePreferredCurrencyStore();
 
 	return (
 		<ScrollView
@@ -29,6 +24,7 @@ export default function Currency() {
 				<SettingContentWrapper headerTitle="Currency symbol">
 					{currencySymbols.map((c) => (
 						<SettingContentButton
+							position="only"
 							onPress={() => setAppCurrencySymbol(c.symbol)}
 							label={c.label}
 							key={c.code}
@@ -57,3 +53,4 @@ function RightButton({ selected }: { selected: boolean }) {
 		</View>
 	);
 }
+

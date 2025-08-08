@@ -11,17 +11,14 @@ import {
 } from 'react-native-paper';
 
 import * as schema from '@/db/schema';
-import {
-	UserPreferenceContext,
-	UserPreferenceContextTypes,
-} from '@/context/UserPreferenceContext';
+
+import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 export default function AddAccountScreen() {
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
-	const { currentCurrencySymbol } = useContext(
-		UserPreferenceContext
-	) as UserPreferenceContextTypes;
+	const { currentCurrencySymbol } = usePreferredCurrencyStore();
+
 	const theme = useTheme();
 
 	const [formLoading, setFormLoading] = useState<boolean>(false);

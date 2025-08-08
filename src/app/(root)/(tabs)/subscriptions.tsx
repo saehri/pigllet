@@ -13,18 +13,13 @@ import {
 	Text,
 	useTheme,
 } from 'react-native-paper';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CalendarIcon, RepeatIcon, TimerIcon } from 'lucide-react-native';
 
 import * as schema from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { useRouter } from 'expo-router';
 import { useSQLiteContext } from 'expo-sqlite';
-
-import {
-	UserPreferenceContext,
-	UserPreferenceContextTypes,
-} from '@/context/UserPreferenceContext';
 
 import getLocaleByCurrencySymbol from '@/utils/locale-getter';
 import useSubscriptionTrackerManager from '@/src/hooks/useSubscriptionTrackerManager';
@@ -33,6 +28,7 @@ import NoItemNotice from '@/src/components/reusables/no-items-notice';
 import AccountSelector from '@/src/components/forms/account-selector';
 import SelectInputWithIcon from '@/src/components/forms/select-input-with-icon';
 import moment from 'moment';
+import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 function addMonths(date: Date, count: number) {
 	const newDate = new Date(date);
@@ -57,9 +53,7 @@ function addYears(date: Date, count: number) {
 export default function SubscriptionScreen(props: any) {
 	const theme = useTheme();
 	const router = useRouter();
-	const { currentCurrencySymbol } = useContext(
-		UserPreferenceContext
-	) as UserPreferenceContextTypes;
+	const { currentCurrencySymbol } = usePreferredCurrencyStore();
 
 	const { loadSubscriptionsData } = useSubscriptionTrackerManager({
 		actionType: 'read',

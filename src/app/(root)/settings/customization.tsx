@@ -1,13 +1,10 @@
-import { useContext } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
-import SettingContentWrapper from '@/src/components/settings/setting-content-wrapper';
 import SettingContentButton from '@/src/components/settings/setting-content-button';
-import {
-	UserPreferenceContext,
-	UserPreferenceContextTypes,
-} from '@/context/UserPreferenceContext';
+import SettingContentWrapper from '@/src/components/settings/setting-content-wrapper';
+
+import { useAppThemeStore } from '@/store/useAppThemeStore';
 
 export default function Customization() {
 	const theme = useTheme();
@@ -28,9 +25,7 @@ export default function Customization() {
 
 function ThemeSelector() {
 	const theme = useTheme();
-	const { currentAppTheme, setAppTheme } = useContext(
-		UserPreferenceContext
-	) as UserPreferenceContextTypes;
+	const { currentAppTheme, setAppTheme } = useAppThemeStore();
 
 	const isDarkTheme = currentAppTheme === 'Dark';
 

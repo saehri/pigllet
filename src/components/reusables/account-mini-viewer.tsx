@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react-native';
 import { Button, Surface, Text, useTheme } from 'react-native-paper';
@@ -8,15 +8,11 @@ import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
 
 import getLocaleByCurrencySymbol from '@/utils/locale-getter';
-import {
-	UserPreferenceContext,
-	UserPreferenceContextTypes,
-} from '@/context/UserPreferenceContext';
+import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 export default function AccountMiniViewer() {
-	const { currentCurrencySymbol } = useContext(
-		UserPreferenceContext
-	) as UserPreferenceContextTypes;
+	const { currentCurrencySymbol } = usePreferredCurrencyStore();
+
 	const [currentCardIndex, setCurrentCardIndex] = useState(0);
 
 	const theme = useTheme();

@@ -1,17 +1,8 @@
-import {
-	UserPreferenceContext,
-	UserPreferenceContextTypes,
-} from '@/context/UserPreferenceContext';
 import { Redirect } from 'expo-router';
-import { useContext } from 'react';
-import { View } from 'react-native';
+import { useUserFirstTimeStore } from '@/store/useUserFirstTimeStore';
 
 export default function Page() {
-	const { firstTimer, loading } = useContext(
-		UserPreferenceContext
-	) as UserPreferenceContextTypes;
-
-	if (loading) return <View></View>;
+	const { firstTimer } = useUserFirstTimeStore();
 
 	if (firstTimer) return <Redirect href="/(auth)/welcome" />;
 

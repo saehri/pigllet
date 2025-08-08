@@ -1,5 +1,5 @@
+import { memo, useMemo } from 'react';
 import { useRouter } from 'expo-router';
-import { useContext, memo, useMemo } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Surface, Text, useTheme } from 'react-native-paper';
 import {
@@ -10,10 +10,6 @@ import {
 	PlusIcon,
 } from 'lucide-react-native';
 
-import {
-	UserPreferenceContext,
-	UserPreferenceContextTypes,
-} from '@/context/UserPreferenceContext';
 import moment from 'moment';
 
 import { CardPositionsTypes } from '@/types/type';
@@ -23,6 +19,7 @@ import { TRANSACTION_CARD_BR, transactionColorMap } from '@/utils/utils';
 import { useSelectedTransactions } from '@/store/useSelectedTransactions';
 
 import TransactionIcons from './transaction-icons';
+import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 type Props = {
 	data: TransactionWithDetails;
@@ -43,10 +40,7 @@ function TransactionCard({ data, position, showDate, pressable }: Props) {
 	const setSelectedTransactions = useSelectedTransactions(
 		(s) => s.setSelectedTransactions
 	);
-
-	const { currentCurrencySymbol } = useContext(
-		UserPreferenceContext
-	) as UserPreferenceContextTypes;
+	const { currentCurrencySymbol } = usePreferredCurrencyStore();
 
 	// used to check whether the transaction card is selected or not
 	const isSelected = selectedTransactions.includes(data.transaction.id!);

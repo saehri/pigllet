@@ -1,9 +1,5 @@
-import {
-	UserPreferenceContext,
-	UserPreferenceContextTypes,
-} from '@/context/UserPreferenceContext';
+import { useState } from 'react';
 import { useRouter } from 'expo-router';
-import { useContext, useState } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Button, Text, useTheme } from 'react-native-paper';
 
@@ -15,6 +11,7 @@ import { drizzle } from 'drizzle-orm/expo-sqlite';
 import { transactionCategories } from '@/constants/expense-category';
 import { incomeCategories } from '@/constants/income-category';
 import { transferCategories } from '@/constants/transfer-category';
+import { useUserFirstTimeStore } from '@/store/useUserFirstTimeStore';
 
 export default function WelcomeScreen() {
 	const theme = useTheme();
@@ -22,9 +19,7 @@ export default function WelcomeScreen() {
 
 	const [isSettingUp, setIsSettingUp] = useState<boolean>(false);
 
-	const { setFirstTimer } = useContext(
-		UserPreferenceContext
-	) as UserPreferenceContextTypes;
+	const { setFirstTimer } = useUserFirstTimeStore();
 
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });

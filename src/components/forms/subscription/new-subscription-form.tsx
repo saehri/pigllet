@@ -1,9 +1,3 @@
-import {
-	UserPreferenceContext,
-	UserPreferenceContextTypes,
-} from '@/context/UserPreferenceContext';
-import useSubscriptionTrackerManager from '@/src/hooks/useSubscriptionTrackerManager';
-import { useContext } from 'react';
 import { StyleSheet, View } from 'react-native';
 import {
 	ActivityIndicator,
@@ -13,14 +7,15 @@ import {
 	useTheme,
 } from 'react-native-paper';
 
+import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
+import useSubscriptionTrackerManager from '@/src/hooks/useSubscriptionTrackerManager';
+
 import DatePicker from '../date-picker';
 import SelectInput from '../select-input';
 
 export default function NewSubscriptionForm() {
 	const theme = useTheme();
-	const { currentCurrencySymbol } = useContext(
-		UserPreferenceContext
-	) as UserPreferenceContextTypes;
+	const { currentCurrencySymbol } = usePreferredCurrencyStore();
 
 	const {
 		subscriptionStartedAt,
