@@ -4,7 +4,7 @@ import { useSQLiteContext } from 'expo-sqlite';
 import * as schema from '@/db/schema';
 import { SetStateAction, useEffect, useState } from 'react';
 import { ToastAndroid } from 'react-native';
-import { desc, eq } from 'drizzle-orm';
+import { desc, eq, inArray } from 'drizzle-orm';
 
 import { useRouter } from 'expo-router';
 import moment from 'moment';
@@ -14,9 +14,45 @@ type Props = {
 	budgetId?: number;
 };
 
+export const loadBudgetRecord = () => {
+	const db = useSQLiteContext();
+	const drizzleDb = drizzle(db, { schema });
+
+	return drizzleDb
+		.select({
+			budget: {
+				id: schema.budgets.id,
+				category_id: schema.budgets.category_id,
+				created_at: schema.budgets.created_at,
+				max_spending: schema.budgets.max_spending,
+				note: schema.budgets.note,
+				period: schema.budgets.period,
+			},
+			category: {
+				id: schema.categories.id,
+				icon_name: schema.categories.icon_name,
+				label: schema.categories.label,
+				type: schema.categories.type,
+			},
+		})
+		.from(schema.budgets)
+		.innerJoin(
+			schema.categories,
+			eq(schema.budgets.category_id, schema.categories.id)
+		)
+		.orderBy(desc(schema.budgets.created_at));
+};
+
+export const deleteBudgetRecord = async (budgetIds: number[], db: any) => {
+	const drizzleDb = drizzle(db, { schema });
+
+	return drizzleDb
+		.delete(schema.budgets)
+		.where(inArray(schema.budgets.id, budgetIds));
+};
+
 type UseBudgetManagerTypes = {
 	loading: boolean;
-	loadBudgetRecord: () => any;
 	createBudgetRecord: () => Promise<void>;
 	updateBudgetRecord: () => Promise<void>;
 	deleteBudgetRecord: () => Promise<void>;
@@ -69,7 +105,6 @@ export default function useBudgetManager({
 							category_id: schema.budgets.category_id,
 							created_at: schema.budgets.created_at,
 							max_spending: schema.budgets.max_spending,
-							current_spending: schema.budgets.current_spending,
 							note: schema.budgets.note,
 							period: schema.budgets.period,
 							category: {
@@ -114,30 +149,6 @@ export default function useBudgetManager({
 		}
 	}, []);
 
-	// ---- READ
-	const loadBudgetRecord = () =>
-		drizzleDb
-			.select({
-				id: schema.budgets.id,
-				category_id: schema.budgets.category_id,
-				created_at: schema.budgets.created_at,
-				max_spending: schema.budgets.max_spending,
-				current_spending: schema.budgets.current_spending,
-				note: schema.budgets.note,
-				period: schema.budgets.period,
-				category: {
-					id: schema.categories.id,
-					icon_name: schema.categories.icon_name,
-					label: schema.categories.label,
-				},
-			})
-			.from(schema.budgets)
-			.leftJoin(
-				schema.categories,
-				eq(schema.budgets.category_id, schema.categories.id)
-			)
-			.orderBy(desc(schema.budgets.created_at));
-
 	// ----- CREATE
 	async function createBudgetRecord() {
 		try {
@@ -148,7 +159,6 @@ export default function useBudgetManager({
 			const payload: schema.Budget = {
 				category_id: Number(budgetCategory.id),
 				created_at: moment(new Date()).format('YYYY-MM-DD'),
-				current_spending: 0,
 				max_spending: Number(budgetMaxSpending),
 				period: moment(new Date()).format('YYYY-MM-DD'),
 				note: budgetNote,
@@ -212,7 +222,6 @@ export default function useBudgetManager({
 
 	return {
 		loading,
-		loadBudgetRecord,
 		createBudgetRecord,
 		budgetCategory,
 		budgetCreatedAt,

@@ -1,13 +1,11 @@
-import { Tabs, useRouter } from 'expo-router';
 import { View } from 'react-native';
+import { Tabs, useRouter } from 'expo-router';
 import { Button, useTheme } from 'react-native-paper';
 import {
+	BanknoteIcon,
 	CalendarSync,
 	ChartPieIcon,
 	House,
-	Plus,
-	ScrollText,
-	Settings,
 	SettingsIcon,
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -143,41 +141,6 @@ export default function Layout() {
 								}
 							/>
 						),
-						headerRight: (props) => (
-							<View
-								style={{
-									flexDirection: 'row',
-									alignItems: 'center',
-									paddingRight: 16,
-								}}
-							>
-								<Button
-									mode="contained-tonal"
-									onPress={() => router.push('/(root)/new-subscription')}
-									contentStyle={{ height: 40 }}
-								>
-									<Plus
-										strokeWidth={1.5}
-										color={theme.colors.onBackground}
-										size={24}
-									/>
-								</Button>
-
-								<Button
-									mode="contained-tonal"
-									onPress={() => router.push('/(root)/settings')}
-									contentStyle={{
-										height: 40,
-									}}
-								>
-									<Settings
-										strokeWidth={1.5}
-										color={theme.colors.onSecondaryContainer}
-										size={20}
-									/>
-								</Button>
-							</View>
-						),
 					}}
 				/>
 				<Tabs.Screen
@@ -185,10 +148,10 @@ export default function Layout() {
 					options={{
 						title: 'Budgets',
 						tabBarIcon: (props) => (
-							<ScrollText
-								size={20}
+							<BanknoteIcon
+								size={28}
 								color={props.color}
-								strokeWidth={1.5}
+								strokeWidth={1.2}
 								fillOpacity={props.focused ? 0.3 : 0}
 								fill={
 									props.focused
@@ -196,42 +159,6 @@ export default function Layout() {
 										: theme.colors.background
 								}
 							/>
-						),
-						headerRight: (props) => (
-							<View
-								style={{
-									flexDirection: 'row',
-									alignItems: 'center',
-									paddingRight: 16,
-								}}
-							>
-								<Button
-									onPress={() => router.push('/(root)/new-budget')}
-									mode="contained-tonal"
-									contentStyle={{
-										height: 40,
-									}}
-								>
-									<Plus
-										strokeWidth={1.5}
-										color={theme.colors.onBackground}
-										size={24}
-									/>
-								</Button>
-								<Button
-									onPress={() => router.push('/(root)/settings')}
-									mode="contained-tonal"
-									contentStyle={{
-										height: 40,
-									}}
-								>
-									<Settings
-										strokeWidth={1.5}
-										color={theme.colors.onSecondaryContainer}
-										size={20}
-									/>
-								</Button>
-							</View>
 						),
 					}}
 				/>

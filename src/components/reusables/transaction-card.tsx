@@ -34,12 +34,8 @@ function TransactionCard({ data, position, showDate, pressable }: Props) {
 	const theme = useTheme();
 	const router = useRouter();
 
-	const selectedTransactions = useSelectedTransactions(
-		(s) => s.selectedTransactions
-	);
-	const setSelectedTransactions = useSelectedTransactions(
-		(s) => s.setSelectedTransactions
-	);
+	const { selectedTransactions, setSelectedTransactions } =
+		useSelectedTransactions();
 	const { currentCurrencySymbol } = usePreferredCurrencyStore();
 
 	// used to check whether the transaction card is selected or not

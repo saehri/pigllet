@@ -1,149 +1,298 @@
 import { useRouter } from 'expo-router';
-import { Pressable, View } from 'react-native';
+import { CheckIcon } from 'lucide-react-native';
+import { memo, useCallback, useMemo } from 'react';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { Surface, Text, useTheme } from 'react-native-paper';
 
 import * as schema from '@/db/schema';
+import { CardPositionsTypes } from '@/types/type';
 
+import moment from 'moment';
 import getLocaleByCurrencySymbol from '@/utils/locale-getter';
+import { TRANSACTION_CARD_BR, transactionColorMap } from '@/utils/utils';
+
+import { useSelectedBudgets } from '@/store/useSelectedBudgets';
 import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
-interface BudgetExtended extends schema.Budget {
-	category: schema.Category;
-}
+import { useSQLiteContext } from 'expo-sqlite';
+import { and, eq, gte, lte, sql } from 'drizzle-orm';
+import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
+
+import TransactionIcons from '../reusables/transaction-icons';
 
 type Props = {
-	data: BudgetExtended;
+	data: { budget: schema.Budget; category: schema.Category };
+	position: CardPositionsTypes;
 };
 
-export default function BudgetCard({ data }: Props) {
+function BudgetCard({ data, position }: Props) {
+	const { budget, category } = data;
+
 	const theme = useTheme();
 	const router = useRouter();
 
 	const { currentCurrencySymbol } = usePreferredCurrencyStore();
+	const { selectedBudgets, setSelectedBudgets } = useSelectedBudgets();
+
+	const isSelected = selectedBudgets.includes(budget.id!);
+
+	// select the card
+	const onSelect = () => {
+		setSelectedBudgets([...selectedBudgets, budget.id!]);
+	};
+
+	// unselect the transaction card
+	const onUnselect = () => {
+		setSelectedBudgets(selectedBudgets.filter((id) => id !== budget.id!));
+	};
+
+	const cardRadiusStyle = useMemo(
+		() => ({
+			borderTopLeftRadius: TRANSACTION_CARD_BR[position].tl,
+			borderTopRightRadius: TRANSACTION_CARD_BR[position].tr,
+			borderBottomLeftRadius: TRANSACTION_CARD_BR[position].bl,
+			borderBottomRightRadius: TRANSACTION_CARD_BR[position].br,
+		}),
+		[position]
+	);
+
+	const routeParams = useMemo(
+		() => ({
+			pathname: '/(root)/edit-budget' as any,
+			params: {
+				id: budget.id,
+				categoryId: category.id,
+			},
+		}),
+		[budget.id, category.id]
+	);
+
+	const formattedAmount = useCallback(
+		(amount: number) => {
+			return `${currentCurrencySymbol} ${amount.toLocaleString(
+				getLocaleByCurrencySymbol(currentCurrencySymbol)
+			)}`;
+		},
+		[currentCurrencySymbol]
+	);
 
 	return (
 		<Pressable
-			style={{ marginBottom: 12 }}
-			onPress={() =>
-				router.push({
-					pathname: '/(root)/edit-budget',
-					params: {
-						id: data.id as any,
-						categoryId: data.category_id,
-					},
-				})
-			}
+			style={[
+				cardRadiusStyle,
+				{
+					overflow: 'hidden',
+					borderWidth: 1,
+					marginHorizontal: 16,
+					marginBottom: 2,
+					borderColor: isSelected
+						? theme.colors.tertiary
+						: theme.colors.elevation.level5,
+				},
+			]}
+			onPress={() => router.push(routeParams)}
 		>
 			<Surface
-				elevation={3}
-				style={{
-					borderWidth: 1,
-					borderColor: theme.colors.outlineVariant,
-					padding: 16,
-					marginHorizontal: 16,
-					borderRadius: 16,
-				}}
+				mode="flat"
+				elevation={5}
+				style={[
+					styles.container,
+					{
+						backgroundColor: isSelected
+							? theme.colors.tertiaryContainer
+							: theme.colors.elevation.level5,
+					},
+				]}
 			>
-				<View
-					style={{
-						flexDirection: 'row',
-						justifyContent: 'space-between',
-						alignItems: 'center',
-						marginBottom: 12,
-					}}
+				<Pressable
+					style={styles.iconContainer}
+					onPress={isSelected ? onUnselect : onSelect}
 				>
-					<Text
-						style={{ fontFamily: 'Manrope-Medium' }}
-						numberOfLines={1}
-						variant="titleMedium"
-					>
-						{data.category.label}
-					</Text>
-
-					<Text
-						style={{ fontFamily: 'Manrope-Regular' }}
-						numberOfLines={1}
-						variant="titleMedium"
-					>
-						{new Date(data.period).toLocaleDateString('en-US', {
-							month: 'short', // or 'short' for abbreviated month
-							year: 'numeric',
-						})}
-					</Text>
-				</View>
-
-				<View
-					style={{
-						borderColor: theme.colors.outlineVariant,
-						borderWidth: 1,
-						borderRadius: 10,
-					}}
-				>
-					<View
-						style={{
-							padding: 8,
-							borderRadius: 8,
-							flex: 1,
-							alignItems: 'center',
-							borderBottomWidth: 1,
-							borderColor: theme.colors.outlineVariant,
-						}}
-					>
-						<Text
-							style={{ fontFamily: 'Manrope-Regular' }}
-							variant="labelLarge"
+					{isSelected ? (
+						<View
+							style={[
+								styles.checkIconBox,
+								{ backgroundColor: theme.colors.tertiary },
+							]}
 						>
-							Current{' '}
-							{`${currentCurrencySymbol} ${data.current_spending.toLocaleString(
-								getLocaleByCurrencySymbol(currentCurrencySymbol)
-							)}`}
+							<CheckIcon
+								color={theme.colors.onTertiary}
+								size={20}
+								strokeWidth={1.5}
+							/>
+						</View>
+					) : (
+						<TransactionIcons
+							color={transactionColorMap[category.type]}
+							icon={category.icon_name as any}
+							size={20}
+						/>
+					)}
+				</Pressable>
+
+				<View style={styles.contentContainer}>
+					<View style={styles.row}>
+						<Text
+							numberOfLines={1}
+							variant="bodyMedium"
+							style={styles.cardLabel}
+						>
+							{category.label}
 						</Text>
+
+						<View style={styles.amountRow}>
+							<Text style={styles.cardPrice} variant="bodyMedium">
+								{formattedAmount(budget.max_spending)}
+							</Text>
+						</View>
 					</View>
 
-					<View
-						style={{
-							padding: 8,
-							borderRadius: 8,
-							flex: 1,
-							alignItems: 'center',
-						}}
-					>
-						<Text
-							style={{ fontFamily: 'Manrope-Regular' }}
-							variant="labelLarge"
-						>
-							Max{' '}
-							{`${currentCurrencySymbol} ${data.max_spending.toLocaleString(
-								getLocaleByCurrencySymbol(currentCurrencySymbol)
-							)}`}
-						</Text>
-					</View>
+					<View style={styles.metaRow}>
+						<View style={{ flex: 1 }}>
+							<Text
+								variant="labelMedium"
+								style={[styles.cardNote, styles.noteText]}
+								numberOfLines={1}
+							>
+								{budget.note || 'Undefined'}
+							</Text>
+						</View>
 
-					<View
-						style={{
-							padding: 8,
-							borderRadius: 8,
-							flex: 1,
-							alignItems: 'center',
-							borderTopWidth: 1,
-							borderColor: theme.colors.outlineVariant,
-						}}
-					>
-						<Text
-							style={{ fontFamily: 'Manrope-Regular' }}
-							variant="labelLarge"
-						>
-							Remaining{' '}
-							{`${currentCurrencySymbol} ${(
-								data.max_spending - data.current_spending
-							).toLocaleString(
-								getLocaleByCurrencySymbol(currentCurrencySymbol)
-							)}`}
-						</Text>
+						<View style={styles.accountRow}>
+							<CurrentSpending
+								formatter={formattedAmount}
+								categoryId={category.id!}
+								budgetDate={budget.period}
+							/>
+						</View>
 					</View>
 				</View>
 			</Surface>
 		</Pressable>
 	);
 }
+
+type CurrentSpendingProps = {
+	formatter: (val: number) => string;
+	categoryId: number;
+	budgetDate: string;
+};
+
+function CurrentSpending({
+	formatter,
+	categoryId,
+	budgetDate,
+}: CurrentSpendingProps) {
+	const db = useSQLiteContext();
+	const drizzleDb = drizzle(db, { schema });
+
+	const getCurrentSpending = useMemo(() => {
+		const whereConditions = [eq(schema.transactions.category_id, categoryId)];
+
+		whereConditions.push(
+			gte(
+				schema.transactions.created_at,
+				moment(budgetDate).startOf('month').format('YYYY-MM-DD')
+			)
+		);
+		whereConditions.push(
+			lte(
+				schema.transactions.created_at,
+				moment(budgetDate).endOf('month').format('YYYY-MM-DD')
+			)
+		);
+
+		return drizzleDb
+			.select({
+				totalExpense: sql<number>`COALESCE(SUM(CASE WHEN ${schema.transactions.type} = 'expense' THEN ${schema.transactions.amount} ELSE 0 END), 0)`,
+			})
+			.from(schema.transactions)
+			.where(and(...whereConditions));
+	}, [categoryId, budgetDate]);
+
+	const { data } = useLiveQuery(getCurrentSpending);
+	const totalExpense = data[0]?.totalExpense || 0;
+
+	return (
+		<Text
+			variant="labelMedium"
+			style={styles.cardNote}
+			adjustsFontSizeToFit
+			numberOfLines={1}
+		>
+			{formatter(totalExpense)} spent
+		</Text>
+	);
+}
+
+const styles = StyleSheet.create({
+	container: {
+		flexDirection: 'row',
+		gap: 10,
+		alignItems: 'center',
+		paddingVertical: 9,
+		paddingHorizontal: 12,
+	},
+	iconContainer: {
+		width: 40,
+		height: 40,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	checkIconBox: {
+		borderRadius: 100,
+		width: 40,
+		height: 40,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	contentContainer: {
+		flex: 1,
+	},
+	row: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		gap: 2,
+		flex: 1,
+		justifyContent: 'space-between',
+	},
+	amountRow: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		gap: 2,
+	},
+	metaRow: {
+		alignItems: 'center',
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+	},
+	accountRow: {
+		flexDirection: 'row',
+		gap: 6,
+		alignItems: 'center',
+	},
+	noteRow: {
+		flexDirection: 'row',
+		gap: 4,
+		alignItems: 'center',
+	},
+	noteText: {
+		flex: 1,
+		maxWidth: 150,
+		fontStyle: 'italic',
+	},
+	cardLabel: {
+		fontFamily: 'Manrope-SemiBold',
+	},
+	cardPrice: {
+		fontFamily: 'Manrope-SemiBold',
+		letterSpacing: -0.2,
+	},
+	cardNote: {
+		fontFamily: 'Manrope-Regular',
+		opacity: 0.9,
+	},
+});
+
+export default memo(BudgetCard);
 

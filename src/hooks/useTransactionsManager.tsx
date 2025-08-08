@@ -214,26 +214,6 @@ export const deleteTransactions = async (db: any, transactionId: number) => {
 
 		await Promise.all(updates);
 
-		// Update the budget associated with the transaction's category
-		const budgets = await drizzleDb
-			.select()
-			.from(schema.budgets)
-			.where(eq(schema.budgets.category_id, Number(transaction.category_id)));
-
-		if (budgets.length) {
-			const budget = budgets[0];
-
-			await drizzleDb
-				.update(schema.budgets)
-				.set({
-					current_spending:
-						budget.current_spending - Number(transaction.amount),
-				})
-				.where(eq(schema.budgets.category_id, Number(transaction.category_id)));
-
-			ToastAndroid.show('Budget updated!', ToastAndroid.CENTER);
-		}
-
 		ToastAndroid.show('Transaction deleted!', ToastAndroid.CENTER);
 	} catch (error: any) {
 		ToastAndroid.show(error.message, ToastAndroid.SHORT);
@@ -404,26 +384,6 @@ export default function useTransactionsManager({
 					balance: transactionUsedAccount.balance - Number(transactionAmount),
 				})
 				.where(eq(schema.accounts.id, transactionUsedAccount.id as number));
-
-			const budgets = await drizzleDb
-				.select()
-				.from(schema.budgets)
-				.where(eq(schema.budgets.category_id, Number(transactionCategory.id)));
-
-			if (budgets.length) {
-				const budgetOldState = budgets[0];
-
-				await drizzleDb
-					.update(schema.budgets)
-					.set({
-						current_spending:
-							budgetOldState.current_spending + Number(transactionAmount),
-					})
-					.where(
-						eq(schema.budgets.category_id, Number(transactionCategory.id))
-					);
-				ToastAndroid.show('Budget updated!', ToastAndroid.CENTER);
-			}
 
 			ToastAndroid.show('Expense added!', ToastAndroid.CENTER);
 
@@ -611,54 +571,6 @@ export default function useTransactionsManager({
 							Number(transactionAmount),
 					})
 					.where(eq(schema.accounts.id, previouslyUsedAccount.id as number));
-			}
-
-			if (initialFormValue.category_id !== transactionCategory?.id) {
-				const oldBudget = await drizzleDb
-					.select()
-					.from(schema.budgets)
-					.where(
-						eq(schema.budgets.category_id, Number(initialFormValue.category_id))
-					);
-
-				if (oldBudget.length) {
-					const budgetOldState = oldBudget[0];
-
-					await drizzleDb
-						.update(schema.budgets)
-						.set({
-							current_spending:
-								budgetOldState.current_spending -
-								Number(initialFormValue?.amount),
-						})
-						.where(
-							eq(
-								schema.budgets.category_id,
-								Number(initialFormValue.category_id)
-							)
-						);
-				}
-
-				const newBudget = await drizzleDb
-					.select()
-					.from(schema.budgets)
-					.where(
-						eq(schema.budgets.category_id, Number(transactionCategory?.id))
-					);
-
-				if (newBudget.length) {
-					await drizzleDb
-						.update(schema.budgets)
-						.set({
-							current_spending:
-								newBudget[0].current_spending + Number(transactionAmount),
-						})
-						.where(
-							eq(schema.budgets.category_id, Number(transactionCategory?.id))
-						);
-				}
-
-				ToastAndroid.show('Budget updated!', ToastAndroid.CENTER);
 			}
 
 			ToastAndroid.show('Changes saved!', ToastAndroid.CENTER);
@@ -892,27 +804,6 @@ export default function useTransactionsManager({
 						.set({ balance: mainAccount.balance + transaction.amount })
 						.where(eq(schema.accounts.id, mainAccount.id));
 				}
-			}
-
-			const budgets = await drizzleDb
-				.select()
-				.from(schema.budgets)
-				.where(eq(schema.budgets.category_id, Number(transaction.category_id)));
-
-			if (budgets.length) {
-				const budgetOldState = budgets[0];
-
-				await drizzleDb
-					.update(schema.budgets)
-					.set({
-						current_spending:
-							budgetOldState.current_spending - Number(transaction?.amount),
-					})
-					.where(
-						eq(schema.budgets.category_id, Number(transaction.category_id))
-					);
-
-				ToastAndroid.show('Budget updated!', ToastAndroid.CENTER);
 			}
 
 			ToastAndroid.show('Transaction deleted!', ToastAndroid.CENTER);
