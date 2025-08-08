@@ -40,7 +40,6 @@ export const budgets = sqliteTable('budgets', {
 		.references(() => categories.id, { onDelete: 'cascade' }),
 	period: text('period').notNull(), // e.g. "2025-05"
 	max_spending: integer('max_spending').notNull(),
-	current_spending: integer('current_spending').notNull(), // Optional if you compute dynamically
 	note: text('note'),
 	created_at: text('created_at').notNull(),
 });
