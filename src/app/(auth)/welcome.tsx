@@ -1,22 +1,50 @@
 import { useState } from 'react';
-import { useRouter } from 'expo-router';
-import { Image, StyleSheet, View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { ActivityIndicator, Button, Text, useTheme } from 'react-native-paper';
 
-import * as schema from '@/db/schema';
-
+import OnboardingSection from '@/src/components/reusables/onboarding-section';
+import { useRouter } from 'expo-router';
+import { useUserFirstTimeStore } from '@/store/useUserFirstTimeStore';
 import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 
+import * as schema from '@/db/schema';
 import { transactionCategories } from '@/constants/expense-category';
 import { incomeCategories } from '@/constants/income-category';
 import { transferCategories } from '@/constants/transfer-category';
-import { useUserFirstTimeStore } from '@/store/useUserFirstTimeStore';
 
-export default function WelcomeScreen() {
+const SECTIONS = [
+	{
+		title: 'Welcome to Pigllet!',
+		description: 'Your simple way to manage money and stay in control.',
+	},
+	{
+		title: 'Track Every Transaction',
+		description: 'Record income, expenses and transfer in seconds.',
+	},
+	{
+		title: 'Sort with Categories',
+		description: 'Group your spending to see where your money goes.',
+	},
+	{
+		title: 'Never Miss a Payment',
+		description: 'Get reminders for upcoming bills and subscriptions.',
+	},
+	{
+		title: 'Stay on Budget',
+		description: 'Set limits and track your spending in real time.',
+	},
+	{
+		title: 'Get Started',
+		description: 'Let’s set up your account and start tracking.',
+	},
+];
+
+export default function OnboardingScreen() {
 	const theme = useTheme();
 	const router = useRouter();
 
+	const [index, setIndex] = useState(0);
 	const [isSettingUp, setIsSettingUp] = useState<boolean>(false);
 
 	const { setFirstTimer } = useUserFirstTimeStore();
@@ -78,83 +106,70 @@ export default function WelcomeScreen() {
 		}
 	}
 
+	const nextSection = () => {
+		if (index < SECTIONS.length - 1) setIndex(index + 1);
+	};
+
+	const prevSection = () => {
+		if (index > 0) setIndex(index - 1);
+	};
+
 	return (
 		<View
 			style={[styles.container, { backgroundColor: theme.colors.background }]}
 		>
-			<View style={styles.imageContainer}>
-				<Image
-					source={require('@/assets/images/welcome image.png')}
-					style={styles.image}
-				/>
-			</View>
+			<OnboardingSection
+				key={index} // key is important for triggering enter/exit
+				title={SECTIONS[index].title}
+				description={SECTIONS[index].description}
+			/>
 
-			<View style={{ gap: 16 }}>
-				<Text variant="headlineLarge" style={styles.headlineLarge}>
-					Take control of your finance, now!
-				</Text>
-
-				<Text variant="bodyLarge" numberOfLines={2} style={styles.bodyLarge}>
-					Pigllet is a next-gen money tracker, but like… cuter, smarter, and
-					totally iconic. 💖✨💸
-				</Text>
-			</View>
-
-			<View style={{ gap: 12 }}>
+			<View style={styles.buttons}>
 				<Button
-					mode="contained"
-					style={styles.button}
 					labelStyle={styles.buttonLabel}
-					onPress={setMyApp}
+					mode="contained-tonal"
+					onPress={prevSection}
+					disabled={index === 0}
 				>
-					{isSettingUp ? (
-						<ActivityIndicator size={20} color={theme.colors.onPrimary} />
-					) : (
-						'Next'
-					)}
+					Previous
 				</Button>
 
-				<View>
-					<Text variant="labelSmall" style={styles.labelSmall}>
-						*Pigllet is an offline first application meaning you can use it
-						without internet connection.
-					</Text>
-					<Text variant="labelSmall" style={styles.labelSmall}>
-						**By creating an account you will be able to upload your data to the
-						cloud so you can access it on other device.
-					</Text>
-				</View>
+				{index !== SECTIONS.length - 1 ? (
+					<Button
+						labelStyle={styles.buttonLabel}
+						mode="contained-tonal"
+						onPress={nextSection}
+						disabled={index === SECTIONS.length - 1}
+					>
+						Next
+					</Button>
+				) : (
+					<Button
+						mode="contained"
+						labelStyle={styles.buttonLabel}
+						onPress={setMyApp}
+					>
+						{isSettingUp ? (
+							<ActivityIndicator size={20} color={theme.colors.onPrimary} />
+						) : (
+							'Go to the next step'
+						)}
+					</Button>
+				)}
 			</View>
 		</View>
 	);
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		padding: 24,
-		paddingVertical: 36,
-		justifyContent: 'flex-end',
-		gap: 36,
+	container: { flex: 1 },
+	buttons: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		padding: 20,
 	},
-	imageContainer: {
-		alignItems: 'center',
-		flex: 1,
-		justifyContent: 'center',
+	buttonLabel: {
+		fontFamily: 'Manrope-Medium',
 	},
-	labelSmall: {
-		fontFamily: 'Manrope-Regular',
-		opacity: 0.6,
-		textAlign: 'center',
-	},
-	button: { borderRadius: 10, padding: 8 },
-	buttonLabel: { fontFamily: 'Manrope-Medium', fontSize: 16 },
-	bodyLarge: {
-		fontFamily: 'Manrope-Regular',
-		textAlign: 'center',
-		opacity: 0.8,
-	},
-	image: { width: 264, height: 302 },
-	headlineLarge: { fontFamily: 'Manrope-Black', textAlign: 'center' },
 });
 

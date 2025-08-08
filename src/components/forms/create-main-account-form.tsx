@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
 	inputContent: {
 		fontFamily: 'Manrope-Regular',
 	},
-	button: { borderRadius: 10, padding: 8 },
-	buttonLabel: { fontFamily: 'Manrope-Medium', fontSize: 16 },
+	button: {},
+	buttonLabel: { fontFamily: 'Manrope-Medium' },
 });
 

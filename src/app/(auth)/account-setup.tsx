@@ -18,11 +18,11 @@ export default function MainAccountSetupScreen() {
 			</View>
 
 			<View style={styles.contentContainer}>
-				<Text variant="headlineLarge" style={styles.headlineLarge}>
-					Let's set up your account
+				<Text variant="headlineMedium" style={styles.headlineLarge}>
+					Let's Set Up Your Main Account
 				</Text>
 
-				<Text variant="bodyLarge" numberOfLines={2} style={styles.bodyLarge}>
+				<Text variant="bodyMedium" numberOfLines={2} style={styles.bodyLarge}>
 					Enter you account balance
 				</Text>
 
@@ -34,10 +34,6 @@ export default function MainAccountSetupScreen() {
 					</Text>
 					<Text variant="labelSmall" style={styles.labelSmall}>
 						**You can add more account by going to the setting.
-					</Text>
-					<Text variant="labelSmall" style={styles.labelSmall}>
-						***Pigllet is a local first application meaning you can use it
-						without internet connection.
 					</Text>
 				</View>
 			</View>
@@ -64,10 +60,9 @@ const styles = StyleSheet.create({
 		fontFamily: 'Manrope-Regular',
 		opacity: 0.6,
 		textAlign: 'center',
-		marginTop: 16,
 	},
 	headlineLarge: {
-		fontFamily: 'Manrope-Black',
+		fontFamily: 'Manrope-ExtraBold',
 		textAlign: 'center',
 	},
 	bodyLarge: {
