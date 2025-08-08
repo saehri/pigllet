@@ -5,6 +5,10 @@ import SettingContentButton from '@/src/components/settings/setting-content-butt
 import SettingContentWrapper from '@/src/components/settings/setting-content-wrapper';
 
 import { useAppThemeStore } from '@/store/useAppThemeStore';
+import { CheckIcon } from 'lucide-react-native';
+import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
+import { currencySymbols } from '@/constants/currency-symbols';
+import { getCardPosition } from '@/utils/utils';
 
 export default function Customization() {
 	const theme = useTheme();
@@ -16,9 +20,13 @@ export default function Customization() {
 				padding: 16,
 			}}
 		>
-			<SettingContentWrapper headerTitle="Theme">
-				<ThemeSelector />
-			</SettingContentWrapper>
+			<View style={{ gap: 24, paddingBottom: 80 }}>
+				<SettingContentWrapper headerTitle="Theme">
+					<ThemeSelector />
+				</SettingContentWrapper>
+
+				<CurrencySelector />
+			</View>
 		</ScrollView>
 	);
 }
@@ -56,6 +64,42 @@ function ThemeSelector() {
 				</Pressable>
 			}
 		/>
+	);
+}
+
+function CurrencySelector() {
+	const { currentCurrencySymbol, setAppCurrencySymbol } =
+		usePreferredCurrencyStore();
+
+	return (
+		<SettingContentWrapper headerTitle="Default Currency Symbol">
+			{currencySymbols.map((c, index) => (
+				<SettingContentButton
+					position={getCardPosition(index, currencySymbols.length)}
+					onPress={() => setAppCurrencySymbol(c.symbol)}
+					label={c.label}
+					key={c.code}
+					higlight={currentCurrencySymbol === c.symbol}
+					buttonRight={
+						<RightButton selected={currentCurrencySymbol === c.symbol} />
+					}
+				/>
+			))}
+		</SettingContentWrapper>
+	);
+}
+
+function RightButton({ selected }: { selected: boolean }) {
+	const theme = useTheme();
+
+	return (
+		<View>
+			<CheckIcon
+				style={{ display: selected ? 'flex' : 'none' }}
+				size={20}
+				color={theme.colors.primary}
+			/>
+		</View>
 	);
 }
 
