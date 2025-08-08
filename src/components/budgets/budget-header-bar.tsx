@@ -2,47 +2,40 @@ import { useCallback, useState } from 'react';
 import { Button, Text } from 'react-native-paper';
 import { Trash2Icon, XIcon } from 'lucide-react-native';
 import { StyleSheet, ToastAndroid, View } from 'react-native';
-
-import { useSQLiteContext } from 'expo-sqlite';
-import { useSelectedTransactions } from '@/store/useSelectedTransactions';
-import { deleteTransactions } from '@/src/hooks/useTransactionsManager';
-
 import Animated, { FadeInRight, FadeOutRight } from 'react-native-reanimated';
 
-export default function HeaderBar() {
+import { useSQLiteContext } from 'expo-sqlite';
+
+import { deleteBudgetRecord } from '@/src/hooks/useBudgetManager';
+import { useSelectedBudgets } from '@/store/useSelectedBudgets';
+
+export default function BudgetHeaderBar() {
 	const db = useSQLiteContext();
 
 	const [deleting, setDeleting] = useState<boolean>(false);
 
-	const selectedTransactions = useSelectedTransactions(
-		(s) => s.selectedTransactions
-	);
-	const setSelectedTransactions = useSelectedTransactions(
-		(s) => s.setSelectedTransactions
-	);
+	const { selectedBudgets, setSelectedBudgets } = useSelectedBudgets();
 
 	const handleDelete = useCallback(async () => {
 		try {
 			setDeleting(true);
 
-			for (const selectedId of selectedTransactions) {
-				await deleteTransactions(db, selectedId);
-			}
+			deleteBudgetRecord(selectedBudgets, db);
 		} catch (error: any) {
 			ToastAndroid.show(error.message, ToastAndroid.SHORT);
 		} finally {
 			setDeleting(false);
-			setSelectedTransactions([]);
+			setSelectedBudgets([]);
 		}
-	}, [selectedTransactions]);
+	}, [selectedBudgets]);
 
 	return (
 		<View style={styles.headerBar}>
 			<Text variant="titleLarge" style={styles.transactionsTitle}>
-				Transactions
+				Budgets
 			</Text>
 
-			{selectedTransactions.length ? (
+			{selectedBudgets.length ? (
 				<Animated.View
 					entering={FadeInRight.duration(100).mass(10)}
 					exiting={FadeOutRight.duration(100).mass(10)}
@@ -64,12 +57,12 @@ export default function HeaderBar() {
 						style={styles.actionButton}
 						mode="contained-tonal"
 						labelStyle={styles.buttonLabel}
-						onPress={() => setSelectedTransactions([])}
+						onPress={() => setSelectedBudgets([])}
 						icon={(props) => (
 							<XIcon size={20} color={props.color} strokeWidth={1.5} />
 						)}
 					>
-						{selectedTransactions.length}
+						{selectedBudgets.length}
 					</Button>
 				</Animated.View>
 			) : (
@@ -85,7 +78,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		alignItems: 'center',
 		marginTop: 16,
-		marginBottom: 4,
+		marginBottom: 12,
 		paddingHorizontal: 16,
 		height: 40,
 	},

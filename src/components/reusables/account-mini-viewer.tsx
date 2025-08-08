@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react-native';
 import { Button, Surface, Text, useTheme } from 'react-native-paper';
+import Animated, { SlideInRight, SlideOutRight } from 'react-native-reanimated';
 
 import * as schema from '@/db/schema';
 import { useSQLiteContext } from 'expo-sqlite';
@@ -41,38 +42,44 @@ export default function AccountMiniViewer() {
 
 	return (
 		<View style={styles.container}>
-			<View>
-				<Surface
-					style={[
-						styles.card,
-						{
-							backgroundColor: theme.colors.secondaryContainer,
-						},
-					]}
+			<View style={styles.cardContainer}>
+				<Animated.View
+					key={currentCardIndex}
+					entering={SlideInRight.duration(350).mass(100)}
+					exiting={SlideOutRight.duration(350).mass(100)}
 				>
-					<Text
-						variant="labelSmall"
+					<Surface
 						style={[
-							styles.cardText,
-							{ color: theme.colors.onSecondaryContainer },
+							styles.card,
+							{
+								backgroundColor: theme.colors.secondaryContainer,
+							},
 						]}
 					>
-						{account[currentCardIndex]?.name}
-					</Text>
-					<Text
-						variant="labelSmall"
-						style={[
-							styles.cardText,
-							{ color: theme.colors.onSecondaryContainer },
-						]}
-					>
-						{`${currentCurrencySymbol} ${account[
-							currentCardIndex
-						]?.balance.toLocaleString(
-							getLocaleByCurrencySymbol(currentCurrencySymbol)
-						)}`}
-					</Text>
-				</Surface>
+						<Text
+							variant="labelSmall"
+							style={[
+								styles.cardText,
+								{ color: theme.colors.onSecondaryContainer },
+							]}
+						>
+							{account[currentCardIndex]?.name}
+						</Text>
+						<Text
+							variant="labelSmall"
+							style={[
+								styles.cardText,
+								{ color: theme.colors.onSecondaryContainer },
+							]}
+						>
+							{`${currentCurrencySymbol} ${account[
+								currentCardIndex
+							]?.balance.toLocaleString(
+								getLocaleByCurrencySymbol(currentCurrencySymbol)
+							)}`}
+						</Text>
+					</Surface>
+				</Animated.View>
 			</View>
 
 			<Button
@@ -114,6 +121,9 @@ const styles = StyleSheet.create({
 	container: {
 		flexDirection: 'row',
 		gap: 2,
+	},
+	cardContainer: {
+		overflow: 'hidden',
 	},
 	card: {
 		borderRadius: 12,
