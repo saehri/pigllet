@@ -14,7 +14,7 @@ export const useUserFirstTimeStore = create<useUserFirstTimeStore>()(
 			setFirstTimer: (firstTimer) => set({ firstTimer }),
 		}),
 		{
-			name: 'app-theme-storage',
+			name: 'use-user-first-time-store',
 			storage: createJSONStorage(() => AsyncStorage),
 			partialize: (state) => ({
 				firstTimer: state.firstTimer,
