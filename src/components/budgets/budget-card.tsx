@@ -3,6 +3,7 @@ import { CheckIcon } from 'lucide-react-native';
 import { memo, useCallback, useMemo } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Surface, Text, useTheme } from 'react-native-paper';
+import Animated, { FlipInEasyY } from 'react-native-reanimated';
 
 import * as schema from '@/db/schema';
 import { CardPositionsTypes } from '@/types/type';
@@ -15,7 +16,7 @@ import { useSelectedBudgets } from '@/store/useSelectedBudgets';
 import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 import { useSQLiteContext } from 'expo-sqlite';
-import { and, eq, gte, lte, sql } from 'drizzle-orm';
+import { and, count, eq, gte, lte, sql } from 'drizzle-orm';
 import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
 
 import TransactionIcons from '../reusables/transaction-icons';
@@ -109,7 +110,8 @@ function BudgetCard({ data, position }: Props) {
 					onPress={isSelected ? onUnselect : onSelect}
 				>
 					{isSelected ? (
-						<View
+						<Animated.View
+							entering={FlipInEasyY.duration(500).damping(100)}
 							style={[
 								styles.checkIconBox,
 								{ backgroundColor: theme.colors.tertiary },
@@ -120,7 +122,7 @@ function BudgetCard({ data, position }: Props) {
 								size={20}
 								strokeWidth={1.5}
 							/>
-						</View>
+						</Animated.View>
 					) : (
 						<TransactionIcons
 							color={transactionColorMap[category.type]}
@@ -149,20 +151,17 @@ function BudgetCard({ data, position }: Props) {
 
 					<View style={styles.metaRow}>
 						<View style={{ flex: 1 }}>
-							<Text
-								variant="labelMedium"
-								style={[styles.cardNote, styles.noteText]}
-								numberOfLines={1}
-							>
-								{budget.note || 'Undefined'}
-							</Text>
+							<TransactionsCount
+								budgetDate={budget.period}
+								categoryId={category.id!}
+							/>
 						</View>
 
 						<View style={styles.accountRow}>
 							<CurrentSpending
-								formatter={formattedAmount}
 								categoryId={category.id!}
 								budgetDate={budget.period}
+								limit={budget.max_spending}
 							/>
 						</View>
 					</View>
@@ -172,16 +171,63 @@ function BudgetCard({ data, position }: Props) {
 	);
 }
 
-type CurrentSpendingProps = {
-	formatter: (val: number) => string;
+type TransactionsCount = {
 	categoryId: number;
 	budgetDate: string;
 };
 
+function TransactionsCount({ budgetDate, categoryId }: TransactionsCount) {
+	const db = useSQLiteContext();
+	const drizzleDb = drizzle(db, { schema });
+
+	const getCurrentSpending = useMemo(() => {
+		const whereConditions = [eq(schema.transactions.category_id, categoryId)];
+
+		whereConditions.push(
+			gte(
+				schema.transactions.created_at,
+				moment(budgetDate).startOf('month').format('YYYY-MM-DD')
+			)
+		);
+		whereConditions.push(
+			lte(
+				schema.transactions.created_at,
+				moment(budgetDate).endOf('month').format('YYYY-MM-DD')
+			)
+		);
+
+		return drizzleDb
+			.select({
+				count: count(),
+			})
+			.from(schema.transactions)
+			.where(and(...whereConditions));
+	}, [categoryId, budgetDate]);
+
+	const { data } = useLiveQuery(getCurrentSpending);
+	const totalTransactions = data[0]?.count ?? 0;
+
+	return (
+		<Text
+			variant="labelMedium"
+			style={[styles.cardNote, styles.noteText]}
+			numberOfLines={1}
+		>
+			{totalTransactions} transactions
+		</Text>
+	);
+}
+
+type CurrentSpendingProps = {
+	categoryId: number;
+	budgetDate: string;
+	limit: number;
+};
+
 function CurrentSpending({
-	formatter,
 	categoryId,
 	budgetDate,
+	limit,
 }: CurrentSpendingProps) {
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
@@ -212,6 +258,13 @@ function CurrentSpending({
 
 	const { data } = useLiveQuery(getCurrentSpending);
 	const totalExpense = data[0]?.totalExpense || 0;
+	const spendingPercentage = (totalExpense / limit) * 100;
+
+	const getStatus = (percentage: number) => {
+		if (percentage === 100) return 'On track';
+		if (percentage < 100) return 'Under budget';
+		if (percentage > 100) return 'Over budget';
+	};
 
 	return (
 		<Text
@@ -220,7 +273,7 @@ function CurrentSpending({
 			adjustsFontSizeToFit
 			numberOfLines={1}
 		>
-			{formatter(totalExpense)} spent
+			{spendingPercentage.toFixed(0)}% · {getStatus(spendingPercentage)}
 		</Text>
 	);
 }

@@ -9,6 +9,7 @@ import {
 	MinusIcon,
 	PlusIcon,
 } from 'lucide-react-native';
+import Animated, { FlipInEasyY } from 'react-native-reanimated';
 
 import moment from 'moment';
 
@@ -117,7 +118,8 @@ function TransactionCard({ data, position, showDate, pressable }: Props) {
 					onPress={isSelected ? onUnselect : onSelect}
 				>
 					{isSelected ? (
-						<View
+						<Animated.View
+							entering={FlipInEasyY.duration(500).damping(100)}
 							style={[
 								styles.checkIconBox,
 								{ backgroundColor: theme.colors.tertiary },
@@ -128,7 +130,7 @@ function TransactionCard({ data, position, showDate, pressable }: Props) {
 								size={20}
 								strokeWidth={1.5}
 							/>
-						</View>
+						</Animated.View>
 					) : (
 						<TransactionIcons
 							color={transactionColorMap[transaction.type]}
