@@ -209,7 +209,7 @@ function TransactionsCount({ budgetDate, categoryId }: TransactionsCount) {
 
 	return (
 		<Text
-			variant="labelMedium"
+			variant="labelSmall"
 			style={[styles.cardNote, styles.noteText]}
 			numberOfLines={1}
 		>
@@ -268,12 +268,12 @@ function CurrentSpending({
 
 	return (
 		<Text
-			variant="labelMedium"
+			variant="labelSmall"
 			style={styles.cardNote}
 			adjustsFontSizeToFit
 			numberOfLines={1}
 		>
-			{spendingPercentage.toFixed(0)}% · {getStatus(spendingPercentage)}
+			{spendingPercentage.toFixed(0)}% spent ·{getStatus(spendingPercentage)}
 		</Text>
 	);
 }

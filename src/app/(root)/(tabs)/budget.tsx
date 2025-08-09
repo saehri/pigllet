@@ -13,6 +13,7 @@ import NoItemNotice from '@/src/components/reusables/no-items-notice';
 import BudgetHeaderBar from '@/src/components/budgets/budget-header-bar';
 import BudgetBigTotals from '@/src/components/budgets/budget-big-totals';
 import MonthSelectorBar from '@/src/components/reusables/month-selector-bar';
+import BudgetActualVsPlanned from '@/src/components/budgets/budget-actual-vs-planned';
 
 export default function BudgetScreen() {
 	const theme = useTheme();
@@ -31,6 +32,8 @@ export default function BudgetScreen() {
 	const { data: budgets } = useLiveQuery(loadBudgetRecord());
 
 	const renderHeader = useCallback(() => {
+		const budgetIds = budgets.map((b) => b.budget.category_id);
+
 		return (
 			<View style={{ paddingTop: 4, gap: 8 }}>
 				<MonthSelectorBar
@@ -48,7 +51,11 @@ export default function BudgetScreen() {
 					<View style={styles.statsContainer}>
 						<BudgetBigTotals
 							selectedDate={selectedDate}
-							budgetIds={budgets.map((b) => b.budget.category_id)}
+							budgetIds={budgetIds}
+						/>
+						<BudgetActualVsPlanned
+							budgets={budgets}
+							selectedDate={selectedDate}
 						/>
 					</View>
 				</View>
