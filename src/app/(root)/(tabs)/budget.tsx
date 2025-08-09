@@ -1,26 +1,24 @@
 import { useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
 import { FAB, Text, useTheme } from 'react-native-paper';
+import { FlatList, StyleSheet, View } from 'react-native';
 
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { loadBudgetRecord } from '@/src/hooks/useBudgetManager';
 
+import { getCardPosition } from '@/utils/utils';
+
 import BudgetCard from '@/src/components/budgets/budget-card';
 import NoItemNotice from '@/src/components/reusables/no-items-notice';
-
-import MonthSelectorBar from '@/src/components/reusables/month-selector-bar';
-import { getCardPosition } from '@/utils/utils';
 import BudgetHeaderBar from '@/src/components/budgets/budget-header-bar';
-import BudgetStatistics from '@/src/components/budgets/budget-statistics';
+import BudgetBigTotals from '@/src/components/budgets/budget-big-totals';
+import MonthSelectorBar from '@/src/components/reusables/month-selector-bar';
 
 export default function BudgetScreen() {
 	const theme = useTheme();
 	const router = useRouter();
 
 	const [selectedDate, setSelectedDate] = useState(new Date());
-
-	const { data: budgets } = useLiveQuery(loadBudgetRecord());
 
 	const updateMonth = useCallback((offset: number) => {
 		setSelectedDate((prev) => {
@@ -29,6 +27,8 @@ export default function BudgetScreen() {
 			return updated;
 		});
 	}, []);
+
+	const { data: budgets } = useLiveQuery(loadBudgetRecord());
 
 	const renderHeader = useCallback(() => {
 		return (
@@ -39,11 +39,24 @@ export default function BudgetScreen() {
 					selectedDate={selectedDate}
 					setSelectedDate={setSelectedDate}
 				/>
-				<BudgetStatistics />
+
+				<View style={styles.headerContainer}>
+					<Text variant="titleLarge" style={styles.headerTitle}>
+						Statistics
+					</Text>
+
+					<View style={styles.statsContainer}>
+						<BudgetBigTotals
+							selectedDate={selectedDate}
+							budgetIds={budgets.map((b) => b.budget.category_id)}
+						/>
+					</View>
+				</View>
+
 				<BudgetHeaderBar />
 			</View>
 		);
-	}, [selectedDate, updateMonth]);
+	}, [budgets, selectedDate]);
 
 	return (
 		<>
@@ -86,6 +99,16 @@ const styles = StyleSheet.create({
 		margin: 16,
 		right: 0,
 		bottom: 80,
+	},
+	headerContainer: {
+		paddingHorizontal: 16,
+		gap: 12,
+	},
+	headerTitle: {
+		fontFamily: 'Manrope-Regular',
+	},
+	statsContainer: {
+		gap: 4,
 	},
 });
 
