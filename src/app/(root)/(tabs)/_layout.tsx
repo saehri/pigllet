@@ -125,14 +125,14 @@ export default function Layout() {
 					}}
 				/>
 				<Tabs.Screen
-					name="subscriptions"
+					name="budget"
 					options={{
-						title: 'Subscriptions',
+						title: 'Budgets',
 						tabBarIcon: (props) => (
-							<CalendarSync
-								size={20}
+							<BanknoteIcon
+								size={28}
 								color={props.color}
-								strokeWidth={1.5}
+								strokeWidth={1.2}
 								fillOpacity={props.focused ? 0.3 : 0}
 								fill={
 									props.focused
@@ -144,14 +144,14 @@ export default function Layout() {
 					}}
 				/>
 				<Tabs.Screen
-					name="budget"
+					name="subscriptions"
 					options={{
-						title: 'Budgets',
+						title: 'Subscriptions',
 						tabBarIcon: (props) => (
-							<BanknoteIcon
-								size={28}
+							<CalendarSync
+								size={20}
 								color={props.color}
-								strokeWidth={1.2}
+								strokeWidth={1.5}
 								fillOpacity={props.focused ? 0.3 : 0}
 								fill={
 									props.focused
