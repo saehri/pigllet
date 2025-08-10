@@ -7,7 +7,7 @@ import moment from 'moment';
 
 import * as schema from '@/db/schema';
 import { useSQLiteContext } from 'expo-sqlite';
-import { and, asc, inArray, sql } from 'drizzle-orm';
+import { and, asc, eq, gte, inArray, lte, sql } from 'drizzle-orm';
 import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
 
 import getLocaleByCurrencySymbol from '@/utils/locale-getter';
@@ -40,20 +40,37 @@ function BudgetActualVSPlanned({ budgets, selectedDate }: Props) {
 	const getActualSpending = useCallback(() => {
 		return drizzleDb
 			.select({
-				amount: sql<number>`COALESCE(SUM(CASE WHEN ${schema.transactions.type} = 'expense' THEN ${schema.transactions.amount} ELSE 0 END), 0)`,
+				amount: sql<number>`
+        COALESCE(
+          SUM(
+            CASE 
+              WHEN ${schema.transactions.type} = 'expense' 
+              THEN ${schema.transactions.amount} 
+              ELSE 0 
+            END
+          ),
+          0
+        )
+      `,
 			})
-			.from(schema.transactions)
-			.where(
+			.from(schema.budgets)
+			.leftJoin(
+				schema.transactions,
 				and(
-					inArray(schema.transactions.category_id, budgetIds),
-					sql`DATE(${schema.transactions.created_at}) BETWEEN DATE(${startOfMonth}) AND DATE(${endOfMonth})`
+					eq(schema.budgets.category_id, schema.transactions.category_id),
+					gte(sql`DATE(${schema.transactions.created_at})`, startOfMonth),
+					lte(sql`DATE(${schema.transactions.created_at})`, endOfMonth)
 				)
 			)
-			.groupBy(schema.transactions.category_id)
-			.orderBy(asc(schema.transactions.category_id));
+			.where(inArray(schema.budgets.category_id, budgetIds))
+			.groupBy(schema.budgets.category_id)
+			.orderBy(asc(schema.budgets.category_id));
 	}, [budgetIds, selectedDate]);
 
-	const { data: actualSpending } = useLiveQuery(getActualSpending());
+	const { data: actualSpending } = useLiveQuery(getActualSpending(), [
+		budgetIds,
+		selectedDate,
+	]);
 
 	const renderer = () => {
 		if (actualSpending.length)
@@ -74,7 +91,29 @@ function BudgetActualVSPlanned({ budgets, selectedDate }: Props) {
 				Actual vs Planned
 			</Text>
 
-			<View>{renderer()}</View>
+			<View>
+				{renderer()}
+
+				<View style={styles.legend}>
+					<View style={styles.legendColumn}>
+						<View
+							style={[styles.legendDot, { backgroundColor: '#175b9bff' }]}
+						></View>
+						<Text variant="labelMedium" style={styles.legendText}>
+							Planned
+						</Text>
+					</View>
+
+					<View style={styles.legendColumn}>
+						<View
+							style={[styles.legendDot, { backgroundColor: '#ED6665' }]}
+						></View>
+						<Text variant="labelMedium" style={styles.legendText}>
+							Actual
+						</Text>
+					</View>
+				</View>
+			</View>
 		</Surface>
 	);
 }
@@ -88,6 +127,15 @@ type RenderChart = {
 function RenderChart({ budgets, actualSpending, budgetIds }: RenderChart) {
 	const theme = useTheme();
 	const { currentCurrencySymbol } = usePreferredCurrencyStore();
+
+	const formattedAmount = useCallback(
+		(amount: number) => {
+			return `${currentCurrencySymbol} ${amount.toLocaleString(
+				getLocaleByCurrencySymbol(currentCurrencySymbol)
+			)}`;
+		},
+		[currentCurrencySymbol]
+	);
 
 	const getChartData = useMemo(() => {
 		const sortedBudgets = budgets.sort(
@@ -110,23 +158,17 @@ function RenderChart({ budgets, actualSpending, budgetIds }: RenderChart) {
 				frontColor: '#175b9bff',
 				topLabelComponent: () => (
 					<Text style={{ color: 'gray', fontSize: 9 }}>
-						{currentCurrencySymbol}{' '}
-						{Number(sortedBudgets[i].budget.max_spending).toLocaleString(
-							getLocaleByCurrencySymbol(currentCurrencySymbol)
-						)}
+						{formattedAmount(sortedBudgets[i].budget.max_spending)}
 					</Text>
 				),
 			});
 			data.push({
-				value: actualSpending[i].amount,
+				value: actualSpending[i]?.amount ?? 0,
 				frontColor: '#ED6665',
-				spacing: 10,
+				spacing: 24,
 				topLabelComponent: () => (
 					<Text style={{ color: 'gray', fontSize: 9 }}>
-						{currentCurrencySymbol}{' '}
-						{Number(actualSpending[i].amount).toLocaleString(
-							getLocaleByCurrencySymbol(currentCurrencySymbol)
-						)}
+						{formattedAmount(actualSpending[i]?.amount ?? 0)}
 					</Text>
 				),
 			});
@@ -136,46 +178,23 @@ function RenderChart({ budgets, actualSpending, budgetIds }: RenderChart) {
 	}, [budgetIds, actualSpending, currentCurrencySymbol]);
 
 	return (
-		<>
-			<BarChart
-				data={getChartData}
-				barWidth={75}
-				barBorderRadius={120}
-				topLabelTextStyle={{
-					fontFamily: 'Manrope-Regular',
-					color: theme.colors.onSurface,
-					fontSize: 9,
-				}}
-				height={200}
-				hideYAxisText
-				showScrollIndicator={false}
-				spacing={0}
-				hideAxesAndRules
-				isAnimated
-				animationDuration={0.5}
-				adjustToWidth
-			/>
-
-			<View style={styles.legend}>
-				<View style={styles.legendColumn}>
-					<View
-						style={[styles.legendDot, { backgroundColor: '#175b9bff' }]}
-					></View>
-					<Text variant="labelMedium" style={styles.legendText}>
-						Planned
-					</Text>
-				</View>
-
-				<View style={styles.legendColumn}>
-					<View
-						style={[styles.legendDot, { backgroundColor: '#ED6665' }]}
-					></View>
-					<Text variant="labelMedium" style={styles.legendText}>
-						Actual
-					</Text>
-				</View>
-			</View>
-		</>
+		<BarChart
+			data={getChartData}
+			barWidth={75}
+			barBorderRadius={120}
+			topLabelTextStyle={{
+				fontFamily: 'Manrope-Regular',
+				color: theme.colors.onSurface,
+				fontSize: 9,
+			}}
+			hideYAxisText
+			showScrollIndicator={false}
+			spacing={0}
+			hideAxesAndRules
+			isAnimated
+			animationDuration={0.5}
+			adjustToWidth
+		/>
 	);
 }
 
@@ -183,16 +202,19 @@ const styles = StyleSheet.create({
 	container: {
 		padding: 16,
 		borderRadius: 16,
+		paddingLeft: 3,
 		gap: 16,
 	},
 	chartTitle: {
 		fontFamily: 'Manrope-SemiBold',
+		marginLeft: 13,
 	},
 	legend: {
 		flexDirection: 'row',
 		gap: 24,
 		justifyContent: 'center',
 		marginTop: 12,
+		marginLeft: 16,
 	},
 	legendColumn: {
 		flexDirection: 'row',

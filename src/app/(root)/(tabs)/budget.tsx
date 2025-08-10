@@ -29,7 +29,9 @@ export default function BudgetScreen() {
 		});
 	}, []);
 
-	const { data: budgets } = useLiveQuery(loadBudgetRecord());
+	const { data: budgets } = useLiveQuery(loadBudgetRecord(selectedDate), [
+		selectedDate,
+	]);
 
 	const renderHeader = useCallback(() => {
 		const budgetIds = budgets.map((b) => b.budget.category_id);

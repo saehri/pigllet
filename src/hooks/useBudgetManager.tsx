@@ -1,10 +1,10 @@
-import { drizzle } from 'drizzle-orm/expo-sqlite';
+import { ToastAndroid } from 'react-native';
 import { useSQLiteContext } from 'expo-sqlite';
+import { SetStateAction, useEffect, useState } from 'react';
 
 import * as schema from '@/db/schema';
-import { SetStateAction, useEffect, useState } from 'react';
-import { ToastAndroid } from 'react-native';
-import { desc, eq, inArray } from 'drizzle-orm';
+import { drizzle } from 'drizzle-orm/expo-sqlite';
+import { asc, eq, inArray, sql } from 'drizzle-orm';
 
 import { useRouter } from 'expo-router';
 import moment from 'moment';
@@ -14,9 +14,12 @@ type Props = {
 	budgetId?: number;
 };
 
-export const loadBudgetRecord = () => {
+export const loadBudgetRecord = (selectedDate: Date) => {
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
+
+	const startDate = moment(selectedDate).startOf('month').format('YYYY-MM-DD');
+	const endDate = moment(selectedDate).endOf('month').format('YYYY-MM-DD');
 
 	return drizzleDb
 		.select({
@@ -36,11 +39,14 @@ export const loadBudgetRecord = () => {
 			},
 		})
 		.from(schema.budgets)
+		.where(
+			sql`DATE(${schema.budgets.created_at}) BETWEEN DATE(${startDate}) AND DATE(${endDate})`
+		)
 		.innerJoin(
 			schema.categories,
 			eq(schema.budgets.category_id, schema.categories.id)
 		)
-		.orderBy(desc(schema.budgets.created_at));
+		.orderBy(asc(schema.budgets.category_id));
 };
 
 export const deleteBudgetRecord = async (budgetIds: number[], db: any) => {
