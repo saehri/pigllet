@@ -1,5 +1,9 @@
-export const transferCategories = [
-	{ icon: 'other', label: 'Other Transfer' },
+import { TransactionIconsCatalogue } from '@/types/type';
+
+export const transferCategories: {
+	label: string;
+	icon: keyof TransactionIconsCatalogue;
+}[] = [
 	{ icon: 'bank-transfer', label: 'Bank Transfer (Own Accounts)' },
 	{ icon: 'cash-deposit', label: 'Cash Deposit' },
 	{ icon: 'cash-withdrawal', label: 'Cash Withdrawal' },
@@ -9,4 +13,6 @@ export const transferCategories = [
 	{ icon: 'sent-to-family', label: 'Sent to Family/Friends' },
 	{ icon: 'loan-received', label: 'Loan Received' },
 	{ icon: 'loan-payment', label: 'Loan Payment' },
+	{ icon: 'other', label: 'Other Transfer' },
 ];
+

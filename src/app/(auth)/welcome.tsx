@@ -1,17 +1,18 @@
 import { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { ActivityIndicator, Button, Text, useTheme } from 'react-native-paper';
+import { ActivityIndicator, Button, useTheme } from 'react-native-paper';
 
-import OnboardingSection from '@/src/components/reusables/onboarding-section';
 import { useRouter } from 'expo-router';
-import { useUserFirstTimeStore } from '@/store/useUserFirstTimeStore';
 import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
+import { useUserFirstTimeStore } from '@/store/useUserFirstTimeStore';
 
 import * as schema from '@/db/schema';
-import { transactionCategories } from '@/constants/expense-category';
 import { incomeCategories } from '@/constants/income-category';
+import { expenseCategories } from '@/constants/expense-category';
 import { transferCategories } from '@/constants/transfer-category';
+
+import OnboardingSection from '@/src/components/reusables/onboarding-section';
 
 const SECTIONS = [
 	{
@@ -64,7 +65,7 @@ export default function OnboardingScreen() {
 			await drizzleDb
 				.insert(schema.categories)
 				.values(
-					transactionCategories.map((category) => ({
+					expenseCategories.map((category) => ({
 						type: 'expense',
 						label: category.label, // Use category name
 						icon_name: category.icon, // Use icon name

@@ -1,36 +1,22 @@
-export const transactionCategories = [
-	{ icon: 'other', label: 'Other Expense' },
-	{ label: 'Advertising', icon: 'advertising' },
-	{ label: 'Airlines', icon: 'airlines' },
-	{ label: 'Alcohol & Bars', icon: 'alcohol-and-bars' },
-	{ label: 'Books & Newspaper', icon: 'books-and-newspaper' },
-	{ label: 'Car Rental', icon: 'car-rental' },
-	{ label: 'Charity', icon: 'charity' },
-	{ label: 'Clothing', icon: 'clothing' },
-	{ label: 'Conferences', icon: 'conferences' },
-	{ label: 'Education', icon: 'education' },
-	{ label: 'Entertainment', icon: 'entertainment' },
-	{ label: 'Facilities Expense', icon: 'facilities-expense' },
-	{
-		label: 'Financial Institution & Fees',
-		icon: 'financial-institution-and-fees',
-	},
-	{ label: 'Foods & Drinks', icon: 'foods-and-drinks' },
-	{ label: 'Fuel & Gas', icon: 'fuel-and-gas' },
-	{ label: 'Government Service', icon: 'government-service' },
+import { TransactionIconsCatalogue } from '@/types/type';
+
+export const expenseCategories: {
+	label: string;
+	icon: keyof TransactionIconsCatalogue;
+}[] = [
+	{ label: 'Other Expense', icon: 'other' },
 	{ label: 'Grocery', icon: 'grocery' },
+	{ label: 'Foods & Drinks', icon: 'foods-and-drinks' },
+	{ label: 'Restaurant', icon: 'restaurant' },
+	{ label: 'Takeout', icon: 'takeout' },
 	{ label: 'Food Delivery', icon: 'food-delivery' },
 	{ label: 'Transportation', icon: 'transportation' },
-	{ label: 'Insurance', icon: 'insurance' },
-	{ label: 'Medical', icon: 'medical' },
+	{ label: 'Fuel & Gas', icon: 'fuel-and-gas' },
 	{ label: 'Internet', icon: 'internet' },
-	{ label: 'Parking', icon: 'parking' },
-	{ label: 'Office Supplies', icon: 'office-supplies' },
-	{ label: 'Restaurant', icon: 'restaurant' },
-	{ label: 'Software', icon: 'software' },
-	{ label: 'Taxes', icon: 'taxes' },
-	{ label: 'Takeout', icon: 'takeout' },
 	{ label: 'Utilities', icon: 'utilities' },
-	{ label: 'Vehicle Expenses', icon: 'vehicle-expenses' },
+	{ label: 'Medical', icon: 'medical' },
+	{ label: 'Insurance', icon: 'insurance' },
+	{ label: 'Clothing', icon: 'clothing' },
+	{ label: 'Taxes', icon: 'taxes' },
 ] as const;
 
