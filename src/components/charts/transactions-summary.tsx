@@ -9,9 +9,7 @@ import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { and, gte, lte, sql } from 'drizzle-orm';
 
-import getLocaleByCurrencySymbol from '@/utils/locale-getter';
-import { CardPositionsTypes } from '@/types/type';
-import { TRANSACTION_CARD_BR } from '@/utils/utils';
+import { TRANSACTION_CARD_BR, formatCurrencyByCode } from '@/utils/utils';
 import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 type Props = {
@@ -104,7 +102,7 @@ type CardProps = {
 function Card({ label, value, position }: CardProps) {
 	const theme = useTheme();
 
-	const { currentCurrencySymbol } = usePreferredCurrencyStore();
+	const { currentCurrencyCode } = usePreferredCurrencyStore();
 
 	const cardRadiusStyle = useMemo(
 		() => ({
@@ -136,9 +134,7 @@ function Card({ label, value, position }: CardProps) {
 				style={[styles.itemText, { color: theme.colors.onSecondary }]}
 				variant="bodyMedium"
 			>
-				{`${currentCurrencySymbol} ${value.toLocaleString(
-					getLocaleByCurrencySymbol(currentCurrencySymbol)
-				)}`}
+				{formatCurrencyByCode(value, currentCurrencyCode)}
 			</Text>
 		</Surface>
 	);

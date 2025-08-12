@@ -1,4 +1,9 @@
-export const TRANSACTION_CARD_BR = {
+import { CurrencyCode, currencySymbols } from '@/constants/currency-symbols';
+
+export const TRANSACTION_CARD_BR: Record<
+	CardPositionsTypes,
+	{ tl: number; tr: number; bl: number; br: number }
+> = {
 	first: {
 		tl: 16,
 		tr: 16,
@@ -43,5 +48,16 @@ export function getCardPosition(
 	if (index === 0) return 'first';
 	if (index === length - 1) return 'last';
 	return 'middle';
+}
+
+export function formatCurrencyByCode(value: number, code: CurrencyCode) {
+	const match = currencySymbols.find((c) => c.code === code);
+
+	return value.toLocaleString(match?.locale || 'id-ID', {
+		style: 'currency',
+		currency: match?.code || 'id-ID',
+		currencySign: 'accounting',
+		maximumFractionDigits: 0,
+	});
 }
 

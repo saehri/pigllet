@@ -1,10 +1,9 @@
-import React from 'react';
 import { useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { Dialog, MD3Theme, Portal, Text, useTheme } from 'react-native-paper';
-import { Check, ChevronDown } from 'lucide-react-native';
+import { Check, ChevronDown, icons } from 'lucide-react-native';
 
-import TransactionIcons from '../reusables/transaction-icons';
+import LucideIcons from '../reusables/lucide-icons';
 
 interface SelectInputWithIcon {
 	data: any;
@@ -62,7 +61,11 @@ export default function SelectInputWithIcon({
 										}}
 										onPress={() => selectItem(c)}
 									>
-										<TransactionIcons icon={c.icon_name as any} />
+										<LucideIcons
+											name={c.icon_name as keyof typeof icons}
+											size={20}
+											color={theme.colors.onSurfaceVariant}
+										/>
 
 										<Text
 											variant="bodyLarge"

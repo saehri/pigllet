@@ -10,7 +10,7 @@ import { useSQLiteContext } from 'expo-sqlite';
 import { and, asc, eq, gte, inArray, lte, sql } from 'drizzle-orm';
 import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
 
-import getLocaleByCurrencySymbol from '@/utils/locale-getter';
+import { formatCurrencyByCode } from '@/utils/utils';
 import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 import NoItemNotice from '../reusables/no-items-notice';
@@ -126,15 +126,13 @@ type RenderChart = {
 
 function RenderChart({ budgets, actualSpending, budgetIds }: RenderChart) {
 	const theme = useTheme();
-	const { currentCurrencySymbol } = usePreferredCurrencyStore();
+	const { currentCurrencyCode } = usePreferredCurrencyStore();
 
 	const formattedAmount = useCallback(
 		(amount: number) => {
-			return `${currentCurrencySymbol} ${amount.toLocaleString(
-				getLocaleByCurrencySymbol(currentCurrencySymbol)
-			)}`;
+			return formatCurrencyByCode(amount, currentCurrencyCode);
 		},
-		[currentCurrencySymbol]
+		[currentCurrencyCode]
 	);
 
 	const getChartData = useMemo(() => {
@@ -175,7 +173,7 @@ function RenderChart({ budgets, actualSpending, budgetIds }: RenderChart) {
 		}
 
 		return data;
-	}, [budgetIds, actualSpending, currentCurrencySymbol]);
+	}, [budgetIds, actualSpending, currentCurrencyCode]);
 
 	return (
 		<BarChart

@@ -1,4 +1,3 @@
-import { CardPositionsTypes } from '@/types/type';
 import { TRANSACTION_CARD_BR } from '@/utils/utils';
 import { ChevronsUpDown } from 'lucide-react-native';
 import { useMemo } from 'react';

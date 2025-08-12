@@ -19,7 +19,7 @@ type Props = {
 
 export default function EditSubscriptionForm({ subscriptionId }: Props) {
 	const theme = useTheme();
-	const { currentCurrencySymbol } = usePreferredCurrencyStore();
+	const { currentCurrencyCode } = usePreferredCurrencyStore();
 
 	const {
 		subscriptionStartedAt,
@@ -69,7 +69,7 @@ export default function EditSubscriptionForm({ subscriptionId }: Props) {
 
 				<View style={styles.inputContainerFull}>
 					<Text style={styles.inputLabel} variant="bodyLarge">
-						Amount ({currentCurrencySymbol})
+						Amount ({currentCurrencyCode})
 					</Text>
 					<TextInput
 						keyboardType="number-pad"

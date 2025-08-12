@@ -68,7 +68,7 @@ function ThemeSelector() {
 }
 
 function CurrencySelector() {
-	const { currentCurrencySymbol, setAppCurrencySymbol } =
+	const { currentCurrencyCode, setAppCurrencyCode } =
 		usePreferredCurrencyStore();
 
 	return (
@@ -76,12 +76,12 @@ function CurrencySelector() {
 			{currencySymbols.map((c, index) => (
 				<SettingContentButton
 					position={getCardPosition(index, currencySymbols.length)}
-					onPress={() => setAppCurrencySymbol(c.symbol)}
+					onPress={() => setAppCurrencyCode(c.symbol)}
 					label={c.label}
 					key={c.code}
-					higlight={currentCurrencySymbol === c.symbol}
+					higlight={currentCurrencyCode === c.symbol}
 					buttonRight={
-						<RightButton selected={currentCurrencySymbol === c.symbol} />
+						<RightButton selected={currentCurrencyCode === c.symbol} />
 					}
 				/>
 			))}

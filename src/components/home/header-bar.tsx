@@ -44,8 +44,8 @@ export default function HeaderBar() {
 
 			{selectedTransactions.length ? (
 				<Animated.View
-					entering={FadeInRight.duration(100).mass(10)}
-					exiting={FadeOutRight.duration(100).mass(10)}
+					entering={FadeInRight.duration(350).mass(10)}
+					exiting={FadeOutRight.duration(350).mass(10)}
 					style={styles.actionButtons}
 				>
 					<Button

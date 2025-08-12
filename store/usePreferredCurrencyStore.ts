@@ -2,25 +2,24 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { CurrencySymbols } from '@/types/type';
+import { CurrencyCode } from '@/constants/currency-symbols';
 
 type usePreferredCurrencyStore = {
-	currentCurrencySymbol: CurrencySymbols;
-	setAppCurrencySymbol: (currencySymbol: CurrencySymbols) => void;
+	currentCurrencyCode: CurrencyCode;
+	setAppCurrencyCode: (currencySymbol: CurrencyCode) => void;
 };
 
 export const usePreferredCurrencyStore = create<usePreferredCurrencyStore>()(
 	persist(
-		(set, get) => ({
-			currentCurrencySymbol: 'Rp',
-			setAppCurrencySymbol: (currentCurrencySymbol) =>
-				set({ currentCurrencySymbol }),
+		(set) => ({
+			currentCurrencyCode: 'IDR',
+			setAppCurrencyCode: (currentCurrencyCode) => set({ currentCurrencyCode }),
 		}),
 		{
 			name: 'preferrable-currency-storage',
 			storage: createJSONStorage(() => AsyncStorage),
 			partialize: (state) => ({
-				currentCurrencySymbol: state.currentCurrencySymbol,
+				currentCurrencyCode: state.currentCurrencyCode,
 			}),
 		}
 	)

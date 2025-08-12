@@ -1,7 +1,6 @@
-import { useContext } from 'react';
-import { Surface, Text } from 'react-native-paper';
-import { StyleSheet, View } from 'react-native';
 import { useSQLiteContext } from 'expo-sqlite';
+import { StyleSheet, View } from 'react-native';
+import { Surface, Text } from 'react-native-paper';
 
 import moment from 'moment';
 
@@ -9,8 +8,7 @@ import * as schema from '@/db/schema';
 import { and, sql } from 'drizzle-orm';
 import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
 
-import { transactionColorMap } from '@/utils/utils';
-import getLocaleByCurrencySymbol from '@/utils/locale-getter';
+import { transactionColorMap, formatCurrencyByCode } from '@/utils/utils';
 import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 type Props = {
@@ -19,7 +17,7 @@ type Props = {
 };
 
 export default function AverageSpending({ selectedDate, range }: Props) {
-	const { currentCurrencySymbol } = usePreferredCurrencyStore();
+	const { currentCurrencyCode } = usePreferredCurrencyStore();
 
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
@@ -84,7 +82,10 @@ export default function AverageSpending({ selectedDate, range }: Props) {
 	);
 
 	// format current average spending according to user preference
-	const formattedAverageSpending = `${currentCurrencySymbol} ${averageSpending[0]?.value.toLocaleString(getLocaleByCurrencySymbol(currentCurrencySymbol))}`;
+	const formattedAverageSpending = formatCurrencyByCode(
+		averageSpending[0]?.value ?? 0,
+		currentCurrencyCode
+	);
 
 	const curr = averageSpending[0]?.value ?? 0;
 	const prev = prevMonthAvgSpending[0]?.value ?? 0;

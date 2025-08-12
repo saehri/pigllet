@@ -7,10 +7,10 @@ import { useSQLiteContext } from 'expo-sqlite';
 import { and, inArray, sql } from 'drizzle-orm';
 import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
 
-import getLocaleByCurrencySymbol from '@/utils/locale-getter';
 import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 import moment from 'moment';
+import { formatCurrencyByCode } from '@/utils/utils';
 
 type Props = {
 	selectedDate: Date;
@@ -22,14 +22,12 @@ function BudgetBigTotals({ selectedDate, budgetIds }: Props) {
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
 
-	const { currentCurrencySymbol } = usePreferredCurrencyStore();
+	const { currentCurrencyCode } = usePreferredCurrencyStore();
 	const formatToCurrency = useCallback(
 		(amount: number) => {
-			return `${currentCurrencySymbol} ${amount.toLocaleString(
-				getLocaleByCurrencySymbol(currentCurrencySymbol)
-			)}`;
+			return formatCurrencyByCode(amount, currentCurrencyCode);
 		},
-		[currentCurrencySymbol]
+		[currentCurrencyCode]
 	);
 
 	const startOfMonth = useMemo(
@@ -130,7 +128,7 @@ function BudgetBigTotals({ selectedDate, budgetIds }: Props) {
 						variant="labelSmall"
 						style={{ fontFamily: 'Manrope-Regular', opacity: 0.7 }}
 					>
-						Remaining budget
+						Remaining budget (amnt)
 					</Text>
 
 					<Text variant="titleMedium" style={{ fontFamily: 'Manrope-Medium' }}>
@@ -138,29 +136,36 @@ function BudgetBigTotals({ selectedDate, budgetIds }: Props) {
 					</Text>
 				</View>
 
-				<View
-					style={[
-						styles.column,
-						{ flexDirection: 'row', alignItems: 'center', gap: 8 },
-					]}
-				>
-					<Text variant="titleMedium" style={{ fontFamily: 'Manrope-Medium' }}>
-						{remainingPercentage.toFixed(0)}%
+				<View style={styles.column}>
+					<Text
+						variant="labelSmall"
+						style={{ fontFamily: 'Manrope-Regular', opacity: 0.7 }}
+					>
+						Remaining budget (%)
 					</Text>
 
-					<View
-						style={[
-							styles.progressContainer,
-							{ backgroundColor: theme.colors.primaryContainer },
-						]}
-					>
+					<View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+						<Text
+							variant="titleMedium"
+							style={{ fontFamily: 'Manrope-Medium' }}
+						>
+							{remainingPercentage.toFixed(0)}%
+						</Text>
+
 						<View
-							style={{
-								height: '100%',
-								width: `${remainingPercentage}%`,
-								backgroundColor: theme.colors.primary,
-							}}
-						></View>
+							style={[
+								styles.progressContainer,
+								{ backgroundColor: theme.colors.primaryContainer },
+							]}
+						>
+							<View
+								style={{
+									height: '100%',
+									width: `${remainingPercentage}%`,
+									backgroundColor: theme.colors.primary,
+								}}
+							></View>
+						</View>
 					</View>
 				</View>
 			</Surface>
@@ -180,8 +185,9 @@ const styles = StyleSheet.create({
 	column: { flex: 1 },
 	progressContainer: {
 		flex: 1,
-		height: 20,
+		height: 18,
 		borderRadius: 6,
+		top: 1,
 		overflow: 'hidden',
 	},
 });

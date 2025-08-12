@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import {
 	FlatList,
@@ -21,14 +22,13 @@ import { eq } from 'drizzle-orm';
 import { useRouter } from 'expo-router';
 import { useSQLiteContext } from 'expo-sqlite';
 
-import getLocaleByCurrencySymbol from '@/utils/locale-getter';
+import { formatCurrencyByCode } from '@/utils/utils';
+import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 import useSubscriptionTrackerManager from '@/src/hooks/useSubscriptionTrackerManager';
 
 import NoItemNotice from '@/src/components/reusables/no-items-notice';
 import AccountSelector from '@/src/components/forms/account-selector';
 import SelectInputWithIcon from '@/src/components/forms/select-input-with-icon';
-import moment from 'moment';
-import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 function addMonths(date: Date, count: number) {
 	const newDate = new Date(date);
@@ -53,7 +53,7 @@ function addYears(date: Date, count: number) {
 export default function SubscriptionScreen(props: any) {
 	const theme = useTheme();
 	const router = useRouter();
-	const { currentCurrencySymbol } = usePreferredCurrencyStore();
+	const { currentCurrencyCode } = usePreferredCurrencyStore();
 
 	const { loadSubscriptionsData } = useSubscriptionTrackerManager({
 		actionType: 'read',
@@ -98,9 +98,7 @@ export default function SubscriptionScreen(props: any) {
 							/>
 
 							<Text style={styles.amount} variant="titleMedium">
-								{`${currentCurrencySymbol} ${item.amount.toLocaleString(
-									getLocaleByCurrencySymbol(currentCurrencySymbol)
-								)}`}
+								{formatCurrencyByCode(item.amount, currentCurrencyCode)}
 							</Text>
 						</View>
 

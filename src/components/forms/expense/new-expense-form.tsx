@@ -18,7 +18,7 @@ import SelectInputWithIcon from '../select-input-with-icon';
 
 export default function CreateExpenseForm() {
 	const theme = useTheme();
-	const { currentCurrencySymbol } = usePreferredCurrencyStore();
+	const { currentCurrencyCode } = usePreferredCurrencyStore();
 
 	const {
 		transactionUsedAccount,
@@ -58,7 +58,7 @@ export default function CreateExpenseForm() {
 
 				<View style={styles.inputContainerFull}>
 					<Text style={styles.inputLabel} variant="bodyLarge">
-						Amount ({currentCurrencySymbol})
+						Amount ({currentCurrencyCode})
 					</Text>
 					<TextInput
 						keyboardType="number-pad"

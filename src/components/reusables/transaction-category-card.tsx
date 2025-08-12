@@ -1,12 +1,21 @@
 import { memo } from 'react';
-import { Pressable, View } from 'react-native';
-import { Surface, Text } from 'react-native-paper';
+import { useRouter } from 'expo-router';
+import { CheckIcon, icons } from 'lucide-react-native';
+import { Surface, Text, useTheme } from 'react-native-paper';
+import Animated, { FlipInEasyY } from 'react-native-reanimated';
+import {
+	GestureResponderEvent,
+	Pressable,
+	StyleSheet,
+	View,
+} from 'react-native';
 
 import { Category, TransactionType } from '@/db/schema';
 import { TRANSACTION_CARD_BR, transactionColorMap } from '@/utils/utils';
-import { CardPositionsTypes, TransactionIconsCatalogue } from '@/types/type';
 
-import TransactionIcons from './transaction-icons';
+import { useSelectedCategory } from '@/store/useSelectedCategory';
+
+import LucideIcons from './lucide-icons';
 
 type Props = {
 	data: Category;
@@ -14,27 +23,80 @@ type Props = {
 };
 
 function TransactionCategoryCard({ data, position }: Props) {
+	const theme = useTheme();
+	const router = useRouter();
+
+	const { selectedCategories, setSelectedCategories } = useSelectedCategory();
+
+	function selectCategory(ev: GestureResponderEvent) {
+		ev.preventDefault();
+		setSelectedCategories([...selectedCategories, data.id as number]);
+	}
+
+	function unselectCategory(ev: GestureResponderEvent) {
+		ev.preventDefault();
+		setSelectedCategories(selectedCategories.filter((id) => id != data.id));
+	}
+
+	const isSelected = selectedCategories.includes(data.id!);
+
 	return (
-		<Pressable>
+		<Pressable
+			onPress={() =>
+				router.push({
+					pathname: '/category-form',
+					params: { id: data.id, formAction: 'edit', categType: data.type },
+				})
+			}
+		>
 			<Surface
 				mode="flat"
 				elevation={3}
-				style={{
-					borderTopLeftRadius: TRANSACTION_CARD_BR[position].tl,
-					borderTopRightRadius: TRANSACTION_CARD_BR[position].tr,
-					borderBottomLeftRadius: TRANSACTION_CARD_BR[position].bl,
-					borderBottomRightRadius: TRANSACTION_CARD_BR[position].br,
-					padding: 16,
-					marginHorizontal: 16,
-				}}
+				style={[
+					styles.card,
+					{
+						borderTopLeftRadius: TRANSACTION_CARD_BR[position].tl,
+						borderTopRightRadius: TRANSACTION_CARD_BR[position].tr,
+						borderBottomLeftRadius: TRANSACTION_CARD_BR[position].bl,
+						borderBottomRightRadius: TRANSACTION_CARD_BR[position].br,
+						borderColor: isSelected
+							? theme.colors.tertiary
+							: theme.colors.elevation.level3,
+						backgroundColor: isSelected
+							? theme.colors.tertiaryContainer
+							: theme.colors.elevation.level3,
+					},
+				]}
 			>
-				<View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-					<TransactionIcons
-						color={transactionColorMap[data.type as TransactionType]}
-						icon={data.icon_name as keyof TransactionIconsCatalogue}
-						size={24}
-					/>
-					<Text style={{ fontFamily: 'Manrope-Regular' }} variant="bodyMedium">
+				<View style={styles.content}>
+					<Pressable
+						style={styles.checkIconBox}
+						onPress={isSelected ? unselectCategory : selectCategory}
+					>
+						{isSelected ? (
+							<Animated.View
+								entering={FlipInEasyY.duration(350).mass(100)}
+								style={[
+									styles.checkIconBox,
+									{ backgroundColor: theme.colors.tertiary },
+								]}
+							>
+								<CheckIcon
+									color={theme.colors.onTertiary}
+									size={20}
+									strokeWidth={1.5}
+								/>
+							</Animated.View>
+						) : (
+							<LucideIcons
+								color={transactionColorMap[data.type as TransactionType]}
+								name={data.icon_name as keyof typeof icons}
+								size={20}
+							/>
+						)}
+					</Pressable>
+
+					<Text style={styles.lable} variant="bodyMedium">
 						{data.label}
 					</Text>
 				</View>
@@ -44,3 +106,24 @@ function TransactionCategoryCard({ data, position }: Props) {
 }
 
 export default memo(TransactionCategoryCard);
+
+const styles = StyleSheet.create({
+	card: {
+		paddingVertical: 9,
+		paddingHorizontal: 12,
+		marginHorizontal: 16,
+		borderWidth: 1,
+	},
+	content: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+	checkIconBox: {
+		borderRadius: 100,
+		width: 40,
+		height: 40,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	lable: {
+		fontFamily: 'Manrope-Regular',
+	},
+});
+

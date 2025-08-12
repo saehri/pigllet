@@ -4,7 +4,7 @@ import { Dimensions, Image, Pressable, View } from 'react-native';
 import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 import * as schema from '@/db/schema';
-import getLocaleByCurrencySymbol from '@/utils/locale-getter';
+import { formatCurrencyByCode } from '@/utils/utils';
 import { useRouter } from 'expo-router';
 
 interface Props extends schema.Account {
@@ -20,7 +20,7 @@ export default function AccountCard({
 	compact,
 	clickable,
 }: Props) {
-	const { currentCurrencySymbol } = usePreferredCurrencyStore();
+	const { currentCurrencyCode } = usePreferredCurrencyStore();
 
 	const router = useRouter();
 
@@ -68,9 +68,7 @@ export default function AccountCard({
 					</Text>
 
 					<Text style={{ fontFamily: 'Manrope-Regular' }} variant="bodySmall">
-						{`${currentCurrencySymbol} ${balance.toLocaleString(
-							getLocaleByCurrencySymbol(currentCurrencySymbol)
-						)}`}
+						{formatCurrencyByCode(balance, currentCurrencyCode)}
 					</Text>
 				</View>
 
@@ -139,9 +137,7 @@ export default function AccountCard({
 					</Text>
 
 					<Text style={{ fontFamily: 'Manrope-Regular' }} variant="bodyLarge">
-						{`${currentCurrencySymbol} ${balance.toLocaleString(
-							getLocaleByCurrencySymbol(currentCurrencySymbol)
-						)}`}
+						{formatCurrencyByCode(balance, currentCurrencyCode)}
 					</Text>
 				</View>
 

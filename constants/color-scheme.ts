@@ -1,5 +1,3 @@
-import { AppTheme } from '@/types/type';
-
 const DEFAULT_LIGHT = {
 	colors: {
 		primary: 'rgb(167, 57, 24)',

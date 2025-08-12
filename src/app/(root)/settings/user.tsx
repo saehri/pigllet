@@ -66,13 +66,13 @@ function ResetUserPreference() {
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
 
-	const { setAppCurrencySymbol } = usePreferredCurrencyStore();
+	const { setAppCurrencyCode } = usePreferredCurrencyStore();
 	const { setAppTheme } = useAppThemeStore();
 	const { setFirstTimer } = useUserFirstTimeStore();
 
 	async function resetUserData() {
 		try {
-			setAppCurrencySymbol('Rp');
+			setAppCurrencyCode('Rp');
 			setAppTheme('Dark');
 			setFirstTimer(true);
 

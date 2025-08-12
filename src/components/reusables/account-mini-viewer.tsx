@@ -8,11 +8,11 @@ import * as schema from '@/db/schema';
 import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
 
-import getLocaleByCurrencySymbol from '@/utils/locale-getter';
+import { formatCurrencyByCode } from '@/utils/utils';
 import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 export default function AccountMiniViewer() {
-	const { currentCurrencySymbol } = usePreferredCurrencyStore();
+	const { currentCurrencyCode } = usePreferredCurrencyStore();
 
 	const [currentCardIndex, setCurrentCardIndex] = useState(0);
 
@@ -72,11 +72,10 @@ export default function AccountMiniViewer() {
 								{ color: theme.colors.onSecondaryContainer },
 							]}
 						>
-							{`${currentCurrencySymbol} ${account[
-								currentCardIndex
-							]?.balance.toLocaleString(
-								getLocaleByCurrencySymbol(currentCurrencySymbol)
-							)}`}
+							{formatCurrencyByCode(
+								account[currentCardIndex]?.balance ?? 0,
+								currentCurrencyCode
+							)}
 						</Text>
 					</Surface>
 				</Animated.View>

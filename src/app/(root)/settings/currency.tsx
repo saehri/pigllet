@@ -11,7 +11,7 @@ import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 export default function Currency() {
 	const theme = useTheme();
 
-	const { currentCurrencySymbol, setAppCurrencySymbol } =
+	const { currentCurrencyCode, setAppCurrencyCode } =
 		usePreferredCurrencyStore();
 
 	return (
@@ -25,12 +25,12 @@ export default function Currency() {
 					{currencySymbols.map((c) => (
 						<SettingContentButton
 							position="only"
-							onPress={() => setAppCurrencySymbol(c.symbol)}
+							onPress={() => setAppCurrencyCode(c.symbol)}
 							label={c.label}
 							key={c.code}
-							higlight={currentCurrencySymbol === c.symbol}
+							higlight={currentCurrencyCode === c.symbol}
 							buttonRight={
-								<RightButton selected={currentCurrencySymbol === c.symbol} />
+								<RightButton selected={currentCurrencyCode === c.symbol} />
 							}
 						/>
 					))}

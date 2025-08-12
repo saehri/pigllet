@@ -15,7 +15,7 @@ import SelectInput from '../select-input';
 
 export default function NewSubscriptionForm() {
 	const theme = useTheme();
-	const { currentCurrencySymbol } = usePreferredCurrencyStore();
+	const { currentCurrencyCode } = usePreferredCurrencyStore();
 
 	const {
 		subscriptionStartedAt,
@@ -65,7 +65,7 @@ export default function NewSubscriptionForm() {
 
 				<View style={styles.inputContainerFull}>
 					<Text style={styles.inputLabel} variant="bodyLarge">
-						Amount ({currentCurrencySymbol})
+						Amount ({currentCurrencyCode})
 					</Text>
 					<TextInput
 						keyboardType="number-pad"

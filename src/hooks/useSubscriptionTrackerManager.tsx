@@ -5,7 +5,6 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import * as schema from '@/db/schema';
 import { eq, sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
-import { SubscriptionBillingTypes } from '@/types/type';
 
 import { useRouter } from 'expo-router';
 import moment from 'moment';

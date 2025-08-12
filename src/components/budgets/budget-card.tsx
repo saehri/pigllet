@@ -1,15 +1,14 @@
 import { useRouter } from 'expo-router';
-import { CheckIcon } from 'lucide-react-native';
 import { memo, useCallback, useMemo } from 'react';
+import { CheckIcon, icons } from 'lucide-react-native';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Surface, Text, useTheme } from 'react-native-paper';
 import Animated, { FlipInEasyY } from 'react-native-reanimated';
+import moment from 'moment';
 
 import * as schema from '@/db/schema';
-import { CardPositionsTypes } from '@/types/type';
 
-import moment from 'moment';
-import getLocaleByCurrencySymbol from '@/utils/locale-getter';
+import { formatCurrencyByCode } from '@/utils/utils';
 import { TRANSACTION_CARD_BR, transactionColorMap } from '@/utils/utils';
 
 import { useSelectedBudgets } from '@/store/useSelectedBudgets';
@@ -19,7 +18,7 @@ import { useSQLiteContext } from 'expo-sqlite';
 import { and, count, eq, gte, lte, sql } from 'drizzle-orm';
 import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
 
-import TransactionIcons from '../reusables/transaction-icons';
+import LucideIcons from '../reusables/lucide-icons';
 
 type Props = {
 	data: { budget: schema.Budget; category: schema.Category };
@@ -32,7 +31,7 @@ function BudgetCard({ data, position }: Props) {
 	const theme = useTheme();
 	const router = useRouter();
 
-	const { currentCurrencySymbol } = usePreferredCurrencyStore();
+	const { currentCurrencyCode } = usePreferredCurrencyStore();
 	const { selectedBudgets, setSelectedBudgets } = useSelectedBudgets();
 
 	const isSelected = selectedBudgets.includes(budget.id!);
@@ -70,11 +69,9 @@ function BudgetCard({ data, position }: Props) {
 
 	const formattedAmount = useCallback(
 		(amount: number) => {
-			return `${currentCurrencySymbol} ${amount.toLocaleString(
-				getLocaleByCurrencySymbol(currentCurrencySymbol)
-			)}`;
+			return formatCurrencyByCode(amount, currentCurrencyCode);
 		},
-		[currentCurrencySymbol]
+		[currentCurrencyCode]
 	);
 
 	return (
@@ -111,7 +108,7 @@ function BudgetCard({ data, position }: Props) {
 				>
 					{isSelected ? (
 						<Animated.View
-							entering={FlipInEasyY.duration(500).damping(100)}
+							entering={FlipInEasyY.duration(350).mass(100)}
 							style={[
 								styles.checkIconBox,
 								{ backgroundColor: theme.colors.tertiary },
@@ -124,9 +121,11 @@ function BudgetCard({ data, position }: Props) {
 							/>
 						</Animated.View>
 					) : (
-						<TransactionIcons
-							color={transactionColorMap[category.type]}
-							icon={category.icon_name as any}
+						<LucideIcons
+							color={
+								transactionColorMap[category.type as schema.TransactionType]
+							}
+							name={category.icon_name as keyof typeof icons}
 							size={20}
 						/>
 					)}

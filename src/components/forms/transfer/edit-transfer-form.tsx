@@ -18,7 +18,7 @@ import useTransactionsManager from '@/src/hooks/useTransactionsManager';
 export default function EditTransferForm() {
 	const theme = useTheme();
 
-	const { currentCurrencySymbol } = usePreferredCurrencyStore();
+	const { currentCurrencyCode } = usePreferredCurrencyStore();
 
 	const { id } = useLocalSearchParams();
 
@@ -60,7 +60,7 @@ export default function EditTransferForm() {
 
 				<View style={styles.inputContainerFull}>
 					<Text style={styles.inputLabel} variant="bodyLarge">
-						Amount ({currentCurrencySymbol})
+						Amount ({currentCurrencyCode})
 					</Text>
 					<TextInput
 						keyboardType="number-pad"

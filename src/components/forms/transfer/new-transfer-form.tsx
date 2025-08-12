@@ -17,7 +17,7 @@ import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 export default function NewTransferForm() {
 	const theme = useTheme();
 
-	const { currentCurrencySymbol } = usePreferredCurrencyStore();
+	const { currentCurrencyCode } = usePreferredCurrencyStore();
 
 	const {
 		createTransferRecord,
@@ -71,7 +71,7 @@ export default function NewTransferForm() {
 
 			<View style={styles.inputContainerFull}>
 				<Text style={styles.inputLabel} variant="bodyLarge">
-					Amount ({currentCurrencySymbol})
+					Amount ({currentCurrencyCode})
 				</Text>
 				<TextInput
 					keyboardType="number-pad"

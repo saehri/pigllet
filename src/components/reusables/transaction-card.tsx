@@ -7,20 +7,26 @@ import {
 	CheckIcon,
 	ImageIcon,
 	MinusIcon,
+	MoveRight,
 	PlusIcon,
 } from 'lucide-react-native';
 import Animated, { FlipInEasyY } from 'react-native-reanimated';
 
 import moment from 'moment';
 
-import { CardPositionsTypes } from '@/types/type';
-import getLocaleByCurrencySymbol from '@/utils/locale-getter';
+import { TransactionType } from '@/db/schema';
 import { TransactionWithDetails } from '@/utils/group-transactions';
-import { TRANSACTION_CARD_BR, transactionColorMap } from '@/utils/utils';
-import { useSelectedTransactions } from '@/store/useSelectedTransactions';
 
-import TransactionIcons from './transaction-icons';
+import {
+	TRANSACTION_CARD_BR,
+	transactionColorMap,
+	formatCurrencyByCode,
+} from '@/utils/utils';
+
+import { useSelectedTransactions } from '@/store/useSelectedTransactions';
 import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
+
+import LucideIcons from './lucide-icons';
 
 type Props = {
 	data: TransactionWithDetails;
@@ -37,7 +43,7 @@ function TransactionCard({ data, position, showDate, pressable }: Props) {
 
 	const { selectedTransactions, setSelectedTransactions } =
 		useSelectedTransactions();
-	const { currentCurrencySymbol } = usePreferredCurrencyStore();
+	const { currentCurrencyCode } = usePreferredCurrencyStore();
 
 	// used to check whether the transaction card is selected or not
 	const isSelected = selectedTransactions.includes(data.transaction.id!);
@@ -55,10 +61,8 @@ function TransactionCard({ data, position, showDate, pressable }: Props) {
 	};
 
 	const formattedAmount = useMemo(() => {
-		return `${currentCurrencySymbol} ${transaction.amount.toLocaleString(
-			getLocaleByCurrencySymbol(currentCurrencySymbol)
-		)}`;
-	}, [transaction.amount, currentCurrencySymbol]);
+		return formatCurrencyByCode(transaction.amount, currentCurrencyCode);
+	}, [transaction.amount, currentCurrencyCode]);
 
 	const formattedDate = useMemo(() => {
 		return moment(transaction.created_at).format('MMM D, YYYY');
@@ -119,7 +123,7 @@ function TransactionCard({ data, position, showDate, pressable }: Props) {
 				>
 					{isSelected ? (
 						<Animated.View
-							entering={FlipInEasyY.duration(500).damping(100)}
+							entering={FlipInEasyY.duration(350).mass(100)}
 							style={[
 								styles.checkIconBox,
 								{ backgroundColor: theme.colors.tertiary },
@@ -132,9 +136,9 @@ function TransactionCard({ data, position, showDate, pressable }: Props) {
 							/>
 						</Animated.View>
 					) : (
-						<TransactionIcons
-							color={transactionColorMap[transaction.type]}
-							icon={category.icon_name as any}
+						<LucideIcons
+							color={transactionColorMap[transaction.type as TransactionType]}
+							name={category.icon_name as any}
 							size={20}
 						/>
 					)}
@@ -214,13 +218,17 @@ function TransactionCard({ data, position, showDate, pressable }: Props) {
 							</Text>
 
 							{related_account && (
+								<MoveRight size={12} color={theme.colors.onSurface} />
+							)}
+
+							{related_account && (
 								<Text
 									variant="labelMedium"
 									style={styles.cardNote}
 									adjustsFontSizeToFit
 									numberOfLines={1}
 								>
-									to {related_account.name}
+									{related_account.name}
 								</Text>
 							)}
 						</View>

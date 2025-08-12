@@ -1,4 +1,3 @@
-import { CardPositionsTypes } from '@/types/type';
 import { TRANSACTION_CARD_BR } from '@/utils/utils';
 import { Dispatch, SetStateAction } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';

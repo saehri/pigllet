@@ -16,7 +16,7 @@ import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 export default function CreateIncomeForm() {
 	const theme = useTheme();
-	const { currentCurrencySymbol } = usePreferredCurrencyStore();
+	const { currentCurrencyCode } = usePreferredCurrencyStore();
 
 	const {
 		transactionUsedAccount,
@@ -56,7 +56,7 @@ export default function CreateIncomeForm() {
 
 				<View style={styles.inputContainerFull}>
 					<Text style={styles.inputLabel} variant="bodyLarge">
-						Amount ({currentCurrencySymbol})
+						Amount ({currentCurrencyCode})
 					</Text>
 					<TextInput
 						keyboardType="number-pad"

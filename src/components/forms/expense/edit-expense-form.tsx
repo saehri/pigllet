@@ -17,7 +17,7 @@ import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 export default function EditExpenseForm() {
 	const theme = useTheme();
-	const { currentCurrencySymbol } = usePreferredCurrencyStore();
+	const { currentCurrencyCode } = usePreferredCurrencyStore();
 
 	const { id } = useLocalSearchParams();
 
@@ -60,7 +60,7 @@ export default function EditExpenseForm() {
 
 				<View style={styles.inputContainerFull}>
 					<Text style={styles.inputLabel} variant="bodyLarge">
-						Amount ({currentCurrencySymbol})
+						Amount ({currentCurrencyCode})
 					</Text>
 					<TextInput
 						keyboardType="number-pad"

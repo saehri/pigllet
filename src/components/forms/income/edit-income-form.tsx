@@ -18,7 +18,7 @@ import useTransactionsManager from '@/src/hooks/useTransactionsManager';
 
 export default function EditIncomeForm() {
 	const theme = useTheme();
-	const { currentCurrencySymbol } = usePreferredCurrencyStore();
+	const { currentCurrencyCode } = usePreferredCurrencyStore();
 
 	const { id } = useLocalSearchParams();
 
@@ -61,7 +61,7 @@ export default function EditIncomeForm() {
 
 				<View style={styles.inputCotainerFull}>
 					<Text style={styles.inputLabel} variant="bodyLarge">
-						Amount ({currentCurrencySymbol})
+						Amount ({currentCurrencyCode})
 					</Text>
 
 					<TextInput

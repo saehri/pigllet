@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { BarChart } from 'react-native-gifted-charts';
 import { Button, Surface, Text, useTheme } from 'react-native-paper';
 
-import getLocaleByCurrencySymbol from '@/utils/locale-getter';
+import { formatCurrencyByCode } from '@/utils/utils';
 
 import * as schema from '@/db/schema';
 import { useSQLiteContext } from 'expo-sqlite';
@@ -176,7 +176,7 @@ function ChartRenderer({
 	transactionType,
 }: ChartRendererProps) {
 	const theme = useTheme();
-	const { currentCurrencySymbol } = usePreferredCurrencyStore();
+	const { currentCurrencyCode } = usePreferredCurrencyStore();
 
 	return (
 		<View style={styles.chartContainer}>
@@ -184,9 +184,7 @@ function ChartRenderer({
 				barWidth={75}
 				barBorderRadius={120}
 				formatYLabel={(label) =>
-					`${Number(label).toLocaleString(
-						getLocaleByCurrencySymbol(currentCurrencySymbol)
-					)}`
+					formatCurrencyByCode(Number(label), currentCurrencyCode)
 				}
 				hideYAxisText
 				height={200}
@@ -195,10 +193,7 @@ function ChartRenderer({
 					...data,
 					topLabelComponent: () => (
 						<Text style={{ color: theme.colors.onSurface, fontSize: 9 }}>
-							{currentCurrencySymbol}{' '}
-							{Number(data.value).toLocaleString(
-								getLocaleByCurrencySymbol(currentCurrencySymbol)
-							)}
+							{formatCurrencyByCode(Number(data.value), currentCurrencyCode)}
 						</Text>
 					),
 				}))}

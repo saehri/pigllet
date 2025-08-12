@@ -87,7 +87,7 @@ type FormProps = {
 };
 
 function Form({ theme, drizzleDb, initialFormValue }: FormProps) {
-	const { currentCurrencySymbol } = usePreferredCurrencyStore();
+	const { currentCurrencyCode } = usePreferredCurrencyStore();
 
 	const router = useRouter();
 
@@ -173,7 +173,7 @@ function Form({ theme, drizzleDb, initialFormValue }: FormProps) {
 
 				<View style={{ gap: 8, flex: 1 }}>
 					<Text style={{ fontFamily: 'Manrope-Regular' }} variant="bodyLarge">
-						Account balance ({currentCurrencySymbol})
+						Account balance ({currentCurrencyCode})
 					</Text>
 					<TextInput
 						keyboardType="number-pad"

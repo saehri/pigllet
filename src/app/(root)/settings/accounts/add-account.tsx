@@ -17,7 +17,7 @@ import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 export default function AddAccountScreen() {
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
-	const { currentCurrencySymbol } = usePreferredCurrencyStore();
+	const { currentCurrencyCode } = usePreferredCurrencyStore();
 
 	const theme = useTheme();
 
@@ -78,7 +78,7 @@ export default function AddAccountScreen() {
 
 					<View style={{ gap: 8, flex: 1 }}>
 						<Text variant="bodyLarge">
-							Account balance ({currentCurrencySymbol})
+							Account balance ({currentCurrencyCode})
 						</Text>
 						<TextInput
 							keyboardType="number-pad"
