@@ -29,7 +29,8 @@ export const categories = sqliteTable('categories', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
 	label: text('label').notNull().unique(),
 	icon_name: text('icon_name').notNull(),
-	type: text('type').notNull(), // Enforce app-level: 'expense' | 'income' | 'transfer'
+	type: text('type').notNull(),
+	is_default: integer().default(0),
 });
 
 // --- BUDGETS ---

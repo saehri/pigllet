@@ -25,7 +25,7 @@ export default function CategoryForm() {
 		categType as schema.TransactionType
 	);
 
-	const createTransactionCategory = useCallback(async () => {
+	const createTransactionCategory = async () => {
 		try {
 			setLoading(true);
 
@@ -46,9 +46,9 @@ export default function CategoryForm() {
 			setIconName('');
 			setLoading(false);
 		}
-	}, [label, iconName, categoryType]);
+	};
 
-	const editTransactionCategory = useCallback(async () => {
+	const editTransactionCategory = async () => {
 		try {
 			setLoading(true);
 
@@ -72,7 +72,7 @@ export default function CategoryForm() {
 			setIconName('');
 			setLoading(false);
 		}
-	}, [label, iconName, categoryType, id]);
+	};
 
 	const loadInitialFormData = useCallback(() => {
 		return drizzleDb

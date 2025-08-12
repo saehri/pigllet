@@ -96,9 +96,26 @@ function TransactionCategoryCard({ data, position }: Props) {
 						)}
 					</Pressable>
 
-					<Text style={styles.lable} variant="bodyMedium">
-						{data.label}
-					</Text>
+					<View
+						style={[
+							styles.content,
+							{ justifyContent: 'space-between', flex: 1 },
+						]}
+					>
+						<Text style={styles.label} variant="bodyMedium">
+							{data.label}
+						</Text>
+
+						<Text
+							style={[
+								styles.label,
+								{ alignSelf: 'baseline', opacity: 0.7, fontStyle: 'italic' },
+							]}
+							variant="labelSmall"
+						>
+							{data.is_default ? 'default' : ''}
+						</Text>
+					</View>
 				</View>
 			</Surface>
 		</Pressable>
@@ -122,7 +139,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 	},
-	lable: {
+	label: {
 		fontFamily: 'Manrope-Regular',
 	},
 });

@@ -7,7 +7,7 @@ import Animated, { FadeInRight } from 'react-native-reanimated';
 import { useSelectedCategory } from '@/store/useSelectedCategory';
 
 import * as schema from '@/db/schema';
-import { eq, inArray } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 
@@ -26,26 +26,50 @@ function CategoryListHeader({ defaultCategoryLabel }: Props) {
 		try {
 			setDeleting(true);
 
-			const defaultCategory = await drizzleDb
+			// Get the default category ID
+			const initialCategory = await drizzleDb
 				.select({
-					defaultCategoryId: schema.categories.id,
+					id: schema.categories.id,
+					type: schema.categories.type,
 				})
 				.from(schema.categories)
 				.where(eq(schema.categories.label, defaultCategoryLabel));
 
-			const defaultCategoryId = defaultCategory[0]?.defaultCategoryId;
+			const { id: initialCategoryId, type: initialCategoryType } =
+				initialCategory[0];
 
-			if (defaultCategoryId) {
-				await drizzleDb
-					.update(schema.transactions)
-					.set({
-						category_id: defaultCategoryId,
-					})
-					.where(inArray(schema.transactions.category_id, selectedCategories));
+			if (initialCategoryId) {
+				// Step 1 — Get selected categories that are NOT default
+				const nonDefaultCategories = await drizzleDb
+					.select({ id: schema.categories.id })
+					.from(schema.categories)
+					.where(
+						and(
+							eq(schema.categories.is_default, 0),
+							eq(schema.categories.type, initialCategoryType),
+							inArray(schema.categories.id, selectedCategories)
+						)
+					);
 
-				await drizzleDb
-					.delete(schema.categories)
-					.where(inArray(schema.categories.id, selectedCategories));
+				const nonDefaultCatIds = nonDefaultCategories.map((c) => c.id);
+
+				if (nonDefaultCatIds.length > 0) {
+					// Step 2 — Update transactions before deleting categories
+					await drizzleDb
+						.update(schema.transactions)
+						.set({ category_id: initialCategoryId })
+						.where(inArray(schema.transactions.category_id, nonDefaultCatIds));
+
+					// Step 3 — Delete only non default categories
+					await drizzleDb
+						.delete(schema.categories)
+						.where(
+							and(
+								inArray(schema.categories.id, selectedCategories),
+								eq(schema.categories.is_default, 0)
+							)
+						);
+				}
 			}
 		} catch (error: any) {
 			ToastAndroid.show(error.message, ToastAndroid.SHORT);

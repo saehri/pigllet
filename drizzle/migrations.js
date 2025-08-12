@@ -6,6 +6,7 @@ import m0001 from './0001_perpetual_cassandra_nova.sql';
 import m0002 from './0002_romantic_talisman.sql';
 import m0003 from './0003_greedy_sally_floyd.sql';
 import m0004 from './0004_chief_vision.sql';
+import m0005 from './0005_windy_tiger_shark.sql';
 
   export default {
     journal,
@@ -14,7 +15,8 @@ import m0004 from './0004_chief_vision.sql';
 m0001,
 m0002,
 m0003,
-m0004
+m0004,
+m0005
     }
   }
   
