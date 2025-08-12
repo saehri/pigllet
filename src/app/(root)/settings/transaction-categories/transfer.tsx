@@ -1,25 +1,69 @@
-import { Workflow } from 'lucide-react-native';
-import { ScrollView, View } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { useCallback } from 'react';
+import { FlatList } from 'react-native';
+import { useFocusEffect } from 'expo-router';
+import { useSQLiteContext } from 'expo-sqlite';
 
-export default function TransferCategories() {
-	const theme = useTheme();
+import { eq } from 'drizzle-orm';
+import * as schema from '@/db/schema';
+import { getCardPosition } from '@/utils/utils';
+import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
+
+import { useSelectedCategory } from '@/store/useSelectedCategory';
+
+import CategoryListHeader from '@/src/components/reusables/category-list-header';
+import TransactionCategoryCard from '@/src/components/reusables/transaction-category-card';
+import CategoryFab from '@/src/components/reusables/category-fab';
+
+export default function ExpenseCategories() {
+	const db = useSQLiteContext();
+	const drizzleDb = drizzle(db, { schema });
+
+	const setSelectedCategories = useSelectedCategory(
+		(s) => s.setSelectedCategories
+	);
+
+	const getTransactionCategories = useCallback(
+		(type: schema.TransactionType) => {
+			return drizzleDb
+				.select()
+				.from(schema.categories)
+				.where(eq(schema.categories.type, type));
+		},
+		[]
+	);
+
+	const { data: expenseCategories } = useLiveQuery(
+		getTransactionCategories('transfer')
+	);
+
+	// unselect all selected category if the user change route
+	useFocusEffect(
+		useCallback(() => {
+			return () => {
+				setSelectedCategories([]);
+			};
+		}, [])
+	);
 
 	return (
-		<ScrollView
-			showsVerticalScrollIndicator={false}
-			style={{
-				backgroundColor: theme.colors.background,
-			}}
-		>
-			<View
-				style={{
-					alignItems: 'center',
-					justifyContent: 'center',
-					padding: 16,
-				}}
-			></View>
-		</ScrollView>
+		<>
+			<FlatList
+				showsVerticalScrollIndicator={false}
+				contentContainerStyle={{ paddingBottom: 140, gap: 2 }}
+				data={expenseCategories}
+				ListHeaderComponent={
+					<CategoryListHeader defaultCategoryLabel="Other Transfer" />
+				}
+				renderItem={({ item, index }) => (
+					<TransactionCategoryCard
+						data={item}
+						position={getCardPosition(index, expenseCategories.length)}
+					/>
+				)}
+			/>
+
+			<CategoryFab categType="transfer" />
+		</>
 	);
 }
 

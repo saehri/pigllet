@@ -1,21 +1,16 @@
-import { TransactionIconsCatalogue } from '@/types/type';
+import { icons } from 'lucide-react-native';
 
 export const incomeCategories: {
 	label: string;
-	icon: keyof TransactionIconsCatalogue;
+	icon: keyof typeof icons;
 }[] = [
-	{ icon: 'other', label: 'Other Income' },
-	{ icon: 'salary', label: 'Salary' },
-	{ icon: 'freelance', label: 'Freelance' },
-	{ icon: 'bonuses-and-commission', label: 'Bonuses & Commissions' },
-	{ icon: 'overtime-pay', label: 'Overtime Pay' },
-	{ icon: 'side-hustles', label: 'Side Hustles' },
-	{ icon: 'gifts-and-donations', label: 'Gifts & Donations' },
-	{ icon: 'lottery-and-gambling', label: 'Lottery & Gambling' },
-	{ icon: 'pension', label: 'Pension' },
-	{ icon: 'unemployment-benefits', label: 'Unemployment Benefits' },
-	{ icon: 'child-support', label: 'Child Support' },
-	{ icon: 'alimony', label: 'Alimony' },
-	{ icon: 'other', label: 'Other Income' },
+	{ icon: 'CircleArrowOutDownLeft', label: 'Other Income' },
+	{ icon: 'CircleDollarSign', label: 'Salary' },
+	{ icon: 'Laptop', label: 'Freelance' },
+	{ icon: 'BriefcaseBusiness', label: 'Bonuses & Commissions' },
+	{ icon: 'Clock10', label: 'Overtime Pay' },
+	{ icon: 'BriefcaseBusiness', label: 'Side Hustles' },
+	{ icon: 'Gift', label: 'Gifts & Donations' },
+	{ icon: 'Dices', label: 'Lottery & Gambling' },
 ];
 
