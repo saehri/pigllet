@@ -55,7 +55,7 @@ export function formatCurrencyByCode(value: number, code: CurrencyCode) {
 
 	return value.toLocaleString(match?.locale || 'id-ID', {
 		style: 'currency',
-		currency: match?.code || 'id-ID',
+		currency: match?.code || 'IDR',
 		currencySign: 'accounting',
 		maximumFractionDigits: 0,
 	});
