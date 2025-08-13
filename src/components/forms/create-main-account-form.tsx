@@ -10,16 +10,15 @@ import useAccountController from '@/src/hooks/useAccountManager';
 
 export default function CreateMainAccountForm() {
 	const theme = useTheme();
-	const { createMainAccount, loading, accountBalance, setAccountBalance } =
+	const { createMainAccount, loading, accountName, setAccountName } =
 		useAccountController();
 
 	return (
 		<View style={{ gap: 16, width: '100%' }}>
 			<TextInput
 				contentStyle={styles.inputContent}
-				inputMode="numeric"
-				value={accountBalance}
-				onChangeText={setAccountBalance}
+				value={accountName}
+				onChangeText={setAccountName}
 			/>
 
 			<Button

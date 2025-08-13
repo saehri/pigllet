@@ -16,7 +16,7 @@ export default function useAccountController() {
 	const [loading, setLoading] = useState<boolean>(false);
 
 	// ------ form input state
-	const [accountBalance, setAccountBalance] = useState<string>(''); // Cast the accountBalance data type to number before submitting
+	const [accountName, setAccountName] = useState<string>(''); // Cast the accountBalance data type to number before submitting
 
 	// ---------------------------- form functions
 	async function createMainAccount() {
@@ -24,9 +24,9 @@ export default function useAccountController() {
 			Keyboard.dismiss();
 
 			// Make sure that user set their account balance and it is a number
-			if (!accountBalance.length || !Boolean(Number(accountBalance)))
+			if (!accountName.length)
 				return ToastAndroid.show(
-					'Please enter a valid amount',
+					'Please enter a valid account name!',
 					ToastAndroid.SHORT
 				);
 
@@ -35,10 +35,10 @@ export default function useAccountController() {
 			await drizzleDb
 				.insert(schema.accounts)
 				.values({
-					name: 'Cash',
+					name: accountName,
 					created_at: new Date().toISOString(),
 					number: '',
-					balance: Number(accountBalance),
+					balance: 0,
 					image: '',
 					is_cash: 1,
 				})
@@ -51,15 +51,15 @@ export default function useAccountController() {
 			}, 1.5);
 		}
 
-		router.push('/(root)/(tabs)/home');
+		router.push('/(root)/(tabs)/home/month');
 	}
 
 	return {
 		loading,
 		setLoading,
 		createMainAccount,
-		accountBalance,
-		setAccountBalance,
+		accountName,
+		setAccountName,
 	};
 }
 

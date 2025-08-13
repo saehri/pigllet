@@ -23,7 +23,7 @@ export default function MainAccountSetupScreen() {
 				</Text>
 
 				<Text variant="bodyMedium" numberOfLines={2} style={styles.bodyLarge}>
-					Enter you account balance
+					Enter you account name
 				</Text>
 
 				<CreateMainAccountForm />
