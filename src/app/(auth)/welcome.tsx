@@ -71,6 +71,7 @@ export default function OnboardingScreen() {
 						icon_name: category.icon, // Use icon name
 						budget_id: null, // If budget_id is optional, set it to null
 						created_at: createdAt, // Set the timestamp
+						is_default: 1,
 					}))
 				)
 				.onConflictDoNothing();
@@ -83,6 +84,7 @@ export default function OnboardingScreen() {
 						icon_name: category.icon,
 						created_at: createdAt,
 						type: 'income',
+						is_default: 1,
 					}))
 				)
 				.onConflictDoNothing();
@@ -95,6 +97,7 @@ export default function OnboardingScreen() {
 						icon_name: category.icon,
 						created_at: createdAt,
 						type: 'transfer',
+						is_default: 1,
 					}))
 				)
 				.onConflictDoNothing();
