@@ -89,7 +89,9 @@ export default function MainSetting() {
 					description="Manage the category of your transactions"
 					titleStyle={{ fontFamily: 'Manrope-Regular' }}
 					descriptionStyle={{ fontFamily: 'Manrope-Light', opacity: 0.7 }}
-					onPress={() => router.push('/(root)/settings/transaction-categories')}
+					onPress={() =>
+						router.push('/(root)/settings/transaction-categories/expense')
+					}
 					left={(props) => (
 						<Notebook
 							{...props}

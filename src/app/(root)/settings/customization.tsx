@@ -72,16 +72,16 @@ function CurrencySelector() {
 		usePreferredCurrencyStore();
 
 	return (
-		<SettingContentWrapper headerTitle="Default Currency Symbol">
+		<SettingContentWrapper headerTitle="Default currency symbol">
 			{currencySymbols.map((c, index) => (
 				<SettingContentButton
 					position={getCardPosition(index, currencySymbols.length)}
-					onPress={() => setAppCurrencyCode(c.symbol)}
+					onPress={() => setAppCurrencyCode(c.code)}
 					label={c.label}
 					key={c.code}
-					higlight={currentCurrencyCode === c.symbol}
+					higlight={currentCurrencyCode === c.code}
 					buttonRight={
-						<RightButton selected={currentCurrencyCode === c.symbol} />
+						<RightButton selected={currentCurrencyCode === c.code} />
 					}
 				/>
 			))}
