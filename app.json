@@ -2,26 +2,30 @@
 	"expo": {
 		"name": "Pigllet",
 		"slug": "pigllet-mobile",
-		"version": "1.0.0",
+		"version": "2.0.0",
 		"orientation": "portrait",
+		"description": "Personal finance tracker with budgeting, transactions, and insights",
+		"privacy": "public",
+		"owner": "saehri",
 		"scheme": "myapp",
 		"userInterfaceStyle": "automatic",
 		"newArchEnabled": true,
 		"backgroundColor": "#000000",
 		"notification": {
-			"color": "#000000",
+			"color": "#f78565ff",
 			"androidMode": "collapse",
-			"androidCollapsedTitle": "#{unread_notifications} new interactions"
+			"androidCollapsedTitle": "#{unread_notifications} new notifications"
 		},
 		"softwareKeyboardLayoutMode": "pan",
 		"ios": {
-			"supportsTablet": true,
+			"supportsTablet": false,
 			"icon": "./assets/icons/ios-light.png"
 		},
 		"android": {
+			"icon": "./assets/icons/android-icon.png",
 			"adaptiveIcon": {
 				"foregroundImage": "./assets/icons/adaptive-icon.png",
-				"backgroundColor": "#ffffff"
+				"backgroundImage": "./assets/icons/adaptive-icon-background.png"
 			},
 			"package": "com.bahree36.piglletmobile"
 		},
@@ -45,12 +49,7 @@
 					"imageWidth": 200
 				}
 			],
-			[
-				"expo-image-picker",
-				{
-					"photosPermission": "The app accesses your photos to let you share them with your friends."
-				}
-			]
+			["expo-image-picker"]
 		],
 		"experiments": {
 			"typedRoutes": true
@@ -65,3 +64,4 @@
 		}
 	}
 }
+

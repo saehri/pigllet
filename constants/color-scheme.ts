@@ -1,6 +1,6 @@
 const DEFAULT_LIGHT = {
 	colors: {
-		primary: 'rgb(167, 57, 24)',
+		primary: 'hsla(14, 75%, 38%, 1.00)',
 		onPrimary: 'rgb(255, 255, 255)',
 		primaryContainer: 'rgb(255, 219, 209)',
 		onPrimaryContainer: 'rgb(59, 9, 0)',
@@ -45,7 +45,7 @@ const DEFAULT_LIGHT = {
 
 const DEFAULT_DARK = {
 	colors: {
-		primary: 'rgba(247, 133, 101, 1)',
+		primary: 'hsla(13, 90%, 68%, 1.00)',
 		onPrimary: 'rgb(96, 21, 0)',
 		primaryContainer: 'rgb(135, 33, 0)',
 		onPrimaryContainer: 'rgb(255, 219, 209)',
