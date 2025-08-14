@@ -1,5 +1,5 @@
 import { View } from 'react-native';
-import { Dispatch, ReactNode, SetStateAction } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import { Button, Text, useTheme } from 'react-native-paper';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react-native';
 
@@ -11,7 +11,6 @@ type Props = {
 	setSelectedDate: Dispatch<SetStateAction<Date>>;
 	onNext: () => void;
 	onPrev: () => void;
-	additionalButton?: () => ReactNode;
 };
 
 export default function YearSelectorBar({
@@ -19,7 +18,6 @@ export default function YearSelectorBar({
 	onPrev,
 	selectedDate,
 	setSelectedDate,
-	additionalButton,
 }: Props) {
 	const theme = useTheme();
 
@@ -28,10 +26,10 @@ export default function YearSelectorBar({
 			style={{
 				flexDirection: 'row',
 				justifyContent: 'space-between',
-				paddingHorizontal: 16,
 				alignItems: 'center',
 				height: 40,
 				marginBottom: 16,
+				flex: 1,
 			}}
 		>
 			<Text style={{ fontFamily: 'Manrope-Medium' }} variant="titleLarge">
@@ -79,7 +77,6 @@ export default function YearSelectorBar({
 					onValueChange={setSelectedDate}
 					selectedValue={selectedDate}
 				/>
-				{additionalButton ? additionalButton() : <View></View>}
 			</View>
 		</View>
 	);

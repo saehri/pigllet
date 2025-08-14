@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { BarChart } from 'react-native-gifted-charts';
 import { Button, Surface, Text, useTheme } from 'react-native-paper';
@@ -13,7 +13,7 @@ import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import moment from 'moment';
 import { transactionColorMap } from '@/utils/utils';
 
-import { ArrowDownIcon, ArrowUpIcon, FocusIcon } from 'lucide-react-native';
+import { ArrowDownIcon, ArrowUpIcon } from 'lucide-react-native';
 import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 type Props = {
@@ -24,7 +24,7 @@ type Props = {
 	descriptions?: string;
 };
 
-export default function TransactionsOverTime({
+function TransactionsOverTime({
 	selectedDate,
 	range,
 	transactionType,
@@ -236,6 +236,8 @@ function ChartRenderer({
 		</View>
 	);
 }
+
+export default memo(TransactionsOverTime);
 
 const styles = StyleSheet.create({
 	chart: {

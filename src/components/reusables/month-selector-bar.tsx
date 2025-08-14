@@ -1,5 +1,5 @@
 import { View } from 'react-native';
-import { Dispatch, memo, ReactNode, SetStateAction } from 'react';
+import { Dispatch, memo, SetStateAction } from 'react';
 import { Button, Text, useTheme } from 'react-native-paper';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react-native';
 
@@ -12,7 +12,6 @@ type Props = {
 	setSelectedDate: Dispatch<SetStateAction<Date>>;
 	onNext: () => void;
 	onPrev: () => void;
-	additionalButton?: () => ReactNode;
 };
 
 const MonthSelectorBar = memo(function MonthSelectorBar({
@@ -20,7 +19,6 @@ const MonthSelectorBar = memo(function MonthSelectorBar({
 	setSelectedDate,
 	onNext,
 	onPrev,
-	additionalButton,
 }: Props) {
 	const theme = useTheme();
 
@@ -29,10 +27,10 @@ const MonthSelectorBar = memo(function MonthSelectorBar({
 			style={{
 				flexDirection: 'row',
 				justifyContent: 'space-between',
-				paddingHorizontal: 16,
 				alignItems: 'center',
 				height: 40,
 				marginBottom: 16,
+				flex: 1,
 			}}
 		>
 			<Text style={{ fontFamily: 'Manrope-Medium' }} variant="titleLarge">
@@ -79,7 +77,6 @@ const MonthSelectorBar = memo(function MonthSelectorBar({
 					onValueChange={setSelectedDate}
 					selectedValue={selectedDate}
 				/>
-				{additionalButton ? additionalButton() : <View></View>}
 			</View>
 		</View>
 	);

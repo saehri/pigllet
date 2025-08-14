@@ -1,12 +1,11 @@
 import { TRANSACTION_CARD_BR } from '@/utils/utils';
-import { Dispatch, SetStateAction } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Surface, Text, useTheme } from 'react-native-paper';
 
 type ToggleButtonProps = {
 	label: string;
 	currentValue: boolean;
-	setCurrentValue: Dispatch<SetStateAction<boolean>>;
+	setCurrentValue: (state: boolean) => void;
 	position: CardPositionsTypes;
 };
 
@@ -37,7 +36,7 @@ export default function BottomSheetToggleButton({
 			</Text>
 
 			<Pressable
-				onPress={() => setCurrentValue((prev) => !prev)}
+				onPress={() => setCurrentValue(!currentValue)}
 				style={[
 					styles.checkboxButton,
 					{
