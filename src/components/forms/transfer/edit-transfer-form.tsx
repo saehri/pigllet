@@ -1,23 +1,16 @@
-import {
-	Text,
-	Button,
-	useTheme,
-	TextInput,
-	ActivityIndicator,
-} from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
+import { Text, Button } from 'react-native-paper';
 import { useLocalSearchParams } from 'expo-router';
 
+import useTransactionsManager from '@/src/hooks/useTransactionsManager';
 import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
+import NoteInput from '../note-input';
 import DatePicker from '../date-picker';
-import ImageSelectorInput from '../image-select-input';
-import SelectInputWithIcon from '../select-input-with-icon';
-import useTransactionsManager from '@/src/hooks/useTransactionsManager';
+import CustomTextInput from '../custom-text-input';
+import TransactionCategorySelector from '../transaction-category-selector';
 
 export default function EditTransferForm() {
-	const theme = useTheme();
-
 	const { currentCurrencyCode } = usePreferredCurrencyStore();
 
 	const { id } = useLocalSearchParams();
@@ -36,8 +29,6 @@ export default function EditTransferForm() {
 		setTransactionAmount,
 		setTransactionCategory,
 		setTransactionCreatedAt,
-		setTransactionUsedAccount,
-		setTransactionUsedRelatedAccount,
 	} = useTransactionsManager({
 		actionType: 'update',
 		transactionId: Number(id),
@@ -46,54 +37,62 @@ export default function EditTransferForm() {
 
 	return (
 		<View style={styles.formWrapper}>
-			<View style={styles.gridContainer}>
-				<View style={styles.inputContainerFull}>
-					<Text style={styles.inputLabel} variant="bodyLarge">
-						Transfer category
-					</Text>
-					<SelectInputWithIcon
-						data={transactionCategories}
-						selectedCategory={transactionCategory}
-						handleSelect={setTransactionCategory}
-					/>
-				</View>
-
-				<View style={styles.inputContainerFull}>
-					<Text style={styles.inputLabel} variant="bodyLarge">
-						Amount ({currentCurrencyCode})
-					</Text>
-					<TextInput
-						keyboardType="number-pad"
-						value={transactionAmount}
-						onChangeText={setTransactionAmount}
-					/>
-				</View>
-			</View>
-
 			<View style={styles.inputContainer}>
-				<Text style={styles.inputLabel} variant="bodyLarge">
-					Date
+				<Text style={styles.inputLabel} variant="bodyMedium">
+					Amount ({currentCurrencyCode})
 				</Text>
-				<DatePicker
-					selectedDate={transactionCreatedAt}
-					setSelectedDate={setTransactionCreatedAt}
+
+				<CustomTextInput
+					keyboardType="number-pad"
+					onChangeText={setTransactionAmount}
+					value={transactionAmount}
+					leftComponent={
+						<Text
+							style={{ fontFamily: 'Manrope-Regular' }}
+							variant="labelMedium"
+						>
+							{currentCurrencyCode}
+						</Text>
+					}
+					placeholder="6900"
 				/>
 			</View>
 
-			<View style={styles.inputContainer}>
-				<Text style={styles.inputLabel} variant="bodyLarge">
-					Note
-				</Text>
-				<TextInput onChangeText={setTransactionNote} value={transactionNote} />
+			<View style={styles.gridContainer}>
+				<View style={styles.inputContainerFull}>
+					<Text style={styles.inputLabel} variant="bodyMedium">
+						Transfer category
+					</Text>
+
+					<TransactionCategorySelector
+						data={transactionCategories}
+						selectedCategory={transactionCategory!}
+						handleSelect={setTransactionCategory as any}
+					/>
+				</View>
+
+				<View style={styles.inputContainerFull}>
+					<Text style={styles.inputLabel} variant="bodyMedium">
+						Date
+					</Text>
+
+					<DatePicker
+						selectedDate={transactionCreatedAt}
+						setSelectedDate={setTransactionCreatedAt}
+					/>
+				</View>
 			</View>
 
 			<View style={styles.inputContainer}>
-				<Text style={styles.inputLabel} variant="bodyLarge">
-					Add image
+				<Text style={styles.inputLabel} variant="bodyMedium">
+					Note
 				</Text>
-				<ImageSelectorInput
-					handleSelect={setTransactionImage}
-					selectedImage={transactionImage}
+
+				<NoteInput
+					noteValue={transactionNote}
+					setNoteValue={setTransactionNote}
+					imageValue={transactionImage}
+					setImageValue={setTransactionImage}
 				/>
 			</View>
 
@@ -102,13 +101,10 @@ export default function EditTransferForm() {
 				style={styles.button}
 				labelStyle={styles.buttonLabel}
 				onPress={updateTransferRecord}
-				disabled={!transactionAmount.length}
+				disabled={loading}
+				loading={loading}
 			>
-				{loading ? (
-					<ActivityIndicator size={20} color={theme.colors.onPrimary} />
-				) : (
-					'Save changes'
-				)}
+				Save changes
 			</Button>
 		</View>
 	);
@@ -117,6 +113,7 @@ export default function EditTransferForm() {
 const styles = StyleSheet.create({
 	inputLabel: {
 		fontFamily: 'Manrope-Regular',
+		opacity: 0.7,
 	},
 	inputContent: {
 		fontFamily: 'Manrope-Regular',

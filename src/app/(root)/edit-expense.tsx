@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { ScrollView, View } from 'react-native';
-import { useLocalSearchParams, useNavigation } from 'expo-router';
-import { Button, useTheme } from 'react-native-paper';
 import { Calculator } from 'lucide-react-native';
+import { Button, useTheme } from 'react-native-paper';
+import { useLocalSearchParams, useNavigation } from 'expo-router';
 
 import EditExpenseForm from '@/src/components/forms/expense/edit-expense-form';
 import DeleteTransactionsDialog from '@/src/components/reusables/delete-transactions-dialog';
@@ -14,19 +14,22 @@ export default function ExpenseDetail() {
 
 	useEffect(() => {
 		navigation.setOptions({
-			title: '',
+			title: 'Edit expense',
 			headerRight: () => (
 				<View
 					style={{
-						backgroundColor: theme.colors.background,
 						flexDirection: 'row',
 						alignItems: 'center',
+						gap: 2,
 					}}
 				>
-					<Button>
+					<Button
+						mode="contained-tonal"
+						style={{ borderTopRightRadius: 6, borderBottomRightRadius: 6 }}
+					>
 						<Calculator
 							strokeWidth={1.5}
-							color={theme.colors.onBackground}
+							color={theme.colors.onSecondaryContainer}
 							size={20}
 						/>
 					</Button>
@@ -41,7 +44,7 @@ export default function ExpenseDetail() {
 	}, []);
 
 	return (
-		<ScrollView style={{ backgroundColor: theme.colors.background }}>
+		<ScrollView showsVerticalScrollIndicator={false}>
 			<EditExpenseForm />
 		</ScrollView>
 	);

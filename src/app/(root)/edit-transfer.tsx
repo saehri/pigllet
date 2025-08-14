@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
-import { Button, useTheme } from 'react-native-paper';
+import { ScrollView, View } from 'react-native';
 import { CalculatorIcon } from 'lucide-react-native';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { Button, useTheme } from 'react-native-paper';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 
 import EditTransferForm from '@/src/components/forms/transfer/edit-transfer-form';
@@ -14,18 +14,22 @@ export default function NewTransferForm() {
 
 	useEffect(() => {
 		navigation.setOptions({
-			title: '',
+			title: 'Edit transfer',
 			headerRight: () => (
 				<View
-					style={[
-						styles.headerRightContainer,
-						{ backgroundColor: theme.colors.background },
-					]}
+					style={{
+						flexDirection: 'row',
+						alignItems: 'center',
+						gap: 2,
+					}}
 				>
-					<Button>
+					<Button
+						mode="contained-tonal"
+						style={{ borderTopRightRadius: 6, borderBottomRightRadius: 6 }}
+					>
 						<CalculatorIcon
 							strokeWidth={1.5}
-							color={theme.colors.onBackground}
+							color={theme.colors.onSecondaryContainer}
 							size={20}
 						/>
 					</Button>
@@ -40,16 +44,9 @@ export default function NewTransferForm() {
 	}, []);
 
 	return (
-		<ScrollView style={{ backgroundColor: theme.colors.background }}>
+		<ScrollView showsVerticalScrollIndicator={false}>
 			<EditTransferForm />
 		</ScrollView>
 	);
 }
-
-const styles = StyleSheet.create({
-	headerRightContainer: {
-		flexDirection: 'row',
-		alignItems: 'center',
-	},
-});
 

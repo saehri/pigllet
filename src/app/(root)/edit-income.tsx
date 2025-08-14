@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 import { ScrollView, View } from 'react-native';
-import { useLocalSearchParams, useNavigation } from 'expo-router';
+import { CalculatorIcon } from 'lucide-react-native';
 import { Button, useTheme } from 'react-native-paper';
-import { Calculator } from 'lucide-react-native';
+import { useLocalSearchParams, useNavigation } from 'expo-router';
 
-import DeleteTransactionsDialog from '@/src/components/reusables/delete-transactions-dialog';
 import EditIncomeForm from '@/src/components/forms/income/edit-income-form';
+import DeleteTransactionsDialog from '@/src/components/reusables/delete-transactions-dialog';
 
 export default function IncomeDetail() {
 	const theme = useTheme();
@@ -14,19 +14,22 @@ export default function IncomeDetail() {
 
 	useEffect(() => {
 		navigation.setOptions({
-			title: '',
+			title: 'Edit income',
 			headerRight: () => (
 				<View
 					style={{
-						backgroundColor: theme.colors.background,
 						flexDirection: 'row',
 						alignItems: 'center',
+						gap: 2,
 					}}
 				>
-					<Button>
-						<Calculator
+					<Button
+						mode="contained-tonal"
+						style={{ borderTopRightRadius: 6, borderBottomRightRadius: 6 }}
+					>
+						<CalculatorIcon
 							strokeWidth={1.5}
-							color={theme.colors.onBackground}
+							color={theme.colors.onSecondaryContainer}
 							size={20}
 						/>
 					</Button>
@@ -41,7 +44,7 @@ export default function IncomeDetail() {
 	}, []);
 
 	return (
-		<ScrollView style={{ backgroundColor: theme.colors.background }}>
+		<ScrollView showsVerticalScrollIndicator={false}>
 			<EditIncomeForm />
 		</ScrollView>
 	);

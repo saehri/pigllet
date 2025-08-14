@@ -1,9 +1,4 @@
 import { Tabs } from 'expo-router';
-import {
-	CircleArrowOutDownLeft,
-	CircleArrowOutUpRight,
-	ShoppingBasket,
-} from 'lucide-react-native';
 import { useTheme } from 'react-native-paper';
 
 export default function Layout() {
@@ -13,67 +8,46 @@ export default function Layout() {
 		<Tabs
 			initialRouteName="expense"
 			screenOptions={{
-				headerShown: false,
 				tabBarActiveTintColor: theme.colors.onPrimary,
 				tabBarActiveBackgroundColor: theme.colors.primary,
+				tabBarInactiveBackgroundColor: theme.colors.primaryContainer,
+				tabBarInactiveTintColor: theme.colors.onPrimaryContainer,
 				tabBarStyle: {
-					backgroundColor: theme.colors.elevation.level1,
-					height: 40,
 					position: 'absolute',
+					backgroundColor: 'rgba(0,0,0,0)',
 					top: 8,
-					borderWidth: 1,
-					borderTopWidth: 1,
-					borderRadius: 1000,
-					borderColor: theme.colors.outlineVariant,
+					borderTopWidth: 0,
 					marginHorizontal: 16,
-					overflow: 'hidden',
+					elevation: 0,
+					shadowOpacity: 0,
+					gap: 12,
+					borderRadius: 8,
+					height: 40,
+				},
+				tabBarLabelStyle: {
+					fontFamily: 'Manrope-Medium',
+					fontSize: 14,
+					textTransform: 'capitalize',
 				},
 				tabBarItemStyle: {
 					overflow: 'hidden',
+					borderRadius: 12,
+					height: 40,
 				},
-				tabBarLabelStyle: {
-					fontFamily: 'Manrope-Regular',
-					fontSize: 14,
+				sceneStyle: {
+					backgroundColor: theme.colors.background,
 				},
 				tabBarLabelPosition: 'beside-icon',
+				tabBarIconStyle: {
+					display: 'none',
+				},
+				headerShown: false,
 			}}
 			backBehavior="none"
 		>
-			<Tabs.Screen
-				name="expense"
-				options={{
-					title: 'Expense',
-					tabBarIcon: (props) => (
-						<ShoppingBasket color={props.color} size={14} strokeWidth={1.5} />
-					),
-				}}
-			/>
-			<Tabs.Screen
-				name="income"
-				options={{
-					title: 'Income',
-					tabBarIcon: (props) => (
-						<CircleArrowOutDownLeft
-							color={props.color}
-							size={14}
-							strokeWidth={1.5}
-						/>
-					),
-				}}
-			/>
-			<Tabs.Screen
-				name="transfer"
-				options={{
-					title: 'Transfer',
-					tabBarIcon: (props) => (
-						<CircleArrowOutUpRight
-							color={props.color}
-							size={14}
-							strokeWidth={1.5}
-						/>
-					),
-				}}
-			/>
+			<Tabs.Screen name="expense" />
+			<Tabs.Screen name="income" />
+			<Tabs.Screen name="transfer" />
 		</Tabs>
 	);
 }

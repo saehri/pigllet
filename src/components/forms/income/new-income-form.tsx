@@ -1,21 +1,16 @@
 import { StyleSheet, View } from 'react-native';
-import {
-	ActivityIndicator,
-	Button,
-	Text,
-	TextInput,
-	useTheme,
-} from 'react-native-paper';
+import { Button, Text } from 'react-native-paper';
 
-import DatePicker from '../date-picker';
-import AccountSelector from '../account-selector';
-import ImageSelectorInput from '../image-select-input';
-import SelectInputWithIcon from '../select-input-with-icon';
 import useTransactionsManager from '@/src/hooks/useTransactionsManager';
 import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
+import NoteInput from '../note-input';
+import DatePicker from '../date-picker';
+import AccountSelector from '../account-selector';
+import CustomTextInput from '../custom-text-input';
+import TransactionCategorySelector from '../transaction-category-selector';
+
 export default function CreateIncomeForm() {
-	const theme = useTheme();
 	const { currentCurrencyCode } = usePreferredCurrencyStore();
 
 	const {
@@ -42,70 +37,74 @@ export default function CreateIncomeForm() {
 
 	return (
 		<View style={styles.formWrapper}>
+			<View style={styles.inputContainerFull}>
+				<Text style={styles.inputLabel} variant="bodyMedium">
+					Amount ({currentCurrencyCode})
+				</Text>
+
+				<CustomTextInput
+					keyboardType="number-pad"
+					onChangeText={setTransactionAmount}
+					value={transactionAmount}
+					leftComponent={
+						<Text
+							style={{ fontFamily: 'Manrope-Regular' }}
+							variant="labelMedium"
+						>
+							{currentCurrencyCode}
+						</Text>
+					}
+					placeholder="6900"
+				/>
+			</View>
+
 			<View style={styles.gridContainer}>
 				<View style={styles.inputContainerFull}>
-					<Text style={styles.inputLabel} variant="bodyLarge">
-						To account
+					<Text style={styles.inputLabel} variant="bodyMedium">
+						Expense category
 					</Text>
-					<AccountSelector
-						accounts={userAccounts}
-						selectedAccount={transactionUsedAccount}
-						handleSelect={setTransactionUsedAccount}
+
+					<TransactionCategorySelector
+						data={transactionCategories}
+						selectedCategory={transactionCategory!}
+						handleSelect={setTransactionCategory as any}
 					/>
 				</View>
 
 				<View style={styles.inputContainerFull}>
-					<Text style={styles.inputLabel} variant="bodyLarge">
-						Amount ({currentCurrencyCode})
+					<Text style={styles.inputLabel} variant="bodyMedium">
+						Date
 					</Text>
-					<TextInput
-						keyboardType="number-pad"
-						value={transactionAmount}
-						onChangeText={setTransactionAmount}
-						contentStyle={styles.inputContent}
+
+					<DatePicker
+						selectedDate={transactionCreatedAt}
+						setSelectedDate={setTransactionCreatedAt}
 					/>
 				</View>
 			</View>
 
 			<View style={styles.inputContainer}>
-				<Text style={styles.inputLabel} variant="bodyLarge">
-					Expense category
+				<Text style={styles.inputLabel} variant="bodyMedium">
+					To account
 				</Text>
-				<SelectInputWithIcon
-					data={transactionCategories}
-					selectedCategory={transactionCategory}
-					handleSelect={setTransactionCategory}
+
+				<AccountSelector
+					accounts={userAccounts}
+					selectedAccount={transactionUsedAccount!}
+					handleSelect={setTransactionUsedAccount as any}
 				/>
 			</View>
 
 			<View style={styles.inputContainer}>
-				<Text style={styles.inputLabel} variant="bodyLarge">
-					Date
-				</Text>
-				<DatePicker
-					selectedDate={transactionCreatedAt}
-					setSelectedDate={setTransactionCreatedAt}
-				/>
-			</View>
-
-			<View style={styles.inputContainer}>
-				<Text style={styles.inputLabel} variant="bodyLarge">
+				<Text style={styles.inputLabel} variant="bodyMedium">
 					Note
 				</Text>
-				<TextInput
-					contentStyle={styles.inputContent}
-					value={transactionNote}
-					onChangeText={setTransactionNote}
-				/>
-			</View>
 
-			<View style={styles.inputContainer}>
-				<Text style={styles.inputLabel} variant="bodyLarge">
-					Add image
-				</Text>
-				<ImageSelectorInput
-					handleSelect={setTransactionImage}
-					selectedImage={transactionImage}
+				<NoteInput
+					noteValue={transactionNote}
+					setNoteValue={setTransactionNote}
+					imageValue={transactionImage}
+					setImageValue={setTransactionImage}
 				/>
 			</View>
 
@@ -115,13 +114,10 @@ export default function CreateIncomeForm() {
 				contentStyle={styles.buttonContent}
 				labelStyle={styles.buttonLabel}
 				onPress={createIncomeRecord}
-				disabled={!transactionAmount.length}
+				disabled={loading}
+				loading={loading}
 			>
-				{loading ? (
-					<ActivityIndicator size={20} color={theme.colors.onPrimary} />
-				) : (
-					'Save income record'
-				)}
+				Save income record
 			</Button>
 		</View>
 	);
@@ -130,12 +126,15 @@ export default function CreateIncomeForm() {
 const styles = StyleSheet.create({
 	inputLabel: {
 		fontFamily: 'Manrope-Regular',
+		opacity: 0.7,
 	},
 	inputContent: {
 		fontFamily: 'Manrope-Regular',
 	},
 	button: { borderRadius: 10, marginTop: 16 },
-	buttonContent: { padding: 8 },
+	buttonContent: {
+		padding: 8,
+	},
 	buttonLabel: {
 		fontFamily: 'Manrope-Medium',
 		fontSize: 16,

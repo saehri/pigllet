@@ -1,13 +1,13 @@
-import { drizzle } from 'drizzle-orm/expo-sqlite';
+import moment from 'moment';
+import { useRouter } from 'expo-router';
 import { ToastAndroid } from 'react-native';
 import { useSQLiteContext } from 'expo-sqlite';
-import moment from 'moment';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 import * as schema from '@/db/schema';
 import { alias } from 'drizzle-orm/sqlite-core';
 import { and, desc, eq, sql } from 'drizzle-orm';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { useRouter } from 'expo-router';
+import { drizzle } from 'drizzle-orm/expo-sqlite';
 
 type Props = {
 	actionType?: 'create' | 'read' | 'update' | 'delete';
@@ -385,11 +385,14 @@ export default function useTransactionsManager({
 				})
 				.where(eq(schema.accounts.id, transactionUsedAccount.id as number));
 
+			const accounts = await drizzleDb.select().from(schema.accounts);
+			setUserAccounts(accounts);
+
 			ToastAndroid.show('Expense added!', ToastAndroid.CENTER);
 
-			// setTransactionAmount('');
-			// setTransactionNote('');
-			// setTransactionImage('');
+			setTransactionAmount('');
+			setTransactionNote('');
+			setTransactionImage('');
 		} catch (error: any) {
 			ToastAndroid.show('Error adding expense', ToastAndroid.CENTER);
 		} finally {
@@ -403,7 +406,15 @@ export default function useTransactionsManager({
 
 			if (!transactionUsedAccount || !transactionCategory) return;
 
-			if (!transactionAmount.length || isNaN(Number(transactionAmount))) {
+			const isTransactionAmountValid = () => {
+				return (
+					transactionAmount.length &&
+					!isNaN(Number(transactionAmount)) &&
+					Number(transactionAmount) > 0
+				);
+			};
+
+			if (!isTransactionAmountValid()) {
 				ToastAndroid.show('Invalid transaction amount', ToastAndroid.SHORT);
 				return;
 			}
@@ -429,6 +440,9 @@ export default function useTransactionsManager({
 				.where(eq(schema.accounts.id, transactionUsedAccount.id as number));
 
 			ToastAndroid.show('Income record added!', ToastAndroid.CENTER);
+
+			const accounts = await drizzleDb.select().from(schema.accounts);
+			setUserAccounts(accounts);
 
 			setTransactionAmount('');
 			setTransactionNote('');

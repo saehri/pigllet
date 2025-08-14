@@ -1,22 +1,16 @@
 import { StyleSheet, View } from 'react-native';
-import {
-	ActivityIndicator,
-	Button,
-	Text,
-	TextInput,
-	useTheme,
-} from 'react-native-paper';
+import { Button, Text } from 'react-native-paper';
 
-import DatePicker from '../date-picker';
-import AccountSelector from '../account-selector';
-import ImageSelectorInput from '../image-select-input';
-import SelectInputWithIcon from '../select-input-with-icon';
 import useTransactionsManager from '@/src/hooks/useTransactionsManager';
 import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
-export default function NewTransferForm() {
-	const theme = useTheme();
+import NoteInput from '../note-input';
+import DatePicker from '../date-picker';
+import AccountSelector from '../account-selector';
+import CustomTextInput from '../custom-text-input';
+import TransactionCategorySelector from '../transaction-category-selector';
 
+export default function NewTransferForm() {
 	const { currentCurrencyCode } = usePreferredCurrencyStore();
 
 	const {
@@ -45,81 +39,86 @@ export default function NewTransferForm() {
 
 	return (
 		<View style={styles.formWrapper}>
+			<View style={styles.inputContainerFull}>
+				<Text style={styles.inputLabel} variant="bodyMedium">
+					Transfer amount
+				</Text>
+
+				<CustomTextInput
+					keyboardType="number-pad"
+					onChangeText={setTransactionAmount}
+					value={transactionAmount}
+					leftComponent={
+						<Text
+							style={{ fontFamily: 'Manrope-Regular' }}
+							variant="labelMedium"
+						>
+							{currentCurrencyCode}
+						</Text>
+					}
+					placeholder="6900"
+				/>
+			</View>
+
 			<View style={styles.gridContainer}>
 				<View style={styles.inputContainerFull}>
-					<Text style={styles.inputLabel} variant="bodyLarge">
-						From account
+					<Text style={styles.inputLabel} variant="bodyMedium">
+						Transfer category
 					</Text>
-					<AccountSelector
-						accounts={userAccounts}
-						selectedAccount={transactionUsedAccount}
-						handleSelect={setTransactionUsedAccount}
+
+					<TransactionCategorySelector
+						data={transactionCategories}
+						selectedCategory={transactionCategory!}
+						handleSelect={setTransactionCategory as any}
 					/>
 				</View>
 
 				<View style={styles.inputContainerFull}>
-					<Text style={styles.inputLabel} variant="bodyLarge">
-						To account
+					<Text style={styles.inputLabel} variant="bodyMedium">
+						Date
 					</Text>
-					<AccountSelector
-						accounts={userAccounts}
-						selectedAccount={transactionUsedRelatedAccount}
-						handleSelect={setTransactionUsedRelatedAccount}
+
+					<DatePicker
+						selectedDate={transactionCreatedAt}
+						setSelectedDate={setTransactionCreatedAt}
 					/>
 				</View>
 			</View>
 
-			<View style={styles.inputContainerFull}>
-				<Text style={styles.inputLabel} variant="bodyLarge">
-					Amount ({currentCurrencyCode})
+			<View style={styles.inputContainer}>
+				<Text style={styles.inputLabel} variant="bodyMedium">
+					From account
 				</Text>
-				<TextInput
-					keyboardType="number-pad"
-					value={transactionAmount}
-					onChangeText={setTransactionAmount}
-					contentStyle={styles.inputContent}
+
+				<AccountSelector
+					accounts={userAccounts}
+					selectedAccount={transactionUsedAccount!}
+					handleSelect={setTransactionUsedAccount as any}
 				/>
 			</View>
 
 			<View style={styles.inputContainer}>
-				<Text style={styles.inputLabel} variant="bodyLarge">
-					Transfer category
+				<Text style={styles.inputLabel} variant="bodyMedium">
+					Destination account
 				</Text>
-				<SelectInputWithIcon
-					data={transactionCategories}
-					selectedCategory={transactionCategory}
-					handleSelect={setTransactionCategory}
+
+				<AccountSelector
+					accounts={userAccounts}
+					selectedAccount={transactionUsedRelatedAccount!}
+					handleSelect={setTransactionUsedRelatedAccount as any}
 				/>
 			</View>
 
 			<View style={styles.inputContainer}>
-				<Text style={styles.inputLabel} variant="bodyLarge">
-					Date
-				</Text>
-				<DatePicker
-					selectedDate={transactionCreatedAt}
-					setSelectedDate={setTransactionCreatedAt}
-				/>
-			</View>
-
-			<View style={styles.inputContainer}>
-				<Text style={styles.inputLabel} variant="bodyLarge">
+				<Text style={styles.inputLabel} variant="bodyMedium">
 					Note
 				</Text>
-				<TextInput
-					contentStyle={styles.inputContent}
-					value={transactionNote}
-					onChangeText={setTransactionNote}
-				/>
-			</View>
 
-			<View style={styles.inputContainer}>
-				<Text style={styles.inputLabel} variant="bodyLarge">
-					Add image
-				</Text>
-				<ImageSelectorInput
-					handleSelect={setTransactionImage}
-					selectedImage={transactionImage}
+				<NoteInput
+					noteValue={transactionNote}
+					setNoteValue={setTransactionNote}
+					imageValue={transactionImage}
+					setImageValue={setTransactionImage}
 				/>
 			</View>
 
@@ -129,13 +128,10 @@ export default function NewTransferForm() {
 				contentStyle={styles.buttonContent}
 				labelStyle={styles.buttonLabel}
 				onPress={createTransferRecord}
-				disabled={!transactionAmount.length}
+				disabled={loading}
+				loading={loading}
 			>
-				{loading ? (
-					<ActivityIndicator size={20} color={theme.colors.onPrimary} />
-				) : (
-					'Save transfer record'
-				)}
+				Save transfer record
 			</Button>
 		</View>
 	);
@@ -144,6 +140,7 @@ export default function NewTransferForm() {
 const styles = StyleSheet.create({
 	inputLabel: {
 		fontFamily: 'Manrope-Regular',
+		opacity: 0.7,
 	},
 	inputContent: {
 		fontFamily: 'Manrope-Regular',

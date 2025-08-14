@@ -1,8 +1,10 @@
-import { Dispatch, SetStateAction } from 'react';
-import { Pressable, StyleSheet } from 'react-native';
+import { CalendarIcon } from 'lucide-react-native';
 import { Text, useTheme } from 'react-native-paper';
-import { Calendar } from 'lucide-react-native';
+import { Pressable, StyleSheet } from 'react-native';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
+
+import moment from 'moment';
 
 type Props = {
 	setSelectedDate: Dispatch<SetStateAction<Date>>;
@@ -11,9 +13,12 @@ type Props = {
 
 export default function DatePicker({ selectedDate, setSelectedDate }: Props) {
 	const theme = useTheme();
+	const [open, setOpen] = useState<boolean>(false);
 
 	// Function to open the date picker
 	const openDatePicker = () => {
+		setOpen(true);
+
 		DateTimePickerAndroid.open({
 			value: selectedDate,
 			mode: 'date',
@@ -24,6 +29,7 @@ export default function DatePicker({ selectedDate, setSelectedDate }: Props) {
 			onChange: (event, date) => {
 				if (date) {
 					setSelectedDate(date);
+					setOpen(false);
 				}
 			},
 		});
@@ -34,26 +40,41 @@ export default function DatePicker({ selectedDate, setSelectedDate }: Props) {
 			onPress={openDatePicker}
 			style={[
 				styles.selectBox,
-				{ backgroundColor: theme.colors.surfaceVariant },
+				{
+					backgroundColor: theme.colors.elevation.level5,
+					borderColor: open
+						? theme.colors.primary
+						: theme.colors.outlineVariant,
+				},
 			]}
 		>
-			<Text style={styles.selectText} numberOfLines={1}>
-				{selectedDate.toLocaleDateString('en-US', { dateStyle: 'long' })}
+			<Text
+				style={[styles.selectText, { color: theme.colors.onSurface }]}
+				numberOfLines={1}
+			>
+				{moment(selectedDate).format('MMM D, YYYY')}
 			</Text>
 
-			<Calendar style={styles.icon} size={20} color={theme.colors.onSurface} />
+			<CalendarIcon
+				strokeWidth={1.5}
+				size={20}
+				color={theme.colors.onSurface}
+			/>
 		</Pressable>
 	);
 }
 
 const styles = StyleSheet.create({
 	selectBox: {
-		padding: 16,
-		borderTopLeftRadius: 5,
-		borderTopRightRadius: 5,
-		borderBottomWidth: 1,
-		flexDirection: 'row',
+		height: 50,
+		padding: 8,
+		paddingHorizontal: 16,
+		gap: 12,
+		borderWidth: 1,
+		width: '100%',
+		borderRadius: 16,
 		alignItems: 'center',
+		flexDirection: 'row',
 		justifyContent: 'space-between',
 	},
 	selectText: {
@@ -61,10 +82,6 @@ const styles = StyleSheet.create({
 		color: '#fff',
 		textTransform: 'capitalize',
 		fontFamily: 'Manrope-Regular',
-	},
-	icon: {
-		position: 'absolute',
-		right: 8,
 	},
 });
 

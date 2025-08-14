@@ -64,10 +64,14 @@ export default function DeleteTransactionsDialog({
 				</Dialog>
 			</Portal>
 
-			<Button onPress={openDialog}>
+			<Button
+				onPress={openDialog}
+				mode="contained-tonal"
+				style={{ borderTopLeftRadius: 6, borderBottomLeftRadius: 6 }}
+			>
 				<Trash2Icon
 					strokeWidth={1.5}
-					color={theme.colors.onBackground}
+					color={theme.colors.onSecondaryContainer}
 					size={20}
 				/>
 			</Button>
