@@ -143,7 +143,6 @@ function Card({ label, value, position }: CardProps) {
 const styles = StyleSheet.create({
 	container: {
 		gap: 12,
-		paddingHorizontal: 16,
 	},
 	list: {
 		gap: 2,
