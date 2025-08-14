@@ -84,10 +84,10 @@ export default function AccountMiniViewer() {
 			<Button
 				compact
 				mode="contained-tonal"
-				contentStyle={{ height: 40 }}
 				style={{
 					borderTopRightRadius: 6,
 					borderBottomRightRadius: 6,
+					display: account.length > 1 ? 'flex' : 'none',
 				}}
 				onPress={prevAccount}
 			>
@@ -103,6 +103,7 @@ export default function AccountMiniViewer() {
 				style={{
 					borderTopLeftRadius: 6,
 					borderBottomLeftRadius: 6,
+					display: account.length > 1 ? 'flex' : 'none',
 				}}
 				onPress={nextAccount}
 			>
