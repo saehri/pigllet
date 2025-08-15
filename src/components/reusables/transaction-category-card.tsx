@@ -11,7 +11,11 @@ import {
 } from 'react-native';
 
 import { Category, TransactionType } from '@/db/schema';
-import { TRANSACTION_CARD_BR, transactionColorMap } from '@/utils/utils';
+import {
+	fastSpatialEasing,
+	TRANSACTION_CARD_BR,
+	transactionColorMap,
+} from '@/utils/utils';
 
 import { useSelectedCategory } from '@/store/useSelectedCategory';
 
@@ -75,7 +79,7 @@ function TransactionCategoryCard({ data, position }: Props) {
 					>
 						{isSelected ? (
 							<Animated.View
-								entering={FlipInEasyY.duration(350).mass(100)}
+								entering={FlipInEasyY.duration(500).easing(fastSpatialEasing)}
 								style={[
 									styles.checkIconBox,
 									{ backgroundColor: theme.colors.tertiary },

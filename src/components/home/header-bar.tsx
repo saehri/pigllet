@@ -2,14 +2,15 @@ import { useCallback, useState } from 'react';
 import { Button, Text } from 'react-native-paper';
 import { Trash2Icon, XIcon } from 'lucide-react-native';
 import { StyleSheet, ToastAndroid, View } from 'react-native';
+import Animated, { FadeInRight, FadeOutRight } from 'react-native-reanimated';
 
 import * as schema from '@/db/schema';
+import { eq, inArray, or } from 'drizzle-orm';
 import { useSQLiteContext } from 'expo-sqlite';
+import { drizzle } from 'drizzle-orm/expo-sqlite';
 import { useSelectedTransactions } from '@/store/useSelectedTransactions';
 
-import Animated, { FadeInRight, FadeOutRight } from 'react-native-reanimated';
-import { eq, inArray, or } from 'drizzle-orm';
-import { drizzle } from 'drizzle-orm/expo-sqlite';
+import { fastSpatialEasing } from '@/utils/utils';
 
 export default function HeaderBar() {
 	const db = useSQLiteContext();
@@ -109,8 +110,8 @@ export default function HeaderBar() {
 
 			{selectedTransactions.length ? (
 				<Animated.View
-					entering={FadeInRight.duration(350).mass(10)}
-					exiting={FadeOutRight.duration(350).mass(10)}
+					entering={FadeInRight.duration(500).easing(fastSpatialEasing)}
+					exiting={FadeOutRight.duration(200).easing(fastSpatialEasing)}
 					style={styles.actionButtons}
 				>
 					<Button
@@ -151,7 +152,6 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		marginTop: 16,
 		marginBottom: 4,
-		paddingHorizontal: 16,
 		height: 40,
 	},
 	transactionsTitle: {

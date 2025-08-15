@@ -1,4 +1,5 @@
 import { CurrencyCode, currencySymbols } from '@/constants/currency-symbols';
+import { Easing } from 'react-native-reanimated';
 
 export const TRANSACTION_CARD_BR: Record<
 	CardPositionsTypes,
@@ -60,4 +61,6 @@ export function formatCurrencyByCode(value: number, code: CurrencyCode) {
 		maximumFractionDigits: 0,
 	});
 }
+
+export const fastSpatialEasing: any = Easing.bezier(0.42, 1.67, 0.21, 0.9);
 

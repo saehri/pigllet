@@ -8,7 +8,7 @@ import moment from 'moment';
 
 import * as schema from '@/db/schema';
 
-import { formatCurrencyByCode } from '@/utils/utils';
+import { fastSpatialEasing, formatCurrencyByCode } from '@/utils/utils';
 import { TRANSACTION_CARD_BR, transactionColorMap } from '@/utils/utils';
 
 import { useSelectedBudgets } from '@/store/useSelectedBudgets';
@@ -108,7 +108,7 @@ function BudgetCard({ data, position }: Props) {
 				>
 					{isSelected ? (
 						<Animated.View
-							entering={FlipInEasyY.duration(350).mass(100)}
+							entering={FlipInEasyY.duration(500).easing(fastSpatialEasing)}
 							style={[
 								styles.checkIconBox,
 								{ backgroundColor: theme.colors.tertiary },

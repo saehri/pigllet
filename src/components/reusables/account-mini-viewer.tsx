@@ -57,17 +57,11 @@ export default function AccountMiniViewer() {
 							},
 						]}
 					>
-						<Text
-							variant="labelSmall"
-							style={[styles.cardText, { color: theme.colors.onSurface }]}
-						>
+						<Text variant="labelSmall" style={styles.cardText}>
 							{account[currentCardIndex]?.card_name}
 						</Text>
 
-						<Text
-							variant="labelSmall"
-							style={[styles.cardText, { color: theme.colors.onSurface }]}
-						>
+						<Text variant="labelSmall" style={styles.cardText}>
 							{formatCurrencyByCode(
 								account[currentCardIndex]?.balance ?? 0,
 								currentCurrencyCode
@@ -130,6 +124,7 @@ const styles = StyleSheet.create({
 	},
 	cardText: {
 		fontFamily: 'Manrope-Regular',
+		color: 'white',
 	},
 });
 

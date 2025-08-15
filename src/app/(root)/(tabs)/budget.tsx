@@ -38,12 +38,14 @@ export default function BudgetScreen() {
 
 		return (
 			<View style={{ paddingTop: 4, gap: 8 }}>
-				<MonthSelectorBar
-					onNext={() => updateMonth(1)}
-					onPrev={() => updateMonth(-1)}
-					selectedDate={selectedDate}
-					setSelectedDate={setSelectedDate}
-				/>
+				<View style={{ paddingHorizontal: 16 }}>
+					<MonthSelectorBar
+						onNext={() => updateMonth(1)}
+						onPrev={() => updateMonth(-1)}
+						selectedDate={selectedDate}
+						setSelectedDate={setSelectedDate}
+					/>
+				</View>
 
 				<View style={styles.headerContainer}>
 					<Text variant="titleLarge" style={styles.headerTitle}>

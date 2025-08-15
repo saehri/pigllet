@@ -8,6 +8,7 @@ import { useSQLiteContext } from 'expo-sqlite';
 
 import { deleteBudgetRecord } from '@/src/hooks/useBudgetManager';
 import { useSelectedBudgets } from '@/store/useSelectedBudgets';
+import { fastSpatialEasing } from '@/utils/utils';
 
 export default function BudgetHeaderBar() {
 	const db = useSQLiteContext();
@@ -37,8 +38,8 @@ export default function BudgetHeaderBar() {
 
 			{selectedBudgets.length ? (
 				<Animated.View
-					entering={FadeInRight.duration(350).mass(10)}
-					exiting={FadeOutRight.duration(350).mass(10)}
+					entering={FadeInRight.duration(500).easing(fastSpatialEasing)}
+					exiting={FadeOutRight.duration(200).easing(fastSpatialEasing)}
 					style={styles.actionButtons}
 				>
 					<Button

@@ -97,7 +97,7 @@ function BudgetActualVSPlanned({ budgets, selectedDate }: Props) {
 				<View style={styles.legend}>
 					<View style={styles.legendColumn}>
 						<View
-							style={[styles.legendDot, { backgroundColor: '#175b9bff' }]}
+							style={[styles.legendDot, { backgroundColor: '#006cd1ff' }]}
 						></View>
 						<Text variant="labelMedium" style={styles.legendText}>
 							Planned
@@ -153,7 +153,7 @@ function RenderChart({ budgets, actualSpending, budgetIds }: RenderChart) {
 					fontFamily: 'Manrope-Regular',
 					fontSize: 10,
 				},
-				frontColor: '#175b9bff',
+				frontColor: '#006cd1ff',
 				topLabelComponent: () => (
 					<Text style={{ color: 'gray', fontSize: 9 }}>
 						{formattedAmount(sortedBudgets[i].budget.max_spending)}

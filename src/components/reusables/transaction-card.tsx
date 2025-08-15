@@ -21,6 +21,7 @@ import {
 	TRANSACTION_CARD_BR,
 	transactionColorMap,
 	formatCurrencyByCode,
+	fastSpatialEasing,
 } from '@/utils/utils';
 
 import { useSelectedTransactions } from '@/store/useSelectedTransactions';
@@ -123,7 +124,7 @@ function TransactionCard({ data, position, showDate, pressable }: Props) {
 				>
 					{isSelected ? (
 						<Animated.View
-							entering={FlipInEasyY.duration(350).mass(100)}
+							entering={FlipInEasyY.duration(500).easing(fastSpatialEasing)}
 							style={[
 								styles.checkIconBox,
 								{ backgroundColor: theme.colors.tertiary },
@@ -214,7 +215,7 @@ function TransactionCard({ data, position, showDate, pressable }: Props) {
 								adjustsFontSizeToFit
 								numberOfLines={1}
 							>
-								{account.name}
+								{account.card_name}
 							</Text>
 
 							{related_account && (
@@ -228,7 +229,7 @@ function TransactionCard({ data, position, showDate, pressable }: Props) {
 									adjustsFontSizeToFit
 									numberOfLines={1}
 								>
-									{related_account.name}
+									{related_account.card_name}
 								</Text>
 							)}
 						</View>
