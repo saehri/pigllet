@@ -53,16 +53,11 @@ export default function Layout() {
 				name="new-subscription"
 				options={{ title: 'New subscription' }}
 			/>
-			<Stack.Screen
-				name="transactions-history"
-				options={{ title: 'Transactions history' }}
-			/>
 			<Stack.Screen name="edit-expense" />
 			<Stack.Screen name="edit-income" />
 			<Stack.Screen name="edit-transfer" />
 			<Stack.Screen name="edit-subscription" />
 			<Stack.Screen name="edit-budget" />
-			<Stack.Screen name="transaction-by-category" />
 			<Stack.Screen name="category-form" />
 		</Stack>
 	);
