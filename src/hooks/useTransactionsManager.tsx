@@ -47,11 +47,19 @@ type UseExpenseManagerTypes = {
 	setTransactionImage: Dispatch<SetStateAction<string>>;
 };
 
-export const loadTransactionsData = (
-	date?: Date,
-	range?: 'month' | 'year',
-	transactionType?: 'income' | 'expense' | 'transfer'
-): any => {
+interface loadTransactionsData {
+	date?: Date;
+	range?: 'month' | 'year';
+	transactionType?: 'income' | 'expense' | 'transfer';
+	accountId?: number;
+}
+
+export const loadTransactionsData = ({
+	date,
+	range,
+	transactionType,
+	accountId,
+}: loadTransactionsData): any => {
 	const relatedAccountsAlias = alias(schema.accounts, 'related_accounts'); // Alias for related accounts
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
@@ -73,6 +81,10 @@ export const loadTransactionsData = (
 
 	if (transactionType) {
 		whereConditions.push(eq(schema.transactions.type, transactionType));
+	}
+
+	if (accountId) {
+		whereConditions.push(eq(schema.transactions.account_id, accountId));
 	}
 
 	return drizzleDb

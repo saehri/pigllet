@@ -1,6 +1,7 @@
 import { Text, useTheme } from 'react-native-paper';
 import { FlatList, StyleSheet, View } from 'react-native';
 
+import { getCardPosition } from '@/utils/utils';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { groupedTransactionsByDate } from '@/utils/group-transactions';
 import { loadTransactionsData } from '@/src/hooks/useTransactionsManager';
@@ -9,12 +10,11 @@ import NoItemNotice from '@/src/components/reusables/no-items-notice';
 import TransactionCard from '@/src/components/reusables/transaction-card';
 import HomeHeaderContainer from '@/src/components/home/home-header-container';
 import TransactionsSummary from '@/src/components/charts/transactions-summary';
-import { getCardPosition } from '@/utils/utils';
 
 export default function HomeScreen() {
 	const theme = useTheme();
 
-	const { data: transactions } = useLiveQuery(loadTransactionsData());
+	const { data: transactions } = useLiveQuery(loadTransactionsData({}));
 
 	return (
 		<FlatList

@@ -20,7 +20,7 @@ export default function HomeYearlyTransactionScreen() {
 	const [selectedDate, setSelectedDate] = useState(() => new Date());
 
 	const { data: transactions } = useLiveQuery(
-		loadTransactionsData(selectedDate, 'year'),
+		loadTransactionsData({ date: selectedDate, range: 'year' }),
 		[selectedDate]
 	);
 
