@@ -1,0 +1,1 @@
+ALTER TABLE `accounts` RENAME COLUMN "card_design" TO "card_color";

@@ -1,5 +1,5 @@
-import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 import { relations } from 'drizzle-orm';
+import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 
 // --- ENUMS (enforced in app logic, not DB constraints) ---
 export const transactionTypes = ['expense', 'income', 'transfer'] as const;
@@ -16,12 +16,13 @@ export type BillingFrequency = (typeof billingFrequencies)[number];
 // --- ACCOUNTS ---
 export const accounts = sqliteTable('accounts', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
-	name: text('name').notNull(),
-	number: text('number').notNull().unique(),
+	card_name: text('card_name').notNull(),
+	card_holder: text('card_holder').notNull(),
+	card_number: text('card_number'),
 	balance: integer('balance').notNull(),
-	is_cash: integer('is_cash').default(0),
-	image: text('image'),
-	created_at: text('created_at').notNull(), // ISO string
+	is_default: integer('is_default').default(0),
+	created_at: text('created_at').notNull(),
+	card_color: text('card_color').notNull(),
 });
 
 // --- CATEGORIES ---
@@ -30,7 +31,7 @@ export const categories = sqliteTable('categories', {
 	label: text('label').notNull().unique(),
 	icon_name: text('icon_name').notNull(),
 	type: text('type').notNull(),
-	is_default: integer().default(0),
+	is_default: integer('is_default').default(0),
 });
 
 // --- BUDGETS ---
@@ -39,7 +40,7 @@ export const budgets = sqliteTable('budgets', {
 	category_id: integer('category_id')
 		.notNull()
 		.references(() => categories.id, { onDelete: 'cascade' }),
-	period: text('period').notNull(), // e.g. "2025-05"
+	period: text('period').notNull(),
 	max_spending: integer('max_spending').notNull(),
 	note: text('note'),
 	created_at: text('created_at').notNull(),
@@ -60,7 +61,6 @@ export const transactions = sqliteTable('transactions', {
 	category_id: integer('category_id')
 		.notNull()
 		.references(() => categories.id),
-	budget_id: integer('budget_id').references(() => budgets.id),
 	type: text('type').notNull(), // Enforce at app level: 'expense' | 'income' | 'transfer'
 	image: text('image'),
 	created_at: text('created_at').notNull(), // ISO 8601 format
@@ -74,6 +74,7 @@ export const subscriptions = sqliteTable('subscriptions', {
 	billed: text('billed').notNull(), // Enforce in app: 'monthly', etc.
 	due_date: text('due_date').notNull(), // ISO date
 	started_at: text('started_at').notNull(), // ISO date
+	created_at: text('created_at').notNull(),
 });
 
 // --- RELATIONS ---
@@ -89,10 +90,6 @@ export const transactionsRelations = relations(transactions, ({ one }) => ({
 	category: one(categories, {
 		fields: [transactions.category_id],
 		references: [categories.id],
-	}),
-	budget: one(budgets, {
-		fields: [transactions.budget_id],
-		references: [budgets.id],
 	}),
 }));
 
