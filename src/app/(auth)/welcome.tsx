@@ -1,6 +1,12 @@
 import { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { ActivityIndicator, Button, useTheme } from 'react-native-paper';
+import {
+	ActivityIndicator,
+	Button,
+	Surface,
+	Text,
+	useTheme,
+} from 'react-native-paper';
 
 import { useRouter } from 'expo-router';
 import { useSQLiteContext } from 'expo-sqlite';
@@ -12,7 +18,9 @@ import { incomeCategories } from '@/constants/income-category';
 import { expenseCategories } from '@/constants/expense-category';
 import { transferCategories } from '@/constants/transfer-category';
 
-import OnboardingSection from '@/src/components/reusables/onboarding-section';
+import Animated, { FadeIn } from 'react-native-reanimated';
+import { SendHorizontalIcon } from 'lucide-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const SECTIONS = [
 	{
@@ -20,23 +28,23 @@ const SECTIONS = [
 		description: 'Your simple way to manage money and stay in control.',
 	},
 	{
-		title: 'Track Every Transaction',
+		title: 'Track every transactions',
 		description: 'Record income, expenses and transfer in seconds.',
 	},
 	{
-		title: 'Sort with Categories',
+		title: 'Sort with categories',
 		description: 'Group your spending to see where your money goes.',
 	},
 	{
-		title: 'Never Miss a Payment',
+		title: 'Never miss a payment',
 		description: 'Get reminders for upcoming bills and subscriptions.',
 	},
 	{
-		title: 'Stay on Budget',
+		title: 'Stay on budget',
 		description: 'Set limits and track your spending in real time.',
 	},
 	{
-		title: 'Get Started',
+		title: 'Get started!',
 		description: 'Let’s set up your account and start tracking.',
 	},
 ];
@@ -44,22 +52,17 @@ const SECTIONS = [
 export default function OnboardingScreen() {
 	const theme = useTheme();
 	const router = useRouter();
+	const db = useSQLiteContext();
+	const drizzleDb = drizzle(db, { schema });
 
 	const [index, setIndex] = useState(0);
 	const [isSettingUp, setIsSettingUp] = useState<boolean>(false);
-
-	const { setFirstTimer } = useUserFirstTimeStore();
-
-	const db = useSQLiteContext();
-	const drizzleDb = drizzle(db, { schema });
 
 	async function setMyApp() {
 		try {
 			setIsSettingUp(true);
 
 			const createdAt = new Date().toISOString();
-
-			setFirstTimer(false);
 
 			// Insert default expense categories
 			await drizzleDb
@@ -118,62 +121,161 @@ export default function OnboardingScreen() {
 		if (index > 0) setIndex(index - 1);
 	};
 
-	return (
-		<View
-			style={[styles.container, { backgroundColor: theme.colors.background }]}
-		>
-			<OnboardingSection
-				key={index} // key is important for triggering enter/exit
-				title={SECTIONS[index].title}
-				description={SECTIONS[index].description}
-			/>
+	const imageRenderer = () => {
+		if (index === 0)
+			return (
+				<Animated.Image
+					key={index}
+					entering={FadeIn.duration(350)}
+					source={require('@/assets/images/onboarding/0.png')}
+					style={styles.image}
+				/>
+			);
 
+		return (
+			<Animated.Image
+				key={index}
+				entering={FadeIn.duration(350)}
+				source={require('@/assets/images/welcome image.png')}
+				style={styles.image}
+			/>
+		);
+	};
+
+	return (
+		<LinearGradient
+			colors={[theme.colors.background, 'transparent']}
+			start={{ x: 0.5, y: 0.75 }}
+			end={{ x: 0.5, y: 0.5 }}
+			style={styles.container}
+		>
+			{imageRenderer()}
+
+			<View style={styles.textContainer}>
+				<Text variant="headlineMedium" style={styles.title}>
+					{SECTIONS[index].title}
+				</Text>
+
+				<Text variant="bodyLarge" style={styles.desc}>
+					{SECTIONS[index].description}
+				</Text>
+
+				<Surface
+					elevation={5}
+					mode="flat"
+					style={[
+						styles.counter,
+						{ backgroundColor: theme.colors.secondaryContainer },
+					]}
+				>
+					<Text
+						style={{
+							fontFamily: 'Manrope-Regular',
+							color: theme.colors.onSecondaryContainer,
+						}}
+						variant="labelMedium"
+					>
+						{index + 1}/{SECTIONS.length}
+					</Text>
+				</Surface>
+			</View>
 			<View style={styles.buttons}>
 				<Button
-					labelStyle={styles.buttonLabel}
-					mode="contained-tonal"
+					mode="contained"
 					onPress={prevSection}
-					disabled={index === 0}
+					disabled={index === 0 || isSettingUp}
+					style={styles.button}
+					labelStyle={styles.buttonLabel}
+					contentStyle={styles.buttonContent}
 				>
 					Previous
 				</Button>
 
 				{index !== SECTIONS.length - 1 ? (
 					<Button
-						labelStyle={styles.buttonLabel}
-						mode="contained-tonal"
+						mode="contained"
 						onPress={nextSection}
-						disabled={index === SECTIONS.length - 1}
+						style={styles.button}
+						labelStyle={styles.buttonLabel}
+						contentStyle={styles.buttonContent}
+						disabled={index === SECTIONS.length - 1 || isSettingUp}
 					>
 						Next
 					</Button>
 				) : (
 					<Button
 						mode="contained"
-						labelStyle={styles.buttonLabel}
 						onPress={setMyApp}
+						style={styles.button}
+						labelStyle={styles.buttonLabel}
+						contentStyle={styles.buttonContent}
+						disabled={isSettingUp}
+						icon={(props) => (
+							<SendHorizontalIcon
+								size={20}
+								color={props.color}
+								strokeWidth={1.5}
+							/>
+						)}
 					>
 						{isSettingUp ? (
 							<ActivityIndicator size={20} color={theme.colors.onPrimary} />
 						) : (
-							'Go to the next step'
+							'Get started'
 						)}
 					</Button>
 				)}
 			</View>
-		</View>
+		</LinearGradient>
 	);
 }
 
 const styles = StyleSheet.create({
-	container: { flex: 1 },
+	container: { flex: 1, justifyContent: 'flex-end' },
 	buttons: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
-		padding: 20,
+		padding: 40,
+		paddingTop: 0,
+	},
+	button: { marginTop: 16 },
+	buttonContent: {
+		flexDirection: 'row-reverse',
 	},
 	buttonLabel: {
 		fontFamily: 'Manrope-Medium',
+		fontSize: 16,
+	},
+	title: {
+		fontFamily: 'Manrope-ExtraBold',
+		textAlign: 'center',
+	},
+	desc: {
+		textAlign: 'center',
+		fontFamily: 'Manrope-Regular',
+		opacity: 0.7,
+		maxWidth: '80%',
+		alignSelf: 'center',
+	},
+	textContainer: {
+		padding: 0,
+	},
+	image: {
+		width: '100%',
+		height: '100%',
+		position: 'absolute',
+		zIndex: -1,
+		objectFit: 'contain',
+	},
+	counter: {
+		marginTop: 24,
+		width: 50,
+		height: 30,
+		borderRadius: 100,
+		alignSelf: 'center',
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'center',
 	},
 });
 

@@ -11,4 +11,3 @@ declare type StatisticsWidget =
 	| 'expense-by-category'
 	| 'income-by-category'
 	| 'transfer-by-category';
-

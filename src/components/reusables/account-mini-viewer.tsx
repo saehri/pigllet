@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react-native';
 import { Button, Surface, Text, useTheme } from 'react-native-paper';
+import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react-native';
 import Animated, { SlideInRight, SlideOutRight } from 'react-native-reanimated';
 
 import * as schema from '@/db/schema';
@@ -24,8 +24,9 @@ export default function AccountMiniViewer() {
 		drizzleDb
 			.select({
 				id: schema.accounts.id,
-				name: schema.accounts.name,
+				card_name: schema.accounts.card_name,
 				balance: schema.accounts.balance,
+				card_color: schema.accounts.card_color,
 			})
 			.from(schema.accounts)
 	);
@@ -45,32 +46,27 @@ export default function AccountMiniViewer() {
 			<View style={styles.cardContainer}>
 				<Animated.View
 					key={currentCardIndex}
-					entering={SlideInRight.duration(350).mass(100)}
-					exiting={SlideOutRight.duration(350).mass(100)}
+					entering={SlideInRight.duration(350)}
+					exiting={SlideOutRight.duration(350)}
 				>
 					<Surface
 						style={[
 							styles.card,
 							{
-								backgroundColor: theme.colors.secondaryContainer,
+								backgroundColor: account[currentCardIndex]?.card_color,
 							},
 						]}
 					>
 						<Text
 							variant="labelSmall"
-							style={[
-								styles.cardText,
-								{ color: theme.colors.onSecondaryContainer },
-							]}
+							style={[styles.cardText, { color: theme.colors.onSurface }]}
 						>
-							{account[currentCardIndex]?.name}
+							{account[currentCardIndex]?.card_name}
 						</Text>
+
 						<Text
 							variant="labelSmall"
-							style={[
-								styles.cardText,
-								{ color: theme.colors.onSecondaryContainer },
-							]}
+							style={[styles.cardText, { color: theme.colors.onSurface }]}
 						>
 							{formatCurrencyByCode(
 								account[currentCardIndex]?.balance ?? 0,

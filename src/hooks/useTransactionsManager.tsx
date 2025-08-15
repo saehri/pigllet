@@ -90,11 +90,11 @@ export const loadTransactionsData = (
 			},
 			account: {
 				id: schema.accounts.id,
-				name: schema.accounts.name,
-				number: schema.accounts.number,
+				card_name: schema.accounts.card_name,
+				card_number: schema.accounts.card_number,
 				balance: schema.accounts.balance,
-				is_cash: schema.accounts.is_cash,
-				image: schema.accounts.image,
+				is_default: schema.accounts.is_default,
+				card_color: schema.accounts.card_color,
 				created_at: schema.accounts.created_at,
 			},
 			category: {
@@ -105,11 +105,11 @@ export const loadTransactionsData = (
 			},
 			related_account: {
 				id: relatedAccountsAlias.id,
-				name: relatedAccountsAlias.name,
-				number: relatedAccountsAlias.number,
+				card_name: relatedAccountsAlias.card_name,
+				card_number: relatedAccountsAlias.card_number,
 				balance: relatedAccountsAlias.balance,
-				is_cash: relatedAccountsAlias.is_cash,
-				image: relatedAccountsAlias.image,
+				is_default: relatedAccountsAlias.is_default,
+				card_color: relatedAccountsAlias.card_color,
 				created_at: relatedAccountsAlias.created_at,
 			},
 		})

@@ -1,6 +1,6 @@
-import { memo, ReactNode, useState } from 'react';
 import { Surface, useTheme } from 'react-native-paper';
-import { StyleSheet, TextInput, TextInputProps } from 'react-native';
+import { memo, ReactNode, useEffect, useState } from 'react';
+import { Keyboard, StyleSheet, TextInput, TextInputProps } from 'react-native';
 
 interface Props extends TextInputProps {
 	leftComponent?: ReactNode;
@@ -9,6 +9,19 @@ interface Props extends TextInputProps {
 function CustomTextInput({ leftComponent, ...props }: Props) {
 	const theme = useTheme();
 	const [isFocused, setFocused] = useState(false);
+
+	useEffect(() => {
+		const keyboardDidHideListener = Keyboard.addListener(
+			'keyboardDidHide',
+			() => {
+				setFocused(false);
+			}
+		);
+
+		return () => {
+			keyboardDidHideListener.remove();
+		};
+	}, []);
 
 	return (
 		<Surface
@@ -66,3 +79,4 @@ const styles = StyleSheet.create({
 });
 
 export default memo(CustomTextInput);
+
