@@ -1,6 +1,6 @@
 import { Dispatch, memo, SetStateAction } from 'react';
 import { Surface, Text, useTheme } from 'react-native-paper';
-import { Image, Pressable, ScrollView, StyleSheet } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import * as schema from '@/db/schema';
 
@@ -30,8 +30,8 @@ function AccountSelector({
 			style={[styles.container, { borderColor: theme.colors.outlineVariant }]}
 		>
 			<ScrollView
-				showsHorizontalScrollIndicator={false}
 				horizontal
+				showsHorizontalScrollIndicator={false}
 				contentContainerStyle={styles.scrollContent}
 			>
 				{accounts?.map((account) => {
@@ -45,21 +45,30 @@ function AccountSelector({
 								styles.card,
 								{
 									borderColor: isSelected
-										? '#ff64afff'
+										? account?.card_color
 										: theme.colors.elevation.level5,
 								},
 							]}
 						>
-							<Text style={styles.text}>{account.name}</Text>
+							<View
+								style={[
+									styles.cardContent,
+									{
+										backgroundColor: account.card_color,
+									},
+								]}
+							>
+								<Text style={styles.text}>{account.card_name}</Text>
 
-							<Text style={styles.text}>
-								{formatCurrencyByCode(account.balance, currentCurrencyCode)}
-							</Text>
+								<Text style={styles.text}>
+									{formatCurrencyByCode(account.balance, currentCurrencyCode)}
+								</Text>
 
-							<Image
-								source={require('@/assets/images/cards/default-card-design.png')}
-								style={styles.bgImage}
-							/>
+								<Image
+									source={require('@/assets/images/cards/pig pattern.png')}
+									style={styles.bgImage}
+								/>
+							</View>
 						</Pressable>
 					);
 				})}
@@ -78,8 +87,8 @@ const styles = StyleSheet.create({
 		gap: 10,
 	},
 	card: {
-		padding: 8,
-		borderRadius: 15,
+		padding: 2,
+		borderRadius: 14,
 		height: 80,
 		width: 150,
 		justifyContent: 'space-between',
@@ -89,15 +98,23 @@ const styles = StyleSheet.create({
 	text: {
 		fontFamily: 'Manrope-Regular',
 		color: 'white',
+		zIndex: 2,
 	},
 	bgImage: {
 		position: 'absolute',
 		top: 0,
 		left: 0,
-		zIndex: -1,
+		zIndex: 0,
 		width: 150,
 		height: 95,
 		resizeMode: 'cover',
+	},
+	cardContent: {
+		justifyContent: 'space-between',
+		flex: 1,
+		borderRadius: 10,
+		padding: 8,
+		overflow: 'hidden',
 	},
 });
 

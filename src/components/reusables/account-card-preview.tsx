@@ -49,6 +49,7 @@ function AccountCardPreview({
 								variant="headlineSmall"
 								style={{
 									fontFamily: 'Manrope-Light',
+									color: 'white',
 								}}
 							>
 								{t}
@@ -99,12 +100,14 @@ const styles = StyleSheet.create({
 		position: 'absolute',
 		top: 16,
 		left: 16,
+		color: 'white',
 	},
 	accountHolder: {
 		fontFamily: 'Manrope-ExtraBold',
 		position: 'absolute',
 		bottom: 16,
 		right: 16,
+		color: 'white',
 	},
 	cardChip: {
 		objectFit: 'cover',

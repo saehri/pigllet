@@ -1,11 +1,8 @@
-import { Stack, useRouter } from 'expo-router';
-import { Plus } from 'lucide-react-native';
-import { View } from 'react-native';
-import { Button, useTheme } from 'react-native-paper';
+import { Stack } from 'expo-router';
+import { useTheme } from 'react-native-paper';
 
 export default function Layout() {
 	const theme = useTheme();
-	const router = useRouter();
 
 	return (
 		<Stack
@@ -21,26 +18,7 @@ export default function Layout() {
 			<Stack.Screen
 				name="index"
 				options={{
-					title: 'Accounts',
-					headerRight: (props) => (
-						<View
-							style={{
-								backgroundColor: theme.colors.background,
-								flexDirection: 'row',
-								alignItems: 'center',
-							}}
-						>
-							<Button
-								onPress={() => router.push('/settings/accounts/add-account')}
-							>
-								<Plus
-									strokeWidth={1.5}
-									color={theme.colors.onBackground}
-									size={24}
-								/>
-							</Button>
-						</View>
-					),
+					title: '',
 				}}
 			/>
 			<Stack.Screen name="add-account" options={{ title: 'Add account' }} />
@@ -48,3 +26,4 @@ export default function Layout() {
 		</Stack>
 	);
 }
+
