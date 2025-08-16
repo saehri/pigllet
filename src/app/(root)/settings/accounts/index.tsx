@@ -14,11 +14,12 @@ import {
 	StyleSheet,
 	View,
 } from 'react-native';
+import { PencilIcon, PlusIcon } from 'lucide-react-native';
+import { useFocusEffect, useNavigation, useRouter } from 'expo-router';
 import Animated, { FadeInDown, FadeInRight } from 'react-native-reanimated';
-import { useFocusEffect } from 'expo-router';
 
 import * as schema from '@/db/schema';
-import { Surface, Text, useTheme } from 'react-native-paper';
+import { Button, Surface, Text, useTheme } from 'react-native-paper';
 import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
 
 import { loadTransactionsData } from '@/src/hooks/useTransactionsManager';
@@ -33,17 +34,66 @@ import TransactionCard from '@/src/components/reusables/transaction-card';
 import AccountCardPreview from '@/src/components/reusables/account-card-preview';
 
 export default function AccountsSettingScreen() {
+	const theme = useTheme();
+	const router = useRouter();
+
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
+	const { data: accounts } = useLiveQuery(
+		drizzleDb.select().from(schema.accounts)
+	);
+
+	const navigation = useNavigation();
+
 	const setSelectedTransactions = useSelectedTransactions(
 		(s) => s.setSelectedTransactions
 	);
 
 	const [selectedAccount, setSelectedAccount] = useState<schema.Account>();
 
-	const { data: accounts } = useLiveQuery(
-		drizzleDb.select().from(schema.accounts)
-	);
+	useEffect(() => {
+		navigation.setOptions({
+			headerRight: () => (
+				<View
+					style={{
+						flexDirection: 'row',
+						alignItems: 'center',
+						gap: 2,
+					}}
+				>
+					<Button
+						mode="contained-tonal"
+						style={{ borderTopRightRadius: 6, borderBottomRightRadius: 6 }}
+						contentStyle={{ height: 40 }}
+						onPress={() =>
+							router.push({
+								pathname: '/(root)/settings/accounts/edit-account',
+								params: { accountId: selectedAccount?.id },
+							})
+						}
+					>
+						<PencilIcon
+							strokeWidth={1.5}
+							color={theme.colors.onSecondaryContainer}
+							size={20}
+						/>
+					</Button>
+					<Button
+						mode="contained-tonal"
+						style={{ borderTopLeftRadius: 6, borderBottomLeftRadius: 6 }}
+						contentStyle={{ height: 40 }}
+						onPress={() => router.push('/(root)/settings/accounts/add-account')}
+					>
+						<PlusIcon
+							strokeWidth={1.5}
+							color={theme.colors.onSecondaryContainer}
+							size={20}
+						/>
+					</Button>
+				</View>
+			),
+		});
+	}, [selectedAccount]);
 
 	useFocusEffect(
 		useCallback(() => {
@@ -100,10 +150,10 @@ function TransactionList({ accountId }: TransactionList) {
 	);
 
 	const renderer = () => {
-		if (transactions.length)
+		if (accountId)
 			return (
 				<Animated.View
-					entering={FadeInDown.delay(300)
+					entering={FadeInDown.delay(500)
 						.springify()
 						.mass(1)
 						.damping(10)
@@ -157,15 +207,15 @@ function CardSelector({
 	);
 
 	useEffect(() => {
-		if (!selectedAccount) {
-			setSelectedAccount(accounts[0]);
-		}
+		setSelectedAccount(accounts[0]);
 	}, [accounts]);
 
-	const accountCardPrevRenderer = () => {
+	const accountCardPrevRenderer = useCallback(() => {
 		if (accounts.length)
 			return (
 				<AccountCardPreview
+					animationKey={selectedAccount.id}
+					isDefault={Boolean(selectedAccount.is_default)}
 					accountHolder={selectedAccount?.card_holder || ''}
 					accountName={selectedAccount?.card_name || ''}
 					accountNumber={selectedAccount?.card_number || ''}
@@ -173,19 +223,20 @@ function CardSelector({
 				/>
 			);
 		return <></>;
-	};
+	}, [selectedAccount]);
 
 	return (
 		<View
 			style={{
-				paddingHorizontal: 30,
 				paddingTop: 10,
 				paddingBottom: 16,
-				flex: 0.9,
+				flex: 0.85,
 				gap: 16,
 			}}
 		>
-			{accountCardPrevRenderer()}
+			<View style={{ paddingHorizontal: 30, maxWidth: 400 }}>
+				{accountCardPrevRenderer()}
+			</View>
 
 			<ScrollView
 				horizontal
@@ -208,7 +259,7 @@ function CardSelector({
 									{
 										borderColor: isSelected
 											? selectedAccount?.card_color
-											: theme.colors.elevation.level5,
+											: theme.colors.background,
 									},
 								]}
 							>
@@ -251,8 +302,8 @@ const styles = StyleSheet.create({
 		gap: 8,
 	},
 	scrollContent: {
-		gap: 10,
 		height: 82,
+		paddingHorizontal: 30,
 	},
 	card: {
 		padding: 2,
@@ -275,6 +326,7 @@ const styles = StyleSheet.create({
 		height: 95,
 		resizeMode: 'cover',
 		zIndex: 0,
+		opacity: 0.3,
 	},
 	cardContent: {
 		justifyContent: 'space-between',

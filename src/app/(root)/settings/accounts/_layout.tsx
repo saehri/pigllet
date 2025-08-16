@@ -9,8 +9,14 @@ export default function Layout() {
 			screenOptions={{
 				headerTintColor: theme.colors.onBackground,
 				headerShadowVisible: false,
-				contentStyle: { backgroundColor: theme.colors.background },
 				headerStyle: {
+					backgroundColor: theme.colors.background,
+				},
+				headerTitleStyle: {
+					fontFamily: 'Manrope-Regular',
+					fontSize: 20,
+				},
+				contentStyle: {
 					backgroundColor: theme.colors.background,
 				},
 			}}

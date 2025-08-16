@@ -1,117 +1,206 @@
-import { drizzle } from 'drizzle-orm/expo-sqlite';
-import { useSQLiteContext } from 'expo-sqlite';
-import { useContext, useState } from 'react';
-import { ScrollView, ToastAndroid, View } from 'react-native';
-import {
-	ActivityIndicator,
-	Button,
-	Text,
-	TextInput,
-	useTheme,
-} from 'react-native-paper';
+import { useEffect } from 'react';
+import { useLocalSearchParams } from 'expo-router';
+import { Button, Text, useTheme } from 'react-native-paper';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
+import { eq } from 'drizzle-orm';
 import * as schema from '@/db/schema';
+import { useSQLiteContext } from 'expo-sqlite';
+import { drizzle } from 'drizzle-orm/expo-sqlite';
 
-import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
+import ColorPicker from '@/src/components/forms/color-picker';
+import useAccountManager from '@/src/hooks/useAccountManager';
+import CustomTextInput from '@/src/components/forms/custom-text-input';
+import AccountCardPreview from '@/src/components/reusables/account-card-preview';
 
-export default function AddAccountScreen() {
-	const db = useSQLiteContext();
-	const drizzleDb = drizzle(db, { schema });
-	const { currentCurrencyCode } = usePreferredCurrencyStore();
+const cardColors = ['#EA1C7E', '#ecb201ff', '#1ab3b3ff'];
 
+export default function EditAccountScreen() {
 	const theme = useTheme();
 
-	const [formLoading, setFormLoading] = useState<boolean>(false);
-	const [accountName, setAccountName] = useState<string>('');
-	const [accountBalance, setAccountBalance] = useState<string>('');
-	const [accountNumber, setAccountNumber] = useState<string>('');
-	const [accountImage, setAccountImage] = useState<string>('');
+	const db = useSQLiteContext();
+	const drizzleDb = drizzle(db, { schema });
 
-	async function createAccount() {
-		try {
-			setFormLoading(true);
+	const { accountId: selectedAccountId } = useLocalSearchParams();
+	const {
+		createAccount,
+		accountHolder,
+		accountName,
+		accountNumber,
+		cardColor,
+		loading,
+		setAccountHolder,
+		setAccountName,
+		setAccountNumber,
+		setCardColor,
+	} = useAccountManager();
 
-			if (!accountName.length || !accountBalance.length) {
-				return ToastAndroid.show('Invalid account data!', ToastAndroid.SHORT);
-			}
-			if (!accountNumber.length) {
-				return ToastAndroid.show(
-					'Please specify an unique account number!',
-					ToastAndroid.SHORT
-				);
-			}
+	useEffect(() => {
+		async function load() {
+			const accounts = await drizzleDb
+				.select()
+				.from(schema.accounts)
+				.where(eq(schema.accounts.id, Number(selectedAccountId)));
 
-			await drizzleDb.insert(schema.accounts).values({
-				balance: Number(accountBalance),
-				created_at: new Date().toISOString(),
-				name: accountName,
-				number: accountNumber,
-				is_cash: 0,
-				image: accountImage,
-			});
+			const { card_color, card_holder, card_name, card_number } = accounts[0];
 
-			ToastAndroid.show('Account successfully created!', ToastAndroid.SHORT);
-
-			setAccountName('');
-			setAccountNumber('');
-			setAccountBalance('');
-		} catch (error: any) {
-			ToastAndroid.show('Failed to add an account', ToastAndroid.SHORT);
-		} finally {
-			setFormLoading(false);
+			setAccountHolder(card_holder);
+			setAccountName(card_name);
+			setCardColor(card_color);
+			setAccountNumber(card_number!);
 		}
-	}
+
+		load();
+	}, []);
+
+	const isFormReady = () => {
+		return Boolean(accountName.length && accountHolder.length);
+	};
 
 	return (
-		<ScrollView>
-			<View style={{ padding: 16, gap: 16 }}>
-				<View style={{ flexDirection: 'row', gap: 8 }}>
-					<View style={{ gap: 8, flex: 1 }}>
-						<Text variant="bodyLarge">Account name</Text>
-						<TextInput
-							keyboardType="default"
-							onChangeText={setAccountName}
+		<ScrollView showsVerticalScrollIndicator={false}>
+			<View
+				style={{
+					gap: 24,
+					paddingHorizontal: 30,
+					paddingVertical: 24,
+				}}
+			>
+				<AccountCardPreview
+					animationKey={cardColor}
+					isDefault={false}
+					accountName={accountName}
+					accountHolder={accountHolder}
+					cardColor={cardColor}
+					accountNumber={accountNumber}
+				/>
+
+				<View style={styles.colorPickers}>
+					{cardColors.map((color) => (
+						<Pressable
+							key={color}
+							style={[
+								styles.colorPickerButton,
+								{
+									backgroundColor: color,
+									borderColor:
+										color === cardColor ? theme.colors.primary : color,
+								},
+							]}
+							onPress={() => setCardColor(color)}
+						></Pressable>
+					))}
+
+					<ColorPicker setCardColor={setCardColor} />
+				</View>
+			</View>
+
+			<View style={styles.formWrapper}>
+				<View style={styles.gridContainer}>
+					<View style={styles.inputContainerFull}>
+						<Text style={styles.inputLabel} variant="bodyMedium">
+							Account name *
+						</Text>
+
+						<CustomTextInput
 							value={accountName}
-							maxLength={12}
+							onChangeText={setAccountName}
+							placeholder="Cash"
 						/>
 					</View>
 
-					<View style={{ gap: 8, flex: 1 }}>
-						<Text variant="bodyLarge">
-							Account balance ({currentCurrencyCode})
+					<View style={styles.inputContainerFull}>
+						<Text style={styles.inputLabel} variant="bodyMedium">
+							Account holder *
 						</Text>
-						<TextInput
-							keyboardType="number-pad"
-							onChangeText={setAccountBalance}
-							value={accountBalance}
+
+						<CustomTextInput
+							value={accountHolder}
+							onChangeText={setAccountHolder}
+							placeholder="John Doe"
 						/>
 					</View>
 				</View>
 
-				<View style={{ gap: 8 }}>
-					<Text variant="bodyLarge">Account number</Text>
-					<TextInput
-						keyboardType="default"
-						onChangeText={setAccountNumber}
+				<View style={styles.inputContainer}>
+					<Text style={styles.inputLabel} variant="bodyMedium">
+						Account number
+					</Text>
+
+					<CustomTextInput
 						value={accountNumber}
+						onChangeText={setAccountNumber}
+						placeholder="**** **** **** ****"
+						maxLength={16}
 					/>
 				</View>
 
 				<Button
 					mode="contained"
-					style={{ borderRadius: 10, marginTop: 16 }}
-					labelStyle={{ fontFamily: 'Manrope-Regular', fontSize: 16 }}
+					style={styles.button}
+					contentStyle={styles.buttonContent}
+					labelStyle={styles.buttonLabel}
+					disabled={loading || !isFormReady()}
+					loading={loading}
 					onPress={createAccount}
-					disabled={!accountBalance.length || !accountName.length}
 				>
-					{formLoading ? (
-						<ActivityIndicator size={20} color={theme.colors.onPrimary} />
-					) : (
-						'Add account'
-					)}
+					Save changes
 				</Button>
 			</View>
 		</ScrollView>
 	);
 }
+
+const styles = StyleSheet.create({
+	labelSmall: {
+		fontFamily: 'Manrope-Regular',
+		opacity: 0.6,
+		textAlign: 'center',
+	},
+	headlineLarge: {
+		fontFamily: 'Manrope-ExtraBold',
+		marginBottom: 24,
+	},
+	inputLabel: {
+		fontFamily: 'Manrope-Regular',
+		opacity: 0.7,
+	},
+	inputContent: {
+		fontFamily: 'Manrope-Regular',
+	},
+	button: { borderRadius: 10, marginTop: 16 },
+	buttonContent: {
+		padding: 8,
+	},
+	buttonLabel: {
+		fontFamily: 'Manrope-Medium',
+		fontSize: 16,
+	},
+	inputContainer: {
+		gap: 8,
+	},
+	inputContainerFull: {
+		gap: 8,
+		flex: 1,
+	},
+	gridContainer: {
+		flexDirection: 'row',
+		gap: 8,
+	},
+	formWrapper: {
+		gap: 16,
+		padding: 16,
+	},
+	colorPickers: {
+		flexDirection: 'row',
+		gap: 24,
+		justifyContent: 'center',
+	},
+	colorPickerButton: {
+		width: 40,
+		height: 40,
+		borderRadius: 100,
+		borderWidth: 2,
+	},
+});
 

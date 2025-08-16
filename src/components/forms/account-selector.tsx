@@ -1,7 +1,7 @@
 import { Dispatch, memo, SetStateAction } from 'react';
 import { Surface, Text, useTheme } from 'react-native-paper';
-import { Image, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import Animated, { FadeInRight } from 'react-native-reanimated';
+import { Image, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import * as schema from '@/db/schema';
 
@@ -30,11 +30,7 @@ function AccountSelector({
 			elevation={5}
 			style={[styles.container, { borderColor: theme.colors.outlineVariant }]}
 		>
-			<ScrollView
-				horizontal
-				showsHorizontalScrollIndicator={false}
-				contentContainerStyle={styles.scrollContent}
-			>
+			<ScrollView horizontal showsHorizontalScrollIndicator={false}>
 				{accounts?.map((account, index) => {
 					const isSelected = selectedAccount.id === account.id;
 					const enteringDelay = 300 + index * 100;
@@ -94,9 +90,6 @@ const styles = StyleSheet.create({
 		padding: 10,
 		height: 102,
 	},
-	scrollContent: {
-		gap: 10,
-	},
 	card: {
 		padding: 2,
 		borderRadius: 14,
@@ -119,6 +112,7 @@ const styles = StyleSheet.create({
 		width: 150,
 		height: 95,
 		resizeMode: 'cover',
+		opacity: 0.3,
 	},
 	cardContent: {
 		justifyContent: 'space-between',

@@ -24,6 +24,10 @@ export default function MainAccountSetupScreen() {
 		setAccountNumber,
 	} = useAccountManager();
 
+	const isFormReady = () => {
+		return Boolean(accountName.length && accountHolder.length);
+	};
+
 	return (
 		<ScrollView
 			style={[styles.container, { backgroundColor: theme.colors.background }]}
@@ -35,6 +39,8 @@ export default function MainAccountSetupScreen() {
 
 				<View style={{ gap: 24, paddingHorizontal: 14 }}>
 					<AccountCardPreview
+						isDefault
+						animationKey={cardColor}
 						accountName={accountName}
 						accountHolder={accountHolder}
 						cardColor={cardColor}
@@ -106,7 +112,7 @@ export default function MainAccountSetupScreen() {
 						style={styles.button}
 						contentStyle={styles.buttonContent}
 						labelStyle={styles.buttonLabel}
-						disabled={loading}
+						disabled={loading || !isFormReady()}
 						loading={loading}
 						onPress={createMainAccount}
 					>

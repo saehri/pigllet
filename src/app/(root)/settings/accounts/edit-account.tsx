@@ -1,238 +1,185 @@
-import React, { useCallback } from 'react';
-import { drizzle, ExpoSQLiteDatabase } from 'drizzle-orm/expo-sqlite';
-import { SQLiteDatabase, useSQLiteContext } from 'expo-sqlite';
-import { useContext, useEffect, useState } from 'react';
-import { ScrollView, ToastAndroid, View } from 'react-native';
-import {
-	ActivityIndicator,
-	Button,
-	Dialog,
-	MD3Theme,
-	Portal,
-	Text,
-	TextInput,
-	useTheme,
-} from 'react-native-paper';
+import { useCallback } from 'react';
+import { useEffect, useState } from 'react';
+import { Trash2Icon } from 'lucide-react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Button, Dialog, Portal, Text, useTheme } from 'react-native-paper';
+import { useLocalSearchParams, useNavigation } from 'expo-router';
 
+import { eq } from 'drizzle-orm';
 import * as schema from '@/db/schema';
+import { useSQLiteContext } from 'expo-sqlite';
+import { drizzle } from 'drizzle-orm/expo-sqlite';
 
-import { eq, or } from 'drizzle-orm';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import NoItemNotice from '@/src/components/reusables/no-items-notice';
-import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
+import ColorPicker from '@/src/components/forms/color-picker';
+import useAccountManager from '@/src/hooks/useAccountManager';
+import CustomTextInput from '@/src/components/forms/custom-text-input';
+import AccountCardPreview from '@/src/components/reusables/account-card-preview';
+
+const cardColors = ['#EA1C7E', '#ecb201ff', '#1ab3b3ff'];
 
 export default function EditAccountScreen() {
+	const theme = useTheme();
+	const navigation = useNavigation();
+
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
-	const theme = useTheme();
 
-	const { accountId } = useLocalSearchParams();
-
-	const [accounts, setAccounts] = useState<schema.Account[]>([]);
-	const [loading, setLoading] = useState<boolean>(false);
+	const { accountId: selectedAccountId } = useLocalSearchParams();
+	const {
+		deleteAccount,
+		editAccount,
+		accountHolder,
+		accountName,
+		accountNumber,
+		cardColor,
+		loading,
+		setAccountHolder,
+		setAccountName,
+		setAccountNumber,
+		setCardColor,
+	} = useAccountManager();
 
 	useEffect(() => {
 		async function load() {
-			try {
-				setLoading(true);
-				const accounts = await drizzleDb
-					.select()
-					.from(schema.accounts)
-					.where(eq(schema.accounts.id, Number(accountId)));
+			const accounts = await drizzleDb
+				.select()
+				.from(schema.accounts)
+				.where(eq(schema.accounts.id, Number(selectedAccountId)));
 
-				setAccounts(accounts);
-			} catch (error: any) {
-				ToastAndroid.show(error.message, ToastAndroid.CENTER);
-			} finally {
-				setLoading(false);
-			}
+			const { card_color, card_holder, card_name, card_number } = accounts[0];
+
+			setAccountHolder(card_holder);
+			setAccountName(card_name);
+			setCardColor(card_color);
+			setAccountNumber(card_number!);
 		}
 
 		load();
+
+		navigation.setOptions({
+			headerRight: () => (
+				<DeleteButton
+					formLoading={loading}
+					handleDelete={() => deleteAccount(Number(selectedAccountId))}
+				/>
+			),
+		});
 	}, []);
 
-	if (loading) {
-		return (
-			<View
-				style={{
-					alignItems: 'center',
-					justifyContent: 'center',
-					height: 300,
-				}}
-			>
-				<ActivityIndicator size={20} color={theme.colors.onSurface} />
-			</View>
-		);
-	}
+	const isFormReady = () => {
+		return Boolean(accountName.length && accountHolder.length);
+	};
 
-	if (!accounts.length) return <NoItemNotice />;
+	const accountCardPrevRenderer = () => {
+		if (accountName.length)
+			return (
+				<AccountCardPreview
+					animationKey={cardColor}
+					isDefault
+					accountName={accountName}
+					accountHolder={accountHolder}
+					cardColor={cardColor}
+					accountNumber={accountNumber}
+				/>
+			);
+
+		return <></>;
+	};
 
 	return (
-		<ScrollView>
-			<Form
-				theme={theme}
-				drizzleDb={drizzleDb}
-				initialFormValue={accounts[0]}
-			/>
+		<ScrollView showsVerticalScrollIndicator={false}>
+			<View
+				style={{
+					gap: 24,
+					paddingHorizontal: 30,
+					paddingVertical: 24,
+				}}
+			>
+				{accountCardPrevRenderer()}
+
+				<View style={styles.colorPickers}>
+					{cardColors.map((color) => (
+						<Pressable
+							key={color}
+							style={[
+								styles.colorPickerButton,
+								{
+									backgroundColor: color,
+									borderColor:
+										color === cardColor ? theme.colors.primary : color,
+								},
+							]}
+							onPress={() => setCardColor(color)}
+						></Pressable>
+					))}
+
+					<ColorPicker setCardColor={setCardColor} />
+				</View>
+			</View>
+
+			<View style={styles.formWrapper}>
+				<View style={styles.gridContainer}>
+					<View style={styles.inputContainerFull}>
+						<Text style={styles.inputLabel} variant="bodyMedium">
+							Account name *
+						</Text>
+
+						<CustomTextInput
+							value={accountName}
+							onChangeText={setAccountName}
+							placeholder="Cash"
+						/>
+					</View>
+
+					<View style={styles.inputContainerFull}>
+						<Text style={styles.inputLabel} variant="bodyMedium">
+							Account holder *
+						</Text>
+
+						<CustomTextInput
+							value={accountHolder}
+							onChangeText={setAccountHolder}
+							placeholder="John Doe"
+						/>
+					</View>
+				</View>
+
+				<View style={styles.inputContainer}>
+					<Text style={styles.inputLabel} variant="bodyMedium">
+						Account number
+					</Text>
+
+					<CustomTextInput
+						value={accountNumber}
+						onChangeText={setAccountNumber}
+						placeholder="**** **** **** ****"
+						maxLength={16}
+					/>
+				</View>
+
+				<Button
+					mode="contained"
+					style={styles.button}
+					contentStyle={styles.buttonContent}
+					labelStyle={styles.buttonLabel}
+					disabled={loading || !isFormReady()}
+					loading={loading}
+					onPress={() => editAccount(Number(selectedAccountId))}
+				>
+					Save changes
+				</Button>
+			</View>
 		</ScrollView>
 	);
 }
 
-type FormProps = {
-	theme: MD3Theme;
-	drizzleDb: ExpoSQLiteDatabase<typeof schema> & {
-		$client: SQLiteDatabase;
-	};
-	initialFormValue: schema.Account;
-};
-
-function Form({ theme, drizzleDb, initialFormValue }: FormProps) {
-	const { currentCurrencyCode } = usePreferredCurrencyStore();
-
-	const router = useRouter();
-
-	const [formLoading, setFormLoading] = useState<boolean>(false);
-	const [accountName, setAccountName] = useState<string>(initialFormValue.name);
-	const [accountBalance, setAccountBalance] = useState<string>(
-		initialFormValue.balance.toString()
-	);
-	const [accountNumber, setAccountNumber] = useState<string>(
-		initialFormValue.number || ''
-	);
-	const [accountImage, setAccountImage] = useState<string>('');
-
-	async function editAccount() {
-		try {
-			setFormLoading(true);
-			if (!accountName.length || !accountBalance.length) {
-				return ToastAndroid.show('Invalid account data!', ToastAndroid.SHORT);
-			}
-
-			await drizzleDb
-				.update(schema.accounts)
-				.set({
-					balance: Number(accountBalance),
-					created_at: new Date().toISOString(),
-					name: accountName,
-					number: accountNumber,
-					image: accountImage,
-				})
-				.where(eq(schema.accounts.id, initialFormValue.id as number));
-
-			ToastAndroid.show('Account successfully updated!', ToastAndroid.SHORT);
-		} catch (error: any) {
-			ToastAndroid.show('Failed to add an account', ToastAndroid.SHORT);
-		} finally {
-			setFormLoading(false);
-		}
-	}
-
-	async function deleteAccount() {
-		try {
-			setFormLoading(true);
-			await drizzleDb
-				.delete(schema.accounts)
-				.where(eq(schema.accounts.id, initialFormValue.id as number));
-
-			await drizzleDb
-				.delete(schema.transactions)
-				.where(
-					or(
-						eq(schema.transactions.account_id, initialFormValue.id as number),
-						eq(
-							schema.transactions.related_account_id,
-							initialFormValue.id as number
-						)
-					)
-				);
-
-			ToastAndroid.show('Account deleted!', ToastAndroid.CENTER);
-			router.back();
-		} catch (error) {
-			ToastAndroid.show('Error when updating expense', ToastAndroid.CENTER);
-		} finally {
-			setFormLoading(false);
-		}
-	}
-
-	return (
-		<View style={{ padding: 16, gap: 16 }}>
-			<View style={{ flexDirection: 'row', gap: 8 }}>
-				<View style={{ gap: 8, flex: 1 }}>
-					<Text style={{ fontFamily: 'Manrope-Regular' }} variant="bodyLarge">
-						Account name
-					</Text>
-					<TextInput
-						keyboardType="default"
-						onChangeText={setAccountName}
-						value={accountName}
-						maxLength={12}
-						contentStyle={{ fontFamily: 'Manrope-Regular' }}
-					/>
-				</View>
-
-				<View style={{ gap: 8, flex: 1 }}>
-					<Text style={{ fontFamily: 'Manrope-Regular' }} variant="bodyLarge">
-						Account balance ({currentCurrencyCode})
-					</Text>
-					<TextInput
-						keyboardType="number-pad"
-						onChangeText={setAccountBalance}
-						value={accountBalance}
-						contentStyle={{ fontFamily: 'Manrope-Regular' }}
-					/>
-				</View>
-			</View>
-
-			{!initialFormValue.is_cash && (
-				<View style={{ gap: 8 }}>
-					<Text style={{ fontFamily: 'Manrope-Regular' }} variant="bodyLarge">
-						Account number
-					</Text>
-					<TextInput
-						keyboardType="default"
-						onChangeText={setAccountNumber}
-						value={accountNumber}
-						contentStyle={{ fontFamily: 'Manrope-Regular' }}
-					/>
-					<Text style={{ fontFamily: 'Manrope-Regular' }} variant="labelSmall">
-						Don't worry your account number is stored localy
-					</Text>
-				</View>
-			)}
-
-			<Button
-				mode="contained"
-				style={{ borderRadius: 10, marginTop: 16, padding: 8 }}
-				labelStyle={{ fontFamily: 'Manrope-Medium', fontSize: 16 }}
-				onPress={editAccount}
-				disabled={!accountBalance.length || !accountName.length}
-			>
-				{formLoading ? (
-					<ActivityIndicator size={20} color={theme.colors.onPrimary} />
-				) : (
-					'Save changes'
-				)}
-			</Button>
-
-			{initialFormValue.is_cash !== 1 && (
-				<DeleteButton
-					formLoading={formLoading}
-					handleDelete={deleteAccount}
-					theme={theme}
-				/>
-			)}
-		</View>
-	);
-}
-
 type DeleteButtonProps = {
-	theme: MD3Theme;
 	formLoading: boolean;
 	handleDelete: () => void;
 };
 
-function DeleteButton({ theme, formLoading, handleDelete }: DeleteButtonProps) {
+function DeleteButton({ formLoading, handleDelete }: DeleteButtonProps) {
+	const theme = useTheme();
 	const [visible, setVisible] = useState<boolean>(false);
 
 	const showModal = useCallback(() => setVisible(true), []);
@@ -242,10 +189,23 @@ function DeleteButton({ theme, formLoading, handleDelete }: DeleteButtonProps) {
 		<>
 			<Portal>
 				<Dialog visible={visible} onDismiss={hideModal}>
-					<Dialog.Title>Delete account</Dialog.Title>
+					<Dialog.Icon
+						icon={(props) => (
+							<Trash2Icon
+								color={props.color}
+								size={props.size}
+								strokeWidth={1.5}
+							/>
+						)}
+					/>
+					<Dialog.Title
+						style={{ textAlign: 'center', fontFamily: 'Manrope-Regular' }}
+					>
+						Delete account
+					</Dialog.Title>
 					<Dialog.Content>
 						<Text variant="bodyLarge" style={{ fontFamily: 'Manrope-Regular' }}>
-							All item records linked to this account will be deleted
+							All transaction records linked to this account will be deleted
 							permanently. This action cannot be undone.
 						</Text>
 					</Dialog.Content>
@@ -258,27 +218,85 @@ function DeleteButton({ theme, formLoading, handleDelete }: DeleteButtonProps) {
 						</Button>
 						<Button
 							labelStyle={{ fontFamily: 'Manrope-Regular', fontSize: 16 }}
-							onPress={handleDelete}
+							onPress={() => {
+								hideModal();
+								handleDelete();
+							}}
 						>
-							Ok
+							Delete
 						</Button>
 					</Dialog.Actions>
 				</Dialog>
 			</Portal>
 
 			<Button
-				mode="outlined"
-				style={{ borderRadius: 10 }}
-				labelStyle={{ fontFamily: 'Manrope-Regular', fontSize: 16 }}
+				mode="contained-tonal"
 				onPress={showModal}
+				style={{ height: 40 }}
+				labelStyle={{ fontFamily: 'Manrope-Regular' }}
+				loading={formLoading}
+				disabled={formLoading}
 			>
-				{formLoading ? (
-					<ActivityIndicator size={20} color={theme.colors.onSurface} />
-				) : (
-					'Delete account'
-				)}
+				<Trash2Icon
+					color={theme.colors.onSecondaryContainer}
+					size={20}
+					strokeWidth={1.5}
+				/>
 			</Button>
 		</>
 	);
 }
+
+const styles = StyleSheet.create({
+	labelSmall: {
+		fontFamily: 'Manrope-Regular',
+		opacity: 0.6,
+		textAlign: 'center',
+	},
+	headlineLarge: {
+		fontFamily: 'Manrope-ExtraBold',
+		marginBottom: 24,
+	},
+	inputLabel: {
+		fontFamily: 'Manrope-Regular',
+		opacity: 0.7,
+	},
+	inputContent: {
+		fontFamily: 'Manrope-Regular',
+	},
+	button: { borderRadius: 10, marginTop: 16 },
+	buttonContent: {
+		padding: 8,
+	},
+	buttonLabel: {
+		fontFamily: 'Manrope-Medium',
+		fontSize: 16,
+	},
+	inputContainer: {
+		gap: 8,
+	},
+	inputContainerFull: {
+		gap: 8,
+		flex: 1,
+	},
+	gridContainer: {
+		flexDirection: 'row',
+		gap: 8,
+	},
+	formWrapper: {
+		gap: 16,
+		padding: 16,
+	},
+	colorPickers: {
+		flexDirection: 'row',
+		gap: 24,
+		justifyContent: 'center',
+	},
+	colorPickerButton: {
+		width: 40,
+		height: 40,
+		borderRadius: 100,
+		borderWidth: 2,
+	},
+});
 
