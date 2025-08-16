@@ -33,7 +33,7 @@ export default function MainAccountSetupScreen() {
 					Let's set up your main account!
 				</Text>
 
-				<View>
+				<View style={{ gap: 24, paddingHorizontal: 14 }}>
 					<AccountCardPreview
 						accountName={accountName}
 						accountHolder={accountHolder}

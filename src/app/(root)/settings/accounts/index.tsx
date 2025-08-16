@@ -14,6 +14,7 @@ import {
 	StyleSheet,
 	View,
 } from 'react-native';
+import Animated, { FadeInDown, FadeInRight } from 'react-native-reanimated';
 import { useFocusEffect } from 'expo-router';
 
 import * as schema from '@/db/schema';
@@ -98,29 +99,45 @@ function TransactionList({ accountId }: TransactionList) {
 		[]
 	);
 
-	return (
-		<Surface
-			mode="flat"
-			elevation={1}
-			style={{
-				borderTopLeftRadius: 32,
-				borderTopRightRadius: 32,
-				gap: 8,
-				flex: 1,
-			}}
-		>
-			<View style={{ paddingHorizontal: 16 }}>
-				<HeaderBar />
-			</View>
+	const renderer = () => {
+		if (transactions.length)
+			return (
+				<Animated.View
+					entering={FadeInDown.delay(300)
+						.springify()
+						.mass(1)
+						.damping(10)
+						.stiffness(100)}
+					style={{ flex: 1 }}
+				>
+					<Surface
+						mode="flat"
+						elevation={1}
+						style={{
+							borderTopLeftRadius: 32,
+							borderTopRightRadius: 32,
+							gap: 8,
+							flex: 1,
+						}}
+					>
+						<View style={{ paddingHorizontal: 16 }}>
+							<HeaderBar />
+						</View>
 
-			<FlatList
-				showsVerticalScrollIndicator={false}
-				ListEmptyComponent={<NoItemNotice />}
-				data={groupedTransactionsByDate(transactions, 'MMM DD, YYYY')}
-				renderItem={renderTransactionGroup}
-			/>
-		</Surface>
-	);
+						<FlatList
+							showsVerticalScrollIndicator={false}
+							ListEmptyComponent={<NoItemNotice />}
+							data={groupedTransactionsByDate(transactions, 'MMM DD, YYYY')}
+							renderItem={renderTransactionGroup}
+						/>
+					</Surface>
+				</Animated.View>
+			);
+
+		return <></>;
+	};
+
+	return <View style={{ flex: 1 }}>{renderer()}</View>;
 }
 
 interface CardSelector {
@@ -145,56 +162,77 @@ function CardSelector({
 		}
 	}, [accounts]);
 
+	const accountCardPrevRenderer = () => {
+		if (accounts.length)
+			return (
+				<AccountCardPreview
+					accountHolder={selectedAccount?.card_holder || ''}
+					accountName={selectedAccount?.card_name || ''}
+					accountNumber={selectedAccount?.card_number || ''}
+					cardColor={selectedAccount?.card_color}
+				/>
+			);
+		return <></>;
+	};
+
 	return (
-		<View style={{ paddingHorizontal: 24, paddingTop: 10, paddingBottom: 24 }}>
-			<AccountCardPreview
-				accountHolder={selectedAccount?.card_holder || ''}
-				accountName={selectedAccount?.card_name || ''}
-				accountNumber={selectedAccount?.card_number || ''}
-				cardColor={selectedAccount?.card_color}
-			/>
+		<View
+			style={{
+				paddingHorizontal: 30,
+				paddingTop: 10,
+				paddingBottom: 16,
+				flex: 0.9,
+				gap: 16,
+			}}
+		>
+			{accountCardPrevRenderer()}
 
 			<ScrollView
 				horizontal
 				showsHorizontalScrollIndicator={false}
 				contentContainerStyle={styles.scrollContent}
 			>
-				{accounts?.map((account) => {
+				{accounts?.map((account, index) => {
 					const isSelected = selectedAccount?.id === account.id;
+					const delayDuration = 500 + index * 100;
 
 					return (
-						<Pressable
+						<Animated.View
 							key={account.id}
-							onPress={() => setSelectedAccount(account)}
-							style={[
-								styles.card,
-								{
-									borderColor: isSelected
-										? selectedAccount?.card_color
-										: theme.colors.elevation.level5,
-								},
-							]}
+							entering={FadeInRight.delay(delayDuration)}
 						>
-							<View
+							<Pressable
+								onPress={() => setSelectedAccount(account)}
 								style={[
-									styles.cardContent,
+									styles.card,
 									{
-										backgroundColor: account.card_color,
+										borderColor: isSelected
+											? selectedAccount?.card_color
+											: theme.colors.elevation.level5,
 									},
 								]}
 							>
-								<Text style={styles.text}>{account.card_name}</Text>
+								<View
+									style={[
+										styles.cardContent,
+										{
+											backgroundColor: account.card_color,
+										},
+									]}
+								>
+									<Text style={styles.text}>{account.card_name}</Text>
 
-								<Text style={styles.text}>
-									{formatCurrencyByCode(account.balance, currentCurrencyCode)}
-								</Text>
+									<Text style={styles.text}>
+										{formatCurrencyByCode(account.balance, currentCurrencyCode)}
+									</Text>
 
-								<Image
-									source={require('@/assets/images/cards/pig pattern.png')}
-									style={styles.bgImage}
-								/>
-							</View>
-						</Pressable>
+									<Image
+										source={require('@/assets/images/cards/pig pattern.png')}
+										style={styles.bgImage}
+									/>
+								</View>
+							</Pressable>
+						</Animated.View>
 					);
 				})}
 			</ScrollView>
@@ -214,6 +252,7 @@ const styles = StyleSheet.create({
 	},
 	scrollContent: {
 		gap: 10,
+		height: 82,
 	},
 	card: {
 		padding: 2,

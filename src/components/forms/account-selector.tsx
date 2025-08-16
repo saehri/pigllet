@@ -82,6 +82,7 @@ const styles = StyleSheet.create({
 		borderRadius: 16,
 		borderWidth: 1,
 		padding: 10,
+		height: 102,
 	},
 	scrollContent: {
 		gap: 10,

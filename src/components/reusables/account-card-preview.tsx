@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 
 type CardDesignPreview = {
 	accountName: string;
@@ -19,17 +20,36 @@ function AccountCardPreview({
 
 	return (
 		<View>
-			<View style={styles.greenCard}></View>
+			<Animated.View
+				entering={FadeInDown.delay(300)
+					.springify()
+					.mass(1)
+					.damping(10)
+					.stiffness(100)}
+				style={styles.greenCard}
+			></Animated.View>
 
-			<View style={styles.redCard}></View>
+			<Animated.View
+				entering={FadeInDown.delay(200)
+					.springify()
+					.mass(1)
+					.damping(10)
+					.stiffness(100)}
+				style={styles.redCard}
+			></Animated.View>
 
-			<View
+			<Animated.View
 				style={[
 					styles.cardWrapper,
 					{
 						backgroundColor: cardColor,
 					},
 				]}
+				entering={FadeInDown.springify()
+					.delay(100)
+					.mass(1)
+					.damping(10)
+					.stiffness(100)}
 			>
 				<Image
 					source={require('@/assets/images/cards/pig pattern.png')}
@@ -46,10 +66,10 @@ function AccountCardPreview({
 						{cardNumber.match(/.{1,4}/g)?.map((t, index) => (
 							<Text
 								key={index}
-								variant="headlineSmall"
 								style={{
 									fontFamily: 'Manrope-Light',
 									color: 'white',
+									fontSize: 22,
 								}}
 							>
 								{t}
@@ -57,15 +77,15 @@ function AccountCardPreview({
 						))}
 					</View>
 
-					<Text variant="bodyLarge" style={styles.accountName}>
+					<Text variant="bodyMedium" style={styles.accountName}>
 						{accountName}
 					</Text>
 
-					<Text variant="bodyLarge" style={styles.accountHolder}>
+					<Text variant="bodyMedium" style={styles.accountHolder}>
 						{accountHolder}
 					</Text>
 				</View>
-			</View>
+			</Animated.View>
 		</View>
 	);
 }
@@ -76,8 +96,7 @@ const styles = StyleSheet.create({
 	cardWrapper: {
 		width: '100%',
 		borderRadius: 24,
-		marginVertical: 24,
-		marginTop: 36,
+		marginTop: 30,
 		boxShadow: '0px 0px 10px 5px rgba(0,0,0,.2)',
 	},
 	cardContent: {
@@ -90,7 +109,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		width: '100%',
 		paddingHorizontal: 40,
-		top: 120,
+		top: 110,
 		gap: 15,
 		justifyContent: 'center',
 		position: 'absolute',
