@@ -10,7 +10,7 @@ type useAppThemeStore = {
 export const useAppThemeStore = create<useAppThemeStore>()(
 	persist(
 		(set, get) => ({
-			currentAppTheme: 'Dark',
+			currentAppTheme: 'Light',
 			setAppTheme: (appTheme) => set({ currentAppTheme: appTheme }),
 		}),
 		{
