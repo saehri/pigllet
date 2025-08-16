@@ -1,6 +1,7 @@
 import { Dispatch, memo, SetStateAction } from 'react';
 import { Surface, Text, useTheme } from 'react-native-paper';
 import { Image, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import Animated, { FadeInRight } from 'react-native-reanimated';
 
 import * as schema from '@/db/schema';
 
@@ -34,42 +35,51 @@ function AccountSelector({
 				showsHorizontalScrollIndicator={false}
 				contentContainerStyle={styles.scrollContent}
 			>
-				{accounts?.map((account) => {
+				{accounts?.map((account, index) => {
 					const isSelected = selectedAccount.id === account.id;
+					const enteringDelay = 300 + index * 100;
 
 					return (
-						<Pressable
+						<Animated.View
 							key={account.id}
-							onPress={() => handleSelect(account)}
-							style={[
-								styles.card,
-								{
-									borderColor: isSelected
-										? account?.card_color
-										: theme.colors.elevation.level5,
-								},
-							]}
+							entering={FadeInRight.delay(enteringDelay)
+								.springify()
+								.mass(1)
+								.damping(10)
+								.stiffness(100)}
 						>
-							<View
+							<Pressable
+								onPress={() => handleSelect(account)}
 								style={[
-									styles.cardContent,
+									styles.card,
 									{
-										backgroundColor: account.card_color,
+										borderColor: isSelected
+											? account?.card_color
+											: theme.colors.elevation.level5,
 									},
 								]}
 							>
-								<Text style={styles.text}>{account.card_name}</Text>
+								<View
+									style={[
+										styles.cardContent,
+										{
+											backgroundColor: account.card_color,
+										},
+									]}
+								>
+									<Text style={styles.text}>{account.card_name}</Text>
 
-								<Text style={styles.text}>
-									{formatCurrencyByCode(account.balance, currentCurrencyCode)}
-								</Text>
+									<Text style={styles.text}>
+										{formatCurrencyByCode(account.balance, currentCurrencyCode)}
+									</Text>
 
-								<Image
-									source={require('@/assets/images/cards/pig pattern.png')}
-									style={styles.bgImage}
-								/>
-							</View>
-						</Pressable>
+									<Image
+										source={require('@/assets/images/cards/pig pattern.png')}
+										style={styles.bgImage}
+									/>
+								</View>
+							</Pressable>
+						</Animated.View>
 					);
 				})}
 			</ScrollView>
