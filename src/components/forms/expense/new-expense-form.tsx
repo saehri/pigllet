@@ -115,7 +115,7 @@ export default function CreateExpenseForm() {
 				contentStyle={styles.buttonContent}
 				labelStyle={styles.buttonLabel}
 				onPress={createExpenseRecord}
-				disabled={loading}
+				disabled={loading || !transactionAmount.length}
 				loading={loading}
 			>
 				Save expense record

@@ -118,13 +118,10 @@ export default function EditExpenseForm() {
 				style={styles.button}
 				labelStyle={styles.buttonLabel}
 				onPress={updateExpenseRecord}
-				disabled={!transactionAmount.length}
+				disabled={loading || !transactionAmount.length}
+				loading={loading}
 			>
-				{loading ? (
-					<ActivityIndicator size={20} color={theme.colors.onPrimary} />
-				) : (
-					'Save changes'
-				)}
+				Save changes
 			</Button>
 		</View>
 	);

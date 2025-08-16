@@ -101,7 +101,7 @@ export default function EditTransferForm() {
 				style={styles.button}
 				labelStyle={styles.buttonLabel}
 				onPress={updateTransferRecord}
-				disabled={loading}
+				disabled={loading || !transactionAmount.length}
 				loading={loading}
 			>
 				Save changes

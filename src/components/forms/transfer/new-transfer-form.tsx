@@ -128,7 +128,7 @@ export default function NewTransferForm() {
 				contentStyle={styles.buttonContent}
 				labelStyle={styles.buttonLabel}
 				onPress={createTransferRecord}
-				disabled={loading}
+				disabled={loading || !transactionAmount.length}
 				loading={loading}
 			>
 				Save transfer record

@@ -117,7 +117,7 @@ export default function EditIncomeForm() {
 				style={styles.button}
 				labelStyle={styles.buttonLabel}
 				onPress={updateIncomeRecord}
-				disabled={loading}
+				disabled={loading || !transactionAmount.length}
 				loading={loading}
 			>
 				Save changes

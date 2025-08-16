@@ -114,7 +114,7 @@ export default function CreateIncomeForm() {
 				contentStyle={styles.buttonContent}
 				labelStyle={styles.buttonLabel}
 				onPress={createIncomeRecord}
-				disabled={loading}
+				disabled={loading || !transactionAmount.length}
 				loading={loading}
 			>
 				Save income record
