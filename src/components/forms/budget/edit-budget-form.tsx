@@ -1,73 +1,43 @@
 import { StyleSheet, View } from 'react-native';
-import {
-	ActivityIndicator,
-	Button,
-	Text,
-	TextInput,
-	useTheme,
-} from 'react-native-paper';
+import { Button, Text } from 'react-native-paper';
 
 import useBudgetManager from '@/src/hooks/useBudgetManager';
+import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
-import SelectInputWithIcon from '../select-input-with-icon';
+import CustomTextInput from '../custom-text-input';
 
 type Props = {
 	budgetId: number;
 };
 
 export default function EditBudgetForm({ budgetId }: Props) {
-	const theme = useTheme();
+	const currentCurrencyCode = usePreferredCurrencyStore(
+		(s) => s.currentCurrencyCode
+	);
 
-	const {
-		transactionCategories,
-		budgetMaxSpending,
-		budgetCategory,
-		budgetNote,
-		loading,
-		setBudgetNote,
-		setBudgetCategory,
-		updateBudgetRecord,
-		setBudgetMaxSpending,
-	} = useBudgetManager({ actionType: 'update', budgetId });
+	const { loading, budgetLimit, updateBudgetRecord, setBudgetLimit } =
+		useBudgetManager({ actionType: 'update', budgetId });
 
 	return (
 		<View style={styles.formWrapper}>
-			<View style={styles.gridContainer}>
-				<View style={styles.inputContainerFull}>
-					<Text style={styles.inputLabel} variant="bodyLarge">
-						Budget category
-					</Text>
-					<SelectInputWithIcon
-						data={transactionCategories}
-						selectedCategory={budgetCategory}
-						handleSelect={setBudgetCategory}
-					/>
-				</View>
+			<View style={styles.inputContainer}>
+				<Text style={styles.inputLabel} variant="bodyLarge">
+					Budet limit
+				</Text>
 
-				<View style={styles.inputContainerFull}>
-					<Text style={styles.inputLabel} variant="bodyLarge">
-						Max spending
-					</Text>
-					<TextInput
-						keyboardType="decimal-pad"
-						value={budgetMaxSpending}
-						onChangeText={setBudgetMaxSpending}
-						contentStyle={styles.inputContent}
-					/>
-				</View>
-			</View>
-
-			<View style={styles.gridContainer}>
-				<View style={styles.inputContainerFull}>
-					<Text style={styles.inputLabel} variant="bodyLarge">
-						Note
-					</Text>
-					<TextInput
-						value={budgetNote}
-						onChangeText={setBudgetNote}
-						contentStyle={styles.inputContent}
-					/>
-				</View>
+				<CustomTextInput
+					keyboardType="decimal-pad"
+					value={budgetLimit}
+					onChangeText={setBudgetLimit}
+					leftComponent={
+						<Text
+							style={{ fontFamily: 'Manrope-Regular' }}
+							variant="labelMedium"
+						>
+							{currentCurrencyCode}
+						</Text>
+					}
+				/>
 			</View>
 
 			<Button
@@ -75,13 +45,10 @@ export default function EditBudgetForm({ budgetId }: Props) {
 				style={styles.button}
 				labelStyle={styles.buttonLabel}
 				onPress={updateBudgetRecord}
-				disabled={!budgetMaxSpending.length}
+				disabled={loading || !budgetLimit.length}
+				loading={loading}
 			>
-				{loading ? (
-					<ActivityIndicator size={20} color={theme.colors.onPrimary} />
-				) : (
-					'Save changes'
-				)}
+				Save changes
 			</Button>
 		</View>
 	);
@@ -89,9 +56,6 @@ export default function EditBudgetForm({ budgetId }: Props) {
 
 const styles = StyleSheet.create({
 	inputLabel: {
-		fontFamily: 'Manrope-Regular',
-	},
-	inputContent: {
 		fontFamily: 'Manrope-Regular',
 	},
 	button: { borderRadius: 10, marginTop: 16, padding: 8, marginBottom: 8 },
