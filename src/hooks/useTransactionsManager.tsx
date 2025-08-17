@@ -48,10 +48,11 @@ type UseExpenseManagerTypes = {
 };
 
 interface loadTransactionsData {
-	date?: Date;
+	date?: moment.MomentInput;
 	range?: 'month' | 'year';
 	transactionType?: 'income' | 'expense' | 'transfer';
 	accountId?: number;
+	categoryId?: number;
 }
 
 export const loadTransactionsData = ({
@@ -59,7 +60,8 @@ export const loadTransactionsData = ({
 	range,
 	transactionType,
 	accountId,
-}: loadTransactionsData): any => {
+	categoryId,
+}: loadTransactionsData) => {
 	const relatedAccountsAlias = alias(schema.accounts, 'related_accounts'); // Alias for related accounts
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
@@ -85,6 +87,10 @@ export const loadTransactionsData = ({
 
 	if (accountId) {
 		whereConditions.push(eq(schema.transactions.account_id, accountId));
+	}
+
+	if (categoryId) {
+		whereConditions.push(eq(schema.transactions.category_id, categoryId));
 	}
 
 	return drizzleDb

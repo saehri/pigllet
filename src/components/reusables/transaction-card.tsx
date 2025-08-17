@@ -66,7 +66,7 @@ function TransactionCard({ data, position, showDate, pressable }: Props) {
 	}, [transaction.amount, currentCurrencyCode]);
 
 	const formattedDate = useMemo(() => {
-		return moment(transaction.created_at).format('MMM D, YYYY');
+		return moment(transaction.created_at).format('MMM D, YY');
 	}, [transaction.created_at]);
 
 	const routeParams = useMemo(
@@ -185,12 +185,12 @@ function TransactionCard({ data, position, showDate, pressable }: Props) {
 
 					<View style={styles.metaRow}>
 						<View style={{ flex: 1 }}>
-							{showDate && (
-								<Text variant="labelLarge" style={styles.cardNote}>
-									{formattedDate}
-								</Text>
-							)}
 							<View style={styles.noteRow}>
+								{showDate && (
+									<Text variant="labelMedium" style={styles.cardNote}>
+										{formattedDate} ·
+									</Text>
+								)}
 								{transaction.image && (
 									<ImageIcon
 										size={14}

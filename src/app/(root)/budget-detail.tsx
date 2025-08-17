@@ -1,0 +1,218 @@
+import { useCallback, useEffect, useState } from 'react';
+import { FlatList, StyleSheet, View } from 'react-native';
+import { PencilIcon, Trash2Icon } from 'lucide-react-native';
+import { Link, useLocalSearchParams, useNavigation } from 'expo-router';
+import { Button, Dialog, Portal, Text, useTheme } from 'react-native-paper';
+
+import { getCardPosition } from '@/utils/utils';
+import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
+import { loadTransactionsData } from '@/src/hooks/useTransactionsManager';
+
+import HeaderBar from '@/src/components/home/header-bar';
+import useBudgetManager from '@/src/hooks/useBudgetManager';
+import NoItemNotice from '@/src/components/reusables/no-items-notice';
+import BudgetBigTotals from '@/src/components/budgets/budget-big-totals';
+import TransactionCard from '@/src/components/reusables/transaction-card';
+
+export default function EditBudget() {
+	const theme = useTheme();
+	const navigation = useNavigation();
+	const {
+		id: budgetId,
+		categoryId,
+		budgetPeriod,
+		categoryLabel,
+		budgetLimit,
+	} = useLocalSearchParams();
+
+	const { data: transactions } = useLiveQuery(
+		loadTransactionsData({
+			date: budgetPeriod,
+			transactionType: 'expense',
+			categoryId: Number(categoryId),
+		})
+	);
+
+	useEffect(() => {
+		navigation.setOptions({
+			title: '',
+			headerRight: () => (
+				<View style={{ flexDirection: 'row', gap: 2, alignItems: 'center' }}>
+					<DeleteBudgetDialog budgetId={Number(budgetId)} />
+
+					<Link
+						href={{
+							pathname: '/edit-budget',
+							params: { id: budgetId, budgetLimit },
+						}}
+					>
+						<Button
+							mode="contained-tonal"
+							style={{ borderTopLeftRadius: 6, borderBottomLeftRadius: 6 }}
+						>
+							<PencilIcon
+								color={theme.colors.onSecondaryContainer}
+								size={20}
+								strokeWidth={1.5}
+							/>
+						</Button>
+					</Link>
+				</View>
+			),
+		});
+	}, [theme]);
+
+	const renderHeader = useCallback(() => {
+		return (
+			<View style={{ paddingTop: 4, gap: 8 }}>
+				<Text
+					variant="headlineSmall"
+					style={[
+						styles.headerTitle,
+						{ paddingHorizontal: 16, marginBottom: 24 },
+					]}
+				>
+					{categoryLabel}
+				</Text>
+
+				<View style={styles.headerContainer}>
+					<Text variant="titleLarge" style={styles.headerTitle}>
+						Statistics
+					</Text>
+
+					<View style={styles.statsContainer}>
+						<BudgetBigTotals
+							budgetIds={[Number(budgetId)]}
+							selectedDate={budgetPeriod}
+							transactionCategoryIds={[Number(categoryId)]}
+						/>
+					</View>
+				</View>
+
+				<View style={{ paddingHorizontal: 16 }}>
+					<HeaderBar />
+				</View>
+			</View>
+		);
+	}, [transactions]);
+
+	return (
+		<FlatList
+			keyboardShouldPersistTaps="handled"
+			showsVerticalScrollIndicator={false}
+			contentContainerStyle={{ paddingBottom: 180 }}
+			data={transactions}
+			ListHeaderComponent={renderHeader}
+			ListEmptyComponent={<NoItemNotice />}
+			renderItem={({ item, index }) => (
+				<View style={{ paddingHorizontal: 16 }}>
+					<TransactionCard
+						showDate
+						data={item as any}
+						position={getCardPosition(index, transactions.length)}
+						key={item.account.id}
+					/>
+				</View>
+			)}
+		/>
+	);
+}
+
+type DeleteBudgetDialog = { budgetId: number };
+
+function DeleteBudgetDialog({ budgetId }: DeleteBudgetDialog) {
+	const theme = useTheme();
+	const { loading, deleteBudgetRecord } = useBudgetManager({
+		actionType: 'delete',
+		budgetId,
+	});
+
+	const [visible, setVisible] = useState<boolean>(false);
+
+	const openDialog = () => setVisible(true);
+	const closeDialog = () => setVisible(false);
+
+	return (
+		<>
+			<Portal>
+				<Dialog visible={visible} onDismiss={closeDialog}>
+					<Dialog.Icon
+						icon={(props) => (
+							<Trash2Icon
+								color={props.color}
+								size={props.size}
+								strokeWidth={1.5}
+							/>
+						)}
+					/>
+					<Dialog.Title style={styles.dialogTitleStyle}>
+						Delete budget record
+					</Dialog.Title>
+
+					<Dialog.Actions>
+						<Button
+							onPress={closeDialog}
+							disabled={loading}
+							labelStyle={styles.dialogContentTextStyle}
+						>
+							Cancel
+						</Button>
+
+						<Button
+							labelStyle={styles.dialogContentTextStyle}
+							onPress={deleteBudgetRecord}
+							disabled={loading}
+							loading={loading}
+						>
+							Delete
+						</Button>
+					</Dialog.Actions>
+				</Dialog>
+			</Portal>
+
+			<Button
+				onPress={openDialog}
+				mode="contained-tonal"
+				style={{
+					height: 40,
+					borderTopRightRadius: 6,
+					borderBottomRightRadius: 6,
+				}}
+			>
+				<Trash2Icon
+					strokeWidth={1.5}
+					color={theme.colors.onSecondaryContainer}
+					size={20}
+				/>
+			</Button>
+		</>
+	);
+}
+
+const styles = StyleSheet.create({
+	dialogContentTextStyle: {
+		fontFamily: 'Manrope-Regular',
+		fontSize: 16,
+	},
+	dialogTitleStyle: {
+		fontFamily: 'Manrope-Regular',
+		textAlign: 'center',
+	},
+	headerContainer: {
+		paddingHorizontal: 16,
+		gap: 12,
+	},
+	headerTitle: {
+		fontFamily: 'Manrope-Regular',
+	},
+	statsContainer: {
+		gap: 4,
+	},
+	inputContainer: {
+		gap: 8,
+	},
+	inputLabel: {
+		fontFamily: 'Manrope-Regular',
+	},
+});
+

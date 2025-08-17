@@ -13,11 +13,16 @@ import moment from 'moment';
 import { formatCurrencyByCode } from '@/utils/utils';
 
 type Props = {
-	selectedDate: Date;
+	selectedDate: moment.MomentInput;
 	budgetIds: number[];
+	transactionCategoryIds: number[];
 };
 
-function BudgetBigTotals({ selectedDate, budgetIds }: Props) {
+function BudgetBigTotals({
+	selectedDate,
+	budgetIds,
+	transactionCategoryIds,
+}: Props) {
 	const theme = useTheme();
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
@@ -30,14 +35,10 @@ function BudgetBigTotals({ selectedDate, budgetIds }: Props) {
 		[currentCurrencyCode]
 	);
 
-	const startOfMonth = useMemo(
-		() => moment(selectedDate).startOf('month').format('YYYY-MM-DD'),
-		[selectedDate]
-	);
-	const endOfMonth = useMemo(
-		() => moment(selectedDate).endOf('month').format('YYYY-MM-DD'),
-		[selectedDate]
-	);
+	const startOfMonth = moment(selectedDate)
+		.startOf('month')
+		.format('YYYY-MM-DD');
+	const endOfMonth = moment(selectedDate).endOf('month').format('YYYY-MM-DD');
 
 	const getTotalBudget = useCallback(() => {
 		return drizzleDb
@@ -46,10 +47,13 @@ function BudgetBigTotals({ selectedDate, budgetIds }: Props) {
 			})
 			.from(schema.budgets)
 			.where(
-				sql`DATE(${schema.budgets.created_at}) BETWEEN DATE(${startOfMonth}) AND DATE(${endOfMonth})`
+				and(
+					inArray(schema.budgets.id, budgetIds),
+					sql`DATE(${schema.budgets.created_at}) BETWEEN DATE(${startOfMonth}) AND DATE(${endOfMonth})`
+				)
 			)
 			.groupBy(sql<string>`strftime('%Y-%m', ${schema.budgets.created_at})`);
-	}, [selectedDate]);
+	}, [selectedDate, budgetIds]);
 
 	const getTotalSpent = useCallback(() => {
 		return drizzleDb
@@ -59,7 +63,7 @@ function BudgetBigTotals({ selectedDate, budgetIds }: Props) {
 			.from(schema.transactions)
 			.where(
 				and(
-					inArray(schema.transactions.category_id, budgetIds),
+					inArray(schema.transactions.category_id, transactionCategoryIds),
 					sql`DATE(${schema.transactions.created_at}) BETWEEN DATE(${startOfMonth}) AND DATE(${endOfMonth})`
 				)
 			);

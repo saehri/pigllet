@@ -1,106 +1,92 @@
-import { useEffect, useState } from 'react';
-import { Trash2Icon } from 'lucide-react-native';
-import { ScrollView, StyleSheet } from 'react-native';
-import { useLocalSearchParams, useNavigation } from 'expo-router';
-import { Button, Dialog, Portal, useTheme } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+import { Button, Text } from 'react-native-paper';
+import { useLocalSearchParams } from 'expo-router';
 
 import useBudgetManager from '@/src/hooks/useBudgetManager';
-import EditBudgetForm from '@/src/components/forms/budget/edit-budget-form';
+import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
+
+import CustomTextInput from '@/src/components/forms/custom-text-input';
+import { useEffect } from 'react';
 
 export default function EditBudget() {
-	const navigation = useNavigation();
-	const { id } = useLocalSearchParams();
+	const { id, budgetLimit: limit } = useLocalSearchParams();
+	const currentCurrencyCode = usePreferredCurrencyStore(
+		(s) => s.currentCurrencyCode
+	);
+
+	const { loading, budgetLimit, updateBudgetRecord, setBudgetLimit } =
+		useBudgetManager({ actionType: 'update', budgetId: Number(id) });
 
 	useEffect(() => {
-		navigation.setOptions({
-			title: 'Edit budget',
-			headerRight: () => <DeleteBudgetDialog budgetId={Number(id)} />,
-		});
+		setBudgetLimit(limit as string);
 	}, []);
 
 	return (
-		<ScrollView showsVerticalScrollIndicator={false}>
-			<EditBudgetForm budgetId={Number(id)} />
-		</ScrollView>
-	);
-}
+		<View style={styles.formWrapper}>
+			<View style={styles.inputContainer}>
+				<Text style={styles.inputLabel} variant="bodyLarge">
+					Budet limit
+				</Text>
 
-type DeleteBudgetDialog = { budgetId: number };
-
-function DeleteBudgetDialog({ budgetId }: DeleteBudgetDialog) {
-	const theme = useTheme();
-
-	const [visible, setVisible] = useState<boolean>(false);
-
-	const openDialog = () => setVisible(true);
-	const closeDialog = () => setVisible(false);
-
-	const { loading, deleteBudgetRecord } = useBudgetManager({
-		actionType: 'delete',
-		budgetId,
-	});
-
-	return (
-		<>
-			<Portal>
-				<Dialog visible={visible} onDismiss={closeDialog}>
-					<Dialog.Icon
-						icon={(props) => (
-							<Trash2Icon
-								color={props.color}
-								size={props.size}
-								strokeWidth={1.5}
-							/>
-						)}
-					/>
-					<Dialog.Title style={styles.dialogTitleStyle}>
-						Delete budget record
-					</Dialog.Title>
-
-					<Dialog.Actions>
-						<Button
-							onPress={closeDialog}
-							disabled={loading}
-							labelStyle={styles.dialogContentTextStyle}
+				<CustomTextInput
+					keyboardType="decimal-pad"
+					value={budgetLimit}
+					onChangeText={setBudgetLimit}
+					leftComponent={
+						<Text
+							style={{ fontFamily: 'Manrope-Regular' }}
+							variant="labelMedium"
 						>
-							Cancel
-						</Button>
-
-						<Button
-							labelStyle={styles.dialogContentTextStyle}
-							onPress={deleteBudgetRecord}
-							disabled={loading}
-							loading={loading}
-						>
-							Delete
-						</Button>
-					</Dialog.Actions>
-				</Dialog>
-			</Portal>
+							{currentCurrencyCode}
+						</Text>
+					}
+				/>
+			</View>
 
 			<Button
-				onPress={openDialog}
-				mode="contained-tonal"
-				style={{ height: 40 }}
+				mode="contained"
+				style={styles.button}
+				labelStyle={styles.buttonLabel}
+				onPress={updateBudgetRecord}
+				disabled={loading || !budgetLimit.length}
+				loading={loading}
 			>
-				<Trash2Icon
-					strokeWidth={1.5}
-					color={theme.colors.onSecondaryContainer}
-					size={20}
-				/>
+				Save changes
 			</Button>
-		</>
+		</View>
 	);
 }
 
 const styles = StyleSheet.create({
-	dialogContentTextStyle: {
+	inputLabel: {
 		fontFamily: 'Manrope-Regular',
+	},
+	button: { borderRadius: 10, marginTop: 16, padding: 8, marginBottom: 8 },
+	buttonLabel: {
+		fontFamily: 'Manrope-Medium',
 		fontSize: 16,
 	},
-	dialogTitleStyle: {
+	inputContainer: {
+		gap: 8,
+	},
+	inputContainerFull: {
+		gap: 8,
+		flex: 1,
+	},
+	gridContainer: {
+		flexDirection: 'row',
+		gap: 8,
+	},
+	formWrapper: {
+		padding: 16,
+		gap: 16,
+	},
+	inputInfo: {
+		opacity: 0.8,
 		fontFamily: 'Manrope-Regular',
-		textAlign: 'center',
+	},
+	inputInfoContainer: {
+		marginTop: 8,
 	},
 });
 

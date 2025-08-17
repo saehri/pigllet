@@ -3,8 +3,8 @@ import { useSQLiteContext } from 'expo-sqlite';
 import { SetStateAction, useEffect, useState } from 'react';
 
 import * as schema from '@/db/schema';
+import { asc, eq, sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
-import { asc, eq, inArray, sql } from 'drizzle-orm';
 
 import { useRouter } from 'expo-router';
 import moment from 'moment';
@@ -14,7 +14,7 @@ type Props = {
 	budgetId?: number;
 };
 
-export const loadBudgetRecord = (selectedDate: Date) => {
+export const loadBudgetRecord = (selectedDate: moment.MomentInput) => {
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
 
@@ -46,14 +46,6 @@ export const loadBudgetRecord = (selectedDate: Date) => {
 			eq(schema.budgets.category_id, schema.categories.id)
 		)
 		.orderBy(asc(schema.budgets.category_id));
-};
-
-export const deleteBudgetRecord = async (budgetIds: number[], db: any) => {
-	const drizzleDb = drizzle(db, { schema });
-
-	return drizzleDb
-		.delete(schema.budgets)
-		.where(inArray(schema.budgets.id, budgetIds));
 };
 
 type UseBudgetManagerTypes = {
@@ -100,43 +92,24 @@ export default function useBudgetManager({
 	useEffect(() => {
 		async function populateForm() {
 			try {
+				// Populate the form when user want to edit
 				if (actionType === 'update') {
-					const budget = await drizzleDb
-						.select({
-							id: schema.budgets.id,
-							category_id: schema.budgets.category_id,
-							created_at: schema.budgets.created_at,
-							limit: schema.budgets.limit,
-							period: schema.budgets.period,
-							category: {
-								id: schema.categories.id,
-								icon_name: schema.categories.icon_name,
-								label: schema.categories.label,
-							},
-						})
+					const limit = await drizzleDb
+						.select({ limit: schema.budgets.limit })
 						.from(schema.budgets)
-						.where(eq(schema.budgets.id, Number(budgetId)))
-						.leftJoin(
-							schema.categories,
-							eq(schema.budgets.category_id, schema.categories.id)
-						);
+						.where(eq(schema.budgets.id, budgetId!));
 
-					if (budget.length) {
-						const { category, limit } = budget[0];
-
-						setBudgetCategory(category as schema.Category);
-						setBudgetLimit(limit.toString());
-					}
+					setBudgetLimit(limit[0].limit.toString());
 				}
 
-				const categories = await drizzleDb
-					.select()
-					.from(schema.categories)
-					.where(eq(schema.categories.type, 'expense'));
-
-				setTransactionCategories(categories);
-
 				if (actionType === 'create') {
+					const categories = await drizzleDb
+						.select()
+						.from(schema.categories)
+						.where(eq(schema.categories.type, 'expense'));
+
+					setTransactionCategories(categories);
+
 					setBudgetCategory(categories[0]);
 				}
 			} catch (error: any) {
@@ -144,7 +117,7 @@ export default function useBudgetManager({
 			}
 		}
 
-		if (actionType !== 'read') {
+		if (actionType !== 'update') {
 			populateForm();
 		}
 	}, []);

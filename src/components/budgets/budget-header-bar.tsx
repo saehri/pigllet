@@ -4,24 +4,27 @@ import { Trash2Icon, XIcon } from 'lucide-react-native';
 import { StyleSheet, ToastAndroid, View } from 'react-native';
 import Animated, { FadeInRight, FadeOutRight } from 'react-native-reanimated';
 
+import * as schema from '@/db/schema';
+import { inArray } from 'drizzle-orm';
 import { useSQLiteContext } from 'expo-sqlite';
-
-import { deleteBudgetRecord } from '@/src/hooks/useBudgetManager';
-import { useSelectedBudgets } from '@/store/useSelectedBudgets';
+import { drizzle } from 'drizzle-orm/expo-sqlite';
 import { fastSpatialEasing } from '@/utils/utils';
+import { useSelectedBudgets } from '@/store/useSelectedBudgets';
 
 export default function BudgetHeaderBar() {
 	const db = useSQLiteContext();
+	const drizzleDb = drizzle(db, { schema });
 
 	const [deleting, setDeleting] = useState<boolean>(false);
-
 	const { selectedBudgets, setSelectedBudgets } = useSelectedBudgets();
 
 	const handleDelete = useCallback(async () => {
 		try {
 			setDeleting(true);
 
-			deleteBudgetRecord(selectedBudgets, db);
+			await drizzleDb
+				.delete(schema.budgets)
+				.where(inArray(schema.budgets.id, selectedBudgets));
 		} catch (error: any) {
 			ToastAndroid.show(error.message, ToastAndroid.SHORT);
 		} finally {
@@ -30,13 +33,9 @@ export default function BudgetHeaderBar() {
 		}
 	}, [selectedBudgets]);
 
-	return (
-		<View style={styles.headerBar}>
-			<Text variant="titleLarge" style={styles.transactionsTitle}>
-				Budgets
-			</Text>
-
-			{selectedBudgets.length ? (
+	const buttonRenderer = useCallback(() => {
+		if (selectedBudgets.length)
+			return (
 				<Animated.View
 					entering={FadeInRight.duration(500).easing(fastSpatialEasing)}
 					exiting={FadeOutRight.duration(200).easing(fastSpatialEasing)}
@@ -66,9 +65,18 @@ export default function BudgetHeaderBar() {
 						{selectedBudgets.length}
 					</Button>
 				</Animated.View>
-			) : (
-				<View></View>
-			)}
+			);
+
+		return <></>;
+	}, [selectedBudgets]);
+
+	return (
+		<View style={styles.headerBar}>
+			<Text variant="titleLarge" style={styles.transactionsTitle}>
+				Budgets
+			</Text>
+
+			{buttonRenderer()}
 		</View>
 	);
 }

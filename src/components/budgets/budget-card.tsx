@@ -58,10 +58,13 @@ function BudgetCard({ data, position }: Props) {
 
 	const routeParams = useMemo(
 		() => ({
-			pathname: '/(root)/edit-budget' as any,
+			pathname: '/(root)/budget-detail' as any,
 			params: {
 				id: budget.id,
 				categoryId: category.id,
+				categoryLabel: category.label,
+				budgetPeriod: budget.period,
+				budgetLimit: budget.limit,
 			},
 		}),
 		[budget.id, category.id]

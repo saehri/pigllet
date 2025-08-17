@@ -34,7 +34,8 @@ export default function BudgetScreen() {
 	]);
 
 	const renderHeader = useCallback(() => {
-		const budgetIds = budgets.map((b) => b.budget.category_id);
+		const budgetIds = budgets.map((b) => b.budget.id);
+		const transactionCategoryIds = budgets.map((b) => b.category.id);
 
 		return (
 			<View style={{ paddingTop: 4, gap: 8 }}>
@@ -57,6 +58,7 @@ export default function BudgetScreen() {
 						<BudgetBigTotals
 							selectedDate={selectedDate}
 							budgetIds={budgetIds}
+							transactionCategoryIds={transactionCategoryIds}
 						/>
 						<BudgetActualVsPlanned
 							budgets={budgets}
