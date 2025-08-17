@@ -1,0 +1,1 @@
+DROP INDEX `budgets_category_id_unique`;

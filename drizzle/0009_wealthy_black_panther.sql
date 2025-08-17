@@ -1,0 +1,1 @@
+ALTER TABLE `budgets` RENAME COLUMN "max_spending" TO "limit";

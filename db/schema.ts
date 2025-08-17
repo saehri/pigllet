@@ -41,8 +41,7 @@ export const budgets = sqliteTable('budgets', {
 		.notNull()
 		.references(() => categories.id, { onDelete: 'cascade' }),
 	period: text('period').notNull(),
-	max_spending: integer('max_spending').notNull(),
-	note: text('note'),
+	limit: integer('limit').notNull(),
 	created_at: text('created_at').notNull(),
 });
 
