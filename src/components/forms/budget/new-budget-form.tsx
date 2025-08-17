@@ -1,88 +1,76 @@
 import { StyleSheet, View } from 'react-native';
-import {
-	Text,
-	Button,
-	useTheme,
-	TextInput,
-	ActivityIndicator,
-} from 'react-native-paper';
+import { Text, Button } from 'react-native-paper';
 
 import useBudgetManager from '@/src/hooks/useBudgetManager';
+import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
-import DatePicker from '../date-picker';
-import SelectInputWithIcon from '../select-input-with-icon';
+import CustomTextInput from '../custom-text-input';
+import MonthPicker from '../../reusables/month-picker';
+import TransactionCategorySelector from '../transaction-category-selector';
 
 export default function NewBudgetForm() {
-	const theme = useTheme();
+	const currentCurrencyCode = usePreferredCurrencyStore(
+		(s) => s.currentCurrencyCode
+	);
 
 	const {
 		transactionCategories,
-		budgetMaxSpending,
 		budgetCategory,
 		budgetPeriod,
-		budgetNote,
+		budgetLimit,
 		loading,
-		setBudgetNote,
+		setBudgetLimit,
 		setBudgetPeriod,
 		setBudgetCategory,
 		createBudgetRecord,
-		setBudgetMaxSpending,
 	} = useBudgetManager({ actionType: 'create' });
 
 	return (
 		<View style={styles.formWrapper}>
+			<View style={styles.inputContainerFull}>
+				<Text style={styles.inputLabel} variant="bodyLarge">
+					Spending limit
+				</Text>
+
+				<CustomTextInput
+					keyboardType="number-pad"
+					onChangeText={setBudgetLimit}
+					value={budgetLimit}
+					leftComponent={
+						<Text
+							style={{ fontFamily: 'Manrope-Regular' }}
+							variant="labelMedium"
+						>
+							{currentCurrencyCode}
+						</Text>
+					}
+					placeholder="6900"
+				/>
+			</View>
+
 			<View style={styles.gridContainer}>
 				<View style={styles.inputContainerFull}>
 					<Text style={styles.inputLabel} variant="bodyLarge">
 						Budget category
 					</Text>
-					<SelectInputWithIcon
+
+					<TransactionCategorySelector
 						data={transactionCategories}
-						selectedCategory={budgetCategory}
-						handleSelect={setBudgetCategory}
+						selectedCategory={budgetCategory!}
+						handleSelect={setBudgetCategory as any}
 					/>
 				</View>
 
 				<View style={styles.inputContainerFull}>
 					<Text style={styles.inputLabel} variant="bodyLarge">
-						Max spending
+						Budget period
 					</Text>
-					<TextInput
-						keyboardType="decimal-pad"
-						value={budgetMaxSpending}
-						onChangeText={setBudgetMaxSpending}
-						contentStyle={styles.inputContent}
+
+					<MonthPicker
+						selectedDate={budgetPeriod}
+						setSelectedDate={setBudgetPeriod}
 					/>
 				</View>
-			</View>
-
-			<View style={styles.gridContainer}>
-				<View style={styles.inputContainerFull}>
-					<Text style={styles.inputLabel} variant="bodyLarge">
-						Note
-					</Text>
-					<TextInput
-						value={budgetNote}
-						onChangeText={setBudgetNote}
-						contentStyle={styles.inputContent}
-					/>
-				</View>
-			</View>
-
-			<View style={styles.inputContainer}>
-				<Text style={styles.inputLabel} variant="bodyLarge">
-					Budget period
-				</Text>
-
-				<DatePicker
-					selectedDate={budgetPeriod}
-					setSelectedDate={setBudgetPeriod}
-				/>
-				<Text variant="labelSmall" style={styles.inputInfo}>
-					You cannot edit the budget period once it's created. To set your
-					monthly budget period please pick any date of the month of your
-					desired.
-				</Text>
 			</View>
 
 			<Button
@@ -90,13 +78,10 @@ export default function NewBudgetForm() {
 				style={styles.button}
 				labelStyle={styles.buttonLabel}
 				onPress={createBudgetRecord}
-				disabled={!budgetMaxSpending.length}
+				disabled={!budgetLimit.length}
+				loading={loading}
 			>
-				{loading ? (
-					<ActivityIndicator size={20} color={theme.colors.onPrimary} />
-				) : (
-					'Save budget record'
-				)}
+				Save budget record
 			</Button>
 		</View>
 	);

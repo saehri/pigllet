@@ -1,9 +1,8 @@
-import { Picker } from '@react-native-picker/picker';
-import { Dispatch, SetStateAction, useState } from 'react';
-
-import { CalendarFoldIcon } from 'lucide-react-native';
-import { Button, Dialog, Portal, useTheme } from 'react-native-paper';
 import { View } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+import { CalendarFoldIcon } from 'lucide-react-native';
+import { Dispatch, memo, SetStateAction, useState } from 'react';
+import { Button, Dialog, Portal, useTheme } from 'react-native-paper';
 
 const months = [
 	{ label: 'January', value: 0 },
@@ -30,10 +29,7 @@ type Props = {
 	onValueChange: Dispatch<SetStateAction<Date>>;
 };
 
-export default function MonthYearSelectorDialog({
-	onValueChange,
-	selectedValue,
-}: Props) {
+function MonthYearSelectorDialog({ onValueChange, selectedValue }: Props) {
 	const theme = useTheme();
 
 	const [visible, setVisible] = useState<boolean>(false);
@@ -184,3 +180,4 @@ export default function MonthYearSelectorDialog({
 	);
 }
 
+export default memo(MonthYearSelectorDialog);

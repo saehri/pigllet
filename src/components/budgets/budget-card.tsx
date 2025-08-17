@@ -143,7 +143,7 @@ function BudgetCard({ data, position }: Props) {
 
 						<View style={styles.amountRow}>
 							<Text style={styles.cardPrice} variant="bodyMedium">
-								{formattedAmount(budget.max_spending)}
+								{formattedAmount(budget.limit)}
 							</Text>
 						</View>
 					</View>
@@ -160,7 +160,7 @@ function BudgetCard({ data, position }: Props) {
 							<CurrentSpending
 								categoryId={category.id!}
 								budgetDate={budget.period}
-								limit={budget.max_spending}
+								limit={budget.limit}
 							/>
 						</View>
 					</View>

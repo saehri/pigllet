@@ -144,7 +144,7 @@ function RenderChart({ budgets, actualSpending, budgetIds }: RenderChart) {
 
 		for (let i = 0; i < sortedBudgets.length; i++) {
 			data.push({
-				value: sortedBudgets[i].budget.max_spending,
+				value: sortedBudgets[i].budget.limit,
 				label: sortedBudgets[i].category.label,
 				spacing: 2,
 				labelWidth: 150,
@@ -156,7 +156,7 @@ function RenderChart({ budgets, actualSpending, budgetIds }: RenderChart) {
 				frontColor: '#006cd1ff',
 				topLabelComponent: () => (
 					<Text style={{ color: 'gray', fontSize: 9 }}>
-						{formattedAmount(sortedBudgets[i].budget.max_spending)}
+						{formattedAmount(sortedBudgets[i].budget.limit)}
 					</Text>
 				),
 			});

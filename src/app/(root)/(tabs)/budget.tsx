@@ -44,6 +44,7 @@ export default function BudgetScreen() {
 						onPrev={() => updateMonth(-1)}
 						selectedDate={selectedDate}
 						setSelectedDate={setSelectedDate}
+						showAdvanceDataSelector={false}
 					/>
 				</View>
 

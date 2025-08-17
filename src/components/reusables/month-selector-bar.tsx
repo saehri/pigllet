@@ -12,15 +12,29 @@ type Props = {
 	setSelectedDate: Dispatch<SetStateAction<Date>>;
 	onNext: () => void;
 	onPrev: () => void;
+	showAdvanceDataSelector?: boolean;
 };
 
-const MonthSelectorBar = memo(function MonthSelectorBar({
+function MonthSelectorBar({
 	selectedDate,
 	setSelectedDate,
 	onNext,
 	onPrev,
+	showAdvanceDataSelector = true,
 }: Props) {
 	const theme = useTheme();
+
+	const renderAdvanceDateSelector = () => {
+		if (showAdvanceDataSelector)
+			return (
+				<MonthYearSelectorDialog
+					selectedValue={selectedDate}
+					onValueChange={setSelectedDate}
+				/>
+			);
+
+		return <></>;
+	};
 
 	return (
 		<View
@@ -73,14 +87,12 @@ const MonthSelectorBar = memo(function MonthSelectorBar({
 						color={theme.colors.onSecondaryContainer}
 					/>
 				</Button>
-				<MonthYearSelectorDialog
-					onValueChange={setSelectedDate}
-					selectedValue={selectedDate}
-				/>
+
+				{renderAdvanceDateSelector()}
 			</View>
 		</View>
 	);
-});
+}
 
-export default MonthSelectorBar;
+export default memo(MonthSelectorBar);
 

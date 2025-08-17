@@ -42,7 +42,7 @@ function BudgetBigTotals({ selectedDate, budgetIds }: Props) {
 	const getTotalBudget = useCallback(() => {
 		return drizzleDb
 			.select({
-				value: sql<number>`SUM(${schema.budgets.max_spending})`,
+				value: sql<number>`SUM(${schema.budgets.limit})`,
 			})
 			.from(schema.budgets)
 			.where(

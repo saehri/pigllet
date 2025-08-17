@@ -27,8 +27,7 @@ export const loadBudgetRecord = (selectedDate: Date) => {
 				id: schema.budgets.id,
 				category_id: schema.budgets.category_id,
 				created_at: schema.budgets.created_at,
-				max_spending: schema.budgets.max_spending,
-				note: schema.budgets.note,
+				limit: schema.budgets.limit,
 				period: schema.budgets.period,
 			},
 			category: {
@@ -63,20 +62,18 @@ type UseBudgetManagerTypes = {
 	updateBudgetRecord: () => Promise<void>;
 	deleteBudgetRecord: () => Promise<void>;
 	budgetCategory: schema.Category | undefined;
+	budgetPeriod: Date;
+	budgetCreatedAt: Date;
+	budgetLimit: string;
+	currentBudgetSpending: string;
+	transactionCategories: schema.Category[];
 	setBudgetCategory: React.Dispatch<
 		React.SetStateAction<schema.Category | undefined>
 	>;
-	budgetPeriod: Date;
-	setBudgetPeriod: React.Dispatch<SetStateAction<Date>>;
-	budgetMaxSpending: string;
-	setBudgetMaxSpending: React.Dispatch<React.SetStateAction<string>>;
-	currentBudgetSpending: string;
+	setBudgetLimit: React.Dispatch<React.SetStateAction<string>>;
 	setBudgetSpending: React.Dispatch<React.SetStateAction<string>>;
-	budgetNote: string;
-	setBudgetNote: React.Dispatch<React.SetStateAction<string>>;
-	budgetCreatedAt: Date;
 	setBudgetCreatedAt: React.Dispatch<React.SetStateAction<Date>>;
-	transactionCategories: schema.Category[];
+	setBudgetPeriod: React.Dispatch<SetStateAction<Date>>;
 };
 
 export default function useBudgetManager({
@@ -96,9 +93,8 @@ export default function useBudgetManager({
 	// ---- form input states
 	const [budgetCategory, setBudgetCategory] = useState<schema.Category>();
 	const [budgetPeriod, setBudgetPeriod] = useState(new Date());
-	const [budgetMaxSpending, setBudgetMaxSpending] = useState<string>('');
+	const [budgetLimit, setBudgetLimit] = useState<string>('');
 	const [currentBudgetSpending, setBudgetSpending] = useState<string>('');
-	const [budgetNote, setBudgetNote] = useState<string>('');
 	const [budgetCreatedAt, setBudgetCreatedAt] = useState<Date>(new Date());
 
 	useEffect(() => {
@@ -110,8 +106,7 @@ export default function useBudgetManager({
 							id: schema.budgets.id,
 							category_id: schema.budgets.category_id,
 							created_at: schema.budgets.created_at,
-							max_spending: schema.budgets.max_spending,
-							note: schema.budgets.note,
+							limit: schema.budgets.limit,
 							period: schema.budgets.period,
 							category: {
 								id: schema.categories.id,
@@ -127,11 +122,10 @@ export default function useBudgetManager({
 						);
 
 					if (budget.length) {
-						const { category, max_spending, note } = budget[0];
+						const { category, limit } = budget[0];
 
 						setBudgetCategory(category as schema.Category);
-						setBudgetMaxSpending(max_spending.toString());
-						setBudgetNote(note || '');
+						setBudgetLimit(limit.toString());
 					}
 				}
 
@@ -165,9 +159,8 @@ export default function useBudgetManager({
 			const payload: schema.Budget = {
 				category_id: Number(budgetCategory.id),
 				created_at: moment(new Date()).format('YYYY-MM-DD'),
-				max_spending: Number(budgetMaxSpending),
+				limit: Number(budgetLimit),
 				period: moment(new Date()).format('YYYY-MM-DD'),
-				note: budgetNote,
 			};
 
 			await drizzleDb
@@ -175,8 +168,7 @@ export default function useBudgetManager({
 				.values(payload)
 				.onConflictDoNothing();
 
-			setBudgetMaxSpending('');
-			setBudgetNote('');
+			setBudgetLimit('');
 
 			ToastAndroid.show('Budget created!', ToastAndroid.SHORT);
 		} catch (error: any) {
@@ -195,8 +187,7 @@ export default function useBudgetManager({
 				.update(schema.budgets)
 				.set({
 					category_id: budgetCategory?.id,
-					max_spending: Number(budgetMaxSpending),
-					note: budgetNote,
+					limit: Number(budgetLimit),
 				})
 				.where(eq(schema.budgets.id, Number(budgetId)));
 
@@ -231,14 +222,12 @@ export default function useBudgetManager({
 		createBudgetRecord,
 		budgetCategory,
 		budgetCreatedAt,
-		budgetMaxSpending,
-		budgetNote,
+		budgetLimit,
 		budgetPeriod,
 		currentBudgetSpending,
 		setBudgetCategory,
 		setBudgetCreatedAt,
-		setBudgetMaxSpending,
-		setBudgetNote,
+		setBudgetLimit,
 		setBudgetSpending,
 		transactionCategories,
 		setBudgetPeriod,
