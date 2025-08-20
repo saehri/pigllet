@@ -1,14 +1,11 @@
 import { useCallback } from 'react';
 import { FlatList } from 'react-native';
-import { useFocusEffect } from 'expo-router';
 import { useSQLiteContext } from 'expo-sqlite';
 
 import { eq } from 'drizzle-orm';
 import * as schema from '@/db/schema';
 import { getCardPosition } from '@/utils/utils';
 import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
-
-import { useSelectedCategory } from '@/store/useSelectedCategory';
 
 import CategoryFab from '@/src/components/reusables/category-fab';
 import CategoryListHeader from '@/src/components/reusables/category-list-header';
@@ -17,10 +14,6 @@ import TransactionCategoryCard from '@/src/components/reusables/transaction-cate
 export default function ExpenseCategories() {
 	const db = useSQLiteContext();
 	const drizzleDb = drizzle(db, { schema });
-
-	const setSelectedCategories = useSelectedCategory(
-		(s) => s.setSelectedCategories
-	);
 
 	const getTransactionCategories = useCallback(
 		(type: schema.TransactionType) => {
@@ -34,15 +27,6 @@ export default function ExpenseCategories() {
 
 	const { data: expenseCategories } = useLiveQuery(
 		getTransactionCategories('income')
-	);
-
-	// unselect all selected category if the user change route
-	useFocusEffect(
-		useCallback(() => {
-			return () => {
-				setSelectedCategories([]);
-			};
-		}, [])
 	);
 
 	return (

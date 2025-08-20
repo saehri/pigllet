@@ -11,6 +11,7 @@ import { drizzle } from 'drizzle-orm/expo-sqlite';
 import { useSelectedTransactions } from '@/store/useSelectedTransactions';
 
 import { fastSpatialEasing } from '@/utils/utils';
+import { useFocusEffect } from 'expo-router';
 
 export default function HeaderBar() {
 	const db = useSQLiteContext();
@@ -101,6 +102,14 @@ export default function HeaderBar() {
 			setSelectedTransactions([]);
 		}
 	}, [selectedTransactions]);
+
+	useFocusEffect(
+		useCallback(() => {
+			return () => {
+				setSelectedTransactions([]);
+			};
+		}, [])
+	);
 
 	return (
 		<View style={styles.headerBar}>

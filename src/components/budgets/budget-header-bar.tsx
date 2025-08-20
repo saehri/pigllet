@@ -10,6 +10,7 @@ import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 import { fastSpatialEasing } from '@/utils/utils';
 import { useSelectedBudgets } from '@/store/useSelectedBudgets';
+import { useFocusEffect } from 'expo-router';
 
 export default function BudgetHeaderBar() {
 	const db = useSQLiteContext();
@@ -69,6 +70,14 @@ export default function BudgetHeaderBar() {
 
 		return <></>;
 	}, [selectedBudgets]);
+
+	useFocusEffect(
+		useCallback(() => {
+			return () => {
+				setSelectedBudgets([]);
+			};
+		}, [])
+	);
 
 	return (
 		<View style={styles.headerBar}>

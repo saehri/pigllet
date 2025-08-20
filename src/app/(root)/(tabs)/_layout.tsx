@@ -160,6 +160,9 @@ export default function Layout() {
 								}
 							/>
 						),
+						tabBarItemStyle: {
+							display: 'none',
+						},
 					}}
 				/>
 			</Tabs>

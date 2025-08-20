@@ -25,11 +25,11 @@ export default function EditBudget() {
 		<View style={styles.formWrapper}>
 			<View style={styles.inputContainer}>
 				<Text style={styles.inputLabel} variant="bodyLarge">
-					Budet limit
+					Budet limit *
 				</Text>
 
 				<CustomTextInput
-					keyboardType="decimal-pad"
+					keyboardType="number-pad"
 					value={budgetLimit}
 					onChangeText={setBudgetLimit}
 					leftComponent={

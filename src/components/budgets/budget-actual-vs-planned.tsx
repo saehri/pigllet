@@ -88,7 +88,7 @@ function BudgetActualVSPlanned({ budgets, selectedDate }: Props) {
 	return (
 		<Surface mode="flat" elevation={2} style={styles.container}>
 			<Text style={styles.chartTitle} variant="bodyLarge">
-				Actual vs Planned
+				Planned vs Actual
 			</Text>
 
 			<View>
@@ -128,13 +128,6 @@ function RenderChart({ budgets, actualSpending, budgetIds }: RenderChart) {
 	const theme = useTheme();
 	const { currentCurrencyCode } = usePreferredCurrencyStore();
 
-	const formattedAmount = useCallback(
-		(amount: number) => {
-			return formatCurrencyByCode(amount, currentCurrencyCode);
-		},
-		[currentCurrencyCode]
-	);
-
 	const getChartData = useMemo(() => {
 		const sortedBudgets = budgets.sort(
 			(a, b) => a.budget.category_id - b.budget.category_id
@@ -156,7 +149,10 @@ function RenderChart({ budgets, actualSpending, budgetIds }: RenderChart) {
 				frontColor: '#006cd1ff',
 				topLabelComponent: () => (
 					<Text style={{ color: 'gray', fontSize: 9 }}>
-						{formattedAmount(sortedBudgets[i].budget.limit)}
+						{formatCurrencyByCode(
+							sortedBudgets[i]?.budget.limit ?? 0,
+							currentCurrencyCode
+						)}
 					</Text>
 				),
 			});
@@ -166,7 +162,10 @@ function RenderChart({ budgets, actualSpending, budgetIds }: RenderChart) {
 				spacing: 24,
 				topLabelComponent: () => (
 					<Text style={{ color: 'gray', fontSize: 9 }}>
-						{formattedAmount(actualSpending[i]?.amount ?? 0)}
+						{formatCurrencyByCode(
+							actualSpending[i]?.amount ?? 0,
+							currentCurrencyCode
+						)}
 					</Text>
 				),
 			});

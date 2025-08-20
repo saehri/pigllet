@@ -94,12 +94,12 @@ export default function useBudgetManager({
 			try {
 				// Populate the form when user want to edit
 				if (actionType === 'update') {
-					const limit = await drizzleDb
+					const budgetLimit = await drizzleDb
 						.select({ limit: schema.budgets.limit })
 						.from(schema.budgets)
 						.where(eq(schema.budgets.id, budgetId!));
 
-					setBudgetLimit(limit[0].limit.toString());
+					setBudgetLimit(budgetLimit[0].limit.toString());
 				}
 
 				if (actionType === 'create') {

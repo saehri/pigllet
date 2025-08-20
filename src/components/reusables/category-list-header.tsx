@@ -1,4 +1,5 @@
 import { Button } from 'react-native-paper';
+import { useFocusEffect } from 'expo-router';
 import { memo, useCallback, useState } from 'react';
 import { Trash2Icon, XIcon } from 'lucide-react-native';
 import { StyleSheet, ToastAndroid, View } from 'react-native';
@@ -78,6 +79,14 @@ function CategoryListHeader({ defaultCategoryLabel }: Props) {
 			setSelectedCategories([]);
 		}
 	}, [selectedCategories]);
+
+	useFocusEffect(
+		useCallback(() => {
+			return () => {
+				setSelectedCategories([]);
+			};
+		}, [])
+	);
 
 	return (
 		<View style={styles.headerBar}>

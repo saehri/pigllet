@@ -100,6 +100,7 @@ export default function MainAccountSetupScreen() {
 						</Text>
 
 						<CustomTextInput
+							keyboardType="number-pad"
 							value={accountNumber}
 							onChangeText={setAccountNumber}
 							placeholder="**** **** **** ****"
