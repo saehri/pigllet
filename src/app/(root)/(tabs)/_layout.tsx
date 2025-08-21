@@ -3,7 +3,6 @@ import { Tabs, useRouter } from 'expo-router';
 import { Button, useTheme } from 'react-native-paper';
 import {
 	BanknoteIcon,
-	CalendarSync,
 	ChartPieIcon,
 	House,
 	SettingsIcon,
@@ -141,28 +140,6 @@ export default function Layout() {
 								}
 							/>
 						),
-					}}
-				/>
-				<Tabs.Screen
-					name="subscriptions"
-					options={{
-						title: 'Subscriptions',
-						tabBarIcon: (props) => (
-							<CalendarSync
-								size={20}
-								color={props.color}
-								strokeWidth={1.5}
-								fillOpacity={props.focused ? 0.3 : 0}
-								fill={
-									props.focused
-										? theme.colors.onPrimary
-										: theme.colors.background
-								}
-							/>
-						),
-						tabBarItemStyle: {
-							display: 'none',
-						},
 					}}
 				/>
 			</Tabs>

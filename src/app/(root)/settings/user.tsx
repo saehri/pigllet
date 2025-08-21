@@ -77,7 +77,6 @@ function ResetUserPreference() {
 			await drizzleDb.delete(schema.accounts);
 			await drizzleDb.delete(schema.budgets);
 			await drizzleDb.delete(schema.categories);
-			await drizzleDb.delete(schema.subscriptions);
 			await drizzleDb.delete(schema.transactions);
 
 			hideDialog();

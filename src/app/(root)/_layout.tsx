@@ -49,14 +49,9 @@ export default function Layout() {
 				}}
 			/>
 			<Stack.Screen name="new-budget" options={{ title: 'New budget' }} />
-			<Stack.Screen
-				name="new-subscription"
-				options={{ title: 'New subscription' }}
-			/>
 			<Stack.Screen name="edit-expense" />
 			<Stack.Screen name="edit-income" />
 			<Stack.Screen name="edit-transfer" />
-			<Stack.Screen name="edit-subscription" />
 			<Stack.Screen name="edit-budget" options={{ title: 'Edit budget' }} />
 			<Stack.Screen name="budget-detail" />
 			<Stack.Screen name="category-form" />

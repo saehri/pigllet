@@ -34,10 +34,6 @@ const SECTIONS = [
 		description: 'Group your spending to see where your money goes.',
 	},
 	{
-		title: 'Never miss a payment',
-		description: 'Get reminders for upcoming bills and subscriptions.',
-	},
-	{
 		title: 'Stay on budget',
 		description: 'Set limits and track your spending in real time.',
 	},
