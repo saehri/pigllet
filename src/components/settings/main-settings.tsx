@@ -1,13 +1,7 @@
 import { useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { List, Text, useTheme } from 'react-native-paper';
-import {
-	LockKeyhole,
-	Notebook,
-	SwatchBook,
-	User,
-	Wallet2,
-} from 'lucide-react-native';
+import { Notebook, SwatchBook, User, Wallet2 } from 'lucide-react-native';
 
 const borderRadius = {
 	tr: {
@@ -47,7 +41,7 @@ export default function MainSetting() {
 			<View style={styles.settingList}>
 				<List.Item
 					title="User"
-					description="Email, password, delete data"
+					description="Delete data"
 					titleStyle={{ fontFamily: 'Manrope-Regular' }}
 					descriptionStyle={{ fontFamily: 'Manrope-Light', opacity: 0.7 }}
 					onPress={() => router.push('/(root)/settings/user')}
@@ -108,29 +102,8 @@ export default function MainSetting() {
 					]}
 				/>
 				<List.Item
-					title="Security"
-					description="App lock, fingerprint"
-					titleStyle={{ fontFamily: 'Manrope-Regular' }}
-					descriptionStyle={{ fontFamily: 'Manrope-Light', opacity: 0.7 }}
-					onPress={() => router.push('/(root)/settings/security')}
-					left={(props) => (
-						<LockKeyhole
-							{...props}
-							size={24}
-							strokeWidth={1.5}
-							color={props.color}
-						/>
-					)}
-					style={[
-						styles.listItem,
-						{
-							backgroundColor: theme.colors.elevation.level2,
-						},
-					]}
-				/>
-				<List.Item
 					title="Accounts"
-					description="Transactions by accounts, add account"
+					description="Add and edit account"
 					titleStyle={{ fontFamily: 'Manrope-Regular' }}
 					descriptionStyle={{ fontFamily: 'Manrope-Light', opacity: 0.7 }}
 					onPress={() => router.push('/(root)/settings/accounts')}

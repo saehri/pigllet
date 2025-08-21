@@ -22,33 +22,6 @@ export default function AccountSettingScreen() {
 			style={{ backgroundColor: theme.colors.background, padding: 16 }}
 		>
 			<View style={{ gap: 24 }}>
-				<SettingContentWrapper headerTitle="Account">
-					<SettingContentButton
-						label="Email (coming soon)"
-						buttonRight={
-							<ChevronRight
-								strokeWidth={1.5}
-								size={20}
-								color={theme.colors.onSurface}
-								style={{ opacity: 0.6 }}
-							/>
-						}
-						position="first"
-					/>
-					<SettingContentButton
-						label="Password (coming soon)"
-						buttonRight={
-							<ChevronRight
-								strokeWidth={1.5}
-								size={20}
-								color={theme.colors.onSurface}
-								style={{ opacity: 0.6 }}
-							/>
-						}
-						position="last"
-					/>
-				</SettingContentWrapper>
-
 				<ResetUserPreference />
 			</View>
 		</ScrollView>
