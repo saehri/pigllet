@@ -9,9 +9,7 @@ import {
 } from 'react-native-paper';
 
 import { useRouter } from 'expo-router';
-import { useSQLiteContext } from 'expo-sqlite';
-import { drizzle } from 'drizzle-orm/expo-sqlite';
-import { useUserFirstTimeStore } from '@/store/useUserFirstTimeStore';
+import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 
 import * as schema from '@/db/schema';
 import { incomeCategories } from '@/constants/income-category';
@@ -52,8 +50,7 @@ const SECTIONS = [
 export default function OnboardingScreen() {
 	const theme = useTheme();
 	const router = useRouter();
-	const db = useSQLiteContext();
-	const drizzleDb = drizzle(db, { schema });
+	const drizzleDb = useDrizzleDB();
 
 	const [index, setIndex] = useState(0);
 	const [isSettingUp, setIsSettingUp] = useState<boolean>(false);

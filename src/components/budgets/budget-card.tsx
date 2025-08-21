@@ -14,11 +14,11 @@ import { TRANSACTION_CARD_BR, transactionColorMap } from '@/utils/utils';
 import { useSelectedBudgets } from '@/store/useSelectedBudgets';
 import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
-import { useSQLiteContext } from 'expo-sqlite';
+import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { and, count, eq, gte, lte, sql } from 'drizzle-orm';
-import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
 
 import LucideIcons from '../reusables/lucide-icons';
+import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 
 type Props = {
 	data: { budget: schema.Budget; category: schema.Category };
@@ -179,8 +179,7 @@ type TransactionsCount = {
 };
 
 function TransactionsCount({ budgetDate, categoryId }: TransactionsCount) {
-	const db = useSQLiteContext();
-	const drizzleDb = drizzle(db, { schema });
+	const drizzleDb = useDrizzleDB();
 
 	const getCurrentSpending = useMemo(() => {
 		const whereConditions = [eq(schema.transactions.category_id, categoryId)];
@@ -231,8 +230,7 @@ function CurrentSpending({
 	budgetDate,
 	limit,
 }: CurrentSpendingProps) {
-	const db = useSQLiteContext();
-	const drizzleDb = drizzle(db, { schema });
+	const drizzleDb = useDrizzleDB();
 
 	const getCurrentSpending = useMemo(() => {
 		const whereConditions = [eq(schema.transactions.category_id, categoryId)];

@@ -5,12 +5,12 @@ import { Surface, Text, useTheme } from 'react-native-paper';
 import moment from 'moment';
 
 import * as schema from '@/db/schema';
-import { useSQLiteContext } from 'expo-sqlite';
-import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
+import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { and, gte, lte, sql } from 'drizzle-orm';
 
 import { TRANSACTION_CARD_BR, formatCurrencyByCode } from '@/utils/utils';
 import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
+import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 
 type Props = {
 	selectedDate?: Date;
@@ -21,8 +21,7 @@ const TransactionsSummary = memo(function TransactionsSummary({
 	selectedDate,
 	range,
 }: Props) {
-	const db = useSQLiteContext();
-	const drizzleDb = drizzle(db, { schema });
+	const drizzleDb = useDrizzleDB();
 
 	const getSumByTypeInDateRange = (selectedDate?: Date) => {
 		const whereConditions = [];

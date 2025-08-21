@@ -6,9 +6,9 @@ import { Surface, Text, useTheme } from 'react-native-paper';
 import moment from 'moment';
 
 import * as schema from '@/db/schema';
-import { useSQLiteContext } from 'expo-sqlite';
+import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
+import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 import { and, asc, eq, gte, inArray, lte, sql } from 'drizzle-orm';
-import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
 
 import { formatCurrencyByCode } from '@/utils/utils';
 import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
@@ -23,8 +23,7 @@ type Props = {
 };
 
 function BudgetActualVSPlanned({ budgets, selectedDate }: Props) {
-	const db = useSQLiteContext();
-	const drizzleDb = drizzle(db, { schema });
+	const drizzleDb = useDrizzleDB();
 
 	const budgetIds = budgets.map((b) => b.budget.category_id).sort();
 

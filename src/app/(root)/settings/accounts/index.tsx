@@ -5,7 +5,6 @@ import {
 	useEffect,
 	useState,
 } from 'react';
-import { useSQLiteContext } from 'expo-sqlite';
 import {
 	FlatList,
 	Image,
@@ -20,7 +19,8 @@ import Animated, { FadeInDown, FadeInRight } from 'react-native-reanimated';
 
 import * as schema from '@/db/schema';
 import { Button, Surface, Text, useTheme } from 'react-native-paper';
-import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
+import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
+import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 
 import { loadTransactionsData } from '@/src/hooks/useTransactionsManager';
 import { useSelectedTransactions } from '@/store/useSelectedTransactions';
@@ -36,14 +36,12 @@ import AccountCardPreview from '@/src/components/reusables/account-card-preview'
 export default function AccountsSettingScreen() {
 	const theme = useTheme();
 	const router = useRouter();
+	const navigation = useNavigation();
 
-	const db = useSQLiteContext();
-	const drizzleDb = drizzle(db, { schema });
+	const drizzleDb = useDrizzleDB();
 	const { data: accounts } = useLiveQuery(
 		drizzleDb.select().from(schema.accounts)
 	);
-
-	const navigation = useNavigation();
 
 	const setSelectedTransactions = useSelectedTransactions(
 		(s) => s.setSelectedTransactions
@@ -177,7 +175,10 @@ function TransactionList({ accountId }: TransactionList) {
 						<FlatList
 							showsVerticalScrollIndicator={false}
 							ListEmptyComponent={<NoItemNotice />}
-							data={groupedTransactionsByDate(transactions, 'MMM DD, YYYY')}
+							data={groupedTransactionsByDate(
+								transactions as any,
+								'MMM DD, YYYY'
+							)}
 							renderItem={renderTransactionGroup}
 						/>
 					</Surface>

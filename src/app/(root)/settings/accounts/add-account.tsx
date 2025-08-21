@@ -5,8 +5,7 @@ import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { eq } from 'drizzle-orm';
 import * as schema from '@/db/schema';
-import { useSQLiteContext } from 'expo-sqlite';
-import { drizzle } from 'drizzle-orm/expo-sqlite';
+import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 
 import ColorPicker from '@/src/components/forms/color-picker';
 import useAccountManager from '@/src/hooks/useAccountManager';
@@ -18,8 +17,7 @@ const cardColors = ['#EA1C7E', '#ecb201ff', '#1ab3b3ff'];
 export default function EditAccountScreen() {
 	const theme = useTheme();
 
-	const db = useSQLiteContext();
-	const drizzleDb = drizzle(db, { schema });
+	const drizzleDb = useDrizzleDB();
 
 	const { accountId: selectedAccountId } = useLocalSearchParams();
 	const {

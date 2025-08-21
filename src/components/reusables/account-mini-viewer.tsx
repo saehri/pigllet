@@ -5,8 +5,8 @@ import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react-native';
 import Animated, { SlideInRight, SlideOutRight } from 'react-native-reanimated';
 
 import * as schema from '@/db/schema';
-import { useSQLiteContext } from 'expo-sqlite';
-import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
+import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
+import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 
 import { formatCurrencyByCode } from '@/utils/utils';
 import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
@@ -18,8 +18,7 @@ export default function AccountMiniViewer() {
 
 	const theme = useTheme();
 
-	const db = useSQLiteContext();
-	const drizzleDb = drizzle(db, { schema });
+	const drizzleDb = useDrizzleDB();
 	const { data: account } = useLiveQuery(
 		drizzleDb
 			.select({

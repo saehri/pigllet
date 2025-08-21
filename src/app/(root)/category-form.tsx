@@ -5,15 +5,13 @@ import { useLocalSearchParams, useNavigation } from 'expo-router';
 
 import { eq } from 'drizzle-orm';
 import * as schema from '@/db/schema';
-import { useSQLiteContext } from 'expo-sqlite';
-import { drizzle } from 'drizzle-orm/expo-sqlite';
+import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 
 import SelectInput from '@/src/components/forms/select-input';
 import IconSelector from '@/src/components/forms/icon-selector';
 
 export default function CategoryForm() {
-	const db = useSQLiteContext();
-	const drizzleDb = drizzle(db, { schema });
+	const drizzleDb = useDrizzleDB();
 	const navigation = useNavigation();
 	const { id, categType, formAction } = useLocalSearchParams();
 

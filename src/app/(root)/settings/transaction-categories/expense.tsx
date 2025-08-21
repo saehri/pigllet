@@ -1,19 +1,18 @@
 import { useCallback } from 'react';
 import { FlatList } from 'react-native';
-import { useSQLiteContext } from 'expo-sqlite';
 
 import { eq } from 'drizzle-orm';
 import * as schema from '@/db/schema';
 import { getCardPosition } from '@/utils/utils';
-import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
+import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
+import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 
 import CategoryFab from '@/src/components/reusables/category-fab';
 import CategoryListHeader from '@/src/components/reusables/category-list-header';
 import TransactionCategoryCard from '@/src/components/reusables/transaction-category-card';
 
 export default function ExpenseCategories() {
-	const db = useSQLiteContext();
-	const drizzleDb = drizzle(db, { schema });
+	const drizzleDb = useDrizzleDB();
 
 	const getTransactionCategories = useCallback(
 		(type: schema.TransactionType) => {

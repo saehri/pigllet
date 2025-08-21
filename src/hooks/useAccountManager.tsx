@@ -5,10 +5,9 @@ import moment from 'moment';
 
 import { eq, or } from 'drizzle-orm';
 import * as schema from '@/db/schema';
-import { useSQLiteContext } from 'expo-sqlite';
-import { drizzle } from 'drizzle-orm/expo-sqlite';
 
 import { useUserFirstTimeStore } from '@/store/useUserFirstTimeStore';
+import { useDrizzleDB } from './useDrizzleDb';
 
 interface useAccountManager {
 	loading: boolean;
@@ -27,8 +26,7 @@ interface useAccountManager {
 }
 
 export default function useAccountManager(): useAccountManager {
-	const db = useSQLiteContext();
-	const drizzleDb = drizzle(db, { schema });
+	const drizzleDb = useDrizzleDB();
 	const router = useRouter();
 	const setFirstTimer = useUserFirstTimeStore((s) => s.setFirstTimer);
 
@@ -147,20 +145,22 @@ export default function useAccountManager(): useAccountManager {
 				);
 			}
 
-			// delete all associated transactions
-			await drizzleDb
-				.delete(schema.transactions)
-				.where(
-					or(
-						eq(schema.transactions.account_id, selectedAccountId),
-						eq(schema.transactions.related_account_id, selectedAccountId)
-					)
-				);
+			await drizzleDb.transaction(async (tx) => {
+				// delete all associated transactions
+				await tx
+					.delete(schema.transactions)
+					.where(
+						or(
+							eq(schema.transactions.account_id, selectedAccountId),
+							eq(schema.transactions.related_account_id, selectedAccountId)
+						)
+					);
 
-			// delete the account
-			await drizzleDb
-				.delete(schema.accounts)
-				.where(eq(schema.accounts.id, selectedAccountId));
+				// delete the account
+				await tx
+					.delete(schema.accounts)
+					.where(eq(schema.accounts.id, selectedAccountId));
+			});
 
 			ToastAndroid.show('Account deleted!', ToastAndroid.SHORT);
 		} catch (error: any) {

@@ -1,16 +1,16 @@
-import { memo, useCallback, useMemo } from 'react';
-import { Surface, Text, useTheme } from 'react-native-paper';
+import { memo, useCallback } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { Surface, Text, useTheme } from 'react-native-paper';
 
 import * as schema from '@/db/schema';
-import { useSQLiteContext } from 'expo-sqlite';
 import { and, inArray, sql } from 'drizzle-orm';
-import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
+import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 
 import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 import moment from 'moment';
 import { formatCurrencyByCode } from '@/utils/utils';
+import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 
 type Props = {
 	selectedDate: moment.MomentInput;
@@ -24,8 +24,7 @@ function BudgetBigTotals({
 	transactionCategoryIds,
 }: Props) {
 	const theme = useTheme();
-	const db = useSQLiteContext();
-	const drizzleDb = drizzle(db, { schema });
+	const drizzleDb = useDrizzleDB();
 
 	const { currentCurrencyCode } = usePreferredCurrencyStore();
 	const formatToCurrency = useCallback(

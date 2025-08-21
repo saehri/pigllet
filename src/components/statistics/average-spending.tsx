@@ -1,4 +1,3 @@
-import { useSQLiteContext } from 'expo-sqlite';
 import { StyleSheet, View } from 'react-native';
 import { Surface, Text } from 'react-native-paper';
 
@@ -6,10 +5,11 @@ import moment from 'moment';
 
 import * as schema from '@/db/schema';
 import { and, sql } from 'drizzle-orm';
-import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
+import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 
 import { transactionColorMap, formatCurrencyByCode } from '@/utils/utils';
 import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
+import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 
 type Props = {
 	selectedDate?: Date;
@@ -19,8 +19,7 @@ type Props = {
 export default function AverageSpending({ selectedDate, range }: Props) {
 	const { currentCurrencyCode } = usePreferredCurrencyStore();
 
-	const db = useSQLiteContext();
-	const drizzleDb = drizzle(db, { schema });
+	const drizzleDb = useDrizzleDB();
 
 	const getAverageSpending = () => {
 		const whereConditions = [];

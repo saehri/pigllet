@@ -5,8 +5,6 @@ import { ScrollView, ToastAndroid, View } from 'react-native';
 import { Button, Dialog, Portal, Text, useTheme } from 'react-native-paper';
 
 import * as schema from '@/db/schema';
-import { useSQLiteContext } from 'expo-sqlite';
-import { drizzle } from 'drizzle-orm/expo-sqlite';
 
 import { useAppThemeStore } from '@/store/useAppThemeStore';
 import { useUserFirstTimeStore } from '@/store/useUserFirstTimeStore';
@@ -14,6 +12,7 @@ import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 import SettingContentButton from '@/src/components/settings/setting-content-button';
 import SettingContentWrapper from '@/src/components/settings/setting-content-wrapper';
+import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 
 export default function AccountSettingScreen() {
 	const theme = useTheme();
@@ -63,8 +62,7 @@ function ResetUserPreference() {
 	const showDialog = () => setVisible(true);
 	const hideDialog = () => setVisible(false);
 
-	const db = useSQLiteContext();
-	const drizzleDb = drizzle(db, { schema });
+	const drizzleDb = useDrizzleDB();
 
 	const { setAppCurrencyCode } = usePreferredCurrencyStore();
 	const { setAppTheme } = useAppThemeStore();
@@ -72,7 +70,7 @@ function ResetUserPreference() {
 
 	async function resetUserData() {
 		try {
-			setAppCurrencyCode('Rp');
+			setAppCurrencyCode('IDR');
 			setAppTheme('Dark');
 			setFirstTimer(true);
 

@@ -9,8 +9,7 @@ import { useSelectedCategory } from '@/store/useSelectedCategory';
 
 import * as schema from '@/db/schema';
 import { and, eq, inArray } from 'drizzle-orm';
-import { useSQLiteContext } from 'expo-sqlite';
-import { drizzle } from 'drizzle-orm/expo-sqlite';
+import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 
 type Props = {
 	defaultCategoryLabel: string;
@@ -18,8 +17,7 @@ type Props = {
 
 function CategoryListHeader({ defaultCategoryLabel }: Props) {
 	const { selectedCategories, setSelectedCategories } = useSelectedCategory();
-	const db = useSQLiteContext();
-	const drizzleDb = drizzle(db, { schema });
+	const drizzleDb = useDrizzleDB();
 
 	const [deleting, setDeleting] = useState<boolean>(false);
 

@@ -6,15 +6,13 @@ import Animated, { FadeInRight, FadeOutRight } from 'react-native-reanimated';
 
 import * as schema from '@/db/schema';
 import { inArray } from 'drizzle-orm';
-import { useSQLiteContext } from 'expo-sqlite';
-import { drizzle } from 'drizzle-orm/expo-sqlite';
+import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 import { fastSpatialEasing } from '@/utils/utils';
 import { useSelectedBudgets } from '@/store/useSelectedBudgets';
 import { useFocusEffect } from 'expo-router';
 
 export default function BudgetHeaderBar() {
-	const db = useSQLiteContext();
-	const drizzleDb = drizzle(db, { schema });
+	const drizzleDb = useDrizzleDB();
 
 	const [deleting, setDeleting] = useState<boolean>(false);
 	const { selectedBudgets, setSelectedBudgets } = useSelectedBudgets();

@@ -6,15 +6,15 @@ import { Button, Surface, Text, useTheme } from 'react-native-paper';
 import { formatCurrencyByCode } from '@/utils/utils';
 
 import * as schema from '@/db/schema';
-import { useSQLiteContext } from 'expo-sqlite';
 import { and, asc, desc, eq, gte, lte, sql } from 'drizzle-orm';
-import { drizzle, useLiveQuery } from 'drizzle-orm/expo-sqlite';
+import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 
 import moment from 'moment';
 import { transactionColorMap } from '@/utils/utils';
 
 import { ArrowDownIcon, ArrowUpIcon } from 'lucide-react-native';
 import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
+import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 
 type Props = {
 	selectedDate?: Date;
@@ -37,8 +37,7 @@ function TransactionsOverTime({
 	const [order, setOrder] = useState<'asc' | 'desc'>('desc');
 
 	// set up the database
-	const db = useSQLiteContext();
-	const drizzleDb = drizzle(db, { schema });
+	const drizzleDb = useDrizzleDB();
 
 	const getDateGroupingRule = (range?: 'month' | 'year') => {
 		if (range === 'month') {

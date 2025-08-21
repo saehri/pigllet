@@ -1,13 +1,12 @@
 import { ToastAndroid } from 'react-native';
-import { useSQLiteContext } from 'expo-sqlite';
 import { SetStateAction, useEffect, useState } from 'react';
 
 import * as schema from '@/db/schema';
 import { asc, eq, sql } from 'drizzle-orm';
-import { drizzle } from 'drizzle-orm/expo-sqlite';
 
 import { useRouter } from 'expo-router';
 import moment from 'moment';
+import { useDrizzleDB } from './useDrizzleDb';
 
 type Props = {
 	actionType?: 'create' | 'read' | 'update' | 'delete';
@@ -15,8 +14,7 @@ type Props = {
 };
 
 export const loadBudgetRecord = (selectedDate: moment.MomentInput) => {
-	const db = useSQLiteContext();
-	const drizzleDb = drizzle(db, { schema });
+	const drizzleDb = useDrizzleDB();
 
 	const startDate = moment(selectedDate).startOf('month').format('YYYY-MM-DD');
 	const endDate = moment(selectedDate).endOf('month').format('YYYY-MM-DD');
@@ -72,8 +70,7 @@ export default function useBudgetManager({
 	actionType,
 	budgetId,
 }: Props): UseBudgetManagerTypes {
-	const db = useSQLiteContext();
-	const drizzleDb = drizzle(db, { schema });
+	const drizzleDb = useDrizzleDB();
 	const router = useRouter();
 
 	// ---- form state
