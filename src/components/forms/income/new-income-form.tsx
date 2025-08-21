@@ -1,8 +1,12 @@
+import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 
-import useTransactionsManager from '@/src/hooks/useTransactionsManager';
+import { useRecordIncomeForm } from '@/src/hooks/useTransactionsManager';
 import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
+
+import { eq } from 'drizzle-orm';
+import * as schema from '@/db/schema';
 
 import NoteInput from '../note-input';
 import DatePicker from '../date-picker';
@@ -14,32 +18,43 @@ export default function CreateIncomeForm() {
 	const { currentCurrencyCode } = usePreferredCurrencyStore();
 
 	const {
-		transactionUsedAccount,
-		transactionCategories,
-		transactionCreatedAt,
-		transactionCategory,
-		transactionAmount,
-		transactionImage,
-		transactionNote,
-		userAccounts,
 		loading,
+		note,
+		image,
+		drizzleDb,
+		accountUsed,
+		transactionDate,
+		selectedCategory,
+		transactionAmount,
+		setNote,
+		setImage,
+		setAccountUsed,
+		setSelectedCategory,
 		createIncomeRecord,
-		setTransactionNote,
-		setTransactionImage,
 		setTransactionAmount,
-		setTransactionCategory,
-		setTransactionCreatedAt,
-		setTransactionUsedAccount,
-	} = useTransactionsManager({
-		transactionType: 'income',
-		actionType: 'create',
-	});
+		setTransactionDate,
+	} = useRecordIncomeForm();
+
+	useEffect(() => {
+		async function loadFormData() {
+			const expenseCategories = await drizzleDb
+				.select()
+				.from(schema.categories)
+				.where(eq(schema.categories.type, 'income'));
+			const accounts = await drizzleDb.select().from(schema.accounts);
+
+			setSelectedCategory(expenseCategories[0]);
+			setAccountUsed(accounts[0]);
+		}
+
+		loadFormData();
+	}, []);
 
 	return (
 		<View style={styles.formWrapper}>
 			<View style={styles.inputContainerFull}>
 				<Text style={styles.inputLabel} variant="bodyMedium">
-					Amount ({currentCurrencyCode})
+					Transaction amount *
 				</Text>
 
 				<CustomTextInput
@@ -61,37 +76,36 @@ export default function CreateIncomeForm() {
 			<View style={styles.gridContainer}>
 				<View style={styles.inputContainerFull}>
 					<Text style={styles.inputLabel} variant="bodyMedium">
-						Expense category
+						Category *
 					</Text>
 
 					<TransactionCategorySelector
-						data={transactionCategories}
-						selectedCategory={transactionCategory!}
-						handleSelect={setTransactionCategory as any}
+						transactionCategory="income"
+						selectedCategory={selectedCategory!}
+						handleSelect={setSelectedCategory as any}
 					/>
 				</View>
 
 				<View style={styles.inputContainerFull}>
 					<Text style={styles.inputLabel} variant="bodyMedium">
-						Date
+						Transaction date *
 					</Text>
 
 					<DatePicker
-						selectedDate={transactionCreatedAt}
-						setSelectedDate={setTransactionCreatedAt}
+						selectedDate={transactionDate}
+						setSelectedDate={setTransactionDate}
 					/>
 				</View>
 			</View>
 
 			<View style={styles.inputContainer}>
 				<Text style={styles.inputLabel} variant="bodyMedium">
-					To account
+					Destination account *
 				</Text>
 
 				<AccountSelector
-					accounts={userAccounts}
-					selectedAccount={transactionUsedAccount!}
-					handleSelect={setTransactionUsedAccount as any}
+					selectedAccount={accountUsed!}
+					handleSelect={setAccountUsed as any}
 				/>
 			</View>
 
@@ -101,10 +115,10 @@ export default function CreateIncomeForm() {
 				</Text>
 
 				<NoteInput
-					noteValue={transactionNote}
-					setNoteValue={setTransactionNote}
-					imageValue={transactionImage}
-					setImageValue={setTransactionImage}
+					noteValue={note}
+					setNoteValue={setNote}
+					imageValue={image}
+					setImageValue={setImage}
 				/>
 			</View>
 

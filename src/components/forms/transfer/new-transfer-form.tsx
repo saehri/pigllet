@@ -1,7 +1,11 @@
+import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 
-import useTransactionsManager from '@/src/hooks/useTransactionsManager';
+import { eq } from 'drizzle-orm';
+import * as schema from '@/db/schema';
+
+import { useRecordTransferForm } from '@/src/hooks/useTransactionsManager';
 import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 import NoteInput from '../note-input';
@@ -14,34 +18,46 @@ export default function NewTransferForm() {
 	const { currentCurrencyCode } = usePreferredCurrencyStore();
 
 	const {
+		accountUsed,
 		createTransferRecord,
-		transactionUsedRelatedAccount,
-		transactionUsedAccount,
-		transactionCategories,
-		transactionCreatedAt,
-		transactionCategory,
-		transactionAmount,
-		transactionImage,
-		transactionNote,
-		userAccounts,
+		image,
+		relatedAccount,
+		drizzleDb,
 		loading,
-		setTransactionNote,
-		setTransactionImage,
+		note,
+		selectedCategory,
+		setAccountUsed,
+		setImage,
+		setNote,
+		setRelatedAccount,
+		setSelectedCategory,
 		setTransactionAmount,
-		setTransactionCategory,
-		setTransactionCreatedAt,
-		setTransactionUsedAccount,
-		setTransactionUsedRelatedAccount,
-	} = useTransactionsManager({
-		transactionType: 'transfer',
-		actionType: 'create',
-	});
+		setTransactionDate,
+		transactionAmount,
+		transactionDate,
+	} = useRecordTransferForm();
+
+	useEffect(() => {
+		async function loadFormData() {
+			const expenseCategories = await drizzleDb
+				.select()
+				.from(schema.categories)
+				.where(eq(schema.categories.type, 'transfer'));
+			const accounts = await drizzleDb.select().from(schema.accounts);
+
+			setSelectedCategory(expenseCategories[0]);
+			setAccountUsed(accounts[0]);
+			setRelatedAccount(accounts[0]);
+		}
+
+		loadFormData();
+	}, []);
 
 	return (
 		<View style={styles.formWrapper}>
 			<View style={styles.inputContainerFull}>
 				<Text style={styles.inputLabel} variant="bodyMedium">
-					Transfer amount
+					Transaction amount *
 				</Text>
 
 				<CustomTextInput
@@ -63,49 +79,47 @@ export default function NewTransferForm() {
 			<View style={styles.gridContainer}>
 				<View style={styles.inputContainerFull}>
 					<Text style={styles.inputLabel} variant="bodyMedium">
-						Transfer category
+						Category *
 					</Text>
 
 					<TransactionCategorySelector
-						data={transactionCategories}
-						selectedCategory={transactionCategory!}
-						handleSelect={setTransactionCategory as any}
+						transactionCategory="transfer"
+						selectedCategory={selectedCategory!}
+						handleSelect={setSelectedCategory as any}
 					/>
 				</View>
 
 				<View style={styles.inputContainerFull}>
 					<Text style={styles.inputLabel} variant="bodyMedium">
-						Date
+						Transaction date *
 					</Text>
 
 					<DatePicker
-						selectedDate={transactionCreatedAt}
-						setSelectedDate={setTransactionCreatedAt}
+						selectedDate={transactionDate}
+						setSelectedDate={setTransactionDate}
 					/>
 				</View>
 			</View>
 
 			<View style={styles.inputContainer}>
 				<Text style={styles.inputLabel} variant="bodyMedium">
-					From account
+					Sending account *
 				</Text>
 
 				<AccountSelector
-					accounts={userAccounts}
-					selectedAccount={transactionUsedAccount!}
-					handleSelect={setTransactionUsedAccount as any}
+					selectedAccount={accountUsed!}
+					handleSelect={setAccountUsed as any}
 				/>
 			</View>
 
 			<View style={styles.inputContainer}>
 				<Text style={styles.inputLabel} variant="bodyMedium">
-					Destination account
+					Destination account *
 				</Text>
 
 				<AccountSelector
-					accounts={userAccounts}
-					selectedAccount={transactionUsedRelatedAccount!}
-					handleSelect={setTransactionUsedRelatedAccount as any}
+					selectedAccount={relatedAccount!}
+					handleSelect={setRelatedAccount as any}
 				/>
 			</View>
 
@@ -115,10 +129,10 @@ export default function NewTransferForm() {
 				</Text>
 
 				<NoteInput
-					noteValue={transactionNote}
-					setNoteValue={setTransactionNote}
-					imageValue={transactionImage}
-					setImageValue={setTransactionImage}
+					noteValue={note}
+					setNoteValue={setNote}
+					imageValue={image}
+					setImageValue={setImage}
 				/>
 			</View>
 

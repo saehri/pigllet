@@ -1,51 +1,11 @@
 import moment from 'moment';
-import { useRouter } from 'expo-router';
+import { useState } from 'react';
 import { ToastAndroid } from 'react-native';
-import { useSQLiteContext } from 'expo-sqlite';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 import * as schema from '@/db/schema';
+import { useDrizzleDB } from './useDrizzleDb';
 import { alias } from 'drizzle-orm/sqlite-core';
 import { and, desc, eq, sql } from 'drizzle-orm';
-import { drizzle } from 'drizzle-orm/expo-sqlite';
-
-type Props = {
-	actionType?: 'create' | 'read' | 'update' | 'delete';
-	transactionId?: number;
-	transactionType?: schema.TransactionType;
-};
-
-type UseExpenseManagerTypes = {
-	createExpenseRecord: () => Promise<void>;
-	createIncomeRecord: () => Promise<void>;
-	createTransferRecord: () => Promise<void>;
-	updateExpenseRecord: () => Promise<void>;
-	updateIncomeRecord: () => Promise<void>;
-	updateTransferRecord: () => Promise<void>;
-	deleteTransaction: () => Promise<void>;
-	loading: boolean;
-	setLoading: Dispatch<SetStateAction<boolean>>;
-	userAccounts: schema.Account[];
-	transactionCategories: schema.Category[];
-	transactionCreatedAt: Date;
-	setTransactionCreatedAt: Dispatch<SetStateAction<Date>>;
-	transactionCategory: schema.Category | undefined;
-	setTransactionCategory: Dispatch<SetStateAction<schema.Category | undefined>>;
-	transactionUsedAccount: schema.Account | undefined;
-	setTransactionUsedAccount: Dispatch<
-		SetStateAction<schema.Account | undefined>
-	>;
-	transactionUsedRelatedAccount: schema.Account | undefined;
-	setTransactionUsedRelatedAccount: Dispatch<
-		SetStateAction<schema.Account | undefined>
-	>;
-	transactionNote: string;
-	setTransactionNote: Dispatch<SetStateAction<string>>;
-	transactionAmount: string;
-	setTransactionAmount: Dispatch<SetStateAction<string>>;
-	transactionImage: string;
-	setTransactionImage: Dispatch<SetStateAction<string>>;
-};
 
 interface loadTransactionsData {
 	date?: moment.MomentInput;
@@ -63,8 +23,7 @@ export const loadTransactionsData = ({
 	categoryId,
 }: loadTransactionsData) => {
 	const relatedAccountsAlias = alias(schema.accounts, 'related_accounts'); // Alias for related accounts
-	const db = useSQLiteContext();
-	const drizzleDb = drizzle(db, { schema });
+	const drizzleDb = useDrizzleDB();
 
 	let startOfMonth = moment(date)
 		.startOf(range || 'month')
@@ -148,731 +107,475 @@ export const loadTransactionsData = ({
 		.orderBy(desc(schema.transactions.created_at));
 };
 
-export const deleteTransactions = async (db: any, transactionId: number) => {
-	const relatedAccountsAlias = alias(schema.accounts, 'related_accounts');
-	const drizzleDb = drizzle(db, { schema });
+export const useRecordExpenseForm = () => {
+	const drizzleDb = useDrizzleDB();
 
-	try {
-		// Fetch the transaction with its related accounts
-		const transactionData = await drizzleDb
-			.select({
-				transaction: schema.transactions,
-				account: schema.accounts,
-				related_account: relatedAccountsAlias,
-			})
-			.from(schema.transactions)
-			.where(eq(schema.transactions.id, transactionId))
-			.innerJoin(
-				schema.accounts,
-				eq(schema.transactions.account_id, schema.accounts.id)
-			)
-			.leftJoin(
-				relatedAccountsAlias,
-				eq(schema.transactions.related_account_id, relatedAccountsAlias.id)
-			);
-
-		if (!transactionData.length) {
-			throw new Error('Transaction not found');
-		}
-
-		const data = transactionData[0];
-		const {
-			transaction,
-			account: mainAccount,
-			related_account: relatedAccount,
-		} = data;
-
-		// Delete the transaction itself
-		await drizzleDb
-			.delete(schema.transactions)
-			.where(eq(schema.transactions.id, transactionId));
-
-		// Prepare balance update queries
-		const updates: Promise<any>[] = [];
-
-		if (
-			transaction.type === 'transfer' &&
-			relatedAccount &&
-			mainAccount.id !== relatedAccount.id
-		) {
-			updates.push(
-				drizzleDb
-					.update(schema.accounts)
-					.set({
-						balance: mainAccount.balance + transaction.amount,
-					})
-					.where(eq(schema.accounts.id, mainAccount.id)),
-
-				drizzleDb
-					.update(schema.accounts)
-					.set({
-						balance: relatedAccount.balance - transaction.amount,
-					})
-					.where(eq(schema.accounts.id, relatedAccount.id))
-			);
-		} else if (transaction.type === 'income') {
-			updates.push(
-				drizzleDb
-					.update(schema.accounts)
-					.set({
-						balance: mainAccount.balance - transaction.amount,
-					})
-					.where(eq(schema.accounts.id, mainAccount.id))
-			);
-		} else if (transaction.type === 'expense') {
-			updates.push(
-				drizzleDb
-					.update(schema.accounts)
-					.set({
-						balance: mainAccount.balance + transaction.amount,
-					})
-					.where(eq(schema.accounts.id, mainAccount.id))
-			);
-		}
-
-		await Promise.all(updates);
-
-		ToastAndroid.show('Transaction deleted!', ToastAndroid.CENTER);
-	} catch (error: any) {
-		ToastAndroid.show(error.message, ToastAndroid.SHORT);
-	}
-};
-
-export default function useTransactionsManager({
-	actionType = 'read',
-	transactionId,
-	transactionType,
-}: Props): UseExpenseManagerTypes {
-	const router = useRouter();
-	const db = useSQLiteContext();
-	const drizzleDb = drizzle(db, { schema });
-	const relatedAccountsAlias = alias(schema.accounts, 'related_accounts'); // Alias for related accounts
-
-	// ------ form state
 	const [loading, setLoading] = useState<boolean>(false);
-
-	// userAccounts and transactionCategories will be populated by the populateForm fn
-	// userAccounts list all the accounts the user owned
-	// transactionCategories list all transaction categories available
-	const [userAccounts, setUserAccounts] = useState<schema.Account[]>([]);
-	const [transactionCategories, setTransactionCategories] = useState<
-		schema.Category[]
-	>([]);
-
-	// ------ form input state
-	const [initialFormValue, setInitialFormValue] =
-		useState<schema.Transaction>();
-	const [previouslyUsedAccount, setPreviouslyUsedAccount] =
-		useState<schema.Account>();
-	const [previouslyUsedRelatedAccount, setPreviouslyUsedRelatedAccount] =
-		useState<schema.Account>();
-	// ---- intialFormValue, previouslyUsedAccount, and previouslyUsedRelatedAccount is to store the old data
-	// previouslyUsedAccount is the old data of the main account
-	// previouslyUsedRelatedAccount is the old data of the related account
-
-	const [transactionCreatedAt, setTransactionCreatedAt] = useState<Date>(
+	const [transactionAmount, setTransactionAmount] = useState<string>('');
+	const [selectedCategory, setSelectedCategory] = useState<schema.Category>();
+	const [transactionDate, setTransactionDate] = useState<moment.MomentInput>(
 		new Date()
 	);
-	const [transactionCategory, setTransactionCategory] =
-		useState<schema.Category>();
-	const [transactionUsedAccount, setTransactionUsedAccount] =
-		useState<schema.Account>(); // store the main account
-	const [transactionUsedRelatedAccount, setTransactionUsedRelatedAccount] =
-		useState<schema.Account>();
-	const [transactionNote, setTransactionNote] = useState<string>('');
-	const [transactionAmount, setTransactionAmount] = useState<string>('');
-	const [transactionImage, setTransactionImage] = useState<string>('');
+	const [accountUsed, setAccountUsed] = useState<schema.Account>();
+	const [note, setNote] = useState<string>('');
+	const [image, setImage] = useState<string>('');
 
-	// ----- set up the form
-	useEffect(() => {
-		async function populateForm() {
-			try {
-				// ----- Fetch the transaction data if the user is editing
-				if (actionType === 'update' && transactionId) {
-					const data = await drizzleDb
-						.select({
-							transactions: schema.transactions,
-							accounts: schema.accounts,
-							categories: schema.categories,
-							related_account: relatedAccountsAlias,
-						})
-						.from(schema.transactions)
-						.where(eq(schema.transactions.id, transactionId as number))
-						.innerJoin(
-							schema.categories,
-							eq(schema.transactions.category_id, schema.categories.id)
-						)
-						.innerJoin(
-							schema.accounts,
-							eq(schema.transactions.account_id, schema.accounts.id)
-						)
-						.leftJoin(
-							relatedAccountsAlias, // Use the alias for the second join
-							eq(
-								schema.transactions.related_account_id,
-								relatedAccountsAlias.id
-							)
-						);
+	const createExpenseRecord = async () => {
+		try {
+			setLoading(true);
 
-					const { accounts, categories, transactions, related_account } =
-						data[0];
+			if (!accountUsed || !selectedCategory) return;
 
-					setInitialFormValue(transactions);
-					setPreviouslyUsedAccount(accounts);
+			await drizzleDb.transaction(async (tx) => {
+				await tx.insert(schema.transactions).values({
+					account_id: accountUsed.id! as number,
+					amount: Number(transactionAmount),
+					category_id: selectedCategory.id!,
+					created_at: moment(transactionDate).format('YYYY-MM-DD'),
+					type: 'expense',
+					image,
+					note,
+				});
 
-					if (related_account) {
-						setPreviouslyUsedRelatedAccount(related_account);
-						setTransactionUsedRelatedAccount(related_account);
-					}
+				await tx
+					.update(schema.accounts)
+					.set({ balance: accountUsed.balance - Number(transactionAmount) })
+					.where(eq(schema.accounts.id, accountUsed?.id!));
+			});
 
-					setTransactionAmount(transactions.amount.toString());
-					setTransactionCategory(categories);
-					setTransactionUsedAccount(accounts);
-					setTransactionCreatedAt(new Date(transactions.created_at));
-					setTransactionNote(transactions.note || '');
-					setTransactionImage(transactions.image || '');
-				}
+			ToastAndroid.show('Expense recorded!', ToastAndroid.SHORT);
 
-				const userAccounts = await drizzleDb.select().from(schema.accounts);
-				const transactionCategories = await drizzleDb
+			setTransactionAmount('');
+			setNote('');
+			setImage('');
+		} catch (error: any) {
+			ToastAndroid.show(error.message, ToastAndroid.CENTER);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const updateExpenseRecord = async (transactionId: number) => {
+		try {
+			setLoading(true);
+
+			if (!accountUsed || !selectedCategory) return;
+
+			await drizzleDb.transaction(async (tx) => {
+				const oldTransactionRecord = await tx
 					.select()
-					.from(schema.categories)
-					.where(eq(schema.categories.type, transactionType as string));
+					.from(schema.transactions)
+					.where(
+						and(
+							eq(schema.transactions.id, transactionId),
+							eq(schema.transactions.type, 'expense')
+						)
+					)
+					.innerJoin(
+						schema.accounts,
+						eq(schema.accounts.id, schema.transactions.account_id)
+					);
 
-				setUserAccounts(userAccounts);
-				setTransactionCategories(transactionCategories);
+				const { accounts: oldAccount, transactions: oldTransaction } =
+					oldTransactionRecord[0];
 
-				if (
-					transactionType == 'income' ||
-					transactionType === 'expense' ||
-					(transactionType === 'transfer' && actionType !== 'update')
-				) {
-					setTransactionUsedRelatedAccount(userAccounts[0]);
+				const isAccountChanged = oldAccount.id !== accountUsed.id;
+
+				if (isAccountChanged) {
+					const newAccountBalance =
+						accountUsed.balance - Number(transactionAmount);
+					const oldAccountBalance = oldAccount.balance + oldTransaction.amount;
+
+					await tx
+						.update(schema.accounts)
+						.set({ balance: newAccountBalance })
+						.where(eq(schema.accounts.id, Number(accountUsed.id)));
+
+					await tx
+						.update(schema.accounts)
+						.set({ balance: oldAccountBalance })
+						.where(eq(schema.accounts.id, oldAccount.id));
+				} else {
+					const newBalance =
+						oldAccount.balance +
+						oldTransaction.amount -
+						Number(transactionAmount);
+
+					await tx
+						.update(schema.accounts)
+						.set({
+							balance: newBalance,
+						})
+						.where(eq(schema.accounts.id, oldAccount.id));
 				}
 
-				// ----- Populate the transaction category and transa. used account with default data
-				if (actionType !== 'update' && !transactionId) {
-					setTransactionCategory(transactionCategories[0]);
-					setTransactionUsedAccount(userAccounts[0]);
-				}
-			} catch (error: any) {
-				ToastAndroid.show(error.message, ToastAndroid.SHORT);
-			}
-		}
+				await tx
+					.update(schema.transactions)
+					.set({
+						amount: Number(transactionAmount),
+						category_id: Number(selectedCategory.id),
+						created_at: moment(transactionDate).format('YYYY-MM-DD'),
+						account_id: accountUsed?.id,
+						note,
+						image,
+					})
+					.where(eq(schema.transactions.id, oldTransaction?.id!));
+			});
 
-		// ----- Do nothing if the user use the hooks for reading the data
-		if (actionType !== 'read' && actionType !== 'delete') {
-			populateForm();
-		}
-	}, []);
-
-	// ----- CREATE
-	async function createExpenseRecord() {
-		try {
-			setLoading(true);
-
-			if (!transactionUsedAccount || !transactionCategory) return;
-
-			if (!transactionAmount.length || isNaN(Number(transactionAmount))) {
-				ToastAndroid.show('Please enter a valid amount', ToastAndroid.SHORT);
-				return;
-			}
-
-			// ---- Idk what happend but if I don't do this and instead insert it directly to the query, it throwing types error.
-			const payload: schema.Transaction = {
-				account_id: Number(transactionUsedAccount.id),
-				amount: Number(transactionAmount),
-				category_id: Number(transactionCategory.id),
-				created_at: moment(transactionCreatedAt).format('YYYY-MM-DD'),
-				type: transactionType as string,
-				image: transactionImage,
-				note: transactionNote,
-			};
-
-			// ---- Save the transaction record
-			await drizzleDb
-				.insert(schema.transactions)
-				.values(payload)
-				.onConflictDoNothing();
-
-			// also update the selected account balance
-			await drizzleDb
-				.update(schema.accounts)
-				.set({
-					balance: transactionUsedAccount.balance - Number(transactionAmount),
-				})
-				.where(eq(schema.accounts.id, transactionUsedAccount.id as number));
-
-			const accounts = await drizzleDb.select().from(schema.accounts);
-			setUserAccounts(accounts);
-
-			ToastAndroid.show('Expense added!', ToastAndroid.CENTER);
-
-			setTransactionAmount('');
-			setTransactionNote('');
-			setTransactionImage('');
-		} catch (error: any) {
-			ToastAndroid.show('Error adding expense', ToastAndroid.CENTER);
-		} finally {
-			setLoading(false);
-		}
-	}
-
-	async function createIncomeRecord() {
-		try {
-			setLoading(true);
-
-			if (!transactionUsedAccount || !transactionCategory) return;
-
-			const isTransactionAmountValid = () => {
-				return (
-					transactionAmount.length &&
-					!isNaN(Number(transactionAmount)) &&
-					Number(transactionAmount) > 0
-				);
-			};
-
-			if (!isTransactionAmountValid()) {
-				ToastAndroid.show('Invalid transaction amount', ToastAndroid.SHORT);
-				return;
-			}
-
-			const payload: schema.Transaction = {
-				amount: Number(transactionAmount),
-				account_id: transactionUsedAccount.id as number,
-				category_id: transactionCategory.id as number,
-				created_at: moment(transactionCreatedAt).format('YYYY-MM-DD'),
-				image: transactionImage,
-				note: transactionNote,
-				type: transactionType as string,
-			};
-
-			await drizzleDb.insert(schema.transactions).values(payload);
-
-			// also update the selected account balance
-			await drizzleDb
-				.update(schema.accounts)
-				.set({
-					balance: transactionUsedAccount.balance + Number(transactionAmount),
-				})
-				.where(eq(schema.accounts.id, transactionUsedAccount.id as number));
-
-			ToastAndroid.show('Income record added!', ToastAndroid.CENTER);
-
-			const accounts = await drizzleDb.select().from(schema.accounts);
-			setUserAccounts(accounts);
-
-			setTransactionAmount('');
-			setTransactionNote('');
-			setTransactionImage('');
+			ToastAndroid.show('Changes saved!', ToastAndroid.SHORT);
 		} catch (error: any) {
 			ToastAndroid.show(error.message, ToastAndroid.CENTER);
 		} finally {
 			setLoading(false);
 		}
-	}
-
-	async function createTransferRecord() {
-		try {
-			setLoading(true);
-			if (
-				!transactionUsedAccount ||
-				!transactionUsedRelatedAccount ||
-				!transactionCategory
-			)
-				return;
-
-			// moved the payload into its own variable because the little shit keep screaming the types is invalid
-			const payload: schema.Transaction = {
-				type: transactionType as string,
-				amount: Number(transactionAmount),
-				account_id: transactionUsedAccount.id as number,
-				related_account_id: transactionUsedRelatedAccount.id,
-				category_id: transactionCategory.id as number,
-				created_at: moment(transactionCreatedAt).format('YYYY-MM-DD'),
-				image: transactionImage,
-				note: transactionNote,
-			};
-
-			await drizzleDb
-				.insert(schema.transactions)
-				.values(payload)
-				.onConflictDoNothing();
-
-			// Update the account balance of main account and related account
-			// if the user pick two different account
-			if (transactionUsedAccount.id !== transactionUsedRelatedAccount.id) {
-				// update the main account balance
-				await drizzleDb
-					.update(schema.accounts)
-					.set({
-						balance: transactionUsedAccount.balance - payload.amount,
-					})
-					.where(eq(schema.accounts.id, transactionUsedAccount.id as number));
-
-				// update the related account balance
-				await drizzleDb
-					.update(schema.accounts)
-					.set({
-						balance: transactionUsedRelatedAccount.balance + payload.amount,
-					})
-					.where(
-						eq(schema.accounts.id, transactionUsedRelatedAccount.id as number)
-					);
-			}
-
-			ToastAndroid.show('Trasfer record added!', ToastAndroid.CENTER);
-		} catch (error: any) {
-			ToastAndroid.show(error.message, ToastAndroid.CENTER);
-		} finally {
-			setLoading(false);
-		}
-	}
-
-	// ----- UPDATE
-	async function updateExpenseRecord() {
-		try {
-			setLoading(true);
-
-			if (!transactionAmount.length || isNaN(Number(transactionAmount))) {
-				ToastAndroid.show('Invalid transaction amount', ToastAndroid.SHORT);
-				return;
-			}
-
-			await drizzleDb
-				.update(schema.transactions)
-				.set({
-					type: transactionType,
-					account_id: transactionUsedAccount?.id,
-					amount: Number(transactionAmount),
-					category_id: transactionCategory?.id,
-					created_at: moment(transactionCreatedAt).format('YYYY-MM-DD'),
-					image: transactionImage,
-					note: transactionNote,
-				})
-				.where(eq(schema.transactions.id, initialFormValue?.id as number));
-
-			// ---- if the user change the account used but does not change the transaction amount -> then adjust the balance for each accounts used
-			if (
-				!previouslyUsedAccount ||
-				!initialFormValue ||
-				!transactionUsedAccount
-			)
-				return;
-			if (
-				initialFormValue.account_id !== transactionUsedAccount.id &&
-				initialFormValue.amount.toString() !== transactionAmount
-			) {
-				// Both account and amount changed
-				// Undo old amount from old account
-				await drizzleDb
-					.update(schema.accounts)
-					.set({
-						balance: previouslyUsedAccount.balance + initialFormValue.amount,
-					})
-					.where(eq(schema.accounts.id, previouslyUsedAccount.id as number));
-				// Apply new amount to new account
-				await drizzleDb
-					.update(schema.accounts)
-					.set({
-						balance: transactionUsedAccount.balance - Number(transactionAmount),
-					})
-					.where(eq(schema.accounts.id, transactionUsedAccount.id as number));
-			} else if (initialFormValue.account_id !== transactionUsedAccount.id) {
-				// Only account changed
-				await drizzleDb
-					.update(schema.accounts)
-					.set({
-						balance: previouslyUsedAccount.balance + initialFormValue.amount,
-					})
-					.where(eq(schema.accounts.id, previouslyUsedAccount.id as number));
-				await drizzleDb
-					.update(schema.accounts)
-					.set({
-						balance: transactionUsedAccount.balance - initialFormValue.amount,
-					})
-					.where(eq(schema.accounts.id, transactionUsedAccount.id as number));
-			} else if (initialFormValue.amount.toString() !== transactionAmount) {
-				// Only amount changed
-				await drizzleDb
-					.update(schema.accounts)
-					.set({
-						balance:
-							previouslyUsedAccount.balance +
-							initialFormValue.amount -
-							Number(transactionAmount),
-					})
-					.where(eq(schema.accounts.id, previouslyUsedAccount.id as number));
-			}
-
-			ToastAndroid.show('Changes saved!', ToastAndroid.CENTER);
-		} catch (error) {
-			ToastAndroid.show('Error when updating expense', ToastAndroid.CENTER);
-		} finally {
-			setLoading(false);
-		}
-	}
-
-	async function updateIncomeRecord() {
-		try {
-			setLoading(true);
-
-			if (!transactionAmount.length || isNaN(Number(transactionAmount))) {
-				ToastAndroid.show('Invalid transaction amount', ToastAndroid.SHORT);
-				return;
-			}
-
-			await drizzleDb
-				.update(schema.transactions)
-				.set({
-					type: transactionType,
-					account_id: transactionUsedAccount?.id,
-					amount: Number(transactionAmount),
-					category_id: transactionCategory?.id,
-					created_at: moment(transactionCreatedAt).format('YYYY-MM-DD'),
-					image: transactionImage,
-					note: transactionNote,
-				})
-				.where(eq(schema.transactions.id, initialFormValue?.id as number));
-
-			if (
-				!previouslyUsedAccount ||
-				!initialFormValue ||
-				!transactionUsedAccount
-			)
-				return;
-
-			// CASE 1: Both account and amount changed
-			if (
-				initialFormValue.account_id !== transactionUsedAccount.id &&
-				initialFormValue.amount.toString() !== transactionAmount
-			) {
-				// Subtract old income from old account
-				await drizzleDb
-					.update(schema.accounts)
-					.set({
-						balance: previouslyUsedAccount.balance - initialFormValue.amount,
-					})
-					.where(eq(schema.accounts.id, previouslyUsedAccount.id as number));
-
-				// Add new income to new account
-				await drizzleDb
-					.update(schema.accounts)
-					.set({
-						balance: transactionUsedAccount.balance + Number(transactionAmount),
-					})
-					.where(eq(schema.accounts.id, transactionUsedAccount.id as number));
-			}
-			// CASE 2: Only account changed
-			else if (initialFormValue.account_id !== transactionUsedAccount.id) {
-				await drizzleDb
-					.update(schema.accounts)
-					.set({
-						balance: previouslyUsedAccount.balance - initialFormValue.amount,
-					})
-					.where(eq(schema.accounts.id, previouslyUsedAccount.id as number));
-
-				await drizzleDb
-					.update(schema.accounts)
-					.set({
-						balance: transactionUsedAccount.balance + initialFormValue.amount,
-					})
-					.where(eq(schema.accounts.id, transactionUsedAccount.id as number));
-			}
-			// CASE 3: Only amount changed
-			else if (initialFormValue.amount.toString() !== transactionAmount) {
-				await drizzleDb
-					.update(schema.accounts)
-					.set({
-						balance:
-							previouslyUsedAccount.balance -
-							initialFormValue.amount +
-							Number(transactionAmount),
-					})
-					.where(eq(schema.accounts.id, previouslyUsedAccount.id as number));
-			}
-
-			ToastAndroid.show('Changes saved!', ToastAndroid.CENTER);
-		} catch (error) {
-			ToastAndroid.show('Error when updating income', ToastAndroid.CENTER);
-		} finally {
-			setLoading(false);
-		}
-	}
-
-	async function updateTransferRecord() {
-		try {
-			setLoading(true);
-
-			if (
-				!previouslyUsedAccount ||
-				!previouslyUsedRelatedAccount ||
-				!transactionUsedAccount ||
-				!transactionUsedRelatedAccount ||
-				!transactionCategory ||
-				!transactionAmount.length ||
-				!initialFormValue ||
-				isNaN(Number(transactionAmount))
-			) {
-				ToastAndroid.show('Invalid transfer details', ToastAndroid.SHORT);
-				return;
-			}
-
-			await drizzleDb
-				.update(schema.transactions)
-				.set({
-					type: transactionType,
-					amount: Number(transactionAmount),
-					account_id: transactionUsedAccount.id as number,
-					related_account_id: transactionUsedRelatedAccount.id,
-					category_id: transactionCategory.id as number,
-					created_at: moment(transactionCreatedAt).format('YYYY-MM-DD'),
-					image: transactionImage,
-					note: transactionNote,
-				})
-				.where(eq(schema.transactions.id, Number(transactionId)));
-
-			if (initialFormValue.amount.toString() !== transactionAmount) {
-				// 01 - change the main account balance
-				// formula -> current balance + previous transactions amount - current transaction amount
-				await drizzleDb
-					.update(schema.accounts)
-					.set({
-						balance:
-							previouslyUsedAccount.balance +
-							initialFormValue.amount -
-							Number(transactionAmount),
-					})
-					.where(eq(schema.accounts.id, previouslyUsedAccount.id as number));
-
-				// 02 - change the related account balance
-				// formula -> current balance - previous transactions amount + current transactions amount
-				await drizzleDb
-					.update(schema.accounts)
-					.set({
-						balance:
-							previouslyUsedRelatedAccount.balance -
-							initialFormValue.amount +
-							Number(transactionAmount),
-					})
-					.where(
-						eq(schema.accounts.id, previouslyUsedRelatedAccount?.id as number)
-					);
-			}
-
-			ToastAndroid.show('Changes saved!', ToastAndroid.CENTER);
-		} catch (error: any) {
-			ToastAndroid.show(
-				error.message || 'Error during transfer',
-				ToastAndroid.CENTER
-			);
-		} finally {
-			setLoading(false);
-		}
-	}
-
-	async function deleteTransaction() {
-		try {
-			setLoading(true);
-
-			// ---- Delete the transaction from the record
-			const transactionData = await drizzleDb
-				.select({
-					transaction: schema.transactions,
-					account: schema.accounts,
-					related_account: relatedAccountsAlias,
-				})
-				.from(schema.transactions)
-				.where(eq(schema.transactions.id, Number(transactionId)))
-				.innerJoin(
-					schema.accounts,
-					eq(schema.transactions.account_id, schema.accounts.id)
-				)
-				.leftJoin(
-					relatedAccountsAlias, // Use the alias for the second join
-					eq(schema.transactions.related_account_id, relatedAccountsAlias.id)
-				);
-
-			const {
-				transaction,
-				account: mainAccount,
-				related_account: relatedAccount,
-			} = transactionData[0];
-
-			await drizzleDb
-				.delete(schema.transactions)
-				.where(eq(schema.transactions.id, Number(transactionId)));
-
-			if (transactionType === 'transfer' && relatedAccount) {
-				if (mainAccount.id !== relatedAccount.id) {
-					// 01 - change main account balance
-					// formula -> main account balance + transaction amount
-					await drizzleDb
-						.update(schema.accounts)
-						.set({
-							balance: mainAccount.balance + transaction.amount,
-						})
-						.where(eq(schema.accounts.id, mainAccount.id as number));
-
-					// 02 - change related account balance
-					// formula -> related account balance - transaction amount
-					await drizzleDb
-						.update(schema.accounts)
-						.set({
-							balance: relatedAccount.balance - transaction.amount,
-						})
-						.where(eq(schema.accounts.id, relatedAccount.id as number));
-				}
-			} else {
-				// --- Update the main account balance
-				if (transactionType === 'income') {
-					await drizzleDb
-						.update(schema.accounts)
-						.set({ balance: mainAccount.balance - transaction.amount })
-						.where(eq(schema.accounts.id, mainAccount.id));
-				} else if (transactionType === 'expense') {
-					await drizzleDb
-						.update(schema.accounts)
-						.set({ balance: mainAccount.balance + transaction.amount })
-						.where(eq(schema.accounts.id, mainAccount.id));
-				}
-			}
-
-			ToastAndroid.show('Transaction deleted!', ToastAndroid.CENTER);
-		} catch (error: any) {
-			ToastAndroid.show(error.message, ToastAndroid.SHORT);
-		} finally {
-			setLoading(false);
-			router.back();
-		}
-	}
+	};
 
 	return {
-		transactionUsedAccount,
-		transactionCategories,
-		createTransferRecord,
-		transactionCreatedAt,
-		createExpenseRecord,
-		transactionCategory,
-		transactionAmount,
-		transactionImage,
-		transactionNote,
-		userAccounts,
 		loading,
-		setLoading,
-		deleteTransaction,
-		setTransactionNote,
+		note,
+		image,
+		accountUsed,
+		transactionDate,
+		selectedCategory,
+		transactionAmount,
+		setTransactionAmount,
+		setSelectedCategory,
+		setTransactionDate,
+		setAccountUsed,
+		setImage,
+		setNote,
+		createExpenseRecord,
+		updateExpenseRecord,
+		drizzleDb,
+	};
+};
+
+export const useRecordIncomeForm = () => {
+	const drizzleDb = useDrizzleDB();
+
+	const [loading, setLoading] = useState<boolean>(false);
+	const [transactionAmount, setTransactionAmount] = useState<string>('');
+	const [selectedCategory, setSelectedCategory] = useState<schema.Category>();
+	const [transactionDate, setTransactionDate] = useState<moment.MomentInput>(
+		new Date()
+	);
+	const [accountUsed, setAccountUsed] = useState<schema.Account>();
+	const [note, setNote] = useState<string>('');
+	const [image, setImage] = useState<string>('');
+
+	const createIncomeRecord = async () => {
+		try {
+			setLoading(true);
+
+			if (!accountUsed || !selectedCategory) return;
+
+			await drizzleDb.transaction(async (tx) => {
+				await tx.insert(schema.transactions).values({
+					account_id: Number(accountUsed.id),
+					amount: Number(transactionAmount),
+					category_id: selectedCategory.id!,
+					created_at: moment(transactionDate).format('YYYY-MM-DD'),
+					type: 'income',
+					image,
+					note,
+				});
+
+				await tx
+					.update(schema.accounts)
+					.set({ balance: accountUsed.balance - Number(transactionAmount) })
+					.where(eq(schema.accounts.id, accountUsed?.id!));
+			});
+
+			ToastAndroid.show('Income recorded!', ToastAndroid.SHORT);
+
+			setTransactionAmount('');
+			setNote('');
+			setImage('');
+		} catch (error: any) {
+			ToastAndroid.show(error.message, ToastAndroid.CENTER);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const updateIncomeRecord = async (transactionId: number) => {
+		try {
+			setLoading(true);
+
+			if (!accountUsed || !selectedCategory) return;
+
+			await drizzleDb.transaction(async (tx) => {
+				const oldTransactionRecord = await tx
+					.select()
+					.from(schema.transactions)
+					.where(
+						and(
+							eq(schema.transactions.id, transactionId),
+							eq(schema.transactions.type, 'income')
+						)
+					)
+					.innerJoin(
+						schema.accounts,
+						eq(schema.accounts.id, schema.transactions.account_id)
+					);
+
+				const { accounts: oldAccount, transactions: oldTransaction } =
+					oldTransactionRecord[0];
+
+				const isAccountChanged = oldAccount.id !== accountUsed.id;
+
+				if (isAccountChanged) {
+					const newAccountBalance =
+						accountUsed.balance + Number(transactionAmount);
+					const oldAccountBalance = oldAccount.balance - oldTransaction.amount;
+
+					await tx
+						.update(schema.accounts)
+						.set({ balance: newAccountBalance })
+						.where(eq(schema.accounts.id, Number(accountUsed.id)));
+
+					await tx
+						.update(schema.accounts)
+						.set({ balance: oldAccountBalance })
+						.where(eq(schema.accounts.id, oldAccount.id));
+				} else {
+					const newBalance =
+						oldAccount.balance +
+						oldTransaction.amount -
+						Number(transactionAmount);
+
+					await tx
+						.update(schema.accounts)
+						.set({
+							balance: newBalance,
+						})
+						.where(eq(schema.accounts.id, oldAccount.id));
+				}
+
+				await tx
+					.update(schema.transactions)
+					.set({
+						amount: Number(transactionAmount),
+						category_id: Number(selectedCategory.id),
+						created_at: moment(transactionDate).format('YYYY-MM-DD'),
+						account_id: accountUsed?.id,
+						note,
+						image,
+					})
+					.where(eq(schema.transactions.id, oldTransaction?.id!));
+			});
+
+			ToastAndroid.show('Changes saved!', ToastAndroid.SHORT);
+		} catch (error: any) {
+			ToastAndroid.show(error.message, ToastAndroid.CENTER);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	return {
+		loading,
+		note,
+		image,
+		accountUsed,
+		transactionDate,
+		selectedCategory,
+		transactionAmount,
+		setTransactionAmount,
+		setSelectedCategory,
+		setTransactionDate,
+		setAccountUsed,
+		setImage,
+		setNote,
 		createIncomeRecord,
 		updateIncomeRecord,
-		setTransactionImage,
-		updateExpenseRecord,
-		setTransactionAmount,
-		updateTransferRecord,
-		setTransactionCategory,
-		setTransactionCreatedAt,
-		setTransactionUsedAccount,
-		transactionUsedRelatedAccount,
-		setTransactionUsedRelatedAccount,
+		drizzleDb,
 	};
-}
+};
+
+export const useRecordTransferForm = () => {
+	const drizzleDb = useDrizzleDB();
+	const relatedAccountsAlias = alias(schema.accounts, 'related_accounts'); // Alias for related accounts
+
+	const [loading, setLoading] = useState<boolean>(false);
+	const [transactionAmount, setTransactionAmount] = useState<string>('');
+	const [selectedCategory, setSelectedCategory] = useState<schema.Category>();
+	const [transactionDate, setTransactionDate] = useState<moment.MomentInput>(
+		new Date()
+	);
+	const [accountUsed, setAccountUsed] = useState<schema.Account>();
+	const [relatedAccount, setRelatedAccount] = useState<schema.Account>();
+	const [note, setNote] = useState<string>('');
+	const [image, setImage] = useState<string>('');
+
+	const createTransferRecord = async () => {
+		try {
+			setLoading(true);
+
+			if (!accountUsed || !selectedCategory || !relatedAccount) return;
+
+			await drizzleDb.transaction(async (tx) => {
+				await tx.insert(schema.transactions).values({
+					account_id: Number(accountUsed.id),
+					amount: Number(transactionAmount),
+					category_id: selectedCategory.id!,
+					created_at: moment(transactionDate).format('YYYY-MM-DD'),
+					type: 'transfer',
+					image,
+					note,
+					related_account_id: relatedAccount.id,
+				});
+
+				if (accountUsed.id !== relatedAccount.id) {
+					// update the sending account balance
+					await tx
+						.update(schema.accounts)
+						.set({ balance: accountUsed.balance - Number(transactionAmount) })
+						.where(eq(schema.accounts.id, Number(accountUsed.id)));
+
+					// update the destination account balance
+					await tx
+						.update(schema.accounts)
+						.set({
+							balance: relatedAccount.balance + Number(transactionAmount),
+						})
+						.where(eq(schema.accounts.id, Number(relatedAccount.id)));
+				}
+			});
+
+			ToastAndroid.show('Transfer recorded!', ToastAndroid.SHORT);
+
+			setTransactionAmount('');
+			setNote('');
+			setImage('');
+		} catch (error: any) {
+			ToastAndroid.show(error.message, ToastAndroid.CENTER);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const updateTransferRecord = async (transactionId: number) => {
+		try {
+			setLoading(true);
+
+			await drizzleDb.transaction(async (tx) => {
+				const oldTransactionRecord = await tx
+					.select({
+						transaction: {
+							id: schema.transactions.id,
+							amount: schema.transactions.amount,
+							note: schema.transactions.note,
+							account_id: schema.transactions.account_id,
+							related_account_id: schema.transactions.related_account_id,
+							category_id: schema.transactions.category_id,
+							type: schema.transactions.type,
+							image: schema.transactions.image,
+							created_at: schema.transactions.created_at,
+						},
+						account: {
+							id: schema.accounts.id,
+							card_name: schema.accounts.card_name,
+							card_number: schema.accounts.card_number,
+							balance: schema.accounts.balance,
+							is_default: schema.accounts.is_default,
+							card_color: schema.accounts.card_color,
+							created_at: schema.accounts.created_at,
+						},
+						related_account: {
+							id: relatedAccountsAlias.id,
+							card_name: relatedAccountsAlias.card_name,
+							card_number: relatedAccountsAlias.card_number,
+							balance: relatedAccountsAlias.balance,
+							is_default: relatedAccountsAlias.is_default,
+							card_color: relatedAccountsAlias.card_color,
+							created_at: relatedAccountsAlias.created_at,
+						},
+					})
+					.from(schema.transactions)
+					.where(
+						and(
+							eq(schema.transactions.id, transactionId),
+							eq(schema.transactions.type, 'transfer')
+						)
+					)
+					.innerJoin(
+						schema.accounts,
+						eq(schema.accounts.id, schema.transactions.account_id)
+					)
+					.innerJoin(
+						relatedAccountsAlias,
+						eq(schema.transactions.related_account_id, relatedAccountsAlias.id)
+					);
+
+				const {
+					account: oldAccount,
+					transaction: oldTransaction,
+					related_account: oldRelatedAccount,
+				} = oldTransactionRecord[0];
+
+				const isTransactionAmountChanged =
+					oldTransaction.amount !== Number(transactionAmount);
+
+				if (isTransactionAmountChanged) {
+					const newOldAccountBalance =
+						oldAccount.balance +
+						oldTransaction.amount -
+						Number(transactionAmount);
+					const newOldRelatedAccBalance =
+						oldRelatedAccount.balance -
+						oldTransaction.amount +
+						Number(transactionAmount);
+
+					await tx
+						.update(schema.accounts)
+						.set({ balance: newOldAccountBalance })
+						.where(eq(schema.accounts.id, oldAccount.id));
+					await tx
+						.update(schema.accounts)
+						.set({ balance: newOldRelatedAccBalance })
+						.where(eq(schema.accounts.id, oldRelatedAccount.id));
+				}
+
+				await tx
+					.update(schema.transactions)
+					.set({
+						amount: Number(transactionAmount),
+						category_id: Number(selectedCategory?.id),
+						created_at: moment(transactionDate).format('YYYY-MM-DD'),
+						note,
+						image,
+					})
+					.where(eq(schema.transactions.id, oldTransaction?.id!));
+			});
+
+			ToastAndroid.show('Changes saved!', ToastAndroid.SHORT);
+		} catch (error: any) {
+			ToastAndroid.show(error.message, ToastAndroid.CENTER);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	return {
+		loading,
+		note,
+		image,
+		accountUsed,
+		relatedAccount,
+		transactionDate,
+		selectedCategory,
+		transactionAmount,
+		setTransactionAmount,
+		setSelectedCategory,
+		setTransactionDate,
+		setAccountUsed,
+		setImage,
+		setNote,
+		setRelatedAccount,
+		createTransferRecord,
+		updateTransferRecord,
+		drizzleDb,
+	};
+};
 

@@ -39,7 +39,7 @@ export default function HomeScreen() {
 			contentContainerStyle={{ paddingBottom: transactions.length ? 180 : 0 }}
 			ListEmptyComponent={<NoItemNotice />}
 			showsVerticalScrollIndicator={false}
-			data={groupedTransactionsByDate(transactions, 'YYYY')}
+			data={groupedTransactionsByDate(transactions as any, 'YYYY')}
 			renderItem={({ item }) => (
 				<View style={styles.transactionListContainer} key={item.created_date}>
 					<Text style={styles.transactionListTitle} variant="bodySmall">

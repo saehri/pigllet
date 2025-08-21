@@ -1,8 +1,12 @@
+import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Text, Button } from 'react-native-paper';
 import { useLocalSearchParams } from 'expo-router';
 
-import useTransactionsManager from '@/src/hooks/useTransactionsManager';
+import { and, eq } from 'drizzle-orm';
+import * as schema from '@/db/schema';
+
+import { useRecordTransferForm } from '@/src/hooks/useTransactionsManager';
 import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 import NoteInput from '../note-input';
@@ -12,34 +16,56 @@ import TransactionCategorySelector from '../transaction-category-selector';
 
 export default function EditTransferForm() {
 	const { currentCurrencyCode } = usePreferredCurrencyStore();
-
 	const { id } = useLocalSearchParams();
 
 	const {
-		transactionCategories,
-		transactionCreatedAt,
-		transactionCategory,
-		transactionAmount,
-		transactionImage,
-		transactionNote,
-		loading,
-		setTransactionNote,
-		setTransactionImage,
 		updateTransferRecord,
+		image,
+		drizzleDb,
+		loading,
+		note,
+		selectedCategory,
+		setImage,
+		setNote,
+		setSelectedCategory,
 		setTransactionAmount,
-		setTransactionCategory,
-		setTransactionCreatedAt,
-	} = useTransactionsManager({
-		actionType: 'update',
-		transactionId: Number(id),
-		transactionType: 'transfer',
-	});
+		setTransactionDate,
+		transactionAmount,
+		transactionDate,
+	} = useRecordTransferForm();
+
+	useEffect(() => {
+		async function loadFormData() {
+			const formData = await drizzleDb
+				.select()
+				.from(schema.transactions)
+				.where(
+					and(
+						eq(schema.transactions.id, Number(id)),
+						eq(schema.transactions.type, 'transfer')
+					)
+				)
+				.leftJoin(
+					schema.categories,
+					eq(schema.categories.id, schema.transactions.category_id)
+				);
+
+			const { categories, transactions } = formData[0];
+			setTransactionAmount(transactions?.amount.toString()!);
+			setSelectedCategory(categories!);
+			setTransactionDate(new Date(transactions?.created_at!));
+			setNote(transactions?.note!);
+			setImage(transactions?.image!);
+		}
+
+		loadFormData();
+	}, []);
 
 	return (
 		<View style={styles.formWrapper}>
 			<View style={styles.inputContainer}>
 				<Text style={styles.inputLabel} variant="bodyMedium">
-					Amount ({currentCurrencyCode})
+					Transaction amount *
 				</Text>
 
 				<CustomTextInput
@@ -61,24 +87,24 @@ export default function EditTransferForm() {
 			<View style={styles.gridContainer}>
 				<View style={styles.inputContainerFull}>
 					<Text style={styles.inputLabel} variant="bodyMedium">
-						Transfer category
+						Category *
 					</Text>
 
 					<TransactionCategorySelector
-						data={transactionCategories}
-						selectedCategory={transactionCategory!}
-						handleSelect={setTransactionCategory as any}
+						transactionCategory="transfer"
+						selectedCategory={selectedCategory!}
+						handleSelect={setSelectedCategory as any}
 					/>
 				</View>
 
 				<View style={styles.inputContainerFull}>
 					<Text style={styles.inputLabel} variant="bodyMedium">
-						Date
+						Transaction date *
 					</Text>
 
 					<DatePicker
-						selectedDate={transactionCreatedAt}
-						setSelectedDate={setTransactionCreatedAt}
+						selectedDate={transactionDate}
+						setSelectedDate={setTransactionDate}
 					/>
 				</View>
 			</View>
@@ -89,10 +115,10 @@ export default function EditTransferForm() {
 				</Text>
 
 				<NoteInput
-					noteValue={transactionNote}
-					setNoteValue={setTransactionNote}
-					imageValue={transactionImage}
-					setImageValue={setTransactionImage}
+					noteValue={note}
+					setNoteValue={setNote}
+					imageValue={image}
+					setImageValue={setImage}
 				/>
 			</View>
 
@@ -100,7 +126,7 @@ export default function EditTransferForm() {
 				mode="contained"
 				style={styles.button}
 				labelStyle={styles.buttonLabel}
-				onPress={updateTransferRecord}
+				onPress={() => updateTransferRecord(Number(id))}
 				disabled={loading || !transactionAmount.length}
 				loading={loading}
 			>

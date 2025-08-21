@@ -6,23 +6,91 @@ import { Image, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import * as schema from '@/db/schema';
 
 import { formatCurrencyByCode } from '@/utils/utils';
+import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
+import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 interface AccountSelectorProps {
-	accounts: schema.Account[];
 	handleSelect: Dispatch<SetStateAction<schema.Account>>;
 	selectedAccount: schema.Account;
 }
 
 function AccountSelector({
 	handleSelect,
-	accounts,
 	selectedAccount,
 }: AccountSelectorProps) {
+	const drizzleDb = useDrizzleDB();
+
+	const getAllAccounts = () => {
+		return drizzleDb.select().from(schema.accounts);
+	};
+
+	const { data: accounts } = useLiveQuery(getAllAccounts());
+
 	const theme = useTheme();
 	const currentCurrencyCode = usePreferredCurrencyStore(
 		(s) => s.currentCurrencyCode
 	);
+
+	const accountCardRenderer = () => {
+		if (accounts.length)
+			return (
+				<>
+					{accounts?.map((account, index) => {
+						const isSelected = selectedAccount?.id === account.id;
+						const enteringDelay = 200 + index * 50;
+
+						return (
+							<Animated.View
+								key={account.id}
+								entering={FadeInRight.delay(enteringDelay)
+									.springify()
+									.mass(1)
+									.damping(15)
+									.stiffness(100)}
+							>
+								<Pressable
+									onPress={() => handleSelect(account)}
+									style={[
+										styles.card,
+										{
+											borderColor: isSelected
+												? account?.card_color
+												: theme.colors.elevation.level5,
+										},
+									]}
+								>
+									<View
+										style={[
+											styles.cardContent,
+											{
+												backgroundColor: account.card_color,
+											},
+										]}
+									>
+										<Text style={styles.text}>{account.card_name}</Text>
+
+										<Text style={styles.text}>
+											{formatCurrencyByCode(
+												account.balance,
+												currentCurrencyCode
+											)}
+										</Text>
+
+										<Image
+											source={require('@/assets/images/cards/pig pattern.png')}
+											style={styles.bgImage}
+										/>
+									</View>
+								</Pressable>
+							</Animated.View>
+						);
+					})}
+				</>
+			);
+
+		return <></>;
+	};
 
 	return (
 		<Surface
@@ -31,53 +99,7 @@ function AccountSelector({
 			style={[styles.container, { borderColor: theme.colors.outlineVariant }]}
 		>
 			<ScrollView horizontal showsHorizontalScrollIndicator={false}>
-				{accounts?.map((account, index) => {
-					const isSelected = selectedAccount.id === account.id;
-					const enteringDelay = 300 + index * 100;
-
-					return (
-						<Animated.View
-							key={account.id}
-							entering={FadeInRight.delay(enteringDelay)
-								.springify()
-								.mass(1)
-								.damping(10)
-								.stiffness(100)}
-						>
-							<Pressable
-								onPress={() => handleSelect(account)}
-								style={[
-									styles.card,
-									{
-										borderColor: isSelected
-											? account?.card_color
-											: theme.colors.elevation.level5,
-									},
-								]}
-							>
-								<View
-									style={[
-										styles.cardContent,
-										{
-											backgroundColor: account.card_color,
-										},
-									]}
-								>
-									<Text style={styles.text}>{account.card_name}</Text>
-
-									<Text style={styles.text}>
-										{formatCurrencyByCode(account.balance, currentCurrencyCode)}
-									</Text>
-
-									<Image
-										source={require('@/assets/images/cards/pig pattern.png')}
-										style={styles.bgImage}
-									/>
-								</View>
-							</Pressable>
-						</Animated.View>
-					);
-				})}
+				{accountCardRenderer()}
 			</ScrollView>
 		</Surface>
 	);

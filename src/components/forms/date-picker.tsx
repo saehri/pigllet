@@ -7,8 +7,8 @@ import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import moment from 'moment';
 
 type Props = {
-	setSelectedDate: Dispatch<SetStateAction<Date>>;
-	selectedDate: Date;
+	setSelectedDate: Dispatch<SetStateAction<moment.MomentInput>>;
+	selectedDate: moment.MomentInput;
 };
 
 export default function DatePicker({ selectedDate, setSelectedDate }: Props) {
@@ -20,7 +20,7 @@ export default function DatePicker({ selectedDate, setSelectedDate }: Props) {
 		setOpen(true);
 
 		DateTimePickerAndroid.open({
-			value: selectedDate,
+			value: selectedDate as Date,
 			mode: 'date',
 			display: 'spinner',
 			neutralButton: { textColor: theme.colors.onSurface },

@@ -1,8 +1,12 @@
+import { useEffect } from 'react';
 import { View } from 'react-native';
 import { StyleSheet } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 
-import useTransactionsManager from '@/src/hooks/useTransactionsManager';
+import { eq } from 'drizzle-orm';
+import * as schema from '@/db/schema';
+
+import { useRecordExpenseForm } from '@/src/hooks/useTransactionsManager';
 import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 import NoteInput from '../note-input';
@@ -15,32 +19,43 @@ export default function CreateExpenseForm() {
 	const { currentCurrencyCode } = usePreferredCurrencyStore();
 
 	const {
-		transactionUsedAccount,
-		transactionCreatedAt,
-		transactionCategory,
-		transactionAmount,
-		transactionCategories,
-		transactionImage,
-		transactionNote,
-		userAccounts,
-		loading,
-		setTransactionNote,
-		setTransactionImage,
-		setTransactionAmount,
-		setTransactionCategory,
-		setTransactionCreatedAt,
 		createExpenseRecord,
-		setTransactionUsedAccount,
-	} = useTransactionsManager({
-		actionType: 'create',
-		transactionType: 'expense',
-	});
+		loading,
+		transactionAmount,
+		selectedCategory,
+		transactionDate,
+		accountUsed,
+		image,
+		note,
+		setNote,
+		setImage,
+		setAccountUsed,
+		setTransactionDate,
+		setSelectedCategory,
+		setTransactionAmount,
+		drizzleDb,
+	} = useRecordExpenseForm();
+
+	useEffect(() => {
+		async function loadFormData() {
+			const expenseCategories = await drizzleDb
+				.select()
+				.from(schema.categories)
+				.where(eq(schema.categories.type, 'expense'));
+			const accounts = await drizzleDb.select().from(schema.accounts);
+
+			setSelectedCategory(expenseCategories[0]);
+			setAccountUsed(accounts[0]);
+		}
+
+		loadFormData();
+	}, []);
 
 	return (
 		<View style={styles.formWrapper}>
 			<View style={styles.inputContainer}>
 				<Text style={styles.inputLabel} variant="bodyMedium">
-					Transaction amount
+					Transaction amount *
 				</Text>
 
 				<CustomTextInput
@@ -62,37 +77,36 @@ export default function CreateExpenseForm() {
 			<View style={styles.gridContainer}>
 				<View style={styles.inputContainerFull}>
 					<Text style={styles.inputLabel} variant="bodyMedium">
-						Category
+						Category *
 					</Text>
 
 					<TransactionCategorySelector
-						data={transactionCategories}
-						selectedCategory={transactionCategory!}
-						handleSelect={setTransactionCategory as any}
+						transactionCategory="expense"
+						selectedCategory={selectedCategory!}
+						handleSelect={setSelectedCategory as any}
 					/>
 				</View>
 
 				<View style={styles.inputContainerFull}>
 					<Text style={styles.inputLabel} variant="bodyMedium">
-						Date
+						Transaction date *
 					</Text>
 
 					<DatePicker
-						selectedDate={transactionCreatedAt}
-						setSelectedDate={setTransactionCreatedAt}
+						selectedDate={transactionDate}
+						setSelectedDate={setTransactionDate}
 					/>
 				</View>
 			</View>
 
 			<View style={styles.inputContainerFull}>
 				<Text style={styles.inputLabel} variant="bodyMedium">
-					Account used
+					Account used *
 				</Text>
 
 				<AccountSelector
-					accounts={userAccounts}
-					handleSelect={setTransactionUsedAccount as any}
-					selectedAccount={transactionUsedAccount!}
+					selectedAccount={accountUsed!}
+					handleSelect={setAccountUsed as any}
 				/>
 			</View>
 
@@ -102,10 +116,10 @@ export default function CreateExpenseForm() {
 				</Text>
 
 				<NoteInput
-					noteValue={transactionNote}
-					setNoteValue={setTransactionNote}
-					imageValue={transactionImage}
-					setImageValue={setTransactionImage}
+					noteValue={note}
+					setNoteValue={setNote}
+					imageValue={image}
+					setImageValue={setImage}
 				/>
 			</View>
 

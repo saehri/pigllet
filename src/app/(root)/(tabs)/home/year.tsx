@@ -25,7 +25,7 @@ export default function HomeYearlyTransactionScreen() {
 	);
 
 	const groupedTransactions = useMemo(() => {
-		return groupedTransactionsByDate(transactions, 'MMMM, YYYY');
+		return groupedTransactionsByDate(transactions as any, 'MMMM, YYYY');
 	}, [transactions]);
 
 	const updateYear = useCallback((offset: number) => {

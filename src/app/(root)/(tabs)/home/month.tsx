@@ -28,7 +28,7 @@ export default function HomeMonthlyTransactionScreen() {
 	);
 
 	const groupedTransactions = useMemo(() => {
-		return groupedTransactionsByDate(transactions, 'MMMM D, YYYY');
+		return groupedTransactionsByDate(transactions as any, 'MMMM D, YYYY');
 	}, [transactions]);
 
 	const updateMonth = useCallback((offset: number) => {

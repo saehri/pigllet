@@ -1,8 +1,12 @@
+import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 import { useLocalSearchParams } from 'expo-router';
 
-import useTransactionsManager from '@/src/hooks/useTransactionsManager';
+import { and, eq } from 'drizzle-orm';
+import * as schema from '@/db/schema';
+
+import { useRecordIncomeForm } from '@/src/hooks/useTransactionsManager';
 import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 import NoteInput from '../note-input';
@@ -13,37 +17,63 @@ import TransactionCategorySelector from '../transaction-category-selector';
 
 export default function EditIncomeForm() {
 	const { currentCurrencyCode } = usePreferredCurrencyStore();
-
 	const { id } = useLocalSearchParams();
 
 	const {
-		transactionUsedAccount,
-		transactionCreatedAt,
-		transactionCategory,
-		transactionAmount,
-		transactionCategories,
-		transactionImage,
-		transactionNote,
-		userAccounts,
 		loading,
-		setTransactionNote,
-		updateIncomeRecord,
-		setTransactionImage,
+		note,
+		image,
+		drizzleDb,
+		accountUsed,
+		transactionDate,
+		selectedCategory,
+		transactionAmount,
+		setNote,
+		setImage,
+		setAccountUsed,
+		setSelectedCategory,
 		setTransactionAmount,
-		setTransactionCategory,
-		setTransactionCreatedAt,
-		setTransactionUsedAccount,
-	} = useTransactionsManager({
-		actionType: 'update',
-		transactionId: Number(id),
-		transactionType: 'income',
-	});
+		setTransactionDate,
+		updateIncomeRecord,
+	} = useRecordIncomeForm();
+
+	useEffect(() => {
+		async function loadFormData() {
+			const formData = await drizzleDb
+				.select()
+				.from(schema.transactions)
+				.where(
+					and(
+						eq(schema.transactions.id, Number(id)),
+						eq(schema.transactions.type, 'income')
+					)
+				)
+				.leftJoin(
+					schema.categories,
+					eq(schema.categories.id, schema.transactions.category_id)
+				)
+				.leftJoin(
+					schema.accounts,
+					eq(schema.accounts.id, schema.transactions.account_id)
+				);
+
+			const { accounts, categories, transactions } = formData[0];
+			setTransactionAmount(transactions?.amount.toString()!);
+			setSelectedCategory(categories!);
+			setTransactionDate(new Date(transactions?.created_at!));
+			setAccountUsed(accounts!);
+			setNote(transactions?.note!);
+			setImage(transactions?.image!);
+		}
+
+		loadFormData();
+	}, []);
 
 	return (
 		<View style={styles.formWrapper}>
 			<View style={styles.inputContainerFull}>
 				<Text style={styles.inputLabel} variant="bodyMedium">
-					Transaction amount
+					Transaction amount *
 				</Text>
 
 				<CustomTextInput
@@ -65,37 +95,36 @@ export default function EditIncomeForm() {
 			<View style={styles.gridContainer}>
 				<View style={styles.inputContainerFull}>
 					<Text style={styles.inputLabel} variant="bodyMedium">
-						Income category
+						Category *
 					</Text>
 
 					<TransactionCategorySelector
-						data={transactionCategories}
-						selectedCategory={transactionCategory!}
-						handleSelect={setTransactionCategory as any}
+						transactionCategory="income"
+						selectedCategory={selectedCategory!}
+						handleSelect={setSelectedCategory as any}
 					/>
 				</View>
 
 				<View style={styles.inputContainerFull}>
 					<Text style={styles.inputLabel} variant="bodyMedium">
-						Date
+						Transaction date *
 					</Text>
 
 					<DatePicker
-						selectedDate={transactionCreatedAt}
-						setSelectedDate={setTransactionCreatedAt}
+						selectedDate={transactionDate}
+						setSelectedDate={setTransactionDate}
 					/>
 				</View>
 			</View>
 
 			<View style={styles.inputContainer}>
 				<Text style={styles.inputLabel} variant="bodyMedium">
-					Destination account
+					Destination account *
 				</Text>
 
 				<AccountSelector
-					accounts={userAccounts}
-					selectedAccount={transactionUsedAccount!}
-					handleSelect={setTransactionUsedAccount as any}
+					selectedAccount={accountUsed!}
+					handleSelect={setAccountUsed as any}
 				/>
 			</View>
 
@@ -105,10 +134,10 @@ export default function EditIncomeForm() {
 				</Text>
 
 				<NoteInput
-					noteValue={transactionNote}
-					setNoteValue={setTransactionNote}
-					imageValue={transactionImage}
-					setImageValue={setTransactionImage}
+					noteValue={note}
+					setNoteValue={setNote}
+					imageValue={image}
+					setImageValue={setImage}
 				/>
 			</View>
 
@@ -116,7 +145,7 @@ export default function EditIncomeForm() {
 				mode="contained"
 				style={styles.button}
 				labelStyle={styles.buttonLabel}
-				onPress={updateIncomeRecord}
+				onPress={() => updateIncomeRecord(Number(id))}
 				disabled={loading || !transactionAmount.length}
 				loading={loading}
 			>

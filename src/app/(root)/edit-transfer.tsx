@@ -34,10 +34,7 @@ export default function NewTransferForm() {
 						/>
 					</Button>
 
-					<DeleteTransactionsDialog
-						transactionType="transfer"
-						transactionId={Number(id)}
-					/>
+					<DeleteTransactionsDialog transactionId={Number(id)} />
 				</View>
 			),
 		});

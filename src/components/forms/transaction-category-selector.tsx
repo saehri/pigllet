@@ -1,11 +1,12 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 import {
-	Dispatch,
 	memo,
-	SetStateAction,
-	useCallback,
 	useRef,
 	useState,
+	Dispatch,
+	useCallback,
+	SetStateAction,
+	useEffect,
 } from 'react';
 import { ChevronDownIcon, icons } from 'lucide-react-native';
 import BottomSheet, {
@@ -14,29 +15,47 @@ import BottomSheet, {
 } from '@gorhom/bottom-sheet';
 import { Portal, Text, useTheme } from 'react-native-paper';
 
-import * as schema from '@/db/schema';
-
 import { getCardPosition, TRANSACTION_CARD_BR } from '@/utils/utils';
+
+import { eq } from 'drizzle-orm';
+import * as schema from '@/db/schema';
+import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 
 import LucideIcons from '../reusables/lucide-icons';
 
 type Props = {
-	data: schema.Category[];
+	transactionCategory: schema.TransactionType;
 	selectedCategory: schema.Category;
 	handleSelect: Dispatch<SetStateAction<schema.Category>>;
 };
 
 function TransactionCategorySelector({
-	data,
 	handleSelect,
 	selectedCategory,
+	transactionCategory,
 }: Props) {
 	const theme = useTheme();
+	const drizzleDb = useDrizzleDB();
+
+	const [categories, setCategories] = useState<schema.Category[]>();
+
+	useEffect(() => {
+		const loadTransactionCategory = async () => {
+			const data = await drizzleDb
+				.select()
+				.from(schema.categories)
+				.where(eq(schema.categories.type, transactionCategory));
+
+			setCategories(data);
+		};
+
+		loadTransactionCategory();
+	}, []);
+
+	const [isFocused, setFocused] = useState(false);
 
 	const snapPoints = ['55%', '93%'];
 	const bottomSheetRef = useRef<BottomSheet>(null);
-
-	const [isFocused, setFocused] = useState(false);
 
 	// renders
 	const renderBackdrop = useCallback(
@@ -106,16 +125,16 @@ function TransactionCategorySelector({
 					<BottomSheetScrollView
 						contentContainerStyle={{ paddingHorizontal: 16, gap: 2 }}
 					>
-						{data.map((c, index) => (
+						{categories?.map((c, index) => (
 							<SelectButton
-								position={getCardPosition(index, data.length)}
+								position={getCardPosition(index, categories.length)}
 								icon_name={c.icon_name}
 								label={c.label}
 								type={c.type}
 								id={c.id}
 								is_default={c.is_default}
 								key={c.id}
-								selected={selectedCategory.id == c.id}
+								selected={selectedCategory?.id == c.id}
 								onPress={() => handleSelect(c)}
 							/>
 						))}
@@ -181,7 +200,6 @@ const styles = StyleSheet.create({
 	selectBox: {
 		height: 50,
 		padding: 8,
-		gap: 12,
 		borderWidth: 1,
 		width: '100%',
 		borderRadius: 16,
@@ -189,6 +207,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		paddingHorizontal: 16,
+		overflow: 'hidden',
 	},
 	selectBoxContent: {
 		flexDirection: 'row',

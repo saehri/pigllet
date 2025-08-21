@@ -1,8 +1,9 @@
+import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { Button, Text } from 'react-native-paper';
 import { useLocalSearchParams } from 'expo-router';
-import { ActivityIndicator, Button, Text, useTheme } from 'react-native-paper';
 
-import useTransactionsManager from '@/src/hooks/useTransactionsManager';
+import { useRecordExpenseForm } from '@/src/hooks/useTransactionsManager';
 import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 import NoteInput from '../note-input';
@@ -11,40 +12,68 @@ import AccountSelector from '../account-selector';
 import CustomTextInput from '../custom-text-input';
 import TransactionCategorySelector from '../transaction-category-selector';
 
-export default function EditExpenseForm() {
-	const theme = useTheme();
-	const { currentCurrencyCode } = usePreferredCurrencyStore();
+import { and, eq } from 'drizzle-orm';
+import * as schema from '@/db/schema';
 
+export default function EditExpenseForm() {
+	const { currentCurrencyCode } = usePreferredCurrencyStore();
 	const { id } = useLocalSearchParams();
 
 	const {
-		transactionUsedAccount,
-		transactionCreatedAt,
-		transactionCategory,
-		transactionAmount,
-		transactionCategories,
-		transactionImage,
-		transactionNote,
-		userAccounts,
-		loading,
-		setTransactionNote,
-		setTransactionImage,
-		setTransactionAmount,
-		setTransactionCategory,
-		setTransactionCreatedAt,
 		updateExpenseRecord,
-		setTransactionUsedAccount,
-	} = useTransactionsManager({
-		actionType: 'update',
-		transactionId: Number(id),
-		transactionType: 'expense',
-	});
+		transactionAmount,
+		selectedCategory,
+		transactionDate,
+		accountUsed,
+		loading,
+		image,
+		note,
+		setNote,
+		setImage,
+		setAccountUsed,
+		setTransactionDate,
+		setSelectedCategory,
+		setTransactionAmount,
+		drizzleDb,
+	} = useRecordExpenseForm();
+
+	useEffect(() => {
+		async function loadFormData() {
+			const formData = await drizzleDb
+				.select()
+				.from(schema.transactions)
+				.where(
+					and(
+						eq(schema.transactions.id, Number(id)),
+						eq(schema.transactions.type, 'expense')
+					)
+				)
+				.leftJoin(
+					schema.categories,
+					eq(schema.categories.id, schema.transactions.category_id)
+				)
+				.leftJoin(
+					schema.accounts,
+					eq(schema.accounts.id, schema.transactions.account_id)
+				);
+
+			const { accounts, categories, transactions } = formData[0];
+			setTransactionAmount(transactions?.amount.toString()!);
+			setSelectedCategory(categories!);
+			setTransactionDate(new Date(transactions?.created_at!));
+			setAccountUsed(accounts!);
+			setNote(transactions?.note!);
+			setImage(transactions?.image!);
+		}
+
+		loadFormData();
+	}, []);
 
 	return (
 		<View style={styles.formWrapper}>
 			<View style={styles.inputContainerFull}>
 				<Text style={styles.inputLabel} variant="bodyMedium">
-					Transaction amount
+					Transaction amount *
 				</Text>
 
 				<CustomTextInput
@@ -66,37 +95,36 @@ export default function EditExpenseForm() {
 			<View style={styles.gridContainer}>
 				<View style={styles.inputContainerFull}>
 					<Text style={styles.inputLabel} variant="bodyMedium">
-						Category
+						Category *
 					</Text>
 
 					<TransactionCategorySelector
-						data={transactionCategories}
-						selectedCategory={transactionCategory!}
-						handleSelect={setTransactionCategory as any}
+						transactionCategory="expense"
+						selectedCategory={selectedCategory!}
+						handleSelect={setSelectedCategory as any}
 					/>
 				</View>
 
 				<View style={styles.inputContainerFull}>
 					<Text style={styles.inputLabel} variant="bodyMedium">
-						Date
+						Transaction date *
 					</Text>
 
 					<DatePicker
-						selectedDate={transactionCreatedAt}
-						setSelectedDate={setTransactionCreatedAt}
+						selectedDate={transactionDate}
+						setSelectedDate={setTransactionDate}
 					/>
 				</View>
 			</View>
 
 			<View style={styles.inputContainer}>
 				<Text style={styles.inputLabel} variant="bodyMedium">
-					Account used
+					Account used *
 				</Text>
 
 				<AccountSelector
-					accounts={userAccounts}
-					handleSelect={setTransactionUsedAccount as any}
-					selectedAccount={transactionUsedAccount!}
+					handleSelect={setAccountUsed as any}
+					selectedAccount={accountUsed!}
 				/>
 			</View>
 
@@ -106,10 +134,10 @@ export default function EditExpenseForm() {
 				</Text>
 
 				<NoteInput
-					noteValue={transactionNote}
-					setNoteValue={setTransactionNote}
-					imageValue={transactionImage}
-					setImageValue={setTransactionImage}
+					noteValue={note}
+					setNoteValue={setNote}
+					imageValue={image}
+					setImageValue={setImage}
 				/>
 			</View>
 
@@ -117,7 +145,7 @@ export default function EditExpenseForm() {
 				mode="contained"
 				style={styles.button}
 				labelStyle={styles.buttonLabel}
-				onPress={updateExpenseRecord}
+				onPress={() => updateExpenseRecord(Number(id))}
 				disabled={loading || !transactionAmount.length}
 				loading={loading}
 			>

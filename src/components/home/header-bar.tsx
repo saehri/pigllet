@@ -1,30 +1,24 @@
+import { useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Button, Text } from 'react-native-paper';
 import { Trash2Icon, XIcon } from 'lucide-react-native';
 import { StyleSheet, ToastAndroid, View } from 'react-native';
 import Animated, { FadeInRight, FadeOutRight } from 'react-native-reanimated';
 
+import { fastSpatialEasing } from '@/utils/utils';
+
 import * as schema from '@/db/schema';
 import { eq, inArray, or } from 'drizzle-orm';
-import { useSQLiteContext } from 'expo-sqlite';
-import { drizzle } from 'drizzle-orm/expo-sqlite';
+import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 import { useSelectedTransactions } from '@/store/useSelectedTransactions';
 
-import { fastSpatialEasing } from '@/utils/utils';
-import { useFocusEffect } from 'expo-router';
-
 export default function HeaderBar() {
-	const db = useSQLiteContext();
-	const drizzleDb = drizzle(db, { schema });
+	const drizzleDb = useDrizzleDB();
 
 	const [deleting, setDeleting] = useState<boolean>(false);
 
-	const selectedTransactions = useSelectedTransactions(
-		(s) => s.selectedTransactions
-	);
-	const setSelectedTransactions = useSelectedTransactions(
-		(s) => s.setSelectedTransactions
-	);
+	const { selectedTransactions, setSelectedTransactions } =
+		useSelectedTransactions();
 
 	const handleDelete = useCallback(async () => {
 		try {
