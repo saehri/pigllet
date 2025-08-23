@@ -1,6 +1,5 @@
 import { Stack } from 'expo-router';
-import { CalculatorIcon } from 'lucide-react-native';
-import { useTheme, Button } from 'react-native-paper';
+import { useTheme } from 'react-native-paper';
 
 export default function Layout() {
 	const theme = useTheme();
@@ -37,15 +36,6 @@ export default function Layout() {
 				name="new-transactions"
 				options={{
 					title: 'New transaction',
-					headerRight: (props) => (
-						<Button mode="contained-tonal" style={{ height: 40 }}>
-							<CalculatorIcon
-								strokeWidth={1.5}
-								color={theme.colors.onSecondaryContainer}
-								size={20}
-							/>
-						</Button>
-					),
 				}}
 			/>
 			<Stack.Screen name="new-budget" options={{ title: 'New budget' }} />

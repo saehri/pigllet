@@ -139,11 +139,7 @@ export default function DeleteTransactionsDialog({ transactionId }: Props) {
 				</Dialog>
 			</Portal>
 
-			<Button
-				onPress={openDialog}
-				mode="contained-tonal"
-				style={{ borderTopLeftRadius: 6, borderBottomLeftRadius: 6 }}
-			>
+			<Button onPress={openDialog} mode="contained-tonal">
 				<Trash2Icon
 					strokeWidth={1.5}
 					color={theme.colors.onSecondaryContainer}
