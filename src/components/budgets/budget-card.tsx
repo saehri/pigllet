@@ -77,6 +77,18 @@ function BudgetCard({ data, position }: Props) {
 		[currentCurrencyCode]
 	);
 
+	const handleButtonPress = () => {
+		if (selectedBudgets.length) {
+			if (isSelected) {
+				return onUnselect();
+			}
+
+			return onSelect();
+		}
+
+		router.push(routeParams);
+	};
+
 	return (
 		<Pressable
 			style={[
@@ -91,7 +103,7 @@ function BudgetCard({ data, position }: Props) {
 						: theme.colors.elevation.level5,
 				},
 			]}
-			onPress={() => router.push(routeParams)}
+			onPress={handleButtonPress}
 		>
 			<Surface
 				mode="flat"

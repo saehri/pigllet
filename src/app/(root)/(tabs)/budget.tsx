@@ -10,7 +10,7 @@ import { getCardPosition } from '@/utils/utils';
 
 import BudgetCard from '@/src/components/budgets/budget-card';
 import NoItemNotice from '@/src/components/reusables/no-items-notice';
-import BudgetHeaderBar from '@/src/components/budgets/budget-header-bar';
+import BudgetTransactionHeaderBar from '@/src/components/budgets/budget-header-bar';
 import BudgetBigTotals from '@/src/components/budgets/budget-big-totals';
 import MonthSelectorBar from '@/src/components/reusables/month-selector-bar';
 import BudgetActualVsPlanned from '@/src/components/budgets/budget-actual-vs-planned';
@@ -67,7 +67,7 @@ export default function BudgetScreen() {
 					</View>
 				</View>
 
-				<BudgetHeaderBar />
+				<BudgetTransactionHeaderBar />
 			</View>
 		);
 	}, [budgets, selectedDate]);

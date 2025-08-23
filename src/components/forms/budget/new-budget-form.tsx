@@ -1,6 +1,10 @@
+import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Text, Button } from 'react-native-paper';
 
+import { eq } from 'drizzle-orm';
+import * as schema from '@/db/schema';
+import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 import useBudgetManager from '@/src/hooks/useBudgetManager';
 import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
@@ -9,12 +13,12 @@ import MonthPicker from '../../reusables/month-picker';
 import TransactionCategorySelector from '../transaction-category-selector';
 
 export default function NewBudgetForm() {
+	const drizzleDb = useDrizzleDB();
 	const currentCurrencyCode = usePreferredCurrencyStore(
 		(s) => s.currentCurrencyCode
 	);
 
 	const {
-		transactionCategories,
 		budgetCategory,
 		budgetPeriod,
 		budgetLimit,
@@ -23,7 +27,20 @@ export default function NewBudgetForm() {
 		setBudgetPeriod,
 		setBudgetCategory,
 		createBudgetRecord,
-	} = useBudgetManager({ actionType: 'create' });
+	} = useBudgetManager();
+
+	useEffect(() => {
+		async function loadFormData() {
+			const expenseCategories = await drizzleDb
+				.select()
+				.from(schema.categories)
+				.where(eq(schema.categories.type, 'expense'));
+
+			setBudgetCategory(expenseCategories[0]);
+		}
+
+		loadFormData();
+	}, []);
 
 	return (
 		<View style={styles.formWrapper}>
@@ -55,7 +72,7 @@ export default function NewBudgetForm() {
 					</Text>
 
 					<TransactionCategorySelector
-						data={transactionCategories}
+						transactionCategory="expense"
 						selectedCategory={budgetCategory!}
 						handleSelect={setBudgetCategory as any}
 					/>

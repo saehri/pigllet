@@ -8,13 +8,13 @@ import { getCardPosition } from '@/utils/utils';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { loadTransactionsData } from '@/src/hooks/useTransactionsManager';
 
-import HeaderBar from '@/src/components/home/header-bar';
 import useBudgetManager from '@/src/hooks/useBudgetManager';
 import NoItemNotice from '@/src/components/reusables/no-items-notice';
 import BudgetBigTotals from '@/src/components/budgets/budget-big-totals';
 import TransactionCard from '@/src/components/reusables/transaction-card';
+import TransactionHeaderBar from '@/src/components/home/transaction-header-bar';
 
-export default function EditBudget() {
+export default function BudgetDetail() {
 	const theme = useTheme();
 	const navigation = useNavigation();
 	const {
@@ -35,7 +35,7 @@ export default function EditBudget() {
 
 	useEffect(() => {
 		navigation.setOptions({
-			title: '',
+			title: categoryLabel,
 			headerRight: () => (
 				<View style={{ flexDirection: 'row', gap: 2, alignItems: 'center' }}>
 					<DeleteBudgetDialog budgetId={Number(budgetId)} />
@@ -47,6 +47,7 @@ export default function EditBudget() {
 						}}
 					>
 						<Button
+							compact
 							mode="contained-tonal"
 							style={{ borderTopLeftRadius: 6, borderBottomLeftRadius: 6 }}
 						>
@@ -65,16 +66,6 @@ export default function EditBudget() {
 	const renderHeader = useCallback(() => {
 		return (
 			<View style={{ paddingTop: 4, gap: 8 }}>
-				<Text
-					variant="headlineSmall"
-					style={[
-						styles.headerTitle,
-						{ paddingHorizontal: 16, marginBottom: 24 },
-					]}
-				>
-					{categoryLabel}
-				</Text>
-
 				<View style={styles.headerContainer}>
 					<Text variant="titleLarge" style={styles.headerTitle}>
 						Statistics
@@ -90,7 +81,7 @@ export default function EditBudget() {
 				</View>
 
 				<View style={{ paddingHorizontal: 16 }}>
-					<HeaderBar />
+					<TransactionHeaderBar />
 				</View>
 			</View>
 		);
@@ -100,7 +91,7 @@ export default function EditBudget() {
 		<FlatList
 			keyboardShouldPersistTaps="handled"
 			showsVerticalScrollIndicator={false}
-			contentContainerStyle={{ paddingBottom: 180 }}
+			contentContainerStyle={{ paddingBottom: 180, gap: 2 }}
 			data={transactions}
 			ListHeaderComponent={renderHeader}
 			ListEmptyComponent={<NoItemNotice />}
@@ -122,10 +113,7 @@ type DeleteBudgetDialog = { budgetId: number };
 
 function DeleteBudgetDialog({ budgetId }: DeleteBudgetDialog) {
 	const theme = useTheme();
-	const { loading, deleteBudgetRecord } = useBudgetManager({
-		actionType: 'delete',
-		budgetId,
-	});
+	const { loading, deleteBudgetRecord } = useBudgetManager();
 
 	const [visible, setVisible] = useState<boolean>(false);
 
@@ -146,7 +134,7 @@ function DeleteBudgetDialog({ budgetId }: DeleteBudgetDialog) {
 						)}
 					/>
 					<Dialog.Title style={styles.dialogTitleStyle}>
-						Delete budget record
+						Delete budget record?
 					</Dialog.Title>
 
 					<Dialog.Actions>
@@ -160,7 +148,7 @@ function DeleteBudgetDialog({ budgetId }: DeleteBudgetDialog) {
 
 						<Button
 							labelStyle={styles.dialogContentTextStyle}
-							onPress={deleteBudgetRecord}
+							onPress={() => deleteBudgetRecord(budgetId)}
 							disabled={loading}
 							loading={loading}
 						>
@@ -178,6 +166,7 @@ function DeleteBudgetDialog({ budgetId }: DeleteBudgetDialog) {
 					borderTopRightRadius: 6,
 					borderBottomRightRadius: 6,
 				}}
+				compact
 			>
 				<Trash2Icon
 					strokeWidth={1.5}

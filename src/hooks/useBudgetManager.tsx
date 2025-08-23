@@ -8,11 +8,6 @@ import { useRouter } from 'expo-router';
 import moment from 'moment';
 import { useDrizzleDB } from './useDrizzleDb';
 
-type Props = {
-	actionType?: 'create' | 'read' | 'update' | 'delete';
-	budgetId?: number;
-};
-
 export const loadBudgetRecord = (selectedDate: moment.MomentInput) => {
 	const drizzleDb = useDrizzleDB();
 
@@ -49,14 +44,13 @@ export const loadBudgetRecord = (selectedDate: moment.MomentInput) => {
 type UseBudgetManagerTypes = {
 	loading: boolean;
 	createBudgetRecord: () => Promise<void>;
-	updateBudgetRecord: () => Promise<void>;
-	deleteBudgetRecord: () => Promise<void>;
+	updateBudgetRecord: (id: number) => Promise<void>;
+	deleteBudgetRecord: (id: number) => Promise<void>;
 	budgetCategory: schema.Category | undefined;
 	budgetPeriod: Date;
 	budgetCreatedAt: Date;
 	budgetLimit: string;
 	currentBudgetSpending: string;
-	transactionCategories: schema.Category[];
 	setBudgetCategory: React.Dispatch<
 		React.SetStateAction<schema.Category | undefined>
 	>;
@@ -66,58 +60,19 @@ type UseBudgetManagerTypes = {
 	setBudgetPeriod: React.Dispatch<SetStateAction<Date>>;
 };
 
-export default function useBudgetManager({
-	actionType,
-	budgetId,
-}: Props): UseBudgetManagerTypes {
+export default function useBudgetManager(): UseBudgetManagerTypes {
 	const drizzleDb = useDrizzleDB();
 	const router = useRouter();
 
 	// ---- form state
 	const [loading, setLoading] = useState<boolean>(false);
-	const [transactionCategories, setTransactionCategories] = useState<
-		schema.Category[]
-	>([]);
 
 	// ---- form input states
+	const [budgetLimit, setBudgetLimit] = useState<string>('');
 	const [budgetCategory, setBudgetCategory] = useState<schema.Category>();
 	const [budgetPeriod, setBudgetPeriod] = useState(new Date());
-	const [budgetLimit, setBudgetLimit] = useState<string>('');
-	const [currentBudgetSpending, setBudgetSpending] = useState<string>('');
 	const [budgetCreatedAt, setBudgetCreatedAt] = useState<Date>(new Date());
-
-	useEffect(() => {
-		async function populateForm() {
-			try {
-				// Populate the form when user want to edit
-				if (actionType === 'update') {
-					const budgetLimit = await drizzleDb
-						.select({ limit: schema.budgets.limit })
-						.from(schema.budgets)
-						.where(eq(schema.budgets.id, budgetId!));
-
-					setBudgetLimit(budgetLimit[0].limit.toString());
-				}
-
-				if (actionType === 'create') {
-					const categories = await drizzleDb
-						.select()
-						.from(schema.categories)
-						.where(eq(schema.categories.type, 'expense'));
-
-					setTransactionCategories(categories);
-
-					setBudgetCategory(categories[0]);
-				}
-			} catch (error: any) {
-				ToastAndroid.show(error.message, ToastAndroid.SHORT);
-			}
-		}
-
-		if (actionType !== 'update') {
-			populateForm();
-		}
-	}, []);
+	const [currentBudgetSpending, setBudgetSpending] = useState<string>('');
 
 	// ----- CREATE
 	async function createBudgetRecord() {
@@ -149,7 +104,7 @@ export default function useBudgetManager({
 	}
 
 	// ---- UPDATE
-	async function updateBudgetRecord() {
+	async function updateBudgetRecord(budgetId: number) {
 		try {
 			setLoading(true);
 
@@ -170,13 +125,13 @@ export default function useBudgetManager({
 	}
 
 	// ----- DELETE
-	async function deleteBudgetRecord() {
+	async function deleteBudgetRecord(budgetId: number) {
 		try {
 			setLoading(true);
 
 			await drizzleDb
 				.delete(schema.budgets)
-				.where(eq(schema.budgets.id, Number(budgetId)));
+				.where(eq(schema.budgets.id, budgetId));
 
 			ToastAndroid.show('Deleted successfully!', ToastAndroid.SHORT);
 			router.back();
@@ -199,7 +154,6 @@ export default function useBudgetManager({
 		setBudgetCreatedAt,
 		setBudgetLimit,
 		setBudgetSpending,
-		transactionCategories,
 		setBudgetPeriod,
 		deleteBudgetRecord,
 		updateBudgetRecord,

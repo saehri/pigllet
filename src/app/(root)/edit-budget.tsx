@@ -15,7 +15,7 @@ export default function EditBudget() {
 	);
 
 	const { loading, budgetLimit, updateBudgetRecord, setBudgetLimit } =
-		useBudgetManager({ actionType: 'update', budgetId: Number(id) });
+		useBudgetManager();
 
 	useEffect(() => {
 		setBudgetLimit(limit as string);
@@ -47,7 +47,7 @@ export default function EditBudget() {
 				mode="contained"
 				style={styles.button}
 				labelStyle={styles.buttonLabel}
-				onPress={updateBudgetRecord}
+				onPress={() => updateBudgetRecord(Number(id))}
 				disabled={loading || !budgetLimit.length}
 				loading={loading}
 			>
