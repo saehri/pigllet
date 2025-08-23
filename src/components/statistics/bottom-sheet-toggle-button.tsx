@@ -1,4 +1,4 @@
-import { TRANSACTION_CARD_BR } from '@/utils/utils';
+import { cardBorderRadius } from '@/utils/utils';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Surface, Text, useTheme } from 'react-native-paper';
 
@@ -24,10 +24,10 @@ export default function BottomSheetToggleButton({
 			style={[
 				styles.checkboxContainer,
 				{
-					borderTopRightRadius: TRANSACTION_CARD_BR[position].tr,
-					borderTopLeftRadius: TRANSACTION_CARD_BR[position].tl,
-					borderBottomLeftRadius: TRANSACTION_CARD_BR[position].bl,
-					borderBottomRightRadius: TRANSACTION_CARD_BR[position].br,
+					borderTopRightRadius: cardBorderRadius[position].tr,
+					borderTopLeftRadius: cardBorderRadius[position].tl,
+					borderBottomLeftRadius: cardBorderRadius[position].bl,
+					borderBottomRightRadius: cardBorderRadius[position].br,
 				},
 			]}
 		>

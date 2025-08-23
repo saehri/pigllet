@@ -15,7 +15,7 @@ import BottomSheet, {
 } from '@gorhom/bottom-sheet';
 import { Portal, Text, useTheme } from 'react-native-paper';
 
-import { getCardPosition, TRANSACTION_CARD_BR } from '@/utils/utils';
+import { getCardPosition, cardBorderRadius } from '@/utils/utils';
 
 import { eq } from 'drizzle-orm';
 import * as schema from '@/db/schema';
@@ -166,10 +166,10 @@ function SelectButton({
 			style={[
 				styles.selectButtonContainer,
 				{
-					borderTopLeftRadius: TRANSACTION_CARD_BR[position].tl,
-					borderTopRightRadius: TRANSACTION_CARD_BR[position].tr,
-					borderBottomRightRadius: TRANSACTION_CARD_BR[position].br,
-					borderBottomLeftRadius: TRANSACTION_CARD_BR[position].bl,
+					borderTopLeftRadius: cardBorderRadius[position].tl,
+					borderTopRightRadius: cardBorderRadius[position].tr,
+					borderBottomRightRadius: cardBorderRadius[position].br,
+					borderBottomLeftRadius: cardBorderRadius[position].bl,
 					backgroundColor: selected
 						? theme.colors.tertiaryContainer
 						: theme.colors.elevation.level5,

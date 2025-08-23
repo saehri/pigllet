@@ -1,4 +1,4 @@
-import { TRANSACTION_CARD_BR } from '@/utils/utils';
+import { cardBorderRadius } from '@/utils/utils';
 import { ChevronsUpDown } from 'lucide-react-native';
 import { useMemo } from 'react';
 import {
@@ -38,10 +38,10 @@ export default function SettingContentButton({
 
 	const cardRadiusStyle = useMemo(
 		() => ({
-			borderTopLeftRadius: TRANSACTION_CARD_BR[position].tl,
-			borderTopRightRadius: TRANSACTION_CARD_BR[position].tr,
-			borderBottomLeftRadius: TRANSACTION_CARD_BR[position].bl,
-			borderBottomRightRadius: TRANSACTION_CARD_BR[position].br,
+			borderTopLeftRadius: cardBorderRadius[position].tl,
+			borderTopRightRadius: cardBorderRadius[position].tr,
+			borderBottomLeftRadius: cardBorderRadius[position].bl,
+			borderBottomRightRadius: cardBorderRadius[position].br,
 		}),
 		[position]
 	);

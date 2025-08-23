@@ -13,7 +13,7 @@ import {
 import { Category, TransactionType } from '@/db/schema';
 import {
 	fastSpatialEasing,
-	TRANSACTION_CARD_BR,
+	cardBorderRadius,
 	transactionColorMap,
 } from '@/utils/utils';
 
@@ -59,10 +59,10 @@ function TransactionCategoryCard({ data, position }: Props) {
 				style={[
 					styles.card,
 					{
-						borderTopLeftRadius: TRANSACTION_CARD_BR[position].tl,
-						borderTopRightRadius: TRANSACTION_CARD_BR[position].tr,
-						borderBottomLeftRadius: TRANSACTION_CARD_BR[position].bl,
-						borderBottomRightRadius: TRANSACTION_CARD_BR[position].br,
+						borderTopLeftRadius: cardBorderRadius[position].tl,
+						borderTopRightRadius: cardBorderRadius[position].tr,
+						borderBottomLeftRadius: cardBorderRadius[position].bl,
+						borderBottomRightRadius: cardBorderRadius[position].br,
 						borderColor: isSelected
 							? theme.colors.tertiary
 							: theme.colors.elevation.level3,

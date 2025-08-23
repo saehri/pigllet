@@ -8,7 +8,7 @@ import * as schema from '@/db/schema';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { and, gte, lte, sql } from 'drizzle-orm';
 
-import { TRANSACTION_CARD_BR, formatCurrencyByCode } from '@/utils/utils';
+import { cardBorderRadius, formatCurrencyByCode } from '@/utils/utils';
 import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 
@@ -105,10 +105,10 @@ function Card({ label, value, position }: CardProps) {
 
 	const cardRadiusStyle = useMemo(
 		() => ({
-			borderTopLeftRadius: TRANSACTION_CARD_BR[position].tl,
-			borderTopRightRadius: TRANSACTION_CARD_BR[position].tr,
-			borderBottomLeftRadius: TRANSACTION_CARD_BR[position].bl,
-			borderBottomRightRadius: TRANSACTION_CARD_BR[position].br,
+			borderTopLeftRadius: cardBorderRadius[position].tl,
+			borderTopRightRadius: cardBorderRadius[position].tr,
+			borderBottomLeftRadius: cardBorderRadius[position].bl,
+			borderBottomRightRadius: cardBorderRadius[position].br,
 		}),
 		[position]
 	);

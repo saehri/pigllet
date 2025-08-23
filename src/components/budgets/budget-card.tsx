@@ -9,7 +9,7 @@ import moment from 'moment';
 import * as schema from '@/db/schema';
 
 import { fastSpatialEasing, formatCurrencyByCode } from '@/utils/utils';
-import { TRANSACTION_CARD_BR, transactionColorMap } from '@/utils/utils';
+import { cardBorderRadius, transactionColorMap } from '@/utils/utils';
 
 import { useSelectedBudgets } from '@/store/useSelectedBudgets';
 import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
@@ -48,10 +48,10 @@ function BudgetCard({ data, position }: Props) {
 
 	const cardRadiusStyle = useMemo(
 		() => ({
-			borderTopLeftRadius: TRANSACTION_CARD_BR[position].tl,
-			borderTopRightRadius: TRANSACTION_CARD_BR[position].tr,
-			borderBottomLeftRadius: TRANSACTION_CARD_BR[position].bl,
-			borderBottomRightRadius: TRANSACTION_CARD_BR[position].br,
+			borderTopLeftRadius: cardBorderRadius[position].tl,
+			borderTopRightRadius: cardBorderRadius[position].tr,
+			borderBottomLeftRadius: cardBorderRadius[position].bl,
+			borderBottomRightRadius: cardBorderRadius[position].br,
 		}),
 		[position]
 	);

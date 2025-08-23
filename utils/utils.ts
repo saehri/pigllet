@@ -1,7 +1,7 @@
 import { CurrencyCode, currencySymbols } from '@/constants/currency-symbols';
 import { Easing } from 'react-native-reanimated';
 
-export const TRANSACTION_CARD_BR: Record<
+export const cardBorderRadius: Record<
 	CardPositionsTypes,
 	{ tl: number; tr: number; bl: number; br: number }
 > = {

@@ -3,32 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { List, Text, useTheme } from 'react-native-paper';
 import { Notebook, SwatchBook, User, Wallet2 } from 'lucide-react-native';
 
-const borderRadius = {
-	tr: {
-		first: 16,
-		middle: 6,
-		only: 16,
-		last: 6,
-	},
-	tl: {
-		first: 16,
-		middle: 6,
-		only: 16,
-		last: 6,
-	},
-	br: {
-		first: 6,
-		middle: 6,
-		only: 16,
-		last: 16,
-	},
-	bl: {
-		first: 6,
-		middle: 6,
-		only: 16,
-		last: 16,
-	},
-};
+import { cardBorderRadius } from '@/utils/utils';
 
 export default function MainSetting() {
 	const router = useRouter();
@@ -52,8 +27,8 @@ export default function MainSetting() {
 						styles.listItem,
 						{
 							backgroundColor: theme.colors.elevation.level2,
-							borderTopLeftRadius: borderRadius.tl.first,
-							borderTopRightRadius: borderRadius.tr.first,
+							borderTopLeftRadius: cardBorderRadius['first'].tl,
+							borderTopRightRadius: cardBorderRadius['first'].tr,
 						},
 					]}
 				/>
@@ -119,8 +94,8 @@ export default function MainSetting() {
 						styles.listItem,
 						{
 							backgroundColor: theme.colors.elevation.level2,
-							borderBottomLeftRadius: borderRadius.bl.last,
-							borderBottomRightRadius: borderRadius.br.last,
+							borderBottomLeftRadius: cardBorderRadius['last'].bl,
+							borderBottomRightRadius: cardBorderRadius['last'].br,
 						},
 					]}
 				/>

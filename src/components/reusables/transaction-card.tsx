@@ -18,7 +18,7 @@ import { TransactionType } from '@/db/schema';
 import { TransactionWithDetails } from '@/utils/group-transactions';
 
 import {
-	TRANSACTION_CARD_BR,
+	cardBorderRadius,
 	transactionColorMap,
 	formatCurrencyByCode,
 	fastSpatialEasing,
@@ -83,10 +83,10 @@ function TransactionCard({ data, position, showDate, pressable }: Props) {
 
 	const cardRadiusStyle = useMemo(
 		() => ({
-			borderTopLeftRadius: TRANSACTION_CARD_BR[position].tl,
-			borderTopRightRadius: TRANSACTION_CARD_BR[position].tr,
-			borderBottomLeftRadius: TRANSACTION_CARD_BR[position].bl,
-			borderBottomRightRadius: TRANSACTION_CARD_BR[position].br,
+			borderTopLeftRadius: cardBorderRadius[position].tl,
+			borderTopRightRadius: cardBorderRadius[position].tr,
+			borderBottomLeftRadius: cardBorderRadius[position].bl,
+			borderBottomRightRadius: cardBorderRadius[position].br,
 		}),
 		[position]
 	);
