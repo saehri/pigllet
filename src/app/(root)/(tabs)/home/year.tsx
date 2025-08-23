@@ -7,7 +7,7 @@ import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { groupedTransactionsByDate } from '@/utils/group-transactions';
 import { loadTransactionsData } from '@/src/hooks/useTransactionsManager';
 
-import HeaderBar from '@/src/components/home/header-bar';
+import TransactionHeaderBar from '@/src/components/home/transaction-header-bar';
 import NoItemNotice from '@/src/components/reusables/no-items-notice';
 import TransactionCard from '@/src/components/reusables/transaction-card';
 import HomeHeaderContainer from '@/src/components/home/home-header-container';
@@ -69,7 +69,7 @@ export default function HomeYearlyTransactionScreen() {
 
 				<TransactionsSummary selectedDate={selectedDate} range="month" />
 
-				<HeaderBar />
+				<TransactionHeaderBar />
 			</HomeHeaderContainer>
 		);
 	}, [selectedDate, updateYear]);

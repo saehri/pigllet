@@ -55,7 +55,7 @@ function TransactionCard({ data, position, showDate, pressable }: Props) {
 	};
 
 	// unselect the transaction card
-	const onUnselect = () => {
+	const unSelect = () => {
 		setSelectedTransactions(
 			selectedTransactions.filter((id) => id !== data.transaction.id!)
 		);
@@ -91,10 +91,22 @@ function TransactionCard({ data, position, showDate, pressable }: Props) {
 		[position]
 	);
 
+	const handleButtonPress = () => {
+		if (selectedTransactions.length) {
+			if (isSelected) {
+				return unSelect();
+			}
+
+			return onSelect();
+		}
+
+		router.push(routeParams);
+	};
+
 	return (
 		<Pressable
 			disabled={pressable}
-			onPress={() => router.push(routeParams)}
+			onPress={handleButtonPress}
 			style={[
 				cardRadiusStyle,
 				{
@@ -120,7 +132,7 @@ function TransactionCard({ data, position, showDate, pressable }: Props) {
 			>
 				<Pressable
 					style={styles.iconContainer}
-					onPress={isSelected ? onUnselect : onSelect}
+					onPress={isSelected ? unSelect : onSelect}
 				>
 					{isSelected ? (
 						<Animated.View

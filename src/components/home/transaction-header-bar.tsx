@@ -1,8 +1,8 @@
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { Button, Text } from 'react-native-paper';
 import { Trash2Icon, XIcon } from 'lucide-react-native';
 import { StyleSheet, ToastAndroid, View } from 'react-native';
+import { Button, Dialog, Portal, Text } from 'react-native-paper';
 import Animated, { FadeInRight, FadeOutRight } from 'react-native-reanimated';
 
 import { fastSpatialEasing } from '@/utils/utils';
@@ -12,7 +12,7 @@ import { eq, inArray, or } from 'drizzle-orm';
 import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 import { useSelectedTransactions } from '@/store/useSelectedTransactions';
 
-export default function HeaderBar() {
+export default function TransactionHeaderBar() {
 	const drizzleDb = useDrizzleDB();
 
 	const [deleting, setDeleting] = useState<boolean>(false);
@@ -105,30 +105,16 @@ export default function HeaderBar() {
 		}, [])
 	);
 
-	return (
-		<View style={styles.headerBar}>
-			<Text variant="titleLarge" style={styles.transactionsTitle}>
-				Transactions
-			</Text>
-
-			{selectedTransactions.length ? (
+	const buttonRenderer = useCallback(() => {
+		if (selectedTransactions.length)
+			return (
 				<Animated.View
 					entering={FadeInRight.duration(500).easing(fastSpatialEasing)}
 					exiting={FadeOutRight.duration(200).easing(fastSpatialEasing)}
 					style={styles.actionButtons}
 				>
-					<Button
-						style={styles.actionButton}
-						mode="contained-tonal"
-						icon={(props) => (
-							<Trash2Icon size={20} color={props.color} strokeWidth={1.5} />
-						)}
-						labelStyle={styles.buttonLabel}
-						onPress={handleDelete}
-						loading={deleting}
-					>
-						Delete
-					</Button>
+					<DeleteModal handleDelete={handleDelete} loading={deleting} />
+
 					<Button
 						style={styles.actionButton}
 						mode="contained-tonal"
@@ -141,15 +127,99 @@ export default function HeaderBar() {
 						{selectedTransactions.length}
 					</Button>
 				</Animated.View>
-			) : (
-				<View></View>
-			)}
+			);
+
+		return <></>;
+	}, [selectedTransactions]);
+
+	return (
+		<View style={styles.TransactionHeaderBar}>
+			<Text variant="titleLarge" style={styles.transactionsTitle}>
+				Transactions
+			</Text>
+
+			{buttonRenderer()}
 		</View>
 	);
 }
 
+type DeleteModalProps = {
+	handleDelete: () => void;
+	loading: boolean;
+};
+
+function DeleteModal({ handleDelete, loading }: DeleteModalProps) {
+	const [open, setOpen] = useState(false);
+
+	const openDialog = () => setOpen(true);
+	const closeDialog = () => setOpen(false);
+
+	return (
+		<>
+			<Button
+				style={styles.actionButton}
+				mode="contained-tonal"
+				icon={(props) => (
+					<Trash2Icon size={20} color={props.color} strokeWidth={1.5} />
+				)}
+				labelStyle={styles.buttonLabel}
+				onPress={openDialog}
+			>
+				Delete
+			</Button>
+
+			<Portal>
+				<Dialog visible={open} onDismiss={closeDialog}>
+					<Dialog.Icon
+						icon={(props) => (
+							<Trash2Icon
+								color={props.color}
+								size={props.size}
+								strokeWidth={1.5}
+							/>
+						)}
+					/>
+
+					<Dialog.Title
+						style={{ fontFamily: 'Manrope-Regular', textAlign: 'center' }}
+					>
+						Are you sure?
+					</Dialog.Title>
+
+					<Dialog.Content>
+						<Text variant="bodyLarge" style={{ fontFamily: 'Manrope-Regular' }}>
+							The selected transaction records will be permanently deleted.
+						</Text>
+					</Dialog.Content>
+
+					<Dialog.Actions>
+						<Button
+							labelStyle={{ fontFamily: 'Manrope-Regular', fontSize: 16 }}
+							onPress={closeDialog}
+						>
+							Cancel
+						</Button>
+
+						<Button
+							labelStyle={{ fontFamily: 'Manrope-Regular', fontSize: 16 }}
+							onPress={() => {
+								closeDialog();
+								handleDelete();
+							}}
+							disabled={loading}
+							loading={loading}
+						>
+							Delete
+						</Button>
+					</Dialog.Actions>
+				</Dialog>
+			</Portal>
+		</>
+	);
+}
+
 const styles = StyleSheet.create({
-	headerBar: {
+	TransactionHeaderBar: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',

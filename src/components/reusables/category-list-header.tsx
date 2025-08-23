@@ -87,7 +87,7 @@ function CategoryListHeader({ defaultCategoryLabel }: Props) {
 	);
 
 	return (
-		<View style={styles.headerBar}>
+		<View style={styles.TransactionHeaderBar}>
 			{selectedCategories.length ? (
 				<Animated.View
 					entering={FadeInRight.duration(350).mass(10)}
@@ -127,7 +127,7 @@ function CategoryListHeader({ defaultCategoryLabel }: Props) {
 export default memo(CategoryListHeader);
 
 const styles = StyleSheet.create({
-	headerBar: {
+	TransactionHeaderBar: {
 		flexDirection: 'row',
 		justifyContent: 'flex-end',
 		alignItems: 'center',

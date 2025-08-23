@@ -28,7 +28,7 @@ import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 import { formatCurrencyByCode, getCardPosition } from '@/utils/utils';
 import { groupedTransactionsByDate } from '@/utils/group-transactions';
 
-import HeaderBar from '@/src/components/home/header-bar';
+import TransactionHeaderBar from '@/src/components/home/transaction-header-bar';
 import NoItemNotice from '@/src/components/reusables/no-items-notice';
 import TransactionCard from '@/src/components/reusables/transaction-card';
 import AccountCardPreview from '@/src/components/reusables/account-card-preview';
@@ -169,7 +169,7 @@ function TransactionList({ accountId }: TransactionList) {
 						}}
 					>
 						<View style={{ paddingHorizontal: 16 }}>
-							<HeaderBar />
+							<TransactionHeaderBar />
 						</View>
 
 						<FlatList
