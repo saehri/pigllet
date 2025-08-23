@@ -187,7 +187,10 @@ function SelectButton({
 				/>
 			</View>
 
-			<Text style={styles.selectText} variant="bodyLarge">
+			<Text
+				style={[styles.selectText, { color: theme.colors.onSurface }]}
+				variant="bodyLarge"
+			>
 				{label}
 			</Text>
 		</Pressable>
