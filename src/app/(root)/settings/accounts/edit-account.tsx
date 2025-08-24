@@ -68,22 +68,6 @@ export default function EditAccountScreen() {
 		return Boolean(accountName.length && accountHolder.length);
 	};
 
-	const accountCardPrevRenderer = () => {
-		if (accountName.length)
-			return (
-				<AccountCardPreview
-					animationKey={cardColor}
-					isDefault
-					accountName={accountName}
-					accountHolder={accountHolder}
-					cardColor={cardColor}
-					accountNumber={accountNumber}
-				/>
-			);
-
-		return <></>;
-	};
-
 	return (
 		<ScrollView showsVerticalScrollIndicator={false}>
 			<View
@@ -93,7 +77,14 @@ export default function EditAccountScreen() {
 					paddingVertical: 24,
 				}}
 			>
-				{accountCardPrevRenderer()}
+				<AccountCardPreview
+					animationKey={cardColor}
+					isDefault
+					accountName={accountName}
+					accountHolder={accountHolder}
+					cardColor={cardColor}
+					accountNumber={accountNumber}
+				/>
 
 				<View style={styles.colorPickers}>
 					{cardColors.map((color) => (

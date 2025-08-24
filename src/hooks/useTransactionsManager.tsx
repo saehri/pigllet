@@ -5,7 +5,7 @@ import { ToastAndroid } from 'react-native';
 import * as schema from '@/db/schema';
 import { useDrizzleDB } from './useDrizzleDb';
 import { alias } from 'drizzle-orm/sqlite-core';
-import { and, desc, eq, sql } from 'drizzle-orm';
+import { and, desc, eq, or, sql } from 'drizzle-orm';
 
 interface loadTransactionsData {
 	date?: moment.MomentInput;
@@ -49,7 +49,12 @@ export const loadTransactionsData = ({
 	}
 
 	if (categoryId) {
-		whereConditions.push(eq(schema.transactions.category_id, categoryId));
+		whereConditions.push(
+			or(
+				eq(schema.transactions.category_id, categoryId),
+				eq(schema.transactions.related_account_id, categoryId)
+			)
+		);
 	}
 
 	return drizzleDb

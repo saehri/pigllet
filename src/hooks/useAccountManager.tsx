@@ -163,6 +163,7 @@ export default function useAccountManager(): useAccountManager {
 			});
 
 			ToastAndroid.show('Account deleted!', ToastAndroid.SHORT);
+			router.back();
 		} catch (error: any) {
 			ToastAndroid.show(error.message, ToastAndroid.SHORT);
 		} finally {

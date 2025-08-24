@@ -100,7 +100,7 @@ function AccountCardPreview({
 					<View style={styles.accountName}>
 						<Text
 							variant="bodyMedium"
-							style={{ fontFamily: 'Manrope-ExtraBold' }}
+							style={{ fontFamily: 'Manrope-ExtraBold', color: 'white' }}
 						>
 							{accountName}
 						</Text>

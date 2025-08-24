@@ -58,7 +58,7 @@ export function formatCurrencyByCode(value: number, code: CurrencyCode) {
 		style: 'currency',
 		currency: match?.code || 'IDR',
 		currencySign: 'accounting',
-		maximumFractionDigits: 0,
+		maximumFractionDigits: 2,
 	});
 }
 

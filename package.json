@@ -14,6 +14,8 @@
     "preset": "jest-expo"
   },
   "dependencies": {
+    "@animatereactnative/marquee": "^0.5.2",
+    "@animatereactnative/stagger": "^0.3.0",
     "@expo/cli": "^0.22.7",
     "@expo/config-plugins": "~9.0.0",
     "@expo/prebuild-config": "~8.0.0",
