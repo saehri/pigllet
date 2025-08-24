@@ -8,7 +8,9 @@
 			"autoIncrement": true
 		},
 		"production-apk": {
-			"buildType": "apk"
+			"android": {
+				"buildType": "apk"
+			}
 		},
 		"preview": {
 			"extends": "production",
