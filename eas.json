@@ -7,6 +7,9 @@
 		"production": {
 			"autoIncrement": true
 		},
+		"production-apk": {
+			"buildType": "apk"
+		},
 		"preview": {
 			"extends": "production",
 			"distribution": "internal"
@@ -20,3 +23,4 @@
 		"production": {}
 	}
 }
+
