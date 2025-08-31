@@ -101,7 +101,8 @@ type CardProps = {
 function Card({ label, value, position }: CardProps) {
 	const theme = useTheme();
 
-	const { currentCurrencyCode } = usePreferredCurrencyStore();
+	const { currentCurrencyCode, showFraction, accountingStyle } =
+		usePreferredCurrencyStore();
 
 	const cardRadiusStyle = useMemo(
 		() => ({
@@ -133,7 +134,12 @@ function Card({ label, value, position }: CardProps) {
 				style={[styles.itemText, { color: theme.colors.onSecondary }]}
 				variant="bodyMedium"
 			>
-				{formatCurrencyByCode(value, currentCurrencyCode)}
+				{formatCurrencyByCode(
+					value,
+					currentCurrencyCode,
+					showFraction,
+					accountingStyle
+				)}
 			</Text>
 		</Surface>
 	);

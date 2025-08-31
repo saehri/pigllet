@@ -12,7 +12,8 @@ import { formatCurrencyByCode } from '@/utils/utils';
 import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
 export default function AccountMiniViewer() {
-	const { currentCurrencyCode } = usePreferredCurrencyStore();
+	const { currentCurrencyCode, showFraction, accountingStyle } =
+		usePreferredCurrencyStore();
 
 	const [currentCardIndex, setCurrentCardIndex] = useState(0);
 
@@ -63,7 +64,9 @@ export default function AccountMiniViewer() {
 						<Text variant="labelSmall" style={styles.cardText}>
 							{formatCurrencyByCode(
 								account[currentCardIndex]?.balance ?? 0,
-								currentCurrencyCode
+								currentCurrencyCode,
+								showFraction,
+								accountingStyle
 							)}
 						</Text>
 					</Surface>

@@ -175,7 +175,8 @@ function ChartRenderer({
 	transactionType,
 }: ChartRendererProps) {
 	const theme = useTheme();
-	const { currentCurrencyCode } = usePreferredCurrencyStore();
+	const { currentCurrencyCode, showFraction, accountingStyle } =
+		usePreferredCurrencyStore();
 
 	return (
 		<View style={styles.chartContainer}>
@@ -183,7 +184,12 @@ function ChartRenderer({
 				barWidth={75}
 				barBorderRadius={120}
 				formatYLabel={(label) =>
-					formatCurrencyByCode(Number(label), currentCurrencyCode)
+					formatCurrencyByCode(
+						Number(label),
+						currentCurrencyCode,
+						showFraction,
+						accountingStyle
+					)
 				}
 				hideYAxisText
 				height={200}
@@ -192,7 +198,12 @@ function ChartRenderer({
 					...data,
 					topLabelComponent: () => (
 						<Text style={{ color: theme.colors.onSurface, fontSize: 9 }}>
-							{formatCurrencyByCode(Number(data.value), currentCurrencyCode)}
+							{formatCurrencyByCode(
+								Number(data.value),
+								currentCurrencyCode,
+								showFraction,
+								accountingStyle
+							)}
 						</Text>
 					),
 				}))}

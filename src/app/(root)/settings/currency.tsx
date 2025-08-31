@@ -25,7 +25,7 @@ export default function Currency() {
 					{currencySymbols.map((c) => (
 						<SettingContentButton
 							position="only"
-							onPress={() => setAppCurrencyCode(c.symbol)}
+							onPress={() => setAppCurrencyCode(c.code)}
 							label={c.label}
 							key={c.code}
 							higlight={currentCurrencyCode === c.symbol}

@@ -31,7 +31,8 @@ function BudgetCard({ data, position }: Props) {
 	const theme = useTheme();
 	const router = useRouter();
 
-	const { currentCurrencyCode } = usePreferredCurrencyStore();
+	const { currentCurrencyCode, showFraction, accountingStyle } =
+		usePreferredCurrencyStore();
 	const { selectedBudgets, setSelectedBudgets } = useSelectedBudgets();
 
 	const isSelected = selectedBudgets.includes(budget.id!);
@@ -72,7 +73,12 @@ function BudgetCard({ data, position }: Props) {
 
 	const formattedAmount = useCallback(
 		(amount: number) => {
-			return formatCurrencyByCode(amount, currentCurrencyCode);
+			return formatCurrencyByCode(
+				amount,
+				currentCurrencyCode,
+				showFraction,
+				accountingStyle
+			);
 		},
 		[currentCurrencyCode]
 	);

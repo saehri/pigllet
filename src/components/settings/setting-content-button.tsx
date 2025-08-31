@@ -1,6 +1,6 @@
 import { cardBorderRadius } from '@/utils/utils';
 import { ChevronsUpDown } from 'lucide-react-native';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
 	Pressable,
 	StyleProp,
@@ -46,6 +46,34 @@ export default function SettingContentButton({
 		[position]
 	);
 
+	const renderDescription = useCallback(() => {
+		if (description)
+			return (
+				<Text variant="labelSmall" style={styles.description}>
+					{description}
+				</Text>
+			);
+
+		return <></>;
+	}, []);
+
+	const renderButtonRight = useCallback(() => {
+		if (buttonRight) return buttonRight;
+
+		return (
+			<View style={styles.buttonRight}>
+				<Text variant="bodyLarge" style={{ fontFamily: 'Manrope-Light' }}>
+					{buttonRightTitle}
+				</Text>
+				<ChevronsUpDown
+					strokeWidth={1.5}
+					size={18}
+					color={theme.colors.onBackground}
+				/>
+			</View>
+		);
+	}, [buttonRight]);
+
 	return (
 		<Pressable
 			style={[
@@ -54,50 +82,32 @@ export default function SettingContentButton({
 				{
 					...(contentStyle as object),
 					backgroundColor: higlight
-						? theme.colors.elevation.level1
+						? theme.colors.tertiaryContainer
 						: theme.colors.elevation.level3,
+					borderWidth: 1,
+					borderColor: higlight
+						? theme.colors.tertiary
+						: theme.colors.elevation.level5,
 				},
 			]}
 			onPress={onPress}
 		>
-			<View>
+			<View style={styles.infoContainer}>
 				<Text
 					variant="bodyLarge"
 					style={{
 						fontFamily: 'Manrope-Regular',
 						...(labelStyle as object),
-						color: higlight ? theme.colors.primary : theme.colors.onSurface,
+						color: theme.colors.onSurface,
 					}}
 				>
 					{label}
 				</Text>
 
-				{description && (
-					<Text
-						style={{
-							fontFamily: 'Manrope-Light',
-							opacity: 0.7,
-						}}
-					>
-						{description}
-					</Text>
-				)}
+				{renderDescription()}
 			</View>
 
-			{buttonRight ? (
-				buttonRight
-			) : (
-				<View style={styles.buttonRight}>
-					<Text variant="bodyLarge" style={{ fontFamily: 'Manrope-Light' }}>
-						{buttonRightTitle}
-					</Text>
-					<ChevronsUpDown
-						strokeWidth={1.5}
-						size={18}
-						color={theme.colors.onBackground}
-					/>
-				</View>
-			)}
+			{renderButtonRight()}
 		</Pressable>
 	);
 }
@@ -115,6 +125,13 @@ const styles = StyleSheet.create({
 		gap: 2,
 		opacity: 0.6,
 		alignItems: 'center',
+	},
+	infoContainer: {
+		flex: 1,
+	},
+	description: {
+		fontFamily: 'Manrope-Light',
+		opacity: 0.7,
 	},
 });
 

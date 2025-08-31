@@ -44,7 +44,8 @@ function TransactionCard({ data, position, showDate, pressable }: Props) {
 
 	const { selectedTransactions, setSelectedTransactions } =
 		useSelectedTransactions();
-	const { currentCurrencyCode } = usePreferredCurrencyStore();
+	const { currentCurrencyCode, showFraction, accountingStyle } =
+		usePreferredCurrencyStore();
 
 	// used to check whether the transaction card is selected or not
 	const isSelected = selectedTransactions.includes(data.transaction.id!);
@@ -62,8 +63,13 @@ function TransactionCard({ data, position, showDate, pressable }: Props) {
 	};
 
 	const formattedAmount = useMemo(() => {
-		return formatCurrencyByCode(transaction.amount, currentCurrencyCode);
-	}, [transaction.amount, currentCurrencyCode]);
+		return formatCurrencyByCode(
+			transaction.amount,
+			currentCurrencyCode,
+			showFraction,
+			accountingStyle
+		);
+	}, [transaction.amount, currentCurrencyCode, showFraction, accountingStyle]);
 
 	const formattedDate = useMemo(() => {
 		return moment(transaction.created_at).format('MMM D, YY');

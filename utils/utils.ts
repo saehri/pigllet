@@ -1,10 +1,12 @@
 import { CurrencyCode, currencySymbols } from '@/constants/currency-symbols';
 import { Easing } from 'react-native-reanimated';
 
-export const cardBorderRadius: Record<
+type CardBorderRadius = Record<
 	CardPositionsTypes,
 	{ tl: number; tr: number; bl: number; br: number }
-> = {
+>;
+
+export const cardBorderRadius: CardBorderRadius = {
 	first: {
 		tl: 16,
 		tr: 16,
@@ -51,14 +53,19 @@ export function getCardPosition(
 	return 'middle';
 }
 
-export function formatCurrencyByCode(value: number, code: CurrencyCode) {
+export function formatCurrencyByCode(
+	value: number,
+	code: CurrencyCode,
+	showFraction: boolean,
+	accountingStyle: boolean
+) {
 	const match = currencySymbols.find((c) => c.code === code);
 
 	return value.toLocaleString(match?.locale || 'id-ID', {
 		style: 'currency',
 		currency: match?.code || 'IDR',
-		currencySign: 'accounting',
-		maximumFractionDigits: 2,
+		currencySign: accountingStyle ? 'accounting' : 'standard',
+		maximumFractionDigits: showFraction ? 2 : 0,
 	});
 }
 

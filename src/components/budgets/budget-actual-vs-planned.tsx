@@ -125,7 +125,8 @@ type RenderChart = {
 
 function RenderChart({ budgets, actualSpending, budgetIds }: RenderChart) {
 	const theme = useTheme();
-	const { currentCurrencyCode } = usePreferredCurrencyStore();
+	const { currentCurrencyCode, showFraction, accountingStyle } =
+		usePreferredCurrencyStore();
 
 	const getChartData = useMemo(() => {
 		const sortedBudgets = budgets.sort(
@@ -150,7 +151,9 @@ function RenderChart({ budgets, actualSpending, budgetIds }: RenderChart) {
 					<Text style={{ color: 'gray', fontSize: 9 }}>
 						{formatCurrencyByCode(
 							sortedBudgets[i]?.budget.limit ?? 0,
-							currentCurrencyCode
+							currentCurrencyCode,
+							showFraction,
+							accountingStyle
 						)}
 					</Text>
 				),
@@ -163,7 +166,9 @@ function RenderChart({ budgets, actualSpending, budgetIds }: RenderChart) {
 					<Text style={{ color: 'gray', fontSize: 9 }}>
 						{formatCurrencyByCode(
 							actualSpending[i]?.amount ?? 0,
-							currentCurrencyCode
+							currentCurrencyCode,
+							showFraction,
+							accountingStyle
 						)}
 					</Text>
 				),

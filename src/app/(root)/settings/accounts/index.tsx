@@ -203,9 +203,8 @@ function CardSelector({
 	setSelectedAccount,
 }: CardSelector) {
 	const theme = useTheme();
-	const currentCurrencyCode = usePreferredCurrencyStore(
-		(s) => s.currentCurrencyCode
-	);
+	const { currentCurrencyCode, showFraction, accountingStyle } =
+		usePreferredCurrencyStore();
 
 	useEffect(() => {
 		setSelectedAccount(accounts[0]);
@@ -275,7 +274,12 @@ function CardSelector({
 									<Text style={styles.text}>{account.card_name}</Text>
 
 									<Text style={styles.text}>
-										{formatCurrencyByCode(account.balance, currentCurrencyCode)}
+										{formatCurrencyByCode(
+											account.balance,
+											currentCurrencyCode,
+											showFraction,
+											accountingStyle
+										)}
 									</Text>
 
 									<Image

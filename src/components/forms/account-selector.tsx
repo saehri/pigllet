@@ -28,9 +28,8 @@ function AccountSelector({
 	const { data: accounts } = useLiveQuery(getAllAccounts());
 
 	const theme = useTheme();
-	const currentCurrencyCode = usePreferredCurrencyStore(
-		(s) => s.currentCurrencyCode
-	);
+	const { currentCurrencyCode, showFraction, accountingStyle } =
+		usePreferredCurrencyStore();
 
 	const accountCardRenderer = () => {
 		if (accounts.length)
@@ -73,7 +72,9 @@ function AccountSelector({
 										<Text style={styles.text}>
 											{formatCurrencyByCode(
 												account.balance,
-												currentCurrencyCode
+												currentCurrencyCode,
+												showFraction,
+												accountingStyle
 											)}
 										</Text>
 

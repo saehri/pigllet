@@ -37,7 +37,9 @@ function ResetUserPreference() {
 
 	const drizzleDb = useDrizzleDB();
 
-	const { setAppCurrencyCode } = usePreferredCurrencyStore();
+	const setAppCurrencyCode = usePreferredCurrencyStore(
+		(s) => s.setAppCurrencyCode
+	);
 	const { setAppTheme } = useAppThemeStore();
 	const { setFirstTimer } = useUserFirstTimeStore();
 

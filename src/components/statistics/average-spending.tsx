@@ -17,7 +17,8 @@ type Props = {
 };
 
 export default function AverageSpending({ selectedDate, range }: Props) {
-	const { currentCurrencyCode } = usePreferredCurrencyStore();
+	const { currentCurrencyCode, showFraction, accountingStyle } =
+		usePreferredCurrencyStore();
 
 	const drizzleDb = useDrizzleDB();
 
@@ -83,7 +84,9 @@ export default function AverageSpending({ selectedDate, range }: Props) {
 	// format current average spending according to user preference
 	const formattedAverageSpending = formatCurrencyByCode(
 		averageSpending[0]?.value ?? 0,
-		currentCurrencyCode
+		currentCurrencyCode,
+		showFraction,
+		accountingStyle
 	);
 
 	const curr = averageSpending[0]?.value ?? 0;

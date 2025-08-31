@@ -26,10 +26,16 @@ function BudgetBigTotals({
 	const theme = useTheme();
 	const drizzleDb = useDrizzleDB();
 
-	const { currentCurrencyCode } = usePreferredCurrencyStore();
+	const { currentCurrencyCode, showFraction, accountingStyle } =
+		usePreferredCurrencyStore();
 	const formatToCurrency = useCallback(
 		(amount: number) => {
-			return formatCurrencyByCode(amount, currentCurrencyCode);
+			return formatCurrencyByCode(
+				amount,
+				currentCurrencyCode,
+				showFraction,
+				accountingStyle
+			);
 		},
 		[currentCurrencyCode]
 	);

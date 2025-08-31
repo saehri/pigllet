@@ -25,6 +25,11 @@ export default function Customization() {
 					<ThemeSelector />
 				</SettingContentWrapper>
 
+				<SettingContentWrapper headerTitle="Currency appearance">
+					<CurrencyAccountingStyle />
+					<CurrencyFractionStyle />
+				</SettingContentWrapper>
+
 				<CurrencySelector />
 			</View>
 		</ScrollView>
@@ -52,6 +57,73 @@ function ThemeSelector() {
 							borderColor: theme.colors.outlineVariant,
 							backgroundColor: theme.colors.elevation.level2,
 							justifyContent: isDarkTheme ? 'flex-end' : 'flex-start',
+						},
+					]}
+				>
+					<View
+						style={[
+							styles.checkboxButtonIndicator,
+							{ backgroundColor: theme.colors.tertiary },
+						]}
+					></View>
+				</Pressable>
+			}
+		/>
+	);
+}
+
+function CurrencyAccountingStyle() {
+	const theme = useTheme();
+	const { accountingStyle, setAccountingStyle } = usePreferredCurrencyStore();
+
+	return (
+		<SettingContentButton
+			label="Use accounting style"
+			description="When enabled, for certain currencies negative values are shown in parentheses instead of using a minus sign.
+"
+			position="first"
+			buttonRight={
+				<Pressable
+					onPress={() => setAccountingStyle(!accountingStyle)}
+					style={[
+						styles.checkboxButton,
+						{
+							borderColor: theme.colors.outlineVariant,
+							backgroundColor: theme.colors.elevation.level2,
+							justifyContent: accountingStyle ? 'flex-end' : 'flex-start',
+						},
+					]}
+				>
+					<View
+						style={[
+							styles.checkboxButtonIndicator,
+							{ backgroundColor: theme.colors.tertiary },
+						]}
+					></View>
+				</Pressable>
+			}
+		/>
+	);
+}
+
+function CurrencyFractionStyle() {
+	const theme = useTheme();
+	const { showFraction, setShowFraction } = usePreferredCurrencyStore();
+
+	return (
+		<SettingContentButton
+			label="Show fraction digit"
+			description="Show decimal place after the number."
+			position="last"
+			buttonRight={
+				<Pressable
+					onPress={() => setShowFraction(!showFraction)}
+					style={[
+						styles.checkboxButton,
+						{
+							borderColor: theme.colors.outlineVariant,
+							backgroundColor: theme.colors.elevation.level2,
+							justifyContent: showFraction ? 'flex-end' : 'flex-start',
 						},
 					]}
 				>
@@ -97,7 +169,7 @@ function RightButton({ selected }: { selected: boolean }) {
 			<CheckIcon
 				style={{ display: selected ? 'flex' : 'none' }}
 				size={20}
-				color={theme.colors.primary}
+				color={theme.colors.onSurface}
 			/>
 		</View>
 	);
