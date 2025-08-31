@@ -43,11 +43,8 @@ export default function NewTransferForm() {
 				.select()
 				.from(schema.categories)
 				.where(eq(schema.categories.type, 'transfer'));
-			const accounts = await drizzleDb.select().from(schema.accounts);
 
 			setSelectedCategory(expenseCategories[0]);
-			setAccountUsed(accounts[0]);
-			setRelatedAccount(accounts[0]);
 		}
 
 		loadFormData();

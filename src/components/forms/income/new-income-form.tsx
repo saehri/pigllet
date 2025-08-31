@@ -41,10 +41,8 @@ export default function CreateIncomeForm() {
 				.select()
 				.from(schema.categories)
 				.where(eq(schema.categories.type, 'income'));
-			const accounts = await drizzleDb.select().from(schema.accounts);
 
 			setSelectedCategory(expenseCategories[0]);
-			setAccountUsed(accounts[0]);
 		}
 
 		loadFormData();

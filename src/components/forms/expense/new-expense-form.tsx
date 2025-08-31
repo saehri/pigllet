@@ -42,10 +42,8 @@ export default function CreateExpenseForm() {
 				.select()
 				.from(schema.categories)
 				.where(eq(schema.categories.type, 'expense'));
-			const accounts = await drizzleDb.select().from(schema.accounts);
 
 			setSelectedCategory(expenseCategories[0]);
-			setAccountUsed(accounts[0]);
 		}
 
 		loadFormData();
