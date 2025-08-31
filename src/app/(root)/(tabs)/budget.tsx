@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { FAB, Text, useTheme } from 'react-native-paper';
+import { AnimatedFAB, FAB, Text, useTheme } from 'react-native-paper';
 import { FlatList, StyleSheet, View } from 'react-native';
 
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
@@ -20,6 +20,7 @@ export default function BudgetScreen() {
 	const router = useRouter();
 
 	const [selectedDate, setSelectedDate] = useState(new Date());
+	const [isExtended, setIsExtended] = useState(true);
 
 	const updateMonth = useCallback((offset: number) => {
 		setSelectedDate((prev) => {
@@ -32,6 +33,13 @@ export default function BudgetScreen() {
 	const { data: budgets } = useLiveQuery(loadBudgetRecord(selectedDate), [
 		selectedDate,
 	]);
+
+	const onScroll = ({ nativeEvent }: any) => {
+		const currentScrollPosition =
+			Math.floor(nativeEvent?.contentOffset?.y) ?? 0;
+
+		setIsExtended(currentScrollPosition <= 0);
+	};
 
 	const renderHeader = useCallback(() => {
 		const budgetIds = budgets.map((b) => b.budget.id);
@@ -75,13 +83,14 @@ export default function BudgetScreen() {
 	return (
 		<>
 			<FlatList
+				onScroll={onScroll}
 				data={budgets}
 				showsVerticalScrollIndicator={false}
 				style={{
 					backgroundColor: theme.colors.background,
 				}}
 				contentContainerStyle={{
-					paddingBottom: budgets.length ? 180 : 0,
+					paddingBottom: budgets.length ? 150 : 0,
 				}}
 				ListEmptyComponent={<NoItemNotice />}
 				ListHeaderComponent={renderHeader}
@@ -95,13 +104,13 @@ export default function BudgetScreen() {
 				keyExtractor={(item) => item.budget.id.toString()}
 			/>
 
-			<FAB
+			<AnimatedFAB
 				icon="plus"
 				style={styles.fab}
 				onPress={() => router.push('/(root)/new-budget')}
-				mode="flat"
+				extended={isExtended}
 				variant="secondary"
-				size="medium"
+				label="Add budget"
 			/>
 		</>
 	);

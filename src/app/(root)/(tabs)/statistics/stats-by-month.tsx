@@ -49,12 +49,42 @@ export default function StatsMonthlyScreen() {
 
 			<View style={styles.chartsContainer}>
 				<AverageSpending selectedDate={selectedDate} range="month" />
-				<ExpensesOverTimeWrapper selectedDate={selectedDate} range="month" />
-				<IncomesOverTimeWrapper selectedDate={selectedDate} range="month" />
-				<TransfersOverTimeWrapper selectedDate={selectedDate} range="month" />
-				<ExpensesByCategoryWrapper selectedDate={selectedDate} range="month" />
-				<IncomesByCategoryWrapper selectedDate={selectedDate} range="month" />
-				<TransfersByCategoryWrapper selectedDate={selectedDate} range="month" />
+				<ExpensesOverTimeWrapper
+					selectedDate={selectedDate}
+					name="Your expenses this month"
+					descriptions="See how much you spend each daily"
+					range="month"
+				/>
+				<IncomesOverTimeWrapper
+					name="Your incomes this month"
+					descriptions="See how much you earn each daily"
+					selectedDate={selectedDate}
+					range="month"
+				/>
+				<TransfersOverTimeWrapper
+					name="Money transfered this month"
+					descriptions="See how your money moves between accounts"
+					selectedDate={selectedDate}
+					range="month"
+				/>
+				<ExpensesByCategoryWrapper
+					name="Where your money goes"
+					descriptions="See the distribution of expenses by category"
+					selectedDate={selectedDate}
+					range="month"
+				/>
+				<IncomesByCategoryWrapper
+					name="Where your money comes"
+					descriptions="See the distribution of incomes by category"
+					selectedDate={selectedDate}
+					range="month"
+				/>
+				<TransfersByCategoryWrapper
+					name="Transfers by category"
+					descriptions=""
+					selectedDate={selectedDate}
+					range="month"
+				/>
 			</View>
 		</ScrollView>
 	);

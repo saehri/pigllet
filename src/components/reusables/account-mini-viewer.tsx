@@ -9,11 +9,11 @@ import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 
 import { formatCurrencyByCode } from '@/utils/utils';
-import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
+import { useCurrencyStyle } from '@/store/useCurrencyStyle';
 
 export default function AccountMiniViewer() {
-	const { currentCurrencyCode, showFraction, accountingStyle } =
-		usePreferredCurrencyStore();
+	const { currentCurrencyCode, showFraction, accountingStyle, showSuffix } =
+		useCurrencyStyle();
 
 	const [currentCardIndex, setCurrentCardIndex] = useState(0);
 
@@ -66,7 +66,8 @@ export default function AccountMiniViewer() {
 								account[currentCardIndex]?.balance ?? 0,
 								currentCurrencyCode,
 								showFraction,
-								accountingStyle
+								accountingStyle,
+								showSuffix
 							)}
 						</Text>
 					</Surface>
@@ -80,13 +81,14 @@ export default function AccountMiniViewer() {
 					borderTopRightRadius: 6,
 					borderBottomRightRadius: 6,
 					display: account.length > 1 ? 'flex' : 'none',
+					backgroundColor: theme.colors.elevation.level5,
 				}}
 				onPress={prevAccount}
 			>
 				<ChevronLeftIcon
 					size={20}
 					strokeWidth={1.5}
-					color={theme.colors.onSecondaryContainer}
+					color={theme.colors.onSurface}
 				/>
 			</Button>
 			<Button
@@ -96,13 +98,14 @@ export default function AccountMiniViewer() {
 					borderTopLeftRadius: 6,
 					borderBottomLeftRadius: 6,
 					display: account.length > 1 ? 'flex' : 'none',
+					backgroundColor: theme.colors.elevation.level5,
 				}}
 				onPress={nextAccount}
 			>
 				<ChevronRightIcon
 					size={20}
 					strokeWidth={1.5}
-					color={theme.colors.onSecondaryContainer}
+					color={theme.colors.onSurface}
 				/>
 			</Button>
 		</View>

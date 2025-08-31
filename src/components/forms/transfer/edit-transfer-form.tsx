@@ -7,7 +7,7 @@ import { and, eq } from 'drizzle-orm';
 import * as schema from '@/db/schema';
 
 import { useRecordTransferForm } from '@/src/hooks/useTransactionsManager';
-import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
+import { useCurrencyStyle } from '@/store/useCurrencyStyle';
 
 import NoteInput from '../note-input';
 import DatePicker from '../date-picker';
@@ -15,7 +15,7 @@ import CustomTextInput from '../custom-text-input';
 import TransactionCategorySelector from '../transaction-category-selector';
 
 export default function EditTransferForm() {
-	const { currentCurrencyCode } = usePreferredCurrencyStore();
+	const { currentCurrencyCode } = useCurrencyStyle();
 	const { id } = useLocalSearchParams();
 
 	const {

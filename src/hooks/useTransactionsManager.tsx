@@ -345,8 +345,8 @@ export const useRecordIncomeForm = () => {
 						.where(eq(schema.accounts.id, oldAccount.id));
 				} else {
 					const newBalance =
-						oldAccount.balance +
-						oldTransaction.amount -
+						oldAccount.balance -
+						oldTransaction.amount +
 						Number(transactionAmount);
 
 					await tx

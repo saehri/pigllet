@@ -1,6 +1,7 @@
-import { Text, useTheme } from 'react-native-paper';
+import { useRouter } from 'expo-router';
 import { useState, useMemo, useCallback } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
+import { AnimatedFAB, Text, useTheme } from 'react-native-paper';
 
 import { getCardPosition } from '@/utils/utils';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
@@ -16,13 +17,22 @@ import YearSelectorBar from '@/src/components/reusables/year-selector-bar';
 
 export default function HomeYearlyTransactionScreen() {
 	const theme = useTheme();
+	const router = useRouter();
 
 	const [selectedDate, setSelectedDate] = useState(() => new Date());
+	const [isExtended, setIsExtended] = useState(true);
 
 	const { data: transactions } = useLiveQuery(
 		loadTransactionsData({ date: selectedDate, range: 'year' }),
 		[selectedDate]
 	);
+
+	const onScroll = ({ nativeEvent }: any) => {
+		const currentScrollPosition =
+			Math.floor(nativeEvent?.contentOffset?.y) ?? 0;
+
+		setIsExtended(currentScrollPosition <= 0);
+	};
 
 	const groupedTransactions = useMemo(() => {
 		return groupedTransactionsByDate(transactions as any, 'MMMM, YYYY');
@@ -75,16 +85,28 @@ export default function HomeYearlyTransactionScreen() {
 	}, [selectedDate, updateYear]);
 
 	return (
-		<FlatList
-			data={groupedTransactions}
-			showsVerticalScrollIndicator={false}
-			style={{ backgroundColor: theme.colors.background }}
-			contentContainerStyle={{ paddingBottom: transactions.length ? 180 : 0 }}
-			ListEmptyComponent={<NoItemNotice />}
-			ListHeaderComponent={renderHeader}
-			renderItem={renderTransactionGroup}
-			keyExtractor={(item) => item.created_date}
-		/>
+		<>
+			<FlatList
+				onScroll={onScroll}
+				data={groupedTransactions}
+				showsVerticalScrollIndicator={false}
+				style={{ backgroundColor: theme.colors.background }}
+				contentContainerStyle={{ paddingBottom: transactions.length ? 150 : 0 }}
+				ListEmptyComponent={<NoItemNotice />}
+				ListHeaderComponent={renderHeader}
+				renderItem={renderTransactionGroup}
+				keyExtractor={(item) => item.created_date}
+			/>
+
+			<AnimatedFAB
+				label="Add expense"
+				icon="plus"
+				style={styles.fab}
+				onPress={() => router.push('/(root)/new-transactions/expense')}
+				variant="secondary"
+				extended={isExtended}
+			/>
+		</>
 	);
 }
 
@@ -97,6 +119,12 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 		paddingBottom: 12,
 		gap: 8,
+	},
+	fab: {
+		position: 'absolute',
+		margin: 16,
+		right: 0,
+		bottom: 80,
 	},
 });
 

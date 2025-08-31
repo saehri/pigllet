@@ -57,16 +57,45 @@ export function formatCurrencyByCode(
 	value: number,
 	code: CurrencyCode,
 	showFraction: boolean,
-	accountingStyle: boolean
+	accountingStyle: boolean,
+	showSuffix: boolean
 ) {
 	const match = currencySymbols.find((c) => c.code === code);
+	const abs = Math.abs(value);
 
-	return value.toLocaleString(match?.locale || 'id-ID', {
+	if (showSuffix) {
+		let newValue, suffix;
+
+		if (abs >= 1_000_000_000) {
+			newValue = value / 1_000_000_000;
+			suffix = 'B';
+		} else if (abs >= 1_000_000) {
+			newValue = value / 1_000_000;
+			suffix = 'M';
+		} else if (abs >= 1_000) {
+			newValue = value / 1_000;
+			suffix = 'K';
+		} else {
+			newValue = value;
+			suffix = '';
+		}
+
+		return (
+			new Intl.NumberFormat(match?.locale || 'id-ID', {
+				style: 'currency',
+				currency: match?.code || 'IDR',
+				currencySign: accountingStyle ? 'accounting' : 'standard',
+				maximumSignificantDigits: 3,
+			}).format(newValue) + suffix
+		);
+	}
+
+	return new Intl.NumberFormat(match?.locale || 'id-ID', {
 		style: 'currency',
 		currency: match?.code || 'IDR',
 		currencySign: accountingStyle ? 'accounting' : 'standard',
 		maximumFractionDigits: showFraction ? 2 : 0,
-	});
+	}).format(value);
 }
 
 export const fastSpatialEasing: any = Easing.bezier(0.42, 1.67, 0.21, 0.9);

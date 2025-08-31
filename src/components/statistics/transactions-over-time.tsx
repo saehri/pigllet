@@ -1,7 +1,11 @@
-import { memo, useState } from 'react';
+import { memo, useCallback, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { BarChart } from 'react-native-gifted-charts';
 import { Button, Surface, Text, useTheme } from 'react-native-paper';
+import {
+	CalendarArrowDownIcon,
+	CalendarArrowUpIcon,
+} from 'lucide-react-native';
 
 import { formatCurrencyByCode } from '@/utils/utils';
 
@@ -12,8 +16,7 @@ import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import moment from 'moment';
 import { transactionColorMap } from '@/utils/utils';
 
-import { ArrowDownIcon, ArrowUpIcon } from 'lucide-react-native';
-import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
+import { useCurrencyStyle } from '@/store/useCurrencyStyle';
 import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 
 type Props = {
@@ -115,6 +118,48 @@ function TransactionsOverTime({
 
 	const { data: chartMaxValue } = useLiveQuery(getMaxValue(), [selectedDate]);
 
+	const contentRenderer = useCallback(() => {
+		if (chartData.length)
+			return (
+				<ChartRenderer
+					chartData={chartData}
+					chartMaxValue={chartMaxValue[0].maxValue}
+					transactionType={transactionType}
+					range={range}
+				/>
+			);
+
+		return (
+			<View style={styles.emptyAndLoadingContainer}>
+				<Text
+					variant="bodyLarge"
+					style={{ fontFamily: 'Manrope-Regular', opacity: 0.5 }}
+				>
+					No data available to display at the moment.
+				</Text>
+			</View>
+		);
+	}, [chartData]);
+
+	const buttonIconRenderer = () => {
+		if (order === 'desc')
+			return (
+				<CalendarArrowDownIcon
+					size={20}
+					strokeWidth={1.5}
+					color={theme.colors.onSecondaryContainer}
+				/>
+			);
+
+		return (
+			<CalendarArrowUpIcon
+				size={20}
+				strokeWidth={1.5}
+				color={theme.colors.onSecondaryContainer}
+			/>
+		);
+	};
+
 	return (
 		<Surface mode="flat" elevation={2} style={styles.chart}>
 			<View style={styles.chartHeader}>
@@ -133,39 +178,11 @@ function TransactionsOverTime({
 					style={{ height: 40 }}
 					onPress={() => setOrder((prev) => (prev === 'desc' ? 'asc' : 'desc'))}
 				>
-					{order === 'desc' ? (
-						<ArrowDownIcon
-							size={20}
-							strokeWidth={1.5}
-							color={theme.colors.onSecondaryContainer}
-						/>
-					) : (
-						<ArrowUpIcon
-							size={20}
-							strokeWidth={1.5}
-							color={theme.colors.onSecondaryContainer}
-						/>
-					)}
+					{buttonIconRenderer()}
 				</Button>
 			</View>
 
-			{chartData.length ? (
-				<ChartRenderer
-					chartData={chartData}
-					chartMaxValue={chartMaxValue[0].maxValue}
-					transactionType={transactionType}
-					range={range}
-				/>
-			) : (
-				<View style={styles.emptyAndLoadingContainer}>
-					<Text
-						variant="bodyLarge"
-						style={{ fontFamily: 'Manrope-Regular', opacity: 0.5 }}
-					>
-						No data available to display at the moment.
-					</Text>
-				</View>
-			)}
+			{contentRenderer()}
 		</Surface>
 	);
 }
@@ -183,9 +200,16 @@ function ChartRenderer({
 	transactionType,
 	range,
 }: ChartRendererProps) {
-	const { currentCurrencyCode } = usePreferredCurrencyStore();
+	const { currentCurrencyCode, showFraction, accountingStyle, showSuffix } =
+		useCurrencyStyle();
 
 	const theme = useTheme();
+
+	const getChartLabel = () => {
+		if (range === 'month') return 'MMM D, YYYY';
+		if (range === 'year') return 'MMM, YYYY';
+		return 'YYYY';
+	};
 
 	return (
 		<View style={styles.chartContainer}>
@@ -193,27 +217,36 @@ function ChartRenderer({
 				barWidth={75}
 				barBorderRadius={120}
 				formatYLabel={(label) =>
-					formatCurrencyByCode(Number(label), currentCurrencyCode)
+					formatCurrencyByCode(
+						Number(label),
+						currentCurrencyCode,
+						showFraction,
+						accountingStyle,
+						showSuffix
+					)
 				}
-				topLabelTextStyle={{
-					fontFamily: 'Manrope-Regular',
-					color: theme.colors.onSurface,
-					fontSize: 9,
-				}}
 				height={200}
 				maxValue={chartMaxValue}
 				data={chartData.map((data) => ({
 					...data,
-					label: moment(data.label).format(
-						range === 'month'
-							? 'MMM D, YYYY'
-							: range === 'year'
-								? 'MMM, YYYY'
-								: 'YYYY'
-					),
+					label: moment(data.label).format(getChartLabel()),
 					topLabelComponent: () => (
-						<Text style={{ color: theme.colors.onSurface, fontSize: 9 }}>
-							{formatCurrencyByCode(data.value, currentCurrencyCode)}
+						<Text
+							style={{
+								color: theme.colors.onSurface,
+								fontSize: 9,
+								fontFamily: 'Manrope-Regular',
+							}}
+							ellipsizeMode="tail"
+							numberOfLines={1}
+						>
+							{formatCurrencyByCode(
+								data.value,
+								currentCurrencyCode,
+								showFraction,
+								accountingStyle,
+								showSuffix
+							)}
 						</Text>
 					),
 				}))}

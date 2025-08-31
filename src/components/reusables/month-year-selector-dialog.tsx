@@ -168,11 +168,11 @@ function MonthYearSelectorDialog({ onValueChange, selectedValue }: Props) {
 				mode="contained-tonal"
 				contentStyle={{ height: 40 }}
 				onPress={openDialog}
-				style={{ backgroundColor: theme.colors.secondaryContainer }}
+				style={{ backgroundColor: theme.colors.elevation.level5 }}
 			>
 				<CalendarFoldIcon
 					strokeWidth={1.5}
-					color={theme.colors.onSecondaryContainer}
+					color={theme.colors.onSurface}
 					size={20}
 				/>
 			</Button>
@@ -181,3 +181,4 @@ function MonthYearSelectorDialog({ onValueChange, selectedValue }: Props) {
 }
 
 export default memo(MonthYearSelectorDialog);
+

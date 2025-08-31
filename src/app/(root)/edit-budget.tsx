@@ -3,16 +3,14 @@ import { Button, Text } from 'react-native-paper';
 import { useLocalSearchParams } from 'expo-router';
 
 import useBudgetManager from '@/src/hooks/useBudgetManager';
-import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
+import { useCurrencyStyle } from '@/store/useCurrencyStyle';
 
 import CustomTextInput from '@/src/components/forms/custom-text-input';
 import { useEffect } from 'react';
 
 export default function EditBudget() {
 	const { id, budgetLimit: limit } = useLocalSearchParams();
-	const currentCurrencyCode = usePreferredCurrencyStore(
-		(s) => s.currentCurrencyCode
-	);
+	const currentCurrencyCode = useCurrencyStyle((s) => s.currentCurrencyCode);
 
 	const { loading, budgetLimit, updateBudgetRecord, setBudgetLimit } =
 		useBudgetManager();

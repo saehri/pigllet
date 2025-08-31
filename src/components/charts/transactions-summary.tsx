@@ -9,7 +9,7 @@ import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { and, gte, lte, sql } from 'drizzle-orm';
 
 import { cardBorderRadius, formatCurrencyByCode } from '@/utils/utils';
-import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
+import { useCurrencyStyle } from '@/store/useCurrencyStyle';
 import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 
 type Props = {
@@ -101,8 +101,8 @@ type CardProps = {
 function Card({ label, value, position }: CardProps) {
 	const theme = useTheme();
 
-	const { currentCurrencyCode, showFraction, accountingStyle } =
-		usePreferredCurrencyStore();
+	const { currentCurrencyCode, showFraction, accountingStyle, showSuffix } =
+		useCurrencyStyle();
 
 	const cardRadiusStyle = useMemo(
 		() => ({
@@ -117,28 +117,25 @@ function Card({ label, value, position }: CardProps) {
 	return (
 		<Surface
 			mode="flat"
-			elevation={3}
-			style={[
-				styles.itemContainer,
-				cardRadiusStyle,
-				{ backgroundColor: theme.colors.secondary },
-			]}
+			elevation={5}
+			style={[styles.itemContainer, cardRadiusStyle]}
 		>
 			<Text
-				style={[styles.itemText, { color: theme.colors.onSecondary }]}
+				style={[styles.itemText, { color: theme.colors.onSurface }]}
 				variant="bodyMedium"
 			>
 				{label}
 			</Text>
 			<Text
-				style={[styles.itemText, { color: theme.colors.onSecondary }]}
+				style={[styles.itemText, { color: theme.colors.onSurface }]}
 				variant="bodyMedium"
 			>
 				{formatCurrencyByCode(
 					value,
 					currentCurrencyCode,
 					showFraction,
-					accountingStyle
+					accountingStyle,
+					showSuffix
 				)}
 			</Text>
 		</Surface>

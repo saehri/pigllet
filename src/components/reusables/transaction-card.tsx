@@ -25,7 +25,7 @@ import {
 } from '@/utils/utils';
 
 import { useSelectedTransactions } from '@/store/useSelectedTransactions';
-import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
+import { useCurrencyStyle } from '@/store/useCurrencyStyle';
 
 import LucideIcons from './lucide-icons';
 
@@ -44,8 +44,8 @@ function TransactionCard({ data, position, showDate, pressable }: Props) {
 
 	const { selectedTransactions, setSelectedTransactions } =
 		useSelectedTransactions();
-	const { currentCurrencyCode, showFraction, accountingStyle } =
-		usePreferredCurrencyStore();
+	const { currentCurrencyCode, showFraction, accountingStyle, showSuffix } =
+		useCurrencyStyle();
 
 	// used to check whether the transaction card is selected or not
 	const isSelected = selectedTransactions.includes(data.transaction.id!);
@@ -67,9 +67,16 @@ function TransactionCard({ data, position, showDate, pressable }: Props) {
 			transaction.amount,
 			currentCurrencyCode,
 			showFraction,
-			accountingStyle
+			accountingStyle,
+			showSuffix
 		);
-	}, [transaction.amount, currentCurrencyCode, showFraction, accountingStyle]);
+	}, [
+		transaction.amount,
+		currentCurrencyCode,
+		showFraction,
+		accountingStyle,
+		showSuffix,
+	]);
 
 	const formattedDate = useMemo(() => {
 		return moment(transaction.created_at).format('MMM D, YY');

@@ -11,7 +11,7 @@ import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 import { and, asc, eq, gte, inArray, lte, sql } from 'drizzle-orm';
 
 import { formatCurrencyByCode } from '@/utils/utils';
-import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
+import { useCurrencyStyle } from '@/store/useCurrencyStyle';
 
 import NoItemNotice from '../reusables/no-items-notice';
 
@@ -125,8 +125,8 @@ type RenderChart = {
 
 function RenderChart({ budgets, actualSpending, budgetIds }: RenderChart) {
 	const theme = useTheme();
-	const { currentCurrencyCode, showFraction, accountingStyle } =
-		usePreferredCurrencyStore();
+	const { currentCurrencyCode, showFraction, accountingStyle, showSuffix } =
+		useCurrencyStyle();
 
 	const getChartData = useMemo(() => {
 		const sortedBudgets = budgets.sort(
@@ -153,7 +153,8 @@ function RenderChart({ budgets, actualSpending, budgetIds }: RenderChart) {
 							sortedBudgets[i]?.budget.limit ?? 0,
 							currentCurrencyCode,
 							showFraction,
-							accountingStyle
+							accountingStyle,
+							showSuffix
 						)}
 					</Text>
 				),
@@ -168,7 +169,8 @@ function RenderChart({ budgets, actualSpending, budgetIds }: RenderChart) {
 							actualSpending[i]?.amount ?? 0,
 							currentCurrencyCode,
 							showFraction,
-							accountingStyle
+							accountingStyle,
+							showSuffix
 						)}
 					</Text>
 				),

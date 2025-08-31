@@ -1,7 +1,11 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { BarChart } from 'react-native-gifted-charts';
 import { Button, Surface, Text, useTheme } from 'react-native-paper';
+import {
+	CalendarArrowDownIcon,
+	CalendarArrowUpIcon,
+} from 'lucide-react-native';
 
 import { formatCurrencyByCode } from '@/utils/utils';
 
@@ -12,8 +16,7 @@ import { and, asc, desc, eq, gte, lte, sql } from 'drizzle-orm';
 import moment from 'moment';
 import { transactionColorMap } from '@/utils/utils';
 
-import { ArrowDownIcon, ArrowUpIcon } from 'lucide-react-native';
-import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
+import { useCurrencyStyle } from '@/store/useCurrencyStyle';
 import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 
 type Props = {
@@ -109,6 +112,28 @@ export default function TransactionsByCategory({
 	]);
 	const { data: chartMaxValue } = useLiveQuery(getMaxValue(), [selectedDate]);
 
+	const contentRenderer = useCallback(() => {
+		if (chartData.length)
+			return (
+				<ChartRenderer
+					chartData={chartData}
+					chartMaxValue={chartMaxValue[0].maxValue}
+					transactionType={type}
+				/>
+			);
+
+		return (
+			<View style={styles.emptyAndLoadingContainer}>
+				<Text
+					variant="bodyLarge"
+					style={{ fontFamily: 'Manrope-Regular', opacity: 0.5 }}
+				>
+					No data available to display at the moment.
+				</Text>
+			</View>
+		);
+	}, [chartData]);
+
 	return (
 		<Surface mode="flat" elevation={2} style={styles.chart}>
 			<View style={styles.chartHeader}>
@@ -128,13 +153,13 @@ export default function TransactionsByCategory({
 					onPress={() => setOrder((prev) => (prev === 'desc' ? 'asc' : 'desc'))}
 				>
 					{order === 'desc' ? (
-						<ArrowDownIcon
+						<CalendarArrowDownIcon
 							size={20}
 							strokeWidth={1.5}
 							color={theme.colors.onSecondaryContainer}
 						/>
 					) : (
-						<ArrowUpIcon
+						<CalendarArrowUpIcon
 							size={20}
 							strokeWidth={1.5}
 							color={theme.colors.onSecondaryContainer}
@@ -143,22 +168,7 @@ export default function TransactionsByCategory({
 				</Button>
 			</View>
 
-			{chartData.length ? (
-				<ChartRenderer
-					chartData={chartData}
-					chartMaxValue={chartMaxValue[0].maxValue}
-					transactionType={type}
-				/>
-			) : (
-				<View style={styles.emptyAndLoadingContainer}>
-					<Text
-						variant="bodyLarge"
-						style={{ fontFamily: 'Manrope-Regular', opacity: 0.5 }}
-					>
-						No data available to display at the moment.
-					</Text>
-				</View>
-			)}
+			{contentRenderer()}
 		</Surface>
 	);
 }
@@ -175,8 +185,8 @@ function ChartRenderer({
 	transactionType,
 }: ChartRendererProps) {
 	const theme = useTheme();
-	const { currentCurrencyCode, showFraction, accountingStyle } =
-		usePreferredCurrencyStore();
+	const { currentCurrencyCode, showFraction, accountingStyle, showSuffix } =
+		useCurrencyStyle();
 
 	return (
 		<View style={styles.chartContainer}>
@@ -188,7 +198,8 @@ function ChartRenderer({
 						Number(label),
 						currentCurrencyCode,
 						showFraction,
-						accountingStyle
+						accountingStyle,
+						showSuffix
 					)
 				}
 				hideYAxisText
@@ -202,7 +213,8 @@ function ChartRenderer({
 								Number(data.value),
 								currentCurrencyCode,
 								showFraction,
-								accountingStyle
+								accountingStyle,
+								showSuffix
 							)}
 						</Text>
 					),

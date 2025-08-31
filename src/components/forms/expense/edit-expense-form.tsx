@@ -4,7 +4,7 @@ import { Button, Text } from 'react-native-paper';
 import { useLocalSearchParams } from 'expo-router';
 
 import { useRecordExpenseForm } from '@/src/hooks/useTransactionsManager';
-import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
+import { useCurrencyStyle } from '@/store/useCurrencyStyle';
 
 import NoteInput from '../note-input';
 import DatePicker from '../date-picker';
@@ -16,7 +16,7 @@ import { and, eq } from 'drizzle-orm';
 import * as schema from '@/db/schema';
 
 export default function EditExpenseForm() {
-	const { currentCurrencyCode } = usePreferredCurrencyStore();
+	const { currentCurrencyCode } = useCurrencyStyle();
 	const { id } = useLocalSearchParams();
 
 	const {

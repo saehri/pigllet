@@ -8,7 +8,7 @@ import * as schema from '@/db/schema';
 
 import { useAppThemeStore } from '@/store/useAppThemeStore';
 import { useUserFirstTimeStore } from '@/store/useUserFirstTimeStore';
-import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
+import { useCurrencyStyle } from '@/store/useCurrencyStyle';
 
 import SettingContentButton from '@/src/components/settings/setting-content-button';
 import SettingContentWrapper from '@/src/components/settings/setting-content-wrapper';
@@ -37,9 +37,7 @@ function ResetUserPreference() {
 
 	const drizzleDb = useDrizzleDB();
 
-	const setAppCurrencyCode = usePreferredCurrencyStore(
-		(s) => s.setAppCurrencyCode
-	);
+	const setAppCurrencyCode = useCurrencyStyle((s) => s.setAppCurrencyCode);
 	const { setAppTheme } = useAppThemeStore();
 	const { setFirstTimer } = useUserFirstTimeStore();
 

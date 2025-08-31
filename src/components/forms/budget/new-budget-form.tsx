@@ -6,7 +6,7 @@ import { eq } from 'drizzle-orm';
 import * as schema from '@/db/schema';
 import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 import useBudgetManager from '@/src/hooks/useBudgetManager';
-import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
+import { useCurrencyStyle } from '@/store/useCurrencyStyle';
 
 import CustomTextInput from '../custom-text-input';
 import MonthPicker from '../../reusables/month-picker';
@@ -14,9 +14,7 @@ import TransactionCategorySelector from '../transaction-category-selector';
 
 export default function NewBudgetForm() {
 	const drizzleDb = useDrizzleDB();
-	const currentCurrencyCode = usePreferredCurrencyStore(
-		(s) => s.currentCurrencyCode
-	);
+	const currentCurrencyCode = useCurrencyStyle((s) => s.currentCurrencyCode);
 
 	const {
 		budgetCategory,

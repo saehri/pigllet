@@ -39,37 +39,35 @@ export default function YearSelectorBar({
 			<View style={{ flexDirection: 'row' }}>
 				<Button
 					compact
-					mode="contained-tonal"
 					contentStyle={{ height: 40 }}
 					style={{
 						borderTopRightRadius: 6,
 						borderBottomRightRadius: 6,
 						marginRight: 2,
-						backgroundColor: theme.colors.secondaryContainer,
+						backgroundColor: theme.colors.elevation.level5,
 					}}
 					onPress={onPrev}
 				>
 					<ChevronLeftIcon
 						size={20}
 						strokeWidth={1.5}
-						color={theme.colors.onSecondaryContainer}
+						color={theme.colors.onSurface}
 					/>
 				</Button>
 				<Button
 					compact
-					mode="contained-tonal"
 					contentStyle={{ height: 40 }}
 					style={{
 						borderTopLeftRadius: 6,
 						borderBottomLeftRadius: 6,
-						backgroundColor: theme.colors.secondaryContainer,
+						backgroundColor: theme.colors.elevation.level5,
 					}}
 					onPress={onNext}
 				>
 					<ChevronRightIcon
 						size={20}
 						strokeWidth={1.5}
-						color={theme.colors.onSecondaryContainer}
+						color={theme.colors.onSurface}
 					/>
 				</Button>
 

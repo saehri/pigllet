@@ -51,8 +51,8 @@ export default function Layout() {
 				screenOptions={{
 					tabBarActiveTintColor: theme.colors.onPrimary,
 					tabBarActiveBackgroundColor: theme.colors.primary,
-					tabBarInactiveBackgroundColor: theme.colors.primaryContainer,
-					tabBarInactiveTintColor: theme.colors.onPrimaryContainer,
+					tabBarInactiveBackgroundColor: theme.colors.elevation.level3,
+					tabBarInactiveTintColor: theme.colors.onSurface,
 					tabBarStyle: {
 						backgroundColor: theme.colors.elevation.level1,
 						height: 52,

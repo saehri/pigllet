@@ -8,7 +8,7 @@ import * as schema from '@/db/schema';
 import { formatCurrencyByCode } from '@/utils/utils';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
-import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
+import { useCurrencyStyle } from '@/store/useCurrencyStyle';
 
 interface AccountSelectorProps {
 	handleSelect: Dispatch<SetStateAction<schema.Account>>;
@@ -28,8 +28,8 @@ function AccountSelector({
 	const { data: accounts } = useLiveQuery(getAllAccounts());
 
 	const theme = useTheme();
-	const { currentCurrencyCode, showFraction, accountingStyle } =
-		usePreferredCurrencyStore();
+	const { currentCurrencyCode, showFraction, accountingStyle, showSuffix } =
+		useCurrencyStyle();
 
 	const accountCardRenderer = () => {
 		if (accounts.length)
@@ -74,7 +74,8 @@ function AccountSelector({
 												account.balance,
 												currentCurrencyCode,
 												showFraction,
-												accountingStyle
+												accountingStyle,
+												showSuffix
 											)}
 										</Text>
 

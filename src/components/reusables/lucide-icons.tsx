@@ -8,7 +8,7 @@ type Props = {
 
 const LucideIcons = ({ name, color, size }: Props) => {
 	const LucideIcon = icons[name] ?? icons.CircleAlert;
-	return <LucideIcon color={color} size={size} />;
+	return <LucideIcon color={color} size={size} strokeWidth={1.5} />;
 };
 
 export default LucideIcons;

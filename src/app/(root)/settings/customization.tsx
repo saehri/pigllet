@@ -6,7 +6,7 @@ import SettingContentWrapper from '@/src/components/settings/setting-content-wra
 
 import { useAppThemeStore } from '@/store/useAppThemeStore';
 import { CheckIcon } from 'lucide-react-native';
-import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
+import { useCurrencyStyle } from '@/store/useCurrencyStyle';
 import { currencySymbols } from '@/constants/currency-symbols';
 import { getCardPosition } from '@/utils/utils';
 
@@ -28,6 +28,7 @@ export default function Customization() {
 				<SettingContentWrapper headerTitle="Currency appearance">
 					<CurrencyAccountingStyle />
 					<CurrencyFractionStyle />
+					<CurrencySuffix />
 				</SettingContentWrapper>
 
 				<CurrencySelector />
@@ -74,7 +75,7 @@ function ThemeSelector() {
 
 function CurrencyAccountingStyle() {
 	const theme = useTheme();
-	const { accountingStyle, setAccountingStyle } = usePreferredCurrencyStore();
+	const { accountingStyle, setAccountingStyle } = useCurrencyStyle();
 
 	return (
 		<SettingContentButton
@@ -108,13 +109,13 @@ function CurrencyAccountingStyle() {
 
 function CurrencyFractionStyle() {
 	const theme = useTheme();
-	const { showFraction, setShowFraction } = usePreferredCurrencyStore();
+	const { showFraction, setShowFraction } = useCurrencyStyle();
 
 	return (
 		<SettingContentButton
 			label="Show fraction digit"
 			description="Show decimal place after the number."
-			position="last"
+			position="middle"
 			buttonRight={
 				<Pressable
 					onPress={() => setShowFraction(!showFraction)}
@@ -139,9 +140,41 @@ function CurrencyFractionStyle() {
 	);
 }
 
+function CurrencySuffix() {
+	const theme = useTheme();
+	const { showSuffix, setShowSufix } = useCurrencyStyle();
+
+	return (
+		<SettingContentButton
+			label="Show suffix for large number"
+			description="When this is on, large numbers will be shortened with suffixes (for example, 1,200 becomes 1.2K, 1,000,000 becomes 1M)."
+			position="last"
+			buttonRight={
+				<Pressable
+					onPress={() => setShowSufix(!showSuffix)}
+					style={[
+						styles.checkboxButton,
+						{
+							borderColor: theme.colors.outlineVariant,
+							backgroundColor: theme.colors.elevation.level2,
+							justifyContent: showSuffix ? 'flex-end' : 'flex-start',
+						},
+					]}
+				>
+					<View
+						style={[
+							styles.checkboxButtonIndicator,
+							{ backgroundColor: theme.colors.tertiary },
+						]}
+					></View>
+				</Pressable>
+			}
+		/>
+	);
+}
+
 function CurrencySelector() {
-	const { currentCurrencyCode, setAppCurrencyCode } =
-		usePreferredCurrencyStore();
+	const { currentCurrencyCode, setAppCurrencyCode } = useCurrencyStyle();
 
 	return (
 		<SettingContentWrapper headerTitle="Default currency symbol">

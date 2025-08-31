@@ -12,7 +12,7 @@ import { fastSpatialEasing, formatCurrencyByCode } from '@/utils/utils';
 import { cardBorderRadius, transactionColorMap } from '@/utils/utils';
 
 import { useSelectedBudgets } from '@/store/useSelectedBudgets';
-import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
+import { useCurrencyStyle } from '@/store/useCurrencyStyle';
 
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { and, count, eq, gte, lte, sql } from 'drizzle-orm';
@@ -31,8 +31,8 @@ function BudgetCard({ data, position }: Props) {
 	const theme = useTheme();
 	const router = useRouter();
 
-	const { currentCurrencyCode, showFraction, accountingStyle } =
-		usePreferredCurrencyStore();
+	const { currentCurrencyCode, showFraction, accountingStyle, showSuffix } =
+		useCurrencyStyle();
 	const { selectedBudgets, setSelectedBudgets } = useSelectedBudgets();
 
 	const isSelected = selectedBudgets.includes(budget.id!);
@@ -77,10 +77,11 @@ function BudgetCard({ data, position }: Props) {
 				amount,
 				currentCurrencyCode,
 				showFraction,
-				accountingStyle
+				accountingStyle,
+				showSuffix
 			);
 		},
-		[currentCurrencyCode]
+		[currentCurrencyCode, showFraction, accountingStyle, showSuffix]
 	);
 
 	const handleButtonPress = () => {

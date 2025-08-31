@@ -8,7 +8,7 @@ import { and, sql } from 'drizzle-orm';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 
 import { transactionColorMap, formatCurrencyByCode } from '@/utils/utils';
-import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
+import { useCurrencyStyle } from '@/store/useCurrencyStyle';
 import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 
 type Props = {
@@ -17,8 +17,8 @@ type Props = {
 };
 
 export default function AverageSpending({ selectedDate, range }: Props) {
-	const { currentCurrencyCode, showFraction, accountingStyle } =
-		usePreferredCurrencyStore();
+	const { currentCurrencyCode, showFraction, accountingStyle, showSuffix } =
+		useCurrencyStyle();
 
 	const drizzleDb = useDrizzleDB();
 
@@ -86,7 +86,8 @@ export default function AverageSpending({ selectedDate, range }: Props) {
 		averageSpending[0]?.value ?? 0,
 		currentCurrencyCode,
 		showFraction,
-		accountingStyle
+		accountingStyle,
+		showSuffix
 	);
 
 	const curr = averageSpending[0]?.value ?? 0;

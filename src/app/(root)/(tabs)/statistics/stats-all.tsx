@@ -31,12 +31,30 @@ export default function StatsAllScreen() {
 				</View>
 
 				<View style={styles.chartsContainer}>
-					<ExpensesOverTimeWrapper />
-					<IncomesOverTimeWrapper />
-					<TransfersOverTimeWrapper />
-					<ExpensesByCategoryWrapper />
-					<IncomesByCategoryWrapper />
-					<TransfersByCategoryWrapper />
+					<ExpensesOverTimeWrapper
+						name="Your expenses"
+						descriptions="See how much you spend each year"
+					/>
+					<IncomesOverTimeWrapper
+						name="Your incomes"
+						descriptions="See how much you earn each year"
+					/>
+					<TransfersOverTimeWrapper
+						name="Money transfered"
+						descriptions="See how your money moves between accounts"
+					/>
+					<ExpensesByCategoryWrapper
+						name="Where your money goes"
+						descriptions="See the distribution of expenses by category"
+					/>
+					<IncomesByCategoryWrapper
+						name="Where your money comes"
+						descriptions="See the distribution of incomes by category"
+					/>
+					<TransfersByCategoryWrapper
+						name="Transfers by category"
+						descriptions=""
+					/>
 				</View>
 			</View>
 		</ScrollView>

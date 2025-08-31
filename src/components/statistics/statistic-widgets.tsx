@@ -6,16 +6,23 @@ import TransactionsOverTime from './transactions-over-time';
 type WrapperProps = {
 	selectedDate?: Date;
 	range?: 'month' | 'year';
+	name: string;
+	descriptions: string;
 };
 
-export function ExpensesOverTimeWrapper({ selectedDate, range }: WrapperProps) {
+export function ExpensesOverTimeWrapper({
+	selectedDate,
+	range,
+	name,
+	descriptions,
+}: WrapperProps) {
 	const isWidgetVisible = usePreferredStatsWindow((s) => s.showExpenseByDate);
 
 	if (isWidgetVisible)
 		return (
 			<TransactionsOverTime
-				name="Your expenses this month"
-				descriptions="See how much you spend daily"
+				name={name}
+				descriptions={descriptions}
 				transactionType="expense"
 				range={range}
 				selectedDate={selectedDate}
@@ -25,14 +32,19 @@ export function ExpensesOverTimeWrapper({ selectedDate, range }: WrapperProps) {
 	return <></>;
 }
 
-export function IncomesOverTimeWrapper({ selectedDate, range }: WrapperProps) {
+export function IncomesOverTimeWrapper({
+	selectedDate,
+	range,
+	name,
+	descriptions,
+}: WrapperProps) {
 	const isWidgetVisible = usePreferredStatsWindow((s) => s.showIncomeByDate);
 
 	if (isWidgetVisible)
 		return (
 			<TransactionsOverTime
-				name="Your incomes this month"
-				descriptions="See how much you earn daily"
+				name={name}
+				descriptions={descriptions}
 				transactionType="income"
 				range={range}
 				selectedDate={selectedDate}
@@ -45,14 +57,16 @@ export function IncomesOverTimeWrapper({ selectedDate, range }: WrapperProps) {
 export function TransfersOverTimeWrapper({
 	selectedDate,
 	range,
+	name,
+	descriptions,
 }: WrapperProps) {
 	const isWidgetVisible = usePreferredStatsWindow((s) => s.showTransferByDate);
 
 	if (isWidgetVisible)
 		return (
 			<TransactionsOverTime
-				name="Money transfered this month"
-				descriptions="See how your money moves between accounts"
+				name={name}
+				descriptions={descriptions}
 				transactionType="transfer"
 				range={range}
 				selectedDate={selectedDate}
@@ -65,6 +79,8 @@ export function TransfersOverTimeWrapper({
 export function ExpensesByCategoryWrapper({
 	selectedDate,
 	range,
+	descriptions,
+	name,
 }: WrapperProps) {
 	const isWidgetVisible = usePreferredStatsWindow(
 		(s) => s.showExpenseByCategory
@@ -76,8 +92,8 @@ export function ExpensesByCategoryWrapper({
 				type="expense"
 				range={range}
 				selectedDate={selectedDate}
-				name="Where your money goes"
-				descriptions="See the distribution of expenses by category"
+				name={name}
+				descriptions={descriptions}
 			/>
 		);
 
@@ -87,6 +103,8 @@ export function ExpensesByCategoryWrapper({
 export function IncomesByCategoryWrapper({
 	selectedDate,
 	range,
+	name,
+	descriptions,
 }: WrapperProps) {
 	const isWidgetVisible = usePreferredStatsWindow(
 		(s) => s.showIncomeByCategory
@@ -98,8 +116,8 @@ export function IncomesByCategoryWrapper({
 				type="income"
 				range={range}
 				selectedDate={selectedDate}
-				name="Where your money comes"
-				descriptions="See the distribution of incomes by category"
+				name={name}
+				descriptions={descriptions}
 			/>
 		);
 
@@ -109,6 +127,7 @@ export function IncomesByCategoryWrapper({
 export function TransfersByCategoryWrapper({
 	selectedDate,
 	range,
+	name,
 }: WrapperProps) {
 	const isWidgetVisible = usePreferredStatsWindow(
 		(s) => s.showTransferByCategory
@@ -120,7 +139,7 @@ export function TransfersByCategoryWrapper({
 				type="transfer"
 				range={range}
 				selectedDate={selectedDate}
-				name="Transfers by category"
+				name={name}
 			/>
 		);
 

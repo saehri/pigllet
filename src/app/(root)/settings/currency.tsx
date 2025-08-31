@@ -6,13 +6,12 @@ import SettingContentButton from '@/src/components/settings/setting-content-butt
 import SettingContentWrapper from '@/src/components/settings/setting-content-wrapper';
 
 import { currencySymbols } from '@/constants/currency-symbols';
-import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
+import { useCurrencyStyle } from '@/store/useCurrencyStyle';
 
 export default function Currency() {
 	const theme = useTheme();
 
-	const { currentCurrencyCode, setAppCurrencyCode } =
-		usePreferredCurrencyStore();
+	const { currentCurrencyCode, setAppCurrencyCode } = useCurrencyStyle();
 
 	return (
 		<ScrollView

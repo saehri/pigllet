@@ -31,14 +31,17 @@ function StatisticsViewToggler() {
 		<>
 			<Button
 				compact
-				mode="contained-tonal"
-				style={{ height: 40, width: 40 }}
+				style={{
+					height: 40,
+					width: 40,
+					backgroundColor: theme.colors.elevation.level5,
+				}}
 				onPress={() => bottomSheetRef.current?.snapToIndex(0)}
 			>
 				<LayoutDashboardIcon
 					size={20}
 					strokeWidth={1.5}
-					color={theme.colors.onSecondaryContainer}
+					color={theme.colors.onSurface}
 				/>
 			</Button>
 

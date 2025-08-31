@@ -20,6 +20,7 @@ type usePreferredStatsWindow = {
 export const usePreferredStatsWindow = create<usePreferredStatsWindow>()(
 	persist(
 		(set) => ({
+			showSuffix: false,
 			showExpenseByDate: true,
 			showIncomeByDate: true,
 			showTransferByDate: true,

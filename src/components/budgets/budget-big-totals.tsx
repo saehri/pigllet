@@ -6,7 +6,7 @@ import * as schema from '@/db/schema';
 import { and, inArray, sql } from 'drizzle-orm';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 
-import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
+import { useCurrencyStyle } from '@/store/useCurrencyStyle';
 
 import moment from 'moment';
 import { formatCurrencyByCode } from '@/utils/utils';
@@ -26,18 +26,20 @@ function BudgetBigTotals({
 	const theme = useTheme();
 	const drizzleDb = useDrizzleDB();
 
-	const { currentCurrencyCode, showFraction, accountingStyle } =
-		usePreferredCurrencyStore();
+	const { currentCurrencyCode, showFraction, accountingStyle, showSuffix } =
+		useCurrencyStyle();
+
 	const formatToCurrency = useCallback(
 		(amount: number) => {
 			return formatCurrencyByCode(
 				amount,
 				currentCurrencyCode,
 				showFraction,
-				accountingStyle
+				accountingStyle,
+				showSuffix
 			);
 		},
-		[currentCurrencyCode]
+		[currentCurrencyCode, showFraction, accountingStyle, showSuffix]
 	);
 
 	const startOfMonth = moment(selectedDate)

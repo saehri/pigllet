@@ -26,7 +26,7 @@ import { formatCurrencyByCode, getCardPosition } from '@/utils/utils';
 import { groupedTransactionsByDate } from '@/utils/group-transactions';
 import { useSelectedTransactions } from '@/store/useSelectedTransactions';
 import { loadTransactionsData } from '@/src/hooks/useTransactionsManager';
-import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
+import { useCurrencyStyle } from '@/store/useCurrencyStyle';
 
 import NoItemNotice from '@/src/components/reusables/no-items-notice';
 import TransactionCard from '@/src/components/reusables/transaction-card';
@@ -206,8 +206,8 @@ function CardSelector({
 	setSelectedAccount,
 }: CardSelector) {
 	const theme = useTheme();
-	const { currentCurrencyCode, showFraction, accountingStyle } =
-		usePreferredCurrencyStore();
+	const { currentCurrencyCode, showFraction, accountingStyle, showSuffix } =
+		useCurrencyStyle();
 
 	useEffect(() => {
 		setSelectedAccount(accounts[0]);
@@ -281,7 +281,8 @@ function CardSelector({
 											account.balance,
 											currentCurrencyCode,
 											showFraction,
-											accountingStyle
+											accountingStyle,
+											showSuffix
 										)}
 									</Text>
 
