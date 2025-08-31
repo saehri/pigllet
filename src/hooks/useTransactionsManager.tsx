@@ -287,7 +287,7 @@ export const useRecordIncomeForm = () => {
 
 				await tx
 					.update(schema.accounts)
-					.set({ balance: accountUsed.balance - Number(transactionAmount) })
+					.set({ balance: accountUsed.balance + Number(transactionAmount) })
 					.where(eq(schema.accounts.id, accountUsed?.id!));
 			});
 
