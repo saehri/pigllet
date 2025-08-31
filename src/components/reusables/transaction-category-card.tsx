@@ -44,15 +44,25 @@ function TransactionCategoryCard({ data, position }: Props) {
 
 	const isSelected = selectedCategories.includes(data.id!);
 
-	return (
-		<Pressable
-			onPress={() =>
-				router.push({
-					pathname: '/category-form',
-					params: { id: data.id, formAction: 'edit', categType: data.type },
-				})
+	const handleButtonPress = (ev: GestureResponderEvent) => {
+		if (selectedCategories.length) {
+			if (isSelected) {
+				return setSelectedCategories(
+					selectedCategories.filter((id) => id != data.id)
+				);
 			}
-		>
+
+			return setSelectedCategories([...selectedCategories, data.id as number]);
+		}
+
+		router.push({
+			pathname: '/category-form',
+			params: { id: data.id, formAction: 'edit', categType: data.type },
+		});
+	};
+
+	return (
+		<Pressable disabled={Boolean(data.is_default)} onPress={handleButtonPress}>
 			<Surface
 				mode="flat"
 				elevation={3}

@@ -122,7 +122,12 @@ export default function CategoryForm() {
 					/>
 				</View>
 
-				<View style={styles.inputContainerFull}>
+				<View
+					style={[
+						styles.inputContainerFull,
+						{ display: formAction === 'edit' ? 'none' : 'flex' },
+					]}
+				>
 					<Text style={styles.inputLabel} variant="bodyLarge">
 						Category type
 					</Text>
