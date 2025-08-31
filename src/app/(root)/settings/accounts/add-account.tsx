@@ -14,7 +14,7 @@ import AccountCardPreview from '@/src/components/reusables/account-card-preview'
 
 const cardColors = ['#EA1C7E', '#ecb201ff', '#1ab3b3ff'];
 
-export default function EditAccountScreen() {
+export default function AddAccountScreen() {
 	const theme = useTheme();
 
 	const drizzleDb = useDrizzleDB();

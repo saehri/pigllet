@@ -95,6 +95,9 @@ export default function useAccountManager(): useAccountManager {
 				})
 				.onConflictDoNothing();
 
+			setAccountName('');
+			setAccountHolder('');
+			setAccountNumber('');
 			ToastAndroid.show('Account created!', ToastAndroid.SHORT);
 		} catch (error: any) {
 			ToastAndroid.show(error.message, ToastAndroid.SHORT);

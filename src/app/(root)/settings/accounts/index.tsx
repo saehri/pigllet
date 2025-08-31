@@ -14,23 +14,23 @@ import {
 	View,
 } from 'react-native';
 import { PencilIcon, PlusIcon } from 'lucide-react-native';
+import { Button, Surface, Text, useTheme } from 'react-native-paper';
 import { useFocusEffect, useNavigation, useRouter } from 'expo-router';
 import Animated, { FadeInDown, FadeInRight } from 'react-native-reanimated';
 
 import * as schema from '@/db/schema';
-import { Button, Surface, Text, useTheme } from 'react-native-paper';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 
-import { loadTransactionsData } from '@/src/hooks/useTransactionsManager';
-import { useSelectedTransactions } from '@/store/useSelectedTransactions';
-import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 import { formatCurrencyByCode, getCardPosition } from '@/utils/utils';
 import { groupedTransactionsByDate } from '@/utils/group-transactions';
+import { useSelectedTransactions } from '@/store/useSelectedTransactions';
+import { loadTransactionsData } from '@/src/hooks/useTransactionsManager';
+import { usePreferredCurrencyStore } from '@/store/usePreferredCurrencyStore';
 
-import TransactionHeaderBar from '@/src/components/home/transaction-header-bar';
 import NoItemNotice from '@/src/components/reusables/no-items-notice';
 import TransactionCard from '@/src/components/reusables/transaction-card';
+import TransactionHeaderBar from '@/src/components/home/transaction-header-bar';
 import AccountCardPreview from '@/src/components/reusables/account-card-preview';
 
 export default function AccountsSettingScreen() {
@@ -51,6 +51,7 @@ export default function AccountsSettingScreen() {
 
 	useEffect(() => {
 		navigation.setOptions({
+			title: 'My accounts',
 			headerRight: () => (
 				<View
 					style={{
@@ -61,6 +62,7 @@ export default function AccountsSettingScreen() {
 				>
 					<Button
 						mode="contained-tonal"
+						compact
 						style={{ borderTopRightRadius: 6, borderBottomRightRadius: 6 }}
 						contentStyle={{ height: 40 }}
 						onPress={() =>
@@ -78,6 +80,7 @@ export default function AccountsSettingScreen() {
 					</Button>
 					<Button
 						mode="contained-tonal"
+						compact
 						style={{ borderTopLeftRadius: 6, borderBottomLeftRadius: 6 }}
 						contentStyle={{ height: 40 }}
 						onPress={() => router.push('/(root)/settings/accounts/add-account')}
