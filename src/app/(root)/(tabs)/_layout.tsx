@@ -33,14 +33,16 @@ export default function Layout() {
 				<AccountMiniViewer />
 
 				<Button
-					mode="contained-tonal"
 					onPress={() => router.push('/(root)/settings')}
-					style={{ borderRadius: 12 }}
+					style={{
+						borderRadius: 12,
+						backgroundColor: theme.colors.elevation.level5,
+					}}
 					contentStyle={{ height: 40 }}
 				>
 					<SettingsIcon
 						strokeWidth={1.5}
-						color={theme.colors.onSecondaryContainer}
+						color={theme.colors.onSurface}
 						size={20}
 					/>
 				</Button>
