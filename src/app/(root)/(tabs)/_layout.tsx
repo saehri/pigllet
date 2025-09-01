@@ -145,11 +145,7 @@ export default function Layout() {
 			</Tabs>
 
 			<LinearGradient
-				colors={
-					currentAppTheme === 'Dark'
-						? ['black', 'transparent']
-						: ['white', 'transparent']
-				}
+				colors={[theme.colors.background, 'transparent']}
 				start={{ x: 0.5, y: 1 }}
 				end={{ x: 0.5, y: 0 }}
 				style={{

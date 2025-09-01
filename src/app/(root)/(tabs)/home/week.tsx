@@ -13,7 +13,7 @@ import TransactionCard from '@/src/components/reusables/transaction-card';
 import HomeHeaderContainer from '@/src/components/home/home-header-container';
 import TransactionsSummary from '@/src/components/charts/transactions-summary';
 
-export default function HomeScreen() {
+export default function WeekTransactionScreen() {
 	const theme = useTheme();
 	const router = useRouter();
 

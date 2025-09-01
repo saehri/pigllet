@@ -1,10 +1,12 @@
 import { useRouter } from 'expo-router';
 import { useState, useMemo, useCallback } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
-import { AnimatedFAB, Text, useTheme } from 'react-native-paper';
+import { FAB, Text, useTheme } from 'react-native-paper';
+import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
 
-import { getCardPosition } from '@/utils/utils';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
+import useScrollDirection from '@/src/hooks/useScrollDirection';
+import { fastSpatialEasing, getCardPosition } from '@/utils/utils';
 import { groupedTransactionsByDate } from '@/utils/group-transactions';
 import { loadTransactionsData } from '@/src/hooks/useTransactionsManager';
 
@@ -18,21 +20,14 @@ import YearSelectorBar from '@/src/components/reusables/year-selector-bar';
 export default function HomeYearlyTransactionScreen() {
 	const theme = useTheme();
 	const router = useRouter();
+	const { direction, handleScroll } = useScrollDirection();
 
 	const [selectedDate, setSelectedDate] = useState(() => new Date());
-	const [isExtended, setIsExtended] = useState(true);
 
 	const { data: transactions } = useLiveQuery(
 		loadTransactionsData({ date: selectedDate, range: 'year' }),
 		[selectedDate]
 	);
-
-	const onScroll = ({ nativeEvent }: any) => {
-		const currentScrollPosition =
-			Math.floor(nativeEvent?.contentOffset?.y) ?? 0;
-
-		setIsExtended(currentScrollPosition <= 0);
-	};
 
 	const groupedTransactions = useMemo(() => {
 		return groupedTransactionsByDate(transactions as any, 'MMMM, YYYY');
@@ -77,7 +72,7 @@ export default function HomeYearlyTransactionScreen() {
 					setSelectedDate={setSelectedDate}
 				/>
 
-				<TransactionsSummary selectedDate={selectedDate} range="month" />
+				<TransactionsSummary selectedDate={selectedDate} range="year" />
 
 				<TransactionHeaderBar />
 			</HomeHeaderContainer>
@@ -87,25 +82,32 @@ export default function HomeYearlyTransactionScreen() {
 	return (
 		<>
 			<FlatList
-				onScroll={onScroll}
+				onScroll={handleScroll}
 				data={groupedTransactions}
 				showsVerticalScrollIndicator={false}
 				style={{ backgroundColor: theme.colors.background }}
-				contentContainerStyle={{ paddingBottom: transactions.length ? 150 : 0 }}
+				contentContainerStyle={{ paddingBottom: transactions.length ? 80 : 0 }}
 				ListEmptyComponent={<NoItemNotice />}
 				ListHeaderComponent={renderHeader}
 				renderItem={renderTransactionGroup}
 				keyExtractor={(item) => item.created_date}
 			/>
 
-			<AnimatedFAB
-				label="Add expense"
-				icon="plus"
-				style={styles.fab}
-				onPress={() => router.push('/(root)/new-transactions/expense')}
-				variant="secondary"
-				extended={isExtended}
-			/>
+			{direction === 'up' && (
+				<Animated.View
+					entering={FadeInDown.duration(500).easing(fastSpatialEasing)}
+					exiting={FadeOutDown.duration(500).easing(fastSpatialEasing)}
+				>
+					<FAB
+						icon="plus"
+						size="medium"
+						mode="flat"
+						style={styles.fab}
+						onPress={() => router.push('/(root)/new-transactions/expense')}
+						variant="secondary"
+					/>
+				</Animated.View>
+			)}
 		</>
 	);
 }

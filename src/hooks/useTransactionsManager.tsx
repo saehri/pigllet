@@ -5,7 +5,7 @@ import { ToastAndroid } from 'react-native';
 import * as schema from '@/db/schema';
 import { useDrizzleDB } from './useDrizzleDb';
 import { alias } from 'drizzle-orm/sqlite-core';
-import { and, desc, eq, or, sql } from 'drizzle-orm';
+import { and, desc, eq, inArray, or, sql } from 'drizzle-orm';
 
 interface loadTransactionsData {
 	date?: moment.MomentInput;
@@ -146,6 +146,12 @@ export const useRecordExpenseForm = () => {
 					.update(schema.accounts)
 					.set({ balance: accountUsed.balance - Number(transactionAmount) })
 					.where(eq(schema.accounts.id, accountUsed?.id!));
+
+				const selectedAccount = await tx
+					.select()
+					.from(schema.accounts)
+					.where(eq(schema.accounts.id, accountUsed.id as number));
+				setAccountUsed(selectedAccount[0]);
 			});
 
 			ToastAndroid.show('Expense recorded!', ToastAndroid.SHORT);
@@ -289,6 +295,12 @@ export const useRecordIncomeForm = () => {
 					.update(schema.accounts)
 					.set({ balance: accountUsed.balance + Number(transactionAmount) })
 					.where(eq(schema.accounts.id, accountUsed?.id!));
+
+				const selectedAccount = await tx
+					.select()
+					.from(schema.accounts)
+					.where(eq(schema.accounts.id, accountUsed.id as number));
+				setAccountUsed(selectedAccount[0]);
 			});
 
 			ToastAndroid.show('Income recorded!', ToastAndroid.SHORT);
@@ -445,6 +457,27 @@ export const useRecordTransferForm = () => {
 							balance: relatedAccount.balance + Number(transactionAmount),
 						})
 						.where(eq(schema.accounts.id, Number(relatedAccount.id)));
+
+					const selectedAccount = await tx
+						.select()
+						.from(schema.accounts)
+						.where(
+							inArray(schema.accounts.id, [
+								accountUsed.id,
+								relatedAccount.id,
+							] as number[])
+						);
+
+					setAccountUsed(
+						selectedAccount.filter(
+							(acc) => acc.id === Number(accountUsed.id)
+						)[0]
+					);
+					setRelatedAccount(
+						selectedAccount.filter(
+							(acc) => acc.id === Number(relatedAccount.id)
+						)[0]
+					);
 				}
 			});
 

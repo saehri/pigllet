@@ -48,6 +48,8 @@ export default function CreateIncomeForm() {
 		loadFormData();
 	}, []);
 
+	const isFormDisabled = loading || !transactionAmount.length || !accountUsed;
+
 	return (
 		<View style={styles.formWrapper}>
 			<View style={styles.inputContainerFull}>
@@ -126,7 +128,7 @@ export default function CreateIncomeForm() {
 				contentStyle={styles.buttonContent}
 				labelStyle={styles.buttonLabel}
 				onPress={createIncomeRecord}
-				disabled={loading || !transactionAmount.length}
+				disabled={isFormDisabled}
 				loading={loading}
 			>
 				Save income record

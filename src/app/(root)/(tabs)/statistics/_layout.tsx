@@ -1,12 +1,27 @@
 import { Tabs } from 'expo-router';
 import { useTheme } from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function StatisticsScreenLayout() {
 	const theme = useTheme();
 
 	return (
 		<View style={styles.container}>
+			<LinearGradient
+				colors={[theme.colors.background, 'transparent']}
+				start={{ x: 0.5, y: 0.5 }}
+				end={{ x: 0.5, y: 1 }}
+				style={{
+					position: 'absolute',
+					top: 0,
+					zIndex: 1,
+					left: 0,
+					width: '100%',
+					height: 70,
+				}}
+			/>
+
 			<Tabs
 				initialRouteName="stats-by-month"
 				screenOptions={{
@@ -25,6 +40,7 @@ export default function StatisticsScreenLayout() {
 						gap: 12,
 						borderRadius: 8,
 						height: 40,
+						zIndex: 10,
 					},
 					tabBarLabelStyle: {
 						fontFamily: 'Manrope-Medium',
@@ -60,13 +76,5 @@ export default function StatisticsScreenLayout() {
 
 const styles = StyleSheet.create({
 	container: { flex: 1 },
-
-	header: {
-		height: 64,
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-		paddingHorizontal: 16,
-	},
 });
 

@@ -49,6 +49,8 @@ export default function CreateExpenseForm() {
 		loadFormData();
 	}, []);
 
+	const isFormDisabled = loading || !transactionAmount.length || !accountUsed;
+
 	return (
 		<View style={styles.formWrapper}>
 			<View style={styles.inputContainer}>
@@ -127,7 +129,7 @@ export default function CreateExpenseForm() {
 				contentStyle={styles.buttonContent}
 				labelStyle={styles.buttonLabel}
 				onPress={createExpenseRecord}
-				disabled={loading || !transactionAmount.length}
+				disabled={isFormDisabled}
 				loading={loading}
 			>
 				Save expense record

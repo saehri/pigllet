@@ -50,6 +50,8 @@ export default function NewTransferForm() {
 		loadFormData();
 	}, []);
 
+	const isFormDisabled = loading || !transactionAmount.length || !accountUsed;
+
 	return (
 		<View style={styles.formWrapper}>
 			<View style={styles.inputContainerFull}>
@@ -139,7 +141,7 @@ export default function NewTransferForm() {
 				contentStyle={styles.buttonContent}
 				labelStyle={styles.buttonLabel}
 				onPress={createTransferRecord}
-				disabled={loading || !transactionAmount.length}
+				disabled={isFormDisabled}
 				loading={loading}
 			>
 				Save transfer record
