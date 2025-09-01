@@ -28,7 +28,7 @@ export default function CategoryForm() {
 			setLoading(true);
 
 			await drizzleDb.insert(schema.categories).values({
-				icon_name: iconName,
+				icon_name: iconName.trim(),
 				label: label,
 				type: categoryType,
 			});
@@ -53,7 +53,7 @@ export default function CategoryForm() {
 			await drizzleDb
 				.update(schema.categories)
 				.set({
-					icon_name: iconName,
+					icon_name: iconName.trim(),
 					label: label,
 					type: categoryType,
 				})
