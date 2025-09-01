@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useRouter } from 'expo-router';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { FAB, Text, useTheme } from 'react-native-paper';
@@ -14,33 +14,46 @@ import NoItemNotice from '@/src/components/reusables/no-items-notice';
 import TransactionCard from '@/src/components/reusables/transaction-card';
 import HomeHeaderContainer from '@/src/components/home/home-header-container';
 import TransactionsSummary from '@/src/components/charts/transactions-summary';
+import TransactionHeaderBar from '@/src/components/home/transaction-header-bar';
+import WeekSelectorBar from '@/src/components/reusables/week-selector-bar';
 
 export default function WeekTransactionScreen() {
 	const theme = useTheme();
 	const router = useRouter();
+	const [selectedDate, setSelectedDate] = useState(new Date());
 	const { direction, handleScroll } = useScrollDirection();
+	const { data: transactions } = useLiveQuery(
+		loadTransactionsData({ date: selectedDate, range: 'week' }),
+		[selectedDate]
+	);
 
-	const { data: transactions } = useLiveQuery(loadTransactionsData({}));
+	const updateWeek = useCallback((offset: number) => {
+		setSelectedDate((prev) => {
+			const updated = new Date(prev);
+			updated.setDate(prev.getDate() + offset * 7);
+
+			// Find Monday of this week (assuming Monday = 1, Sunday = 0)
+			const day = updated.getDay();
+			const diff = day === 0 ? -6 : 1 - day; // if Sunday, go back 6 days
+			updated.setDate(updated.getDate() + diff);
+
+			return updated;
+		});
+	}, []);
 
 	const renderHeader = useCallback(() => {
 		return (
 			<HomeHeaderContainer>
-				<TransactionsSummary range="month" />
-
-				<Text
-					variant="titleLarge"
-					style={{
-						marginLeft: 16,
-						marginTop: 16,
-						marginBottom: 12,
-						fontFamily: 'Manrope-Regular',
-					}}
-				>
-					Transactions
-				</Text>
+				<WeekSelectorBar
+					onNext={() => updateWeek(1)}
+					onPrev={() => updateWeek(-1)}
+					selectedDate={selectedDate}
+				/>
+				<TransactionsSummary range="week" selectedDate={selectedDate} />
+				<TransactionHeaderBar />
 			</HomeHeaderContainer>
 		);
-	}, []);
+	}, [selectedDate, updateWeek]);
 
 	const renderTransactionGroup = useCallback(
 		({ item }: any) => (
@@ -90,10 +103,13 @@ export default function WeekTransactionScreen() {
 				onScroll={handleScroll}
 				ListHeaderComponent={renderHeader}
 				style={{ backgroundColor: theme.colors.background }}
-				contentContainerStyle={{ paddingBottom: transactions.length ? 150 : 0 }}
+				contentContainerStyle={{ paddingBottom: transactions.length ? 100 : 0 }}
 				ListEmptyComponent={<NoItemNotice />}
 				showsVerticalScrollIndicator={false}
-				data={groupedTransactionsByDate(transactions as any, 'YYYY')}
+				data={groupedTransactionsByDate(
+					transactions as any,
+					'MMM D, YYYY'
+				).reverse()}
 				renderItem={renderTransactionGroup}
 			/>
 

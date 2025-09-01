@@ -9,7 +9,7 @@ import { and, desc, eq, inArray, or, sql } from 'drizzle-orm';
 
 interface loadTransactionsData {
 	date?: moment.MomentInput;
-	range?: 'month' | 'year';
+	range?: 'month' | 'year' | 'week';
 	transactionType?: 'income' | 'expense' | 'transfer';
 	accountId?: number;
 	categoryId?: number;
@@ -25,18 +25,18 @@ export const loadTransactionsData = ({
 	const relatedAccountsAlias = alias(schema.accounts, 'related_accounts'); // Alias for related accounts
 	const drizzleDb = useDrizzleDB();
 
-	let startOfMonth = moment(date)
-		.startOf(range || 'month')
-		.format('YYYY-MM-DD');
-	let endOfMonth = moment(date)
-		.endOf(range || 'month')
-		.format('YYYY-MM-DD');
-
 	const whereConditions = [];
 
 	if (date) {
+		let startDate = moment(date)
+			.startOf(range || 'month')
+			.format('YYYY-MM-DD');
+		let endDate = moment(date)
+			.endOf(range || 'month')
+			.format('YYYY-MM-DD');
+
 		whereConditions.push(
-			sql`DATE(${schema.transactions.created_at}) BETWEEN DATE(${startOfMonth}) AND DATE(${endOfMonth})`
+			sql`DATE(${schema.transactions.created_at}) BETWEEN DATE(${startDate}) AND DATE(${endDate})`
 		);
 	}
 

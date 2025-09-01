@@ -14,7 +14,7 @@ import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 
 type Props = {
 	selectedDate?: Date;
-	range?: 'month' | 'year';
+	range?: 'month' | 'year' | 'week';
 };
 
 const TransactionsSummary = memo(function TransactionsSummary({
