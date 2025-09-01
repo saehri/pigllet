@@ -13,7 +13,7 @@ import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 
 type Props = {
 	selectedDate?: Date;
-	range?: 'month' | 'year';
+	range?: 'month' | 'year' | 'week';
 };
 
 export default function AverageSpending({ selectedDate, range }: Props) {
@@ -22,9 +22,14 @@ export default function AverageSpending({ selectedDate, range }: Props) {
 
 	const drizzleDb = useDrizzleDB();
 
+	const divisor = () => {
+		if (range === 'week') return 7;
+		if (range === 'month') return moment(selectedDate).daysInMonth();
+		if (range === 'year') return 12;
+	};
+
 	const getAverageSpending = () => {
 		const whereConditions = [];
-		const divisor = range === 'month' ? moment(selectedDate).daysInMonth() : 12;
 
 		if (selectedDate && range) {
 			const startDate = moment(selectedDate)
@@ -39,7 +44,7 @@ export default function AverageSpending({ selectedDate, range }: Props) {
 
 		return drizzleDb
 			.select({
-				value: sql<number>`COALESCE(SUM(CASE WHEN ${schema.transactions.type} = 'expense' THEN ${schema.transactions.amount} ELSE 0 END) / ${divisor}, 0)`,
+				value: sql<number>`COALESCE(SUM(CASE WHEN ${schema.transactions.type} = 'expense' THEN ${schema.transactions.amount} ELSE 0 END) / ${divisor()}, 0)`,
 			})
 			.from(schema.transactions)
 			.where(and(...whereConditions));
@@ -47,17 +52,32 @@ export default function AverageSpending({ selectedDate, range }: Props) {
 
 	const getPrevMonthAverageSpending = () => {
 		const whereConditions = [];
-		const divisor = range === 'month' ? moment(selectedDate).daysInMonth() : 12;
 
 		if (selectedDate && range) {
-			const startDate = moment(selectedDate)
-				.set('M', moment(selectedDate).month() - 1)
-				.startOf(range)
-				.format('YYYY-MM-DD');
-			const endDate = moment(selectedDate)
-				.set('M', moment(selectedDate).month() - 1)
-				.endOf(range)
-				.format('YYYY-MM-DD');
+			let startDate, endDate;
+
+			if (range === 'week') {
+				const prevWeek = new Date(selectedDate);
+				prevWeek.setDate(selectedDate.getDate() * -1);
+
+				// Find Monday of this week (assuming Monday = 1, Sunday = 0)
+				const day = prevWeek.getDay();
+				const diff = day === 0 ? -6 : 1 - day; // if Sunday, go back 6 days
+				prevWeek.setDate(prevWeek.getDate() + diff);
+
+				startDate = moment(prevWeek).startOf('week').format('YYYY-MM-DD');
+				endDate = moment(prevWeek).endOf('week').format('YYYY-MM-DD');
+			} else {
+				startDate = moment(selectedDate)
+					.set('M', moment(selectedDate).month() - 1)
+					.startOf(range)
+					.format('YYYY-MM-DD');
+
+				endDate = moment(selectedDate)
+					.set('M', moment(selectedDate).month() - 1)
+					.endOf(range)
+					.format('YYYY-MM-DD');
+			}
 
 			whereConditions.push(
 				sql`DATE(${schema.transactions.created_at}) BETWEEN DATE(${startDate}) AND DATE(${endDate})`
@@ -66,7 +86,7 @@ export default function AverageSpending({ selectedDate, range }: Props) {
 
 		return drizzleDb
 			.select({
-				value: sql<number>`COALESCE(SUM(CASE WHEN ${schema.transactions.type} = 'expense' THEN ${schema.transactions.amount} ELSE 0 END) / ${divisor}, 0)`,
+				value: sql<number>`COALESCE(SUM(CASE WHEN ${schema.transactions.type} = 'expense' THEN ${schema.transactions.amount} ELSE 0 END) / ${divisor()}, 0)`,
 			})
 			.from(schema.transactions)
 			.where(and(...whereConditions));
@@ -97,10 +117,15 @@ export default function AverageSpending({ selectedDate, range }: Props) {
 	const spendingPercentage =
 		prev === 0 ? 0 : (averageSpendingDiff / prev) * 100;
 
+	const labelDisplay = () => {
+		if (range === 'week' || range === 'month') return 'Daily average spending';
+		return 'Monthly average spending';
+	};
+
 	return (
 		<Surface mode="flat" elevation={2} style={[styles.chart]}>
 			<Text style={styles.chartTitle} variant="bodyLarge">
-				{range === 'month' ? 'Daily' : 'Monthly'} average spending
+				{labelDisplay()}
 			</Text>
 
 			{averageSpending.length ? (

@@ -5,9 +5,10 @@ import TransactionsOverTime from './transactions-over-time';
 
 type WrapperProps = {
 	selectedDate?: Date;
-	range?: 'month' | 'year';
+	range?: 'month' | 'year' | 'week';
 	name: string;
 	descriptions: string;
+	initialSorting?: 'asc' | 'desc';
 };
 
 export function ExpensesOverTimeWrapper({
@@ -15,6 +16,7 @@ export function ExpensesOverTimeWrapper({
 	range,
 	name,
 	descriptions,
+	initialSorting,
 }: WrapperProps) {
 	const isWidgetVisible = usePreferredStatsWindow((s) => s.showExpenseByDate);
 
@@ -26,6 +28,7 @@ export function ExpensesOverTimeWrapper({
 				transactionType="expense"
 				range={range}
 				selectedDate={selectedDate}
+				initialSorting={initialSorting}
 			/>
 		);
 
@@ -37,6 +40,7 @@ export function IncomesOverTimeWrapper({
 	range,
 	name,
 	descriptions,
+	initialSorting,
 }: WrapperProps) {
 	const isWidgetVisible = usePreferredStatsWindow((s) => s.showIncomeByDate);
 
@@ -48,6 +52,7 @@ export function IncomesOverTimeWrapper({
 				transactionType="income"
 				range={range}
 				selectedDate={selectedDate}
+				initialSorting={initialSorting}
 			/>
 		);
 
@@ -59,6 +64,7 @@ export function TransfersOverTimeWrapper({
 	range,
 	name,
 	descriptions,
+	initialSorting,
 }: WrapperProps) {
 	const isWidgetVisible = usePreferredStatsWindow((s) => s.showTransferByDate);
 
@@ -70,6 +76,7 @@ export function TransfersOverTimeWrapper({
 				transactionType="transfer"
 				range={range}
 				selectedDate={selectedDate}
+				initialSorting={initialSorting}
 			/>
 		);
 
@@ -81,6 +88,7 @@ export function ExpensesByCategoryWrapper({
 	range,
 	descriptions,
 	name,
+	initialSorting,
 }: WrapperProps) {
 	const isWidgetVisible = usePreferredStatsWindow(
 		(s) => s.showExpenseByCategory
@@ -93,6 +101,7 @@ export function ExpensesByCategoryWrapper({
 				range={range}
 				selectedDate={selectedDate}
 				name={name}
+				initialSorting={initialSorting}
 				descriptions={descriptions}
 			/>
 		);
@@ -105,6 +114,7 @@ export function IncomesByCategoryWrapper({
 	range,
 	name,
 	descriptions,
+	initialSorting,
 }: WrapperProps) {
 	const isWidgetVisible = usePreferredStatsWindow(
 		(s) => s.showIncomeByCategory
@@ -117,6 +127,7 @@ export function IncomesByCategoryWrapper({
 				range={range}
 				selectedDate={selectedDate}
 				name={name}
+				initialSorting={initialSorting}
 				descriptions={descriptions}
 			/>
 		);
@@ -128,6 +139,7 @@ export function TransfersByCategoryWrapper({
 	selectedDate,
 	range,
 	name,
+	initialSorting,
 }: WrapperProps) {
 	const isWidgetVisible = usePreferredStatsWindow(
 		(s) => s.showTransferByCategory
@@ -139,6 +151,7 @@ export function TransfersByCategoryWrapper({
 				type="transfer"
 				range={range}
 				selectedDate={selectedDate}
+				initialSorting={initialSorting}
 				name={name}
 			/>
 		);

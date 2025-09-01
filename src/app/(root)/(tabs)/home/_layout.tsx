@@ -23,7 +23,7 @@ export default function HomeScreenLayout() {
 			/>
 
 			<Tabs
-				initialRouteName="month"
+				initialRouteName="week"
 				screenOptions={{
 					tabBarActiveTintColor: theme.colors.onPrimary,
 					tabBarActiveBackgroundColor: theme.colors.primary,

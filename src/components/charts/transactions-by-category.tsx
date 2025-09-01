@@ -18,12 +18,16 @@ import { fastSpatialEasing, formatCurrencyByCode } from '@/utils/utils';
 import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 import { useCurrencyStyle } from '@/store/useCurrencyStyle';
 
+type DateRange = 'month' | 'year' | 'week';
+type Sort = 'asc' | 'desc';
+
 type Props = {
 	selectedDate?: Date;
-	range?: 'month' | 'year';
+	range?: DateRange;
 	type: schema.TransactionType;
 	name: string;
 	descriptions?: string;
+	initialSorting?: Sort;
 };
 
 export default function TransactionsByCategory({
@@ -32,11 +36,12 @@ export default function TransactionsByCategory({
 	type,
 	name,
 	descriptions,
+	initialSorting = 'desc',
 }: Props) {
 	const theme = useTheme();
 
 	// for ordering the data
-	const [order, setOrder] = useState<'asc' | 'desc'>('desc');
+	const [order, setOrder] = useState<'asc' | 'desc'>(initialSorting);
 
 	// set up the database
 	const drizzleDb = useDrizzleDB();
@@ -79,44 +84,19 @@ export default function TransactionsByCategory({
 			);
 	};
 
-	const getMaxValue = () => {
-		const whereConditions = [eq(schema.transactions.type, type)];
-
-		if (selectedDate && range) {
-			whereConditions.push(
-				gte(
-					schema.transactions.created_at,
-					moment(selectedDate).startOf(range).format('YYYY-MM-DD')
-				)
-			);
-			whereConditions.push(
-				lte(
-					schema.transactions.created_at,
-					moment(selectedDate).endOf(range).format('YYYY-MM-DD')
-				)
-			);
-		}
-
-		return drizzleDb
-			.select({
-				maxValue: sql<number>`SUM(${schema.transactions.amount})`,
-			})
-			.from(schema.transactions)
-			.where(whereConditions.length > 0 ? and(...whereConditions) : undefined);
-	};
-
 	const { data: chartData } = useLiveQuery(getSumByTypeInDateRange(), [
 		selectedDate,
 		order,
 	]);
-	const { data: chartMaxValue } = useLiveQuery(getMaxValue(), [selectedDate]);
 
 	const contentRenderer = useCallback(() => {
 		if (chartData.length)
 			return (
 				<ChartRenderer
 					chartData={chartData}
-					chartMaxValue={chartMaxValue[0].maxValue}
+					chartMaxValue={
+						chartData.slice().sort((a, b) => b.value - a.value)[0].value
+					}
 					transactionType={type}
 				/>
 			);

@@ -21,12 +21,16 @@ import { fastSpatialEasing, formatCurrencyByCode } from '@/utils/utils';
 import { useCurrencyStyle } from '@/store/useCurrencyStyle';
 import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 
+type DateRange = 'month' | 'year' | 'week';
+type Sort = 'asc' | 'desc';
+
 type Props = {
 	selectedDate?: Date;
-	range?: 'month' | 'year';
+	range?: DateRange;
 	transactionType: schema.TransactionType;
 	name: string;
 	descriptions?: string;
+	initialSorting?: Sort;
 };
 
 function TransactionsOverTime({
@@ -35,17 +39,18 @@ function TransactionsOverTime({
 	transactionType,
 	name,
 	descriptions,
+	initialSorting = 'desc',
 }: Props) {
 	const theme = useTheme();
 
 	// for ordering the data
-	const [order, setOrder] = useState<'asc' | 'desc'>('desc');
+	const [order, setOrder] = useState<'asc' | 'desc'>(initialSorting);
 
 	// set up the database
 	const drizzleDb = useDrizzleDB();
 
-	const getDateGroupingRule = (range?: 'month' | 'year') => {
-		if (range === 'month') {
+	const getDateGroupingRule = (range?: DateRange) => {
+		if (range === 'month' || range === 'week') {
 			return sql<string>`DATE(${schema.transactions.created_at})`;
 		}
 		if (range === 'year') {
@@ -87,45 +92,19 @@ function TransactionsOverTime({
 			.groupBy(getDateGroupingRule(range));
 	};
 
-	const getMaxValue = () => {
-		const whereConditions = [eq(schema.transactions.type, transactionType)];
-
-		if (selectedDate && range) {
-			whereConditions.push(
-				gte(
-					schema.transactions.created_at,
-					moment(selectedDate).startOf(range).format('YYYY-MM-DD')
-				)
-			);
-			whereConditions.push(
-				lte(
-					schema.transactions.created_at,
-					moment(selectedDate).endOf(range).format('YYYY-MM-DD')
-				)
-			);
-		}
-
-		return drizzleDb
-			.select({
-				maxValue: sql<number>`SUM(${schema.transactions.amount})`,
-			})
-			.from(schema.transactions)
-			.where(whereConditions.length > 0 ? and(...whereConditions) : undefined);
-	};
-
 	const { data: chartData } = useLiveQuery(getSumByTypeInDateRange(), [
 		selectedDate,
 		order,
 	]);
-
-	const { data: chartMaxValue } = useLiveQuery(getMaxValue(), [selectedDate]);
 
 	const contentRenderer = useCallback(() => {
 		if (chartData.length)
 			return (
 				<ChartRenderer
 					chartData={chartData}
-					chartMaxValue={chartMaxValue[0].maxValue}
+					chartMaxValue={
+						chartData.slice().sort((a, b) => b.value - a.value)[0].value
+					}
 					transactionType={transactionType}
 					range={range}
 				/>
@@ -199,7 +178,7 @@ type ChartRendererProps = {
 	chartData: { value: number; label: string }[];
 	chartMaxValue: number;
 	transactionType: schema.TransactionType;
-	range?: 'month' | 'year';
+	range?: DateRange;
 };
 
 function ChartRenderer({
@@ -214,7 +193,7 @@ function ChartRenderer({
 	const theme = useTheme();
 
 	const getChartLabel = () => {
-		if (range === 'month') return 'MMM D, YYYY';
+		if (range === 'month' || range === 'week') return 'MMM D, YYYY';
 		if (range === 'year') return 'MMM, YYYY';
 		return 'YYYY';
 	};

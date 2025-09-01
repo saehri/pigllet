@@ -23,7 +23,7 @@ export default function StatisticsScreenLayout() {
 			/>
 
 			<Tabs
-				initialRouteName="stats-by-month"
+				initialRouteName="stats-by-week"
 				screenOptions={{
 					tabBarActiveTintColor: theme.colors.onPrimary,
 					tabBarActiveBackgroundColor: theme.colors.primary,
@@ -66,9 +66,9 @@ export default function StatisticsScreenLayout() {
 					headerShown: false,
 				}}
 			>
+				<Tabs.Screen name="stats-by-week" options={{ title: 'Week' }} />
 				<Tabs.Screen name="stats-by-month" options={{ title: 'Month' }} />
 				<Tabs.Screen name="stats-by-year" options={{ title: 'Year' }} />
-				<Tabs.Screen name="stats-all" options={{ title: 'All' }} />
 			</Tabs>
 		</View>
 	);
