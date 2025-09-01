@@ -1,26 +1,27 @@
 import { useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { AnimatedFAB, FAB, Text, useTheme } from 'react-native-paper';
-import { FlatList, StyleSheet, View } from 'react-native';
-
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
-import { loadBudgetRecord } from '@/src/hooks/useBudgetManager';
+import { FAB, Text, useTheme } from 'react-native-paper';
+import { FlatList, StyleSheet, View } from 'react-native';
+import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
 
-import { getCardPosition } from '@/utils/utils';
+import useScrollDirection from '@/src/hooks/useScrollDirection';
+import { loadBudgetRecord } from '@/src/hooks/useBudgetManager';
+import { fastSpatialEasing, getCardPosition } from '@/utils/utils';
 
 import BudgetCard from '@/src/components/budgets/budget-card';
 import NoItemNotice from '@/src/components/reusables/no-items-notice';
-import BudgetTransactionHeaderBar from '@/src/components/budgets/budget-header-bar';
 import BudgetBigTotals from '@/src/components/budgets/budget-big-totals';
 import MonthSelectorBar from '@/src/components/reusables/month-selector-bar';
+import BudgetTransactionHeaderBar from '@/src/components/budgets/budget-header-bar';
 import BudgetActualVsPlanned from '@/src/components/budgets/budget-actual-vs-planned';
 
 export default function BudgetScreen() {
 	const theme = useTheme();
 	const router = useRouter();
+	const { direction, handleScroll } = useScrollDirection();
 
 	const [selectedDate, setSelectedDate] = useState(new Date());
-	const [isExtended, setIsExtended] = useState(true);
 
 	const updateMonth = useCallback((offset: number) => {
 		setSelectedDate((prev) => {
@@ -33,13 +34,6 @@ export default function BudgetScreen() {
 	const { data: budgets } = useLiveQuery(loadBudgetRecord(selectedDate), [
 		selectedDate,
 	]);
-
-	const onScroll = ({ nativeEvent }: any) => {
-		const currentScrollPosition =
-			Math.floor(nativeEvent?.contentOffset?.y) ?? 0;
-
-		setIsExtended(currentScrollPosition <= 0);
-	};
 
 	const renderHeader = useCallback(() => {
 		const budgetIds = budgets.map((b) => b.budget.id);
@@ -80,10 +74,31 @@ export default function BudgetScreen() {
 		);
 	}, [budgets, selectedDate]);
 
+	const renderFab = useCallback(() => {
+		if (direction === 'up')
+			return (
+				<Animated.View
+					entering={FadeInDown.duration(500).easing(fastSpatialEasing)}
+					exiting={FadeOutDown.duration(500).easing(fastSpatialEasing)}
+				>
+					<FAB
+						icon="plus"
+						size="medium"
+						mode="flat"
+						style={styles.fab}
+						onPress={() => router.push('/(root)/new-transactions/expense')}
+						variant="secondary"
+					/>
+				</Animated.View>
+			);
+
+		return <></>;
+	}, [direction]);
+
 	return (
 		<>
 			<FlatList
-				onScroll={onScroll}
+				onScroll={handleScroll}
 				data={budgets}
 				showsVerticalScrollIndicator={false}
 				style={{
@@ -104,14 +119,7 @@ export default function BudgetScreen() {
 				keyExtractor={(item) => item.budget.id.toString()}
 			/>
 
-			<AnimatedFAB
-				icon="plus"
-				style={styles.fab}
-				onPress={() => router.push('/(root)/new-budget')}
-				extended={isExtended}
-				variant="secondary"
-				label="Add budget"
-			/>
+			{renderFab()}
 		</>
 	);
 }
