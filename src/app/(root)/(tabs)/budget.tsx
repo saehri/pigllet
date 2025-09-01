@@ -86,7 +86,7 @@ export default function BudgetScreen() {
 						size="medium"
 						mode="flat"
 						style={styles.fab}
-						onPress={() => router.push('/(root)/new-transactions/expense')}
+						onPress={() => router.push('/(root)/new-budget')}
 						variant="secondary"
 					/>
 				</Animated.View>
