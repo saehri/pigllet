@@ -123,7 +123,7 @@ export default function AverageSpending({ selectedDate, range }: Props) {
 						}}
 					>
 						{spendingPercentage > 0 && '+'}
-						{spendingPercentage.toFixed(0)}% from last month.
+						{spendingPercentage.toFixed(0)}% from previous {range}.
 					</Text>
 				</View>
 			) : (

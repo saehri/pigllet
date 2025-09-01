@@ -48,22 +48,23 @@ function StatisticsViewToggler() {
 			<Portal>
 				<BottomSheet
 					ref={bottomSheetRef}
-					snapPoints={[480, '90%']}
 					enablePanDownToClose={true}
 					overDragResistanceFactor={0.5}
-					enableDynamicSizing={false}
+					enableDynamicSizing={true}
 					backgroundStyle={{
 						backgroundColor: theme.colors.elevation.level1,
 					}}
 					backdropComponent={renderBackdrop}
-					index={-1}
 					handleIndicatorStyle={{
 						backgroundColor: theme.colors.secondary,
 						height: 6,
 						width: 35,
 					}}
+					index={-1}
 				>
-					<BottomSheetView style={{ paddingHorizontal: 16, gap: 2 }}>
+					<BottomSheetView
+						style={{ paddingHorizontal: 16, gap: 2, paddingBottom: 24 }}
+					>
 						<Text style={styles.checkboxSectionTitle}>By date</Text>
 						<ExpenseByDateToggle />
 						<IncomeByDateToggle />

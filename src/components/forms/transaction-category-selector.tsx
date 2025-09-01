@@ -107,12 +107,10 @@ function TransactionCategorySelector({
 				<BottomSheet
 					onClose={() => setFocused(false)}
 					ref={bottomSheetRef}
-					snapPoints={snapPoints}
 					enablePanDownToClose={true}
 					overDragResistanceFactor={0.5}
 					index={-1}
 					backdropComponent={renderBackdrop}
-					enableDynamicSizing={false}
 					backgroundStyle={{
 						backgroundColor: theme.colors.elevation.level2,
 					}}
@@ -123,7 +121,11 @@ function TransactionCategorySelector({
 					}}
 				>
 					<BottomSheetScrollView
-						contentContainerStyle={{ paddingHorizontal: 16, gap: 2 }}
+						contentContainerStyle={{
+							paddingHorizontal: 16,
+							gap: 2,
+							paddingBottom: 24,
+						}}
 					>
 						{categories?.map((c, index) => (
 							<SelectButton
