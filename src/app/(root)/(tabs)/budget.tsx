@@ -69,7 +69,9 @@ export default function BudgetScreen() {
 					</View>
 				</View>
 
-				<BudgetTransactionHeaderBar />
+				<Text variant="titleLarge" style={styles.budgetTitle}>
+					Budgets
+				</Text>
 			</View>
 		);
 	}, [budgets, selectedDate]);
@@ -130,6 +132,12 @@ const styles = StyleSheet.create({
 		margin: 16,
 		right: 0,
 		bottom: 80,
+	},
+	budgetTitle: {
+		fontFamily: 'Manrope-Regular',
+		marginTop: 16,
+		marginBottom: 12,
+		marginHorizontal: 16,
 	},
 	headerContainer: {
 		paddingHorizontal: 16,

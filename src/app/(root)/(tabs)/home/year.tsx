@@ -15,7 +15,6 @@ import TransactionCard from '@/src/components/reusables/transaction-card';
 import YearSelectorBar from '@/src/components/reusables/year-selector-bar';
 import HomeHeaderContainer from '@/src/components/home/home-header-container';
 import TransactionsSummary from '@/src/components/charts/transactions-summary';
-import TransactionHeaderBar from '@/src/components/home/transaction-header-bar';
 
 export default function HomeYearlyTransactionScreen() {
 	const theme = useTheme();
@@ -95,7 +94,9 @@ export default function HomeYearlyTransactionScreen() {
 
 				<TransactionsSummary selectedDate={selectedDate} range="year" />
 
-				<TransactionHeaderBar />
+				<Text variant="titleLarge" style={styles.transactionsTitle}>
+					Transactions
+				</Text>
 			</HomeHeaderContainer>
 		);
 	}, [selectedDate, updateYear]);
@@ -123,6 +124,11 @@ const styles = StyleSheet.create({
 	transactionListTitle: {
 		fontFamily: 'Manrope-Light',
 		opacity: 0.7,
+	},
+	transactionsTitle: {
+		fontFamily: 'Manrope-Regular',
+		marginTop: 16,
+		marginBottom: 4,
 	},
 	transactionListContainer: {
 		paddingHorizontal: 16,

@@ -58,6 +58,7 @@ export default function AccountsSettingScreen() {
 						flexDirection: 'row',
 						alignItems: 'center',
 						gap: 2,
+						paddingRight: 16,
 					}}
 				>
 					<Button
@@ -171,7 +172,24 @@ function TransactionList({ accountId }: TransactionList) {
 							flex: 1,
 						}}
 					>
-						<View style={{ paddingHorizontal: 16 }}>
+						<View
+							style={{
+								paddingHorizontal: 16,
+								flexDirection: 'row',
+								justifyContent: 'space-between',
+								alignItems: 'center',
+							}}
+						>
+							<Text
+								variant="titleLarge"
+								style={{
+									fontFamily: 'Manrope-Regular',
+									marginTop: 12,
+								}}
+							>
+								Transactions
+							</Text>
+
 							<TransactionHeaderBar />
 						</View>
 

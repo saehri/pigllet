@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, Surface, Text, useTheme } from 'react-native-paper';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react-native';
@@ -41,9 +41,9 @@ export default function AccountMiniViewer() {
 		);
 	}
 
-	return (
-		<View style={styles.container}>
-			<View style={styles.cardContainer}>
+	const accountCardRenderer = useCallback(() => {
+		if (account.length)
+			return (
 				<Animated.View
 					key={currentCardIndex}
 					entering={SlideInRight.duration(350)}
@@ -72,7 +72,14 @@ export default function AccountMiniViewer() {
 						</Text>
 					</Surface>
 				</Animated.View>
-			</View>
+			);
+
+		return <></>;
+	}, [account]);
+
+	return (
+		<View style={styles.container}>
+			<View style={styles.cardContainer}>{accountCardRenderer()}</View>
 
 			<Button
 				compact

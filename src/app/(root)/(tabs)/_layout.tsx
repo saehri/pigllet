@@ -9,44 +9,29 @@ import {
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
-import { useAppThemeStore } from '@/store/useAppThemeStore';
+import { useSelectedBudgets } from '@/store/useSelectedBudgets';
+import { useSelectedTransactions } from '@/store/useSelectedTransactions';
 
 import AccountMiniViewer from '@/src/components/reusables/account-mini-viewer';
+import TransactionHeaderBar from '@/src/components/home/transaction-header-bar';
+import BudgetTransactionHeaderBar from '@/src/components/budgets/budget-header-bar';
 
 export default function Layout() {
 	const theme = useTheme();
-	const router = useRouter();
-	const { currentAppTheme } = useAppThemeStore();
+	const selectedBudgets = useSelectedBudgets((s) => s.selectedBudgets);
+	const selectedTransactions = useSelectedTransactions(
+		(s) => s.selectedTransactions
+	);
+
+	const isOverlayActive = selectedBudgets.length || selectedTransactions.length;
 
 	return (
 		<View style={{ flex: 1 }}>
-			<View
-				style={{
-					height: 64,
-					backgroundColor: theme.colors.background,
-					flexDirection: 'row',
-					alignItems: 'center',
-					justifyContent: 'space-between',
-					paddingHorizontal: 16,
-				}}
-			>
-				<AccountMiniViewer />
-
-				<Button
-					onPress={() => router.push('/(root)/settings')}
-					style={{
-						borderRadius: 12,
-						backgroundColor: theme.colors.elevation.level5,
-					}}
-					contentStyle={{ height: 40 }}
-				>
-					<SettingsIcon
-						strokeWidth={1.5}
-						color={theme.colors.onSurface}
-						size={20}
-					/>
-				</Button>
-			</View>
+			<AppHeader
+				isOverlayActive={Boolean(isOverlayActive)}
+				budgetOverlayActive={Boolean(selectedBudgets.length)}
+				transactionOverlayActive={Boolean(selectedTransactions.length)}
+			/>
 
 			<Tabs
 				initialRouteName="home"
@@ -71,6 +56,7 @@ export default function Layout() {
 						borderWidth: 1,
 						borderColor: theme.colors.outlineVariant,
 						zIndex: 10,
+						display: isOverlayActive ? 'none' : 'flex',
 					},
 					tabBarItemStyle: {
 						overflow: 'hidden',
@@ -159,6 +145,67 @@ export default function Layout() {
 					height: 100,
 				}}
 			/>
+		</View>
+	);
+}
+
+type AppHeaderProps = {
+	isOverlayActive: boolean;
+	budgetOverlayActive: boolean;
+	transactionOverlayActive: boolean;
+};
+
+function AppHeader({
+	budgetOverlayActive,
+	isOverlayActive,
+	transactionOverlayActive,
+}: AppHeaderProps) {
+	const theme = useTheme();
+	const router = useRouter();
+
+	const headerOverlayContent = () => {
+		if (budgetOverlayActive) return <BudgetTransactionHeaderBar />;
+		if (transactionOverlayActive) return <TransactionHeaderBar />;
+	};
+
+	return (
+		<View
+			style={{
+				height: 64,
+				backgroundColor: theme.colors.background,
+				paddingHorizontal: 16,
+				alignItems: 'center',
+				flexDirection: 'row',
+			}}
+		>
+			<View
+				style={{
+					flexDirection: 'row',
+					alignItems: 'center',
+					justifyContent: 'space-between',
+					flex: 1,
+					opacity: isOverlayActive ? 0 : 1,
+				}}
+			>
+				<AccountMiniViewer />
+
+				<Button
+					onPress={() => router.push('/(root)/settings')}
+					style={{
+						borderRadius: 12,
+						backgroundColor: theme.colors.elevation.level5,
+					}}
+					contentStyle={{ height: 40 }}
+				>
+					<SettingsIcon
+						strokeWidth={1.5}
+						color={theme.colors.onSurface}
+						size={20}
+					/>
+				</Button>
+			</View>
+
+			{headerOverlayContent()}
 		</View>
 	);
 }

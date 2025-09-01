@@ -2,32 +2,28 @@ import { memo } from 'react';
 import { useRouter } from 'expo-router';
 import { FAB } from 'react-native-paper';
 import { StyleSheet } from 'react-native';
-import { View } from 'lucide-react-native';
 import { TransactionType } from '@/db/schema';
-import { useSelectedCategory } from '@/store/useSelectedCategory';
 import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
+import { fastSpatialEasing } from '@/utils/utils';
 
 type Props = {
 	categType: TransactionType;
+	direction: 'up' | 'down' | null;
 };
 
-function CategoryFab({ categType }: Props) {
+function CategoryFab({ categType, direction }: Props) {
 	const router = useRouter();
-	const selectedCategories = useSelectedCategory((s) => s.selectedCategories);
 
 	return (
 		<>
-			{!selectedCategories.length ? (
+			{direction === 'up' && (
 				<Animated.View
-					entering={FadeInDown.duration(350).mass(100)}
-					exiting={FadeOutDown.duration(350).mass(100)}
+					entering={FadeInDown.duration(500).easing(fastSpatialEasing)}
+					exiting={FadeOutDown.duration(500).easing(fastSpatialEasing)}
 				>
 					<FAB
 						icon="plus"
-						style={[
-							styles.fab,
-							{ display: selectedCategories.length ? 'none' : 'flex' },
-						]}
+						style={styles.fab}
 						onPress={() =>
 							router.push({
 								pathname: '/(root)/category-form',
@@ -39,8 +35,6 @@ function CategoryFab({ categType }: Props) {
 						size="medium"
 					/>
 				</Animated.View>
-			) : (
-				<View style={styles.fab}></View>
 			)}
 		</>
 	);

@@ -132,15 +132,7 @@ export default function TransactionHeaderBar() {
 		return <></>;
 	}, [selectedTransactions]);
 
-	return (
-		<View style={styles.TransactionHeaderBar}>
-			<Text variant="titleLarge" style={styles.transactionsTitle}>
-				Transactions
-			</Text>
-
-			{buttonRenderer()}
-		</View>
-	);
+	return <View style={styles.TransactionHeaderBar}>{buttonRenderer()}</View>;
 }
 
 type DeleteModalProps = {

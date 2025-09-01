@@ -67,15 +67,7 @@ export default function BudgetTransactionHeaderBar() {
 		}, [])
 	);
 
-	return (
-		<View style={styles.TransactionHeaderBar}>
-			<Text variant="titleLarge" style={styles.transactionsTitle}>
-				Budgets
-			</Text>
-
-			{buttonRenderer()}
-		</View>
-	);
+	return <View style={styles.TransactionHeaderBar}>{buttonRenderer()}</View>;
 }
 
 type DeleteModalProps = {
@@ -160,7 +152,6 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		marginTop: 16,
 		marginBottom: 12,
-		paddingHorizontal: 16,
 		height: 40,
 	},
 	transactionsTitle: {

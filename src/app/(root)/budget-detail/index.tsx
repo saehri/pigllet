@@ -12,7 +12,6 @@ import useBudgetManager from '@/src/hooks/useBudgetManager';
 import NoItemNotice from '@/src/components/reusables/no-items-notice';
 import BudgetBigTotals from '@/src/components/budgets/budget-big-totals';
 import TransactionCard from '@/src/components/reusables/transaction-card';
-import TransactionHeaderBar from '@/src/components/home/transaction-header-bar';
 
 export default function BudgetDetail() {
 	const theme = useTheme();
@@ -21,7 +20,6 @@ export default function BudgetDetail() {
 		id: budgetId,
 		categoryId,
 		budgetPeriod,
-		categoryLabel,
 		budgetLimit,
 	} = useLocalSearchParams();
 
@@ -35,7 +33,7 @@ export default function BudgetDetail() {
 
 	useEffect(() => {
 		navigation.setOptions({
-			title: categoryLabel,
+			title: '',
 			headerRight: () => (
 				<View style={{ flexDirection: 'row', gap: 2, alignItems: 'center' }}>
 					<DeleteBudgetDialog budgetId={Number(budgetId)} />
@@ -80,9 +78,9 @@ export default function BudgetDetail() {
 					</View>
 				</View>
 
-				<View style={{ paddingHorizontal: 16 }}>
-					<TransactionHeaderBar />
-				</View>
+				<Text variant="titleLarge" style={styles.budgetTitle}>
+					Transactions
+				</Text>
 			</View>
 		);
 	}, [transactions]);
@@ -193,6 +191,12 @@ const styles = StyleSheet.create({
 	},
 	headerTitle: {
 		fontFamily: 'Manrope-Regular',
+	},
+	budgetTitle: {
+		fontFamily: 'Manrope-Regular',
+		marginTop: 16,
+		marginBottom: 8,
+		marginHorizontal: 16,
 	},
 	statsContainer: {
 		gap: 4,

@@ -6,13 +6,17 @@ import * as schema from '@/db/schema';
 import { getCardPosition } from '@/utils/utils';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
+import useScrollDirection from '@/src/hooks/useScrollDirection';
+import { useSelectedCategory } from '@/store/useSelectedCategory';
 
 import CategoryFab from '@/src/components/reusables/category-fab';
-import CategoryListHeader from '@/src/components/reusables/category-list-header';
 import TransactionCategoryCard from '@/src/components/reusables/transaction-category-card';
 
 export default function ExpenseCategories() {
 	const drizzleDb = useDrizzleDB();
+	const { direction, handleScroll } = useScrollDirection();
+
+	const selectedCategories = useSelectedCategory((s) => s.selectedCategories);
 
 	const getTransactionCategories = useCallback(
 		(type: schema.TransactionType) => {
@@ -31,12 +35,14 @@ export default function ExpenseCategories() {
 	return (
 		<>
 			<FlatList
+				onScroll={handleScroll}
 				showsVerticalScrollIndicator={false}
-				contentContainerStyle={{ paddingBottom: 140, gap: 2 }}
+				contentContainerStyle={{
+					paddingBottom: 140,
+					gap: 2,
+					paddingTop: selectedCategories.length ? 0 : 60,
+				}}
 				data={expenseCategories}
-				ListHeaderComponent={
-					<CategoryListHeader defaultCategoryLabel="Other Expense" />
-				}
 				renderItem={({ item, index }) => (
 					<TransactionCategoryCard
 						data={item}
@@ -45,7 +51,7 @@ export default function ExpenseCategories() {
 				)}
 			/>
 
-			<CategoryFab categType="expense" />
+			<CategoryFab direction={direction} categType="expense" />
 		</>
 	);
 }

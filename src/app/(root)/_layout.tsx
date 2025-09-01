@@ -43,7 +43,7 @@ export default function Layout() {
 			<Stack.Screen name="edit-income" />
 			<Stack.Screen name="edit-transfer" />
 			<Stack.Screen name="edit-budget" options={{ title: 'Edit budget' }} />
-			<Stack.Screen name="budget-detail" />
+			<Stack.Screen name="budget-detail" options={{ headerShown: false }} />
 			<Stack.Screen name="category-form" />
 		</Stack>
 	);

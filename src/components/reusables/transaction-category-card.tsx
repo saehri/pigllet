@@ -86,6 +86,7 @@ function TransactionCategoryCard({ data, position }: Props) {
 					<Pressable
 						style={styles.checkIconBox}
 						onPress={isSelected ? unselectCategory : selectCategory}
+						disabled={Boolean(data.is_default)}
 					>
 						{isSelected ? (
 							<Animated.View
@@ -127,7 +128,7 @@ function TransactionCategoryCard({ data, position }: Props) {
 							]}
 							variant="labelSmall"
 						>
-							{data.is_default ? 'default' : ''}
+							{Boolean(data.is_default) ? 'default' : ''}
 						</Text>
 					</View>
 				</View>

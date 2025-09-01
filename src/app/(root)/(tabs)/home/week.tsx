@@ -14,7 +14,6 @@ import NoItemNotice from '@/src/components/reusables/no-items-notice';
 import TransactionCard from '@/src/components/reusables/transaction-card';
 import HomeHeaderContainer from '@/src/components/home/home-header-container';
 import TransactionsSummary from '@/src/components/charts/transactions-summary';
-import TransactionHeaderBar from '@/src/components/home/transaction-header-bar';
 import WeekSelectorBar from '@/src/components/reusables/week-selector-bar';
 
 export default function WeekTransactionScreen() {
@@ -50,7 +49,9 @@ export default function WeekTransactionScreen() {
 					selectedDate={selectedDate}
 				/>
 				<TransactionsSummary range="week" selectedDate={selectedDate} />
-				<TransactionHeaderBar />
+				<Text variant="titleLarge" style={styles.transactionsTitle}>
+					Transactions
+				</Text>
 			</HomeHeaderContainer>
 		);
 	}, [selectedDate, updateWeek]);
@@ -122,6 +123,11 @@ const styles = StyleSheet.create({
 	transactionListTitle: {
 		fontFamily: 'Manrope-Light',
 		opacity: 0.7,
+	},
+	transactionsTitle: {
+		fontFamily: 'Manrope-Regular',
+		marginTop: 16,
+		marginBottom: 4,
 	},
 	transactionListContainer: {
 		paddingHorizontal: 16,
