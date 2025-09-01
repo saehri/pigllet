@@ -1,21 +1,21 @@
 import { useRouter } from 'expo-router';
+import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { useState, useMemo, useCallback } from 'react';
 import { FAB, Text, useTheme } from 'react-native-paper';
 import { FlatList, StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
 
-import { fastSpatialEasing, getCardPosition } from '@/utils/utils';
-import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import useScrollDirection from '@/src/hooks/useScrollDirection';
+import { fastSpatialEasing, getCardPosition } from '@/utils/utils';
 import { groupedTransactionsByDate } from '@/utils/group-transactions';
 import { loadTransactionsData } from '@/src/hooks/useTransactionsManager';
 
-import TransactionHeaderBar from '@/src/components/home/transaction-header-bar';
 import NoItemNotice from '@/src/components/reusables/no-items-notice';
 import TransactionCard from '@/src/components/reusables/transaction-card';
 import MonthSelectorBar from '@/src/components/reusables/month-selector-bar';
 import HomeHeaderContainer from '@/src/components/home/home-header-container';
 import TransactionsSummary from '@/src/components/charts/transactions-summary';
+import TransactionHeaderBar from '@/src/components/home/transaction-header-bar';
 
 export default function HomeMonthlyTransactionScreen() {
 	const theme = useTheme();
@@ -82,6 +82,27 @@ export default function HomeMonthlyTransactionScreen() {
 		);
 	}, [selectedDate, updateMonth]);
 
+	const renderFab = useCallback(() => {
+		if (direction === 'up')
+			return (
+				<Animated.View
+					entering={FadeInDown.duration(500).easing(fastSpatialEasing)}
+					exiting={FadeOutDown.duration(500).easing(fastSpatialEasing)}
+				>
+					<FAB
+						icon="plus"
+						size="medium"
+						mode="flat"
+						style={styles.fab}
+						onPress={() => router.push('/(root)/new-transactions/expense')}
+						variant="secondary"
+					/>
+				</Animated.View>
+			);
+
+		return <></>;
+	}, [direction]);
+
 	return (
 		<>
 			<FlatList
@@ -96,21 +117,7 @@ export default function HomeMonthlyTransactionScreen() {
 				keyExtractor={(item) => item.created_date}
 			/>
 
-			{direction === 'up' && (
-				<Animated.View
-					entering={FadeInDown.duration(500).easing(fastSpatialEasing)}
-					exiting={FadeOutDown.duration(500).easing(fastSpatialEasing)}
-				>
-					<FAB
-						icon="plus"
-						size="medium"
-						mode="flat"
-						style={styles.fab}
-						onPress={() => router.push('/(root)/new-transactions/expense')}
-						variant="secondary"
-					/>
-				</Animated.View>
-			)}
+			{renderFab()}
 		</>
 	);
 }

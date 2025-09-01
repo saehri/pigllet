@@ -1,10 +1,12 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { useRouter } from 'expo-router';
-import { FlatList, StyleSheet, View } from 'react-native';
-import { AnimatedFAB, Text, useTheme } from 'react-native-paper';
-
-import { getCardPosition } from '@/utils/utils';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
+import { FAB, Text, useTheme } from 'react-native-paper';
+import { FlatList, StyleSheet, View } from 'react-native';
+import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
+
+import useScrollDirection from '@/src/hooks/useScrollDirection';
+import { fastSpatialEasing, getCardPosition } from '@/utils/utils';
 import { groupedTransactionsByDate } from '@/utils/group-transactions';
 import { loadTransactionsData } from '@/src/hooks/useTransactionsManager';
 
@@ -16,17 +18,9 @@ import TransactionsSummary from '@/src/components/charts/transactions-summary';
 export default function WeekTransactionScreen() {
 	const theme = useTheme();
 	const router = useRouter();
-
-	const [isExtended, setIsExtended] = useState(true);
+	const { direction, handleScroll } = useScrollDirection();
 
 	const { data: transactions } = useLiveQuery(loadTransactionsData({}));
-
-	const onScroll = ({ nativeEvent }: any) => {
-		const currentScrollPosition =
-			Math.floor(nativeEvent?.contentOffset?.y) ?? 0;
-
-		setIsExtended(currentScrollPosition <= 0);
-	};
 
 	const renderHeader = useCallback(() => {
 		return (
@@ -69,10 +63,31 @@ export default function WeekTransactionScreen() {
 		[]
 	);
 
+	const renderFab = useCallback(() => {
+		if (direction === 'up')
+			return (
+				<Animated.View
+					entering={FadeInDown.duration(500).easing(fastSpatialEasing)}
+					exiting={FadeOutDown.duration(500).easing(fastSpatialEasing)}
+				>
+					<FAB
+						icon="plus"
+						size="medium"
+						mode="flat"
+						style={styles.fab}
+						onPress={() => router.push('/(root)/new-transactions/expense')}
+						variant="secondary"
+					/>
+				</Animated.View>
+			);
+
+		return <></>;
+	}, [direction]);
+
 	return (
 		<>
 			<FlatList
-				onScroll={onScroll}
+				onScroll={handleScroll}
 				ListHeaderComponent={renderHeader}
 				style={{ backgroundColor: theme.colors.background }}
 				contentContainerStyle={{ paddingBottom: transactions.length ? 150 : 0 }}
@@ -82,14 +97,7 @@ export default function WeekTransactionScreen() {
 				renderItem={renderTransactionGroup}
 			/>
 
-			<AnimatedFAB
-				label="Add expense"
-				icon="plus"
-				style={styles.fab}
-				onPress={() => router.push('/(root)/new-transactions/expense')}
-				variant="secondary"
-				extended={isExtended}
-			/>
+			{renderFab()}
 		</>
 	);
 }

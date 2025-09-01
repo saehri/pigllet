@@ -1,21 +1,21 @@
 import { useRouter } from 'expo-router';
+import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { useState, useMemo, useCallback } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { FAB, Text, useTheme } from 'react-native-paper';
 import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
 
-import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import useScrollDirection from '@/src/hooks/useScrollDirection';
 import { fastSpatialEasing, getCardPosition } from '@/utils/utils';
 import { groupedTransactionsByDate } from '@/utils/group-transactions';
 import { loadTransactionsData } from '@/src/hooks/useTransactionsManager';
 
-import TransactionHeaderBar from '@/src/components/home/transaction-header-bar';
 import NoItemNotice from '@/src/components/reusables/no-items-notice';
 import TransactionCard from '@/src/components/reusables/transaction-card';
+import YearSelectorBar from '@/src/components/reusables/year-selector-bar';
 import HomeHeaderContainer from '@/src/components/home/home-header-container';
 import TransactionsSummary from '@/src/components/charts/transactions-summary';
-import YearSelectorBar from '@/src/components/reusables/year-selector-bar';
+import TransactionHeaderBar from '@/src/components/home/transaction-header-bar';
 
 export default function HomeYearlyTransactionScreen() {
 	const theme = useTheme();
@@ -62,6 +62,27 @@ export default function HomeYearlyTransactionScreen() {
 		[]
 	);
 
+	const renderFab = useCallback(() => {
+		if (direction === 'up')
+			return (
+				<Animated.View
+					entering={FadeInDown.duration(500).easing(fastSpatialEasing)}
+					exiting={FadeOutDown.duration(500).easing(fastSpatialEasing)}
+				>
+					<FAB
+						icon="plus"
+						size="medium"
+						mode="flat"
+						style={styles.fab}
+						onPress={() => router.push('/(root)/new-transactions/expense')}
+						variant="secondary"
+					/>
+				</Animated.View>
+			);
+
+		return <></>;
+	}, [direction]);
+
 	const renderHeader = useCallback(() => {
 		return (
 			<HomeHeaderContainer>
@@ -93,21 +114,7 @@ export default function HomeYearlyTransactionScreen() {
 				keyExtractor={(item) => item.created_date}
 			/>
 
-			{direction === 'up' && (
-				<Animated.View
-					entering={FadeInDown.duration(500).easing(fastSpatialEasing)}
-					exiting={FadeOutDown.duration(500).easing(fastSpatialEasing)}
-				>
-					<FAB
-						icon="plus"
-						size="medium"
-						mode="flat"
-						style={styles.fab}
-						onPress={() => router.push('/(root)/new-transactions/expense')}
-						variant="secondary"
-					/>
-				</Animated.View>
-			)}
+			{renderFab()}
 		</>
 	);
 }
