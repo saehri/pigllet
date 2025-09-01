@@ -1,20 +1,22 @@
-import { memo, useCallback, useState } from 'react';
+import moment from 'moment';
+import * as schema from '@/db/schema';
 import { StyleSheet, View } from 'react-native';
+import { memo, useCallback, useState } from 'react';
 import { BarChart } from 'react-native-gifted-charts';
+import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
+import { and, asc, desc, eq, gte, lte, sql } from 'drizzle-orm';
 import { Button, Surface, Text, useTheme } from 'react-native-paper';
 import {
 	CalendarArrowDownIcon,
 	CalendarArrowUpIcon,
 } from 'lucide-react-native';
+import Animated, {
+	RotateInDownRight,
+	RotateOutDownLeft,
+} from 'react-native-reanimated';
 
-import { formatCurrencyByCode } from '@/utils/utils';
-
-import * as schema from '@/db/schema';
-import { and, asc, desc, eq, gte, lte, sql } from 'drizzle-orm';
-import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
-
-import moment from 'moment';
 import { transactionColorMap } from '@/utils/utils';
+import { fastSpatialEasing, formatCurrencyByCode } from '@/utils/utils';
 
 import { useCurrencyStyle } from '@/store/useCurrencyStyle';
 import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
@@ -178,7 +180,13 @@ function TransactionsOverTime({
 					style={{ height: 40 }}
 					onPress={() => setOrder((prev) => (prev === 'desc' ? 'asc' : 'desc'))}
 				>
-					{buttonIconRenderer()}
+					<Animated.View
+						key={order}
+						entering={RotateInDownRight.duration(500).easing(fastSpatialEasing)}
+						exiting={RotateOutDownLeft.duration(500).easing(fastSpatialEasing)}
+					>
+						{buttonIconRenderer()}
+					</Animated.View>
 				</Button>
 			</View>
 

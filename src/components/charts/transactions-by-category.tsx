@@ -1,23 +1,22 @@
+import moment from 'moment';
+import * as schema from '@/db/schema';
 import { useCallback, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { BarChart } from 'react-native-gifted-charts';
-import { Button, Surface, Text, useTheme } from 'react-native-paper';
-import {
-	CalendarArrowDownIcon,
-	CalendarArrowUpIcon,
-} from 'lucide-react-native';
-
-import { formatCurrencyByCode } from '@/utils/utils';
-
-import * as schema from '@/db/schema';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { and, asc, desc, eq, gte, lte, sql } from 'drizzle-orm';
+import { Button, Surface, Text, useTheme } from 'react-native-paper';
+import { ArrowDownRightIcon, ArrowUpRightIcon } from 'lucide-react-native';
+import Animated, {
+	RotateInDownRight,
+	RotateOutDownLeft,
+} from 'react-native-reanimated';
 
-import moment from 'moment';
 import { transactionColorMap } from '@/utils/utils';
+import { fastSpatialEasing, formatCurrencyByCode } from '@/utils/utils';
 
-import { useCurrencyStyle } from '@/store/useCurrencyStyle';
 import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
+import { useCurrencyStyle } from '@/store/useCurrencyStyle';
 
 type Props = {
 	selectedDate?: Date;
@@ -134,6 +133,25 @@ export default function TransactionsByCategory({
 		);
 	}, [chartData]);
 
+	const buttonIconRenderer = useCallback(() => {
+		if (order === 'desc')
+			return (
+				<ArrowDownRightIcon
+					size={20}
+					strokeWidth={1.5}
+					color={theme.colors.onSecondaryContainer}
+				/>
+			);
+
+		return (
+			<ArrowUpRightIcon
+				size={20}
+				strokeWidth={1.5}
+				color={theme.colors.onSecondaryContainer}
+			/>
+		);
+	}, [order]);
+
 	return (
 		<Surface mode="flat" elevation={2} style={styles.chart}>
 			<View style={styles.chartHeader}>
@@ -152,19 +170,13 @@ export default function TransactionsByCategory({
 					style={{ height: 40 }}
 					onPress={() => setOrder((prev) => (prev === 'desc' ? 'asc' : 'desc'))}
 				>
-					{order === 'desc' ? (
-						<CalendarArrowDownIcon
-							size={20}
-							strokeWidth={1.5}
-							color={theme.colors.onSecondaryContainer}
-						/>
-					) : (
-						<CalendarArrowUpIcon
-							size={20}
-							strokeWidth={1.5}
-							color={theme.colors.onSecondaryContainer}
-						/>
-					)}
+					<Animated.View
+						key={order}
+						entering={RotateInDownRight.duration(500).easing(fastSpatialEasing)}
+						exiting={RotateOutDownLeft.duration(500).easing(fastSpatialEasing)}
+					>
+						{buttonIconRenderer()}
+					</Animated.View>
 				</Button>
 			</View>
 
