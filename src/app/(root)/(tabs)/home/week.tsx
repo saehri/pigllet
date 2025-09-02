@@ -1,5 +1,5 @@
-import { useCallback, useState } from 'react';
 import { useRouter } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { FAB, Text, useTheme } from 'react-native-paper';
 import { FlatList, StyleSheet, View } from 'react-native';
@@ -12,9 +12,9 @@ import { loadTransactionsData } from '@/src/hooks/useTransactionsManager';
 
 import NoItemNotice from '@/src/components/reusables/no-items-notice';
 import TransactionCard from '@/src/components/reusables/transaction-card';
+import WeekSelectorBar from '@/src/components/reusables/week-selector-bar';
 import HomeHeaderContainer from '@/src/components/home/home-header-container';
 import TransactionsSummary from '@/src/components/charts/transactions-summary';
-import WeekSelectorBar from '@/src/components/reusables/week-selector-bar';
 
 export default function WeekTransactionScreen() {
 	const theme = useTheme();
@@ -107,10 +107,7 @@ export default function WeekTransactionScreen() {
 				contentContainerStyle={{ paddingBottom: transactions.length ? 80 : 0 }}
 				ListEmptyComponent={<NoItemNotice />}
 				showsVerticalScrollIndicator={false}
-				data={groupedTransactionsByDate(
-					transactions as any,
-					'MMM D, YYYY'
-				).reverse()}
+				data={groupedTransactionsByDate(transactions as any, 'MMM D, YYYY')}
 				renderItem={renderTransactionGroup}
 			/>
 
