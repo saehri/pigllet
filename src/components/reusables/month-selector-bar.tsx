@@ -13,6 +13,7 @@ type Props = {
 	onNext: () => void;
 	onPrev: () => void;
 	showAdvanceDataSelector?: boolean;
+	labelStyle?: string;
 };
 
 function MonthSelectorBar({
@@ -21,6 +22,7 @@ function MonthSelectorBar({
 	onNext,
 	onPrev,
 	showAdvanceDataSelector = true,
+	labelStyle,
 }: Props) {
 	const theme = useTheme();
 
@@ -48,7 +50,7 @@ function MonthSelectorBar({
 			}}
 		>
 			<Text style={{ fontFamily: 'Manrope-Medium' }} variant="titleLarge">
-				{moment(selectedDate).format('MMM, YYYY')}
+				{moment(selectedDate).format(labelStyle ?? 'MMM, YYYY')}
 			</Text>
 
 			<View style={{ flexDirection: 'row' }}>

@@ -1,5 +1,5 @@
 import { Stack } from 'expo-router';
-import { useTheme } from 'react-native-paper';
+import { Appbar, useTheme } from 'react-native-paper';
 
 export default function Layout() {
 	const theme = useTheme();
@@ -18,6 +18,20 @@ export default function Layout() {
 					fontSize: 20,
 				},
 				headerStyle: { backgroundColor: theme.colors.background },
+				header: (props) => (
+					<Appbar.Header
+						style={{
+							backgroundColor: theme.colors.background,
+							zIndex: 10,
+						}}
+					>
+						<Appbar.BackAction onPress={() => props.navigation.goBack()} />
+						<Appbar.Content
+							title={props.options.title ?? props.route.name}
+							titleStyle={{ fontFamily: 'Manrope-Medium', fontSize: 20 }}
+						/>
+					</Appbar.Header>
+				),
 			}}
 		>
 			<Stack.Screen

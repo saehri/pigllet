@@ -2,13 +2,19 @@ import { useCallback, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, Surface, Text, useTheme } from 'react-native-paper';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react-native';
-import Animated, { SlideInRight, SlideOutRight } from 'react-native-reanimated';
+import Animated, {
+	FadeInDown,
+	FadeInUp,
+	FadeOutUp,
+	SlideInRight,
+	SlideOutRight,
+} from 'react-native-reanimated';
 
 import * as schema from '@/db/schema';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 
-import { formatCurrencyByCode } from '@/utils/utils';
+import { fastSpatialEasing, formatCurrencyByCode } from '@/utils/utils';
 import { useCurrencyStyle } from '@/store/useCurrencyStyle';
 
 export default function AccountMiniViewer() {
@@ -46,8 +52,8 @@ export default function AccountMiniViewer() {
 			return (
 				<Animated.View
 					key={currentCardIndex}
-					entering={SlideInRight.duration(350)}
-					exiting={SlideOutRight.duration(350)}
+					entering={FadeInUp.duration(500).easing(fastSpatialEasing)}
+					exiting={FadeOutUp.duration(500).easing(fastSpatialEasing)}
 				>
 					<Surface
 						style={[
@@ -56,6 +62,7 @@ export default function AccountMiniViewer() {
 								backgroundColor: account[currentCardIndex]?.card_color,
 							},
 						]}
+						mode="flat"
 					>
 						<Text variant="labelSmall" style={styles.cardText}>
 							{account[currentCardIndex]?.card_name}
@@ -75,11 +82,11 @@ export default function AccountMiniViewer() {
 			);
 
 		return <></>;
-	}, [account]);
+	}, [account, currentCardIndex]);
 
 	return (
 		<View style={styles.container}>
-			<View style={styles.cardContainer}>{accountCardRenderer()}</View>
+			<View>{accountCardRenderer()}</View>
 
 			<Button
 				compact
@@ -88,14 +95,13 @@ export default function AccountMiniViewer() {
 					borderTopRightRadius: 6,
 					borderBottomRightRadius: 6,
 					display: account.length > 1 ? 'flex' : 'none',
-					backgroundColor: theme.colors.elevation.level5,
 				}}
 				onPress={prevAccount}
 			>
 				<ChevronLeftIcon
 					size={20}
 					strokeWidth={1.5}
-					color={theme.colors.onSurface}
+					color={theme.colors.onSecondaryContainer}
 				/>
 			</Button>
 			<Button
@@ -105,14 +111,13 @@ export default function AccountMiniViewer() {
 					borderTopLeftRadius: 6,
 					borderBottomLeftRadius: 6,
 					display: account.length > 1 ? 'flex' : 'none',
-					backgroundColor: theme.colors.elevation.level5,
 				}}
 				onPress={nextAccount}
 			>
 				<ChevronRightIcon
 					size={20}
 					strokeWidth={1.5}
-					color={theme.colors.onSurface}
+					color={theme.colors.onSecondaryContainer}
 				/>
 			</Button>
 		</View>
@@ -123,9 +128,6 @@ const styles = StyleSheet.create({
 	container: {
 		flexDirection: 'row',
 		gap: 2,
-	},
-	cardContainer: {
-		overflow: 'hidden',
 	},
 	card: {
 		borderRadius: 12,

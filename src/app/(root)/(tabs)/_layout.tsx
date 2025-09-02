@@ -190,16 +190,16 @@ function AppHeader({
 				<AccountMiniViewer />
 
 				<Button
+					mode="contained-tonal"
 					onPress={() => router.push('/(root)/settings')}
 					style={{
 						borderRadius: 12,
-						backgroundColor: theme.colors.elevation.level5,
 					}}
 					contentStyle={{ height: 40 }}
 				>
 					<SettingsIcon
 						strokeWidth={1.5}
-						color={theme.colors.onSurface}
+						color={theme.colors.onSecondaryContainer}
 						size={20}
 					/>
 				</Button>

@@ -48,6 +48,7 @@ export default function BudgetScreen() {
 						selectedDate={selectedDate}
 						setSelectedDate={setSelectedDate}
 						showAdvanceDataSelector={false}
+						labelStyle="MMMM, YYYY"
 					/>
 				</View>
 
