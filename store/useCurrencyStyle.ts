@@ -34,6 +34,7 @@ export const useCurrencyStyle = create<useCurrencyStyle>()(
 				currentCurrencyCode: state.currentCurrencyCode,
 				showFraction: state.showFraction,
 				accountingStyle: state.accountingStyle,
+				showSuffix: state.showSuffix,
 			}),
 		}
 	)
