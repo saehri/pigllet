@@ -130,7 +130,7 @@ export default function TransactionsByCategory({
 				color={theme.colors.onSecondaryContainer}
 			/>
 		);
-	}, [order]);
+	}, [order, theme]);
 
 	return (
 		<Surface mode="flat" elevation={2} style={styles.chart}>
@@ -212,7 +212,7 @@ function ChartRenderer({
 					),
 				}))}
 				frontColor={transactionColorMap[transactionType]}
-				spacing={10}
+				spacing={4}
 				hideAxesAndRules
 				showScrollIndicator={false}
 				xAxisLabelTextStyle={{
@@ -224,6 +224,7 @@ function ChartRenderer({
 				isAnimated
 				animationDuration={0.5}
 				adjustToWidth
+				disablePress
 			/>
 		</View>
 	);

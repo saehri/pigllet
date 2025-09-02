@@ -240,7 +240,7 @@ function ChartRenderer({
 				hideYAxisText
 				showScrollIndicator={false}
 				frontColor={transactionColorMap[transactionType]}
-				spacing={10}
+				spacing={4}
 				hideAxesAndRules
 				xAxisLabelTextStyle={{
 					fontFamily: 'Manrope-Regular',
@@ -251,6 +251,7 @@ function ChartRenderer({
 				isAnimated
 				animationDuration={0.5}
 				adjustToWidth
+				disablePress
 			/>
 		</View>
 	);

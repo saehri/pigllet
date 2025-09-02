@@ -104,7 +104,7 @@ export default function WeekTransactionScreen() {
 				onScroll={handleScroll}
 				ListHeaderComponent={renderHeader}
 				style={{ backgroundColor: theme.colors.background }}
-				contentContainerStyle={{ paddingBottom: transactions.length ? 80 : 0 }}
+				contentContainerStyle={{ paddingBottom: transactions.length ? 70 : 0 }}
 				ListEmptyComponent={<NoItemNotice />}
 				showsVerticalScrollIndicator={false}
 				data={groupedTransactionsByDate(transactions as any, 'MMM D, YYYY')}

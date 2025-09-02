@@ -139,7 +139,7 @@ function RenderChart({ budgets, actualSpending, budgetIds }: RenderChart) {
 			data.push({
 				value: sortedBudgets[i].budget.limit,
 				label: sortedBudgets[i].category.label,
-				spacing: 2,
+				spacing: 4,
 				labelWidth: 150,
 				labelTextStyle: {
 					color: 'gray',
@@ -162,7 +162,7 @@ function RenderChart({ budgets, actualSpending, budgetIds }: RenderChart) {
 			data.push({
 				value: actualSpending[i]?.amount ?? 0,
 				frontColor: '#ED6665',
-				spacing: 24,
+				spacing: 22,
 				topLabelComponent: () => (
 					<Text style={{ color: 'gray', fontSize: 9 }}>
 						{formatCurrencyByCode(

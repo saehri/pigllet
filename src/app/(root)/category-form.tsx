@@ -108,8 +108,6 @@ export default function CategoryForm() {
 		return 'Edit transaction category';
 	};
 
-	console.log({ label, iconName, categoryType });
-
 	return (
 		<View style={styles.formWrapper}>
 			<View style={styles.gridContainer}>

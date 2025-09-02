@@ -108,7 +108,7 @@ export default function HomeYearlyTransactionScreen() {
 				data={groupedTransactions}
 				showsVerticalScrollIndicator={false}
 				style={{ backgroundColor: theme.colors.background }}
-				contentContainerStyle={{ paddingBottom: transactions.length ? 80 : 0 }}
+				contentContainerStyle={{ paddingBottom: transactions.length ? 70 : 0 }}
 				ListEmptyComponent={<NoItemNotice />}
 				ListHeaderComponent={renderHeader}
 				renderItem={renderTransactionGroup}

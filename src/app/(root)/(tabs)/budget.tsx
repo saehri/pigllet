@@ -13,7 +13,6 @@ import BudgetCard from '@/src/components/budgets/budget-card';
 import NoItemNotice from '@/src/components/reusables/no-items-notice';
 import BudgetBigTotals from '@/src/components/budgets/budget-big-totals';
 import MonthSelectorBar from '@/src/components/reusables/month-selector-bar';
-import BudgetTransactionHeaderBar from '@/src/components/budgets/budget-header-bar';
 import BudgetActualVsPlanned from '@/src/components/budgets/budget-actual-vs-planned';
 
 export default function BudgetScreen() {
@@ -108,7 +107,7 @@ export default function BudgetScreen() {
 					backgroundColor: theme.colors.background,
 				}}
 				contentContainerStyle={{
-					paddingBottom: budgets.length ? 150 : 0,
+					paddingBottom: budgets.length ? 80 : 0,
 				}}
 				ListEmptyComponent={<NoItemNotice />}
 				ListHeaderComponent={renderHeader}
