@@ -1,27 +1,11 @@
 import { icons } from 'lucide-react-native';
-import { Searchbar, useTheme } from 'react-native-paper';
-import {
-	ComponentProps,
-	Dispatch,
-	memo,
-	SetStateAction,
-	useRef,
-	useState,
-} from 'react';
-import Fuse from 'fuse.js';
+import { useTheme } from 'react-native-paper';
+import { Dimensions, FlatList, Pressable, View } from 'react-native';
+import { ComponentProps, Dispatch, memo, SetStateAction } from 'react';
 
 import { iconsUserCanPick } from '@/constants/icons';
 
-import { Dimensions, Pressable, View } from 'react-native';
-
 import LucideIcons from '../reusables/lucide-icons';
-import { ScrollView } from 'react-native-gesture-handler';
-
-const fuse = new Fuse(iconsUserCanPick, {
-	keys: ['key', 'tag'],
-	threshold: 0.3,
-	ignoreLocation: true,
-});
 
 type Props = {
 	selectedIconName: string;
@@ -30,21 +14,6 @@ type Props = {
 
 function IconSelector({ selectedIconName, setIcon }: Props) {
 	const theme = useTheme();
-
-	const [query, setQuery] = useState('');
-	const [results, setResults] = useState(iconsUserCanPick);
-	const searchTimeout = useRef(null); // store timeout ID
-
-	// Memoized debounce function so it’s not recreated on every render
-	const onChangeSearch = (text: string) => {
-		setQuery(text);
-		if (!text) {
-			setResults(iconsUserCanPick); // reset if empty
-		} else {
-			const fuseResults = fuse.search(text);
-			setResults(fuseResults.map((result) => result.item));
-		}
-	};
 
 	return (
 		<View
@@ -56,35 +25,8 @@ function IconSelector({ selectedIconName, setIcon }: Props) {
 				gap: 16,
 			}}
 		>
-			<Searchbar
-				placeholder="Search by name or tag..."
-				onChangeText={onChangeSearch}
-				value={query}
-				style={{ borderRadius: 6 }}
-			/>
-
-			<ScrollView
-				contentContainerStyle={{
-					flexDirection: 'row',
-					flexWrap: 'wrap',
-					gap: 8,
-				}}
-				showsVerticalScrollIndicator={false}
-			>
-				{results.map((icon) => (
-					<IconButton
-						key={icon.key}
-						name={icon.key as keyof typeof icons}
-						selectedIconName={selectedIconName}
-						color={theme.colors.onSurface}
-						size={20}
-						setIcon={setIcon}
-					/>
-				))}
-			</ScrollView>
-
-			{/* <FlatList
-				data={results}
+			<FlatList
+				data={iconsUserCanPick}
 				contentContainerStyle={{
 					flexDirection: 'row',
 					flexWrap: 'wrap',
@@ -101,7 +43,7 @@ function IconSelector({ selectedIconName, setIcon }: Props) {
 						setIcon={setIcon}
 					/>
 				)}
-			/> */}
+			/>
 		</View>
 	);
 }
@@ -144,11 +86,11 @@ function IconButton({
 				borderRadius: 6,
 				backgroundColor: isSelected
 					? theme.colors.tertiaryContainer
-					: theme.colors.elevation.level5,
+					: theme.colors.elevation.level1,
 				borderWidth: 1,
 				borderColor: isSelected
 					? theme.colors.tertiary
-					: theme.colors.elevation.level5,
+					: theme.colors.elevation.level0,
 			}}
 		>
 			<LucideIcons

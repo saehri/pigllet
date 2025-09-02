@@ -1,136 +1,80 @@
-import { Dispatch, SetStateAction, useState } from 'react';
-import { ChevronDown } from 'lucide-react-native';
-import { Pressable, ScrollView, View, StyleSheet } from 'react-native';
-import { Dialog, Portal, Text, useTheme } from 'react-native-paper';
-
-import SelectInputItem from './select-input-item';
+import { useTheme } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+import { Dispatch, memo, SetStateAction, useState } from 'react';
 
 type Props = {
-	value: string;
-	placeholder?: string;
-	closeAfterSelect?: boolean;
-	handleSelect: any;
-	triggerButton?: ({
-		showDialog,
-	}: {
-		showDialog: () => void;
-	}) => React.ReactNode;
-	data: { value: any; label: string }[];
+	selectedValue: any;
+	setSelectedValue: Dispatch<SetStateAction<any>>;
+	data: { value: any; label: any }[];
 };
 
-export default function SelectInput({
-	placeholder,
-	value,
-	data,
-	handleSelect,
-	closeAfterSelect,
-	triggerButton,
-}: Props) {
+function SelectInput({ selectedValue, setSelectedValue, data }: Props) {
 	const theme = useTheme();
-	const [visible, setVisible] = useState<boolean>(false);
 
-	const showDialog = () => setVisible(true);
-	const hideDialog = () => setVisible(false);
+	const [open, setOpened] = useState(false);
 
-	function selectItem(selected: string) {
-		handleSelect(selected);
-		if (closeAfterSelect) hideDialog();
-	}
+	const handleValueChange = (itemValue: number) => {
+		setSelectedValue(itemValue);
+	};
 
 	return (
-		<>
-			<Portal>
-				<Dialog visible={visible} onDismiss={hideDialog}>
-					<Dialog.Content>
-						<ScrollView showsVerticalScrollIndicator={false}>
-							<View style={styles.listContainer}>
-								{data.map((item) => (
-									<SelectInputItem
-										handleSelect={() => selectItem(item.value)}
-										label={item.label}
-										selected={value}
-										value={item.value}
-										key={item.value}
-									/>
-								))}
-							</View>
-						</ScrollView>
-					</Dialog.Content>
-				</Dialog>
-			</Portal>
-
-			{triggerButton ? (
-				triggerButton({ showDialog })
-			) : (
-				<Pressable
-					onPress={showDialog}
-					style={[
-						styles.selectBox,
-						{
-							backgroundColor: theme.colors.surfaceVariant,
-							borderColor: visible
+		<View
+			style={[
+				styles.container,
+				{
+					backgroundColor: theme.colors.elevation.level5,
+					borderColor: open
+						? theme.colors.primary
+						: theme.colors.outlineVariant,
+				},
+			]}
+		>
+			<Picker
+				mode="dropdown"
+				selectedValue={selectedValue}
+				onValueChange={handleValueChange}
+				style={{
+					color: theme.colors.onSurface,
+					backgroundColor: theme.colors.elevation.level5,
+					borderRadius: 12,
+					fontFamily: 'Manrope-Medium',
+				}}
+				dropdownIconColor={theme.colors.onSurface}
+				onFocus={() => setOpened(true)}
+				onBlur={() => setOpened(false)}
+			>
+				{data.map((d) => (
+					<Picker.Item
+						key={d.label}
+						label={d.label}
+						value={d.value}
+						fontFamily="Manrope-Regular"
+						color={
+							selectedValue === d.value
 								? theme.colors.primary
-								: theme.colors.outline,
-						},
-					]}
-				>
-					<Text style={styles.selectText} numberOfLines={1}>
-						{value.replaceAll('-', ' ').replaceAll('and', '&') || placeholder}
-					</Text>
-					<ChevronDown
-						style={styles.icon}
-						size={20}
-						color={theme.colors.onSurface}
+								: theme.colors.onSurface
+						}
+						style={{
+							backgroundColor: theme.colors.elevation.level5,
+						}}
 					/>
-				</Pressable>
-			)}
-		</>
+				))}
+			</Picker>
+		</View>
 	);
 }
 
 const styles = StyleSheet.create({
-	listContainer: {
-		gap: 4,
-	},
-	itemContainer: {
-		flexDirection: 'row',
-		gap: 16,
-		alignItems: 'center',
-	},
-	radioOuter: {
-		width: 20,
-		height: 20,
-		borderRadius: 100,
+	container: {
+		paddingHorizontal: 6,
+		borderRadius: 16,
+		overflow: 'hidden',
+		flex: 1,
+		height: 50,
 		borderWidth: 1,
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
-	radioInner: {
-		width: 11,
-		height: 11,
-		borderRadius: 1000,
-	},
-	itemText: {
-		textTransform: 'capitalize',
-	},
-	selectBox: {
-		padding: 16,
-		borderTopLeftRadius: 5,
-		borderTopRightRadius: 5,
-		borderBottomWidth: 1,
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-	},
-	selectText: {
-		fontFamily: 'Manrope-Regular',
-		fontSize: 16,
-		color: '#fff',
-		textTransform: 'capitalize',
-	},
-	icon: {
-		position: 'absolute',
-		right: 8,
 	},
 });
+
+export default memo(SelectInput);
 

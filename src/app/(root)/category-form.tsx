@@ -1,6 +1,6 @@
+import { Button, Text } from 'react-native-paper';
 import { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, ToastAndroid, View } from 'react-native';
-import { Button, Text, TextInput } from 'react-native-paper';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 
 import { eq } from 'drizzle-orm';
@@ -9,6 +9,7 @@ import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 
 import SelectInput from '@/src/components/forms/select-input';
 import IconSelector from '@/src/components/forms/icon-selector';
+import CustomTextInput from '@/src/components/forms/custom-text-input';
 
 export default function CategoryForm() {
 	const drizzleDb = useDrizzleDB();
@@ -107,6 +108,8 @@ export default function CategoryForm() {
 		return 'Edit transaction category';
 	};
 
+	console.log({ label, iconName, categoryType });
+
 	return (
 		<View style={styles.formWrapper}>
 			<View style={styles.gridContainer}>
@@ -115,10 +118,10 @@ export default function CategoryForm() {
 						Label
 					</Text>
 
-					<TextInput
+					<CustomTextInput
 						onChangeText={setLabel}
 						value={label}
-						contentStyle={styles.inputContent}
+						placeholder="Cookies"
 					/>
 				</View>
 
@@ -138,9 +141,8 @@ export default function CategoryForm() {
 							{ label: 'Income', value: 'income' },
 							{ label: 'Transfer', value: 'transfer' },
 						]}
-						value={categoryType}
-						closeAfterSelect
-						handleSelect={setCategoryType}
+						selectedValue={categoryType}
+						setSelectedValue={setCategoryType}
 					/>
 				</View>
 			</View>
@@ -166,7 +168,7 @@ export default function CategoryForm() {
 						? createTransactionCategory
 						: editTransactionCategory
 				}
-				disabled={!isFormReady}
+				disabled={!isFormReady()}
 			>
 				{buttonContentRenderer()}
 			</Button>
