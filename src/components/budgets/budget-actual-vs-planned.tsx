@@ -197,6 +197,7 @@ function RenderChart({ budgets, actualSpending, budgetIds }: RenderChart) {
 			isAnimated
 			animationDuration={0.5}
 			adjustToWidth
+			disablePress
 		/>
 	);
 }
