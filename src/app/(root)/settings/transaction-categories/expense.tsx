@@ -38,7 +38,7 @@ export default function ExpenseCategories() {
 				onScroll={handleScroll}
 				showsVerticalScrollIndicator={false}
 				contentContainerStyle={{
-					paddingBottom: 140,
+					paddingBottom: 30,
 					gap: 2,
 					paddingTop: selectedCategories.length ? 0 : 60,
 				}}

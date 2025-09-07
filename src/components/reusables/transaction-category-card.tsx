@@ -75,10 +75,10 @@ function TransactionCategoryCard({ data, position }: Props) {
 						borderBottomRightRadius: cardBorderRadius[position].br,
 						borderColor: isSelected
 							? theme.colors.tertiary
-							: theme.colors.elevation.level3,
+							: theme.colors.elevation.level5,
 						backgroundColor: isSelected
 							? theme.colors.tertiaryContainer
-							: theme.colors.elevation.level3,
+							: theme.colors.elevation.level5,
 					},
 				]}
 			>
