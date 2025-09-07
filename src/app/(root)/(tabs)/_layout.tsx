@@ -1,13 +1,14 @@
+import { useEffect } from 'react';
 import { View } from 'react-native';
-import { Tabs, useRouter } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Button, useTheme } from 'react-native-paper';
+import { Tabs, usePathname, useRouter } from 'expo-router';
 import {
 	BanknoteIcon,
 	ChartPieIcon,
 	House,
 	SettingsIcon,
 } from 'lucide-react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 
 import { useSelectedBudgets } from '@/store/useSelectedBudgets';
 import { useSelectedTransactions } from '@/store/useSelectedTransactions';
@@ -18,12 +19,18 @@ import BudgetTransactionHeaderBar from '@/src/components/budgets/budget-header-b
 
 export default function Layout() {
 	const theme = useTheme();
-	const selectedBudgets = useSelectedBudgets((s) => s.selectedBudgets);
-	const selectedTransactions = useSelectedTransactions(
-		(s) => s.selectedTransactions
-	);
+	const pathname = usePathname();
+
+	const { selectedBudgets, setSelectedBudgets } = useSelectedBudgets();
+	const { selectedTransactions, setSelectedTransactions } =
+		useSelectedTransactions();
 
 	const isOverlayActive = selectedBudgets.length || selectedTransactions.length;
+
+	useEffect(() => {
+		setSelectedBudgets([]);
+		setSelectedTransactions([]);
+	}, [pathname]);
 
 	return (
 		<View style={{ flex: 1 }}>

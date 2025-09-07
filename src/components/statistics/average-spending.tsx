@@ -25,7 +25,14 @@ export default function AverageSpending({ selectedDate, range }: Props) {
 	const divisor = () => {
 		if (range === 'week') return 7;
 		if (range === 'month') return moment(selectedDate).daysInMonth();
-		if (range === 'year') return 12;
+		if (range === 'year') {
+			const totalDaysInLeapYear = 366;
+			const totalDaysInYear = 365;
+			const isLeapYear = moment(selectedDate).isLeapYear();
+
+			if (isLeapYear) return totalDaysInLeapYear;
+			return totalDaysInYear;
+		}
 	};
 
 	const getAverageSpending = () => {

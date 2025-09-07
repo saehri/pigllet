@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { List, Text, useTheme } from 'react-native-paper';
-import { Notebook, SwatchBook, User, Wallet2 } from 'lucide-react-native';
+import { NotebookIcon, SwatchBookIcon, Wallet2Icon } from 'lucide-react-native';
 
 import { cardBorderRadius } from '@/utils/utils';
 
@@ -15,31 +15,13 @@ export default function MainSetting() {
 
 			<View style={styles.settingList}>
 				<List.Item
-					title="User"
-					description="Delete data"
-					titleStyle={{ fontFamily: 'Manrope-Regular' }}
-					descriptionStyle={{ fontFamily: 'Manrope-Light', opacity: 0.7 }}
-					onPress={() => router.push('/(root)/settings/user')}
-					left={(props) => (
-						<User {...props} size={24} strokeWidth={1.5} color={props.color} />
-					)}
-					style={[
-						styles.listItem,
-						{
-							backgroundColor: theme.colors.elevation.level2,
-							borderTopLeftRadius: cardBorderRadius['first'].tl,
-							borderTopRightRadius: cardBorderRadius['first'].tr,
-						},
-					]}
-				/>
-				<List.Item
 					title="Customizations"
 					description="Theme, default currency"
 					titleStyle={{ fontFamily: 'Manrope-Regular' }}
 					descriptionStyle={{ fontFamily: 'Manrope-Light', opacity: 0.7 }}
 					onPress={() => router.push('/(root)/settings/customization')}
 					left={(props) => (
-						<SwatchBook
+						<SwatchBookIcon
 							{...props}
 							size={24}
 							strokeWidth={1.5}
@@ -50,6 +32,8 @@ export default function MainSetting() {
 						styles.listItem,
 						{
 							backgroundColor: theme.colors.elevation.level2,
+							borderTopLeftRadius: cardBorderRadius['first'].tl,
+							borderTopRightRadius: cardBorderRadius['first'].tr,
 						},
 					]}
 				/>
@@ -62,7 +46,7 @@ export default function MainSetting() {
 						router.push('/(root)/settings/transaction-categories/expense')
 					}
 					left={(props) => (
-						<Notebook
+						<NotebookIcon
 							{...props}
 							size={24}
 							strokeWidth={1.5}
@@ -83,7 +67,7 @@ export default function MainSetting() {
 					descriptionStyle={{ fontFamily: 'Manrope-Light', opacity: 0.7 }}
 					onPress={() => router.push('/(root)/settings/accounts')}
 					left={(props) => (
-						<Wallet2
+						<Wallet2Icon
 							{...props}
 							size={24}
 							strokeWidth={1.5}

@@ -18,9 +18,9 @@ type useCurrencyStyle = {
 export const useCurrencyStyle = create<useCurrencyStyle>()(
 	persist(
 		(set) => ({
-			showSuffix: false,
+			showSuffix: true,
 			showFraction: true,
-			accountingStyle: false,
+			accountingStyle: true,
 			currentCurrencyCode: 'IDR',
 			setShowSufix: (state) => set({ showSuffix: state }),
 			setShowFraction: (state) => set({ showFraction: state }),

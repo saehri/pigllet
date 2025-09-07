@@ -198,7 +198,7 @@ function TransactionList({ accountId }: TransactionList) {
 							ListEmptyComponent={<NoItemNotice />}
 							data={groupedTransactionsByDate(
 								transactions as any,
-								'MMM DD, YYYY'
+								'MMM D, YYYY'
 							)}
 							renderItem={renderTransactionGroup}
 						/>
@@ -246,6 +246,69 @@ function CardSelector({
 		return <></>;
 	}, [selectedAccount]);
 
+	const accountSelectorRowRenderer = useCallback(() => {
+		if (accounts.length && selectedAccount)
+			return (
+				<ScrollView
+					horizontal
+					showsHorizontalScrollIndicator={false}
+					contentContainerStyle={styles.scrollContent}
+				>
+					{accounts?.map((account, index) => {
+						const isSelected = selectedAccount?.id === account.id;
+						const delayDuration = 500 + index * 100;
+
+						return (
+							<Animated.View
+								key={account.id}
+								entering={FadeInRight.delay(delayDuration)}
+							>
+								<Pressable
+									onPress={() => setSelectedAccount(account)}
+									style={[
+										styles.card,
+										{
+											borderColor: isSelected
+												? selectedAccount?.card_color
+												: theme.colors.background,
+										},
+									]}
+								>
+									<View
+										style={[
+											styles.cardContent,
+											{
+												backgroundColor: account.card_color,
+											},
+										]}
+									>
+										<Text style={styles.text}>{account.card_name}</Text>
+
+										<Text style={styles.text}>
+											{formatCurrencyByCode(
+												account.balance,
+												currentCurrencyCode,
+												showFraction,
+												accountingStyle,
+												showSuffix
+											)}
+										</Text>
+
+										<Image
+											source={require('@/assets/images/cards/pig pattern.png')}
+											style={styles.bgImage}
+										/>
+									</View>
+								</Pressable>
+							</Animated.View>
+						);
+					})}
+				</ScrollView>
+			);
+
+		return <></>;
+	}, [selectedAccount, accounts]);
+
 	return (
 		<View
 			style={{
@@ -259,61 +322,7 @@ function CardSelector({
 				{accountCardPrevRenderer()}
 			</View>
 
-			<ScrollView
-				horizontal
-				showsHorizontalScrollIndicator={false}
-				contentContainerStyle={styles.scrollContent}
-			>
-				{accounts?.map((account, index) => {
-					const isSelected = selectedAccount?.id === account.id;
-					const delayDuration = 500 + index * 100;
-
-					return (
-						<Animated.View
-							key={account.id}
-							entering={FadeInRight.delay(delayDuration)}
-						>
-							<Pressable
-								onPress={() => setSelectedAccount(account)}
-								style={[
-									styles.card,
-									{
-										borderColor: isSelected
-											? selectedAccount?.card_color
-											: theme.colors.background,
-									},
-								]}
-							>
-								<View
-									style={[
-										styles.cardContent,
-										{
-											backgroundColor: account.card_color,
-										},
-									]}
-								>
-									<Text style={styles.text}>{account.card_name}</Text>
-
-									<Text style={styles.text}>
-										{formatCurrencyByCode(
-											account.balance,
-											currentCurrencyCode,
-											showFraction,
-											accountingStyle,
-											showSuffix
-										)}
-									</Text>
-
-									<Image
-										source={require('@/assets/images/cards/pig pattern.png')}
-										style={styles.bgImage}
-									/>
-								</View>
-							</Pressable>
-						</Animated.View>
-					);
-				})}
-			</ScrollView>
+			{accountSelectorRowRenderer()}
 		</View>
 	);
 }
