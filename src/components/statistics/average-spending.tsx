@@ -64,13 +64,10 @@ export default function AverageSpending({ selectedDate, range }: Props) {
 			let startDate, endDate;
 
 			if (range === 'week') {
-				const prevWeek = new Date(selectedDate);
-				prevWeek.setDate(selectedDate.getDate() * -1);
-
-				// Find Monday of this week (assuming Monday = 1, Sunday = 0)
-				const day = prevWeek.getDay();
-				const diff = day === 0 ? -6 : 1 - day; // if Sunday, go back 6 days
-				prevWeek.setDate(prevWeek.getDate() + diff);
+				const prevWeek = moment(selectedDate)
+					.startOf('week')
+					.add(-1, 'weeks')
+					.toDate();
 
 				startDate = moment(prevWeek).startOf('week').format('YYYY-MM-DD');
 				endDate = moment(prevWeek).endOf('week').format('YYYY-MM-DD');

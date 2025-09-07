@@ -77,7 +77,7 @@ export default function SecondarySetting() {
 
 				<List.Item
 					title="App version"
-					description="2.0.0"
+					description="2.1.1"
 					titleStyle={{ fontFamily: 'Manrope-Regular' }}
 					descriptionStyle={{ fontFamily: 'Manrope-Light', opacity: 0.7 }}
 					left={(props) => (

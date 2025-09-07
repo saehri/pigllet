@@ -2,7 +2,7 @@
 	"expo": {
 		"name": "Pigllet",
 		"slug": "pigllet-mobile",
-		"version": "2.0.0",
+		"version": "2.1.1",
 		"orientation": "portrait",
 		"description": "Personal finance tracker with budgeting, transactions, and insights",
 		"privacy": "public",

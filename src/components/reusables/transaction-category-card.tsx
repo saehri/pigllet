@@ -84,7 +84,14 @@ function TransactionCategoryCard({ data, position }: Props) {
 			>
 				<View style={styles.content}>
 					<Pressable
-						style={styles.checkIconBox}
+						style={[
+							styles.checkIconBox,
+							{
+								backgroundColor: theme.colors.elevation.level3,
+								borderWidth: 1,
+								borderColor: theme.colors.elevation.level1,
+							},
+						]}
 						onPress={isSelected ? unselectCategory : selectCategory}
 						disabled={Boolean(data.is_default)}
 					>
@@ -124,11 +131,19 @@ function TransactionCategoryCard({ data, position }: Props) {
 						<Text
 							style={[
 								styles.label,
-								{ alignSelf: 'baseline', opacity: 0.7, fontStyle: 'italic' },
+								{
+									alignSelf: 'baseline',
+									opacity: 0.7,
+									paddingHorizontal: 4,
+									backgroundColor: theme.colors.secondaryContainer,
+									borderRadius: 4,
+									fontFamily: 'Manrope-Regular',
+									display: Boolean(data.is_default) ? 'flex' : 'none',
+								},
 							]}
 							variant="labelSmall"
 						>
-							{Boolean(data.is_default) ? 'default' : ''}
+							Default
 						</Text>
 					</View>
 				</View>
@@ -144,6 +159,7 @@ const styles = StyleSheet.create({
 		paddingVertical: 9,
 		paddingHorizontal: 12,
 		marginHorizontal: 16,
+		paddingLeft: 8,
 		borderWidth: 1,
 	},
 	content: { flexDirection: 'row', alignItems: 'center', gap: 8 },
@@ -155,7 +171,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 	},
 	label: {
-		fontFamily: 'Manrope-Regular',
+		fontFamily: 'Manrope-SemiBold',
 	},
 });
 

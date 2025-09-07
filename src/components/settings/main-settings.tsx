@@ -15,6 +15,30 @@ export default function MainSetting() {
 
 			<View style={styles.settingList}>
 				<List.Item
+					title="Accounts"
+					description="Add and edit account"
+					titleStyle={{ fontFamily: 'Manrope-Regular' }}
+					descriptionStyle={{ fontFamily: 'Manrope-Light', opacity: 0.7 }}
+					onPress={() => router.push('/(root)/settings/accounts')}
+					left={(props) => (
+						<Wallet2Icon
+							{...props}
+							size={24}
+							strokeWidth={1.5}
+							color={props.color}
+						/>
+					)}
+					style={[
+						styles.listItem,
+						{
+							backgroundColor: theme.colors.elevation.level2,
+							borderTopLeftRadius: cardBorderRadius['first'].tl,
+							borderTopRightRadius: cardBorderRadius['first'].tr,
+						},
+					]}
+				/>
+
+				<List.Item
 					title="Customizations"
 					description="Theme, default currency"
 					titleStyle={{ fontFamily: 'Manrope-Regular' }}
@@ -32,11 +56,10 @@ export default function MainSetting() {
 						styles.listItem,
 						{
 							backgroundColor: theme.colors.elevation.level2,
-							borderTopLeftRadius: cardBorderRadius['first'].tl,
-							borderTopRightRadius: cardBorderRadius['first'].tr,
 						},
 					]}
 				/>
+
 				<List.Item
 					title="Transaction category"
 					description="Manage the category of your transactions"
@@ -47,27 +70,6 @@ export default function MainSetting() {
 					}
 					left={(props) => (
 						<NotebookIcon
-							{...props}
-							size={24}
-							strokeWidth={1.5}
-							color={props.color}
-						/>
-					)}
-					style={[
-						styles.listItem,
-						{
-							backgroundColor: theme.colors.elevation.level2,
-						},
-					]}
-				/>
-				<List.Item
-					title="Accounts"
-					description="Add and edit account"
-					titleStyle={{ fontFamily: 'Manrope-Regular' }}
-					descriptionStyle={{ fontFamily: 'Manrope-Light', opacity: 0.7 }}
-					onPress={() => router.push('/(root)/settings/accounts')}
-					left={(props) => (
-						<Wallet2Icon
 							{...props}
 							size={24}
 							strokeWidth={1.5}

@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
@@ -19,8 +20,10 @@ import TransactionsSummary from '@/src/components/charts/transactions-summary';
 export default function WeekTransactionScreen() {
 	const theme = useTheme();
 	const router = useRouter();
-	const [selectedDate, setSelectedDate] = useState(new Date());
 	const { direction, handleScroll } = useScrollDirection();
+
+	const [selectedDate, setSelectedDate] = useState(new Date());
+
 	const { data: transactions } = useLiveQuery(
 		loadTransactionsData({ date: selectedDate, range: 'week' }),
 		[selectedDate]
@@ -28,15 +31,10 @@ export default function WeekTransactionScreen() {
 
 	const updateWeek = useCallback((offset: number) => {
 		setSelectedDate((prev) => {
-			const updated = new Date(prev);
-			updated.setDate(prev.getDate() + offset * 7);
-
-			// Find Monday of this week (assuming Monday = 1, Sunday = 0)
-			const day = updated.getDay();
-			const diff = day === 0 ? -6 : 1 - day; // if Sunday, go back 6 days
-			updated.setDate(updated.getDate() + diff);
-
-			return updated;
+			return moment(prev)
+				.startOf('week') // Monday
+				.add(offset, 'weeks') // move weeks
+				.toDate();
 		});
 	}, []);
 

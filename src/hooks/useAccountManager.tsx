@@ -3,7 +3,7 @@ import { Keyboard, ToastAndroid } from 'react-native';
 import { Dispatch, SetStateAction, useState } from 'react';
 import moment from 'moment';
 
-import { eq, or } from 'drizzle-orm';
+import { eq, inArray, or } from 'drizzle-orm';
 import * as schema from '@/db/schema';
 
 import { useUserFirstTimeStore } from '@/store/useUserFirstTimeStore';
@@ -149,15 +149,79 @@ export default function useAccountManager(): useAccountManager {
 			}
 
 			await drizzleDb.transaction(async (tx) => {
-				// delete all associated transactions
-				await tx
-					.delete(schema.transactions)
-					.where(
-						or(
-							eq(schema.transactions.account_id, selectedAccountId),
-							eq(schema.transactions.related_account_id, selectedAccountId)
+				await tx.transaction(async (tx) => {
+					// 1. Get all selected transactions before deleting them
+					const transactionsToDelete = await tx
+						.select({
+							id: schema.transactions.id,
+							type: schema.transactions.type,
+							amount: schema.transactions.amount,
+							accountId: schema.transactions.account_id,
+							relatedAccountId: schema.transactions.related_account_id,
+						})
+						.from(schema.transactions)
+						.where(
+							or(
+								eq(schema.transactions.account_id, selectedAccountId),
+								eq(schema.transactions.related_account_id, selectedAccountId)
+							)
+						);
+
+					// 2. Get all affected account IDs
+					const affectedAccountIds = new Set<number>();
+					for (const t of transactionsToDelete) {
+						if (t.accountId) affectedAccountIds.add(t.accountId);
+						if (t.relatedAccountId) affectedAccountIds.add(t.relatedAccountId);
+					}
+
+					// 3. Delete all selected transactions at once
+					await tx.delete(schema.transactions).where(
+						inArray(
+							schema.transactions.id,
+							transactionsToDelete.map((x) => x.id)
 						)
 					);
+
+					// 4. Recalculate balances for affected accounts
+					for (const accountId of affectedAccountIds) {
+						const remainingTransactions = await tx
+							.select({
+								type: schema.transactions.type,
+								amount: schema.transactions.amount,
+								accountId: schema.transactions.account_id,
+								relatedAccountId: schema.transactions.related_account_id,
+							})
+							.from(schema.transactions)
+							.where(
+								or(
+									eq(schema.transactions.account_id, accountId),
+									eq(schema.transactions.related_account_id, accountId)
+								)
+							);
+
+						let balance = 0;
+
+						for (const t of remainingTransactions) {
+							if (t.type === 'income' && t.accountId === accountId) {
+								balance += t.amount;
+							} else if (t.type === 'expense' && t.accountId === accountId) {
+								balance -= t.amount;
+							} else if (t.type === 'transfer') {
+								if (t.accountId === accountId) {
+									balance -= t.amount; // sent out
+								} else if (t.relatedAccountId === accountId) {
+									balance += t.amount; // received
+								}
+							}
+						}
+
+						// 5. Update the account with the new balance
+						await tx
+							.update(schema.accounts)
+							.set({ balance })
+							.where(eq(schema.accounts.id, accountId));
+					}
+				});
 
 				// delete the account
 				await tx

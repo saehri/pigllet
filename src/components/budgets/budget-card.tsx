@@ -125,7 +125,14 @@ function BudgetCard({ data, position }: Props) {
 				]}
 			>
 				<Pressable
-					style={styles.iconContainer}
+					style={[
+						styles.iconContainer,
+						{
+							backgroundColor: theme.colors.elevation.level3,
+							borderWidth: 1,
+							borderColor: theme.colors.elevation.level1,
+						},
+					]}
 					onPress={isSelected ? onUnselect : onSelect}
 				>
 					{isSelected ? (
@@ -304,12 +311,14 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		paddingVertical: 9,
 		paddingHorizontal: 12,
+		paddingLeft: 8,
 	},
 	iconContainer: {
 		width: 40,
 		height: 40,
 		alignItems: 'center',
 		justifyContent: 'center',
+		borderRadius: 100,
 	},
 	checkIconBox: {
 		borderRadius: 100,
@@ -362,7 +371,7 @@ const styles = StyleSheet.create({
 	},
 	cardNote: {
 		fontFamily: 'Manrope-Regular',
-		opacity: 0.9,
+		opacity: 0.7,
 	},
 });
 

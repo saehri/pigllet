@@ -144,7 +144,14 @@ function TransactionCard({ data, position, showDate, pressable }: Props) {
 				]}
 			>
 				<Pressable
-					style={styles.iconContainer}
+					style={[
+						styles.iconContainer,
+						{
+							backgroundColor: theme.colors.elevation.level3,
+							borderWidth: 1,
+							borderColor: theme.colors.elevation.level1,
+						},
+					]}
 					onPress={isSelected ? unSelect : onSelect}
 				>
 					{isSelected ? (
@@ -188,6 +195,7 @@ function TransactionCard({ data, position, showDate, pressable }: Props) {
 									color={theme.colors.onBackground}
 								/>
 							)}
+
 							{transaction.type === 'income' && (
 								<PlusIcon
 									size={14}
@@ -195,6 +203,7 @@ function TransactionCard({ data, position, showDate, pressable }: Props) {
 									color={theme.colors.onBackground}
 								/>
 							)}
+
 							{transaction.type === 'expense' && (
 								<MinusIcon
 									size={14}
@@ -202,6 +211,7 @@ function TransactionCard({ data, position, showDate, pressable }: Props) {
 									color={theme.colors.onBackground}
 								/>
 							)}
+
 							<Text style={styles.cardPrice} variant="bodyMedium">
 								{formattedAmount}
 							</Text>
@@ -212,10 +222,11 @@ function TransactionCard({ data, position, showDate, pressable }: Props) {
 						<View style={{ flex: 1 }}>
 							<View style={styles.noteRow}>
 								{showDate && (
-									<Text variant="labelMedium" style={styles.cardNote}>
+									<Text variant="labelSmall" style={styles.cardNote}>
 										{formattedDate} ·
 									</Text>
 								)}
+
 								{transaction.image && (
 									<ImageIcon
 										size={14}
@@ -223,20 +234,24 @@ function TransactionCard({ data, position, showDate, pressable }: Props) {
 										color={theme.colors.onBackground}
 									/>
 								)}
+
 								<Text
-									variant="labelMedium"
+									variant="labelSmall"
 									style={[styles.cardNote, styles.noteText]}
 									numberOfLines={1}
 								>
-									{transaction.note || 'Undefined'}
+									{transaction.note}
 								</Text>
 							</View>
 						</View>
 
 						<View style={styles.accountRow}>
 							<Text
-								variant="labelMedium"
-								style={styles.cardNote}
+								variant="labelSmall"
+								style={[
+									styles.cardName,
+									{ backgroundColor: theme.colors.secondaryContainer },
+								]}
 								adjustsFontSizeToFit
 								numberOfLines={1}
 							>
@@ -244,13 +259,20 @@ function TransactionCard({ data, position, showDate, pressable }: Props) {
 							</Text>
 
 							{related_account && (
-								<MoveRight size={12} color={theme.colors.onSurface} />
+								<MoveRight
+									size={12}
+									color={theme.colors.onSurface}
+									strokeWidth={1.5}
+								/>
 							)}
 
 							{related_account && (
 								<Text
-									variant="labelMedium"
-									style={styles.cardNote}
+									variant="labelSmall"
+									style={[
+										styles.cardName,
+										{ backgroundColor: theme.colors.secondaryContainer },
+									]}
 									adjustsFontSizeToFit
 									numberOfLines={1}
 								>
@@ -272,12 +294,14 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		paddingVertical: 9,
 		paddingHorizontal: 12,
+		paddingLeft: 8,
 	},
 	iconContainer: {
 		width: 40,
 		height: 40,
 		alignItems: 'center',
 		justifyContent: 'center',
+		borderRadius: 100,
 	},
 	checkIconBox: {
 		borderRadius: 100,
@@ -330,7 +354,13 @@ const styles = StyleSheet.create({
 	},
 	cardNote: {
 		fontFamily: 'Manrope-Regular',
-		opacity: 0.9,
+		opacity: 0.7,
+	},
+	cardName: {
+		fontFamily: 'Manrope-Regular',
+		opacity: 0.7,
+		paddingHorizontal: 4,
+		borderRadius: 4,
 	},
 });
 
