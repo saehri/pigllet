@@ -360,7 +360,6 @@ const styles = StyleSheet.create({
 	noteText: {
 		flex: 1,
 		maxWidth: 150,
-		fontStyle: 'italic',
 	},
 	cardLabel: {
 		fontFamily: 'Manrope-SemiBold',

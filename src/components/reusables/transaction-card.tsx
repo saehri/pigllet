@@ -231,7 +231,7 @@ function TransactionCard({ data, position, showDate, pressable }: Props) {
 									<ImageIcon
 										size={14}
 										strokeWidth={1}
-										color={theme.colors.onBackground}
+										color={theme.colors.onSurface}
 									/>
 								)}
 
@@ -343,7 +343,6 @@ const styles = StyleSheet.create({
 	noteText: {
 		flex: 1,
 		maxWidth: 150,
-		fontStyle: 'italic',
 	},
 	cardLabel: {
 		fontFamily: 'Manrope-SemiBold',
