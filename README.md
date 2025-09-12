@@ -1,4 +1,4 @@
-![Pigllet Screenshot](./assets/images/github%20header.png)
+![Pigllet Screenshot](./assets/images/new%20github%20header%201.png)
 
 # 🐷 Pigllet
 
@@ -17,7 +17,6 @@ Aplikasi ini membantu pengguna mengelola pemasukan, pengeluaran, anggaran, dan l
 - Unlimited account
 - Organized transactions by category
 - Simple and intuitive UI
-- ***
 
 ## 🛠️ Tech Stack
 
