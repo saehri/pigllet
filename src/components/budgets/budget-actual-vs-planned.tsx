@@ -201,7 +201,7 @@ function RenderChart({ budgets, actualSpending, budgetIds }: RenderChart) {
 const styles = StyleSheet.create({
 	container: {
 		padding: 16,
-		borderRadius: 24,
+		borderRadius: 36,
 		paddingLeft: 3,
 		gap: 16,
 	},
