@@ -6,12 +6,14 @@ export default function Layout() {
 
 	return (
 		<Stack
+			initialRouteName="index"
 			screenOptions={{
 				headerShown: false,
 				contentStyle: { backgroundColor: theme.colors.background },
 				headerShadowVisible: false,
 			}}
 		>
+			<Stack.Screen name="index" options={{ headerShown: false }} />
 			<Stack.Screen name="welcome" options={{ headerShown: false }} />
 			<Stack.Screen
 				name="account-setup"

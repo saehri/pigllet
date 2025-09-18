@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
 	Dimensions,
 	Image,
@@ -6,6 +6,7 @@ import {
 	StyleSheet,
 	View,
 } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Marquee } from '@animatereactnative/marquee';
 import Animated, {
 	FadeIn,
@@ -25,7 +26,7 @@ import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
 import { expenseCategories } from '@/constants/expense-category';
 import { incomeCategories } from '@/constants/income-category';
 import { transferCategories } from '@/constants/transfer-category';
-import { useRouter } from 'expo-router';
+import { useAppThemeStore } from '@/store/useAppThemeStore';
 
 const images: ImageSourcePropType[] = [
 	require('@/assets/images/onboarding/1.jpeg'),
@@ -95,9 +96,14 @@ export default function WelcomeScreen() {
 	const router = useRouter();
 	const drizzleDb = useDrizzleDB();
 	const offset = useSharedValue(0);
+	const { setAppTheme } = useAppThemeStore();
 
 	const [activeIndex, setActiveIndex] = useState(0);
 	const [isSettingUp, setIsSettingUp] = useState(false);
+
+	useEffect(() => {
+		setAppTheme('Light');
+	}, []);
 
 	useAnimatedReaction(
 		() => {
