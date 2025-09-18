@@ -12,6 +12,7 @@ import useBudgetManager from '@/src/hooks/useBudgetManager';
 import NoItemNotice from '@/src/components/reusables/no-items-notice';
 import BudgetBigTotals from '@/src/components/budgets/budget-big-totals';
 import TransactionCard from '@/src/components/reusables/transaction-card';
+import { groupedTransactionsByDate } from '@/utils/group-transactions';
 
 export default function BudgetDetail() {
 	const theme = useTheme();
@@ -85,24 +86,36 @@ export default function BudgetDetail() {
 		);
 	}, [transactions]);
 
+	const renderTransactionGroup = useCallback(
+		({ item }: any) => (
+			<View style={styles.transactionListContainer}>
+				<Text style={styles.transactionListTitle} variant="bodySmall">
+					{item.created_date}
+				</Text>
+				<View style={{ gap: 2 }}>
+					{item.transactions.map((data: any, index: number) => (
+						<TransactionCard
+							key={data.transaction.id}
+							data={data}
+							showDate={false}
+							position={getCardPosition(index, item.transactions.length)}
+						/>
+					))}
+				</View>
+			</View>
+		),
+		[]
+	);
+
 	return (
 		<FlatList
 			keyboardShouldPersistTaps="handled"
 			showsVerticalScrollIndicator={false}
 			contentContainerStyle={{ paddingBottom: 180, gap: 2 }}
-			data={transactions}
+			data={groupedTransactionsByDate(transactions as any, 'MMM D, YYYY')}
 			ListHeaderComponent={renderHeader}
 			ListEmptyComponent={<NoItemNotice />}
-			renderItem={({ item, index }) => (
-				<View style={{ paddingHorizontal: 16 }}>
-					<TransactionCard
-						showDate
-						data={item as any}
-						position={getCardPosition(index, transactions.length)}
-						key={item.account.id}
-					/>
-				</View>
-			)}
+			renderItem={renderTransactionGroup}
 		/>
 	);
 }
@@ -206,6 +219,20 @@ const styles = StyleSheet.create({
 	},
 	inputLabel: {
 		fontFamily: 'Manrope-Regular',
+	},
+	transactionListTitle: {
+		fontFamily: 'Manrope-Light',
+		opacity: 0.7,
+	},
+	transactionsTitle: {
+		fontFamily: 'Manrope-Regular',
+		marginTop: 16,
+		marginBottom: 4,
+	},
+	transactionListContainer: {
+		paddingHorizontal: 16,
+		paddingBottom: 12,
+		gap: 8,
 	},
 });
 
