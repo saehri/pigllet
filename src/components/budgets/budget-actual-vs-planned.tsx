@@ -1,5 +1,5 @@
+import { memo, useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { memo, useCallback, useMemo } from 'react';
 import { BarChart } from 'react-native-gifted-charts';
 import { Surface, Text, useTheme } from 'react-native-paper';
 
@@ -8,7 +8,7 @@ import moment from 'moment';
 import * as schema from '@/db/schema';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { useDrizzleDB } from '@/src/hooks/useDrizzleDb';
-import { and, asc, eq, gte, inArray, lte, sql } from 'drizzle-orm';
+import { and, asc, eq, gte, inArray, lte, sql, sum } from 'drizzle-orm';
 
 import { formatCurrencyByCode } from '@/utils/utils';
 import { useCurrencyStyle } from '@/store/useCurrencyStyle';
@@ -24,49 +24,36 @@ type Props = {
 
 function BudgetActualVSPlanned({ budgets, selectedDate }: Props) {
 	const drizzleDb = useDrizzleDB();
-
-	const budgetIds = budgets.map((b) => b.budget.category_id).sort();
-
-	const startOfMonth = useMemo(
-		() => moment(selectedDate).startOf('month').format('YYYY-MM-DD'),
-		[selectedDate]
-	);
-	const endOfMonth = useMemo(
-		() => moment(selectedDate).endOf('month').format('YYYY-MM-DD'),
-		[selectedDate]
+	const budgetIds = useMemo(
+		() => budgets.map((b) => b.budget.category_id).sort(),
+		[budgets.length]
 	);
 
-	const getActualSpending = useCallback(() => {
-		return drizzleDb
-			.select({
-				amount: sql<number>`
-        COALESCE(
-          SUM(
-            CASE 
-              WHEN ${schema.transactions.type} = 'expense' 
-              THEN ${schema.transactions.amount} 
-              ELSE 0 
-            END
-          ),
-          0
-        )
-      `,
-			})
-			.from(schema.budgets)
-			.leftJoin(
-				schema.transactions,
-				and(
-					eq(schema.budgets.category_id, schema.transactions.category_id),
-					gte(sql`DATE(${schema.transactions.created_at})`, startOfMonth),
-					lte(sql`DATE(${schema.transactions.created_at})`, endOfMonth)
-				)
+	const startOfMonth = moment(selectedDate)
+		.startOf('month')
+		.format('YYYY-MM-DD');
+	const endOfMonth = moment(selectedDate).endOf('month').format('YYYY-MM-DD');
+
+	const getActualSpending = drizzleDb
+		.select({ amount: sum(schema.transactions.amount) })
+		.from(schema.transactions)
+		.where(
+			and(
+				eq(schema.transactions.type, 'expense'),
+				inArray(schema.transactions.category_id, budgetIds),
+				eq(schema.budgets.category_id, schema.transactions.category_id),
+				gte(sql`DATE(${schema.transactions.created_at})`, startOfMonth),
+				lte(sql`DATE(${schema.transactions.created_at})`, endOfMonth)
 			)
-			.where(inArray(schema.budgets.category_id, budgetIds))
-			.groupBy(schema.budgets.category_id)
-			.orderBy(asc(schema.budgets.category_id));
-	}, [budgetIds, selectedDate]);
+		)
+		.leftJoin(
+			schema.budgets,
+			eq(schema.budgets.category_id, schema.transactions.category_id)
+		)
+		.groupBy(schema.budgets.id)
+		.orderBy(asc(schema.budgets.category_id));
 
-	const { data: actualSpending } = useLiveQuery(getActualSpending(), [
+	const { data: actualSpending } = useLiveQuery(getActualSpending, [
 		budgetIds,
 		selectedDate,
 	]);
@@ -119,7 +106,7 @@ function BudgetActualVSPlanned({ budgets, selectedDate }: Props) {
 
 type RenderChart = {
 	budgets: Budget[];
-	actualSpending: { amount: number }[];
+	actualSpending: { amount: string | null }[];
 	budgetIds: number[];
 };
 
@@ -150,7 +137,7 @@ function RenderChart({ budgets, actualSpending, budgetIds }: RenderChart) {
 				topLabelComponent: () => (
 					<Text style={{ color: 'gray', fontSize: 9 }}>
 						{formatCurrencyByCode(
-							sortedBudgets[i]?.budget.limit ?? 0,
+							sortedBudgets[i].budget.limit ?? 0,
 							currentCurrencyCode,
 							showFraction,
 							accountingStyle,
@@ -160,13 +147,13 @@ function RenderChart({ budgets, actualSpending, budgetIds }: RenderChart) {
 				),
 			});
 			data.push({
-				value: actualSpending[i]?.amount ?? 0,
+				value: Number(actualSpending[i]?.amount) ?? 0,
 				frontColor: '#ED6665',
 				spacing: 22,
 				topLabelComponent: () => (
 					<Text style={{ color: 'gray', fontSize: 9 }}>
 						{formatCurrencyByCode(
-							actualSpending[i]?.amount ?? 0,
+							Number(actualSpending[i]?.amount) ?? 0,
 							currentCurrencyCode,
 							showFraction,
 							accountingStyle,
@@ -178,7 +165,14 @@ function RenderChart({ budgets, actualSpending, budgetIds }: RenderChart) {
 		}
 
 		return data;
-	}, [budgetIds, actualSpending, currentCurrencyCode]);
+	}, [
+		budgetIds,
+		actualSpending,
+		currentCurrencyCode,
+		showFraction,
+		accountingStyle,
+		showSuffix,
+	]);
 
 	return (
 		<BarChart
@@ -190,6 +184,8 @@ function RenderChart({ budgets, actualSpending, budgetIds }: RenderChart) {
 				color: theme.colors.onSurface,
 				fontSize: 9,
 			}}
+			height={105}
+			stepHeight={10}
 			hideYAxisText
 			showScrollIndicator={false}
 			spacing={0}
@@ -205,7 +201,7 @@ function RenderChart({ budgets, actualSpending, budgetIds }: RenderChart) {
 const styles = StyleSheet.create({
 	container: {
 		padding: 16,
-		borderRadius: 16,
+		borderRadius: 24,
 		paddingLeft: 3,
 		gap: 16,
 	},

@@ -193,6 +193,7 @@ function TransactionCard({ data, position, showDate, pressable }: Props) {
 									size={14}
 									strokeWidth={1}
 									color={theme.colors.onBackground}
+									style={{ opacity: 0.8 }}
 								/>
 							)}
 
@@ -201,6 +202,7 @@ function TransactionCard({ data, position, showDate, pressable }: Props) {
 									size={14}
 									strokeWidth={1}
 									color={theme.colors.onBackground}
+									style={{ opacity: 0.8 }}
 								/>
 							)}
 
@@ -209,6 +211,7 @@ function TransactionCard({ data, position, showDate, pressable }: Props) {
 									size={14}
 									strokeWidth={1}
 									color={theme.colors.onBackground}
+									style={{ opacity: 0.8 }}
 								/>
 							)}
 

@@ -13,6 +13,8 @@ interface loadTransactionsData {
 	transactionType?: 'income' | 'expense' | 'transfer';
 	accountId?: number;
 	categoryId?: number;
+	limit?: number;
+	relatedAccountId?: number;
 }
 
 export const loadTransactionsData = ({
@@ -21,6 +23,8 @@ export const loadTransactionsData = ({
 	transactionType,
 	accountId,
 	categoryId,
+	limit,
+	relatedAccountId,
 }: loadTransactionsData) => {
 	const relatedAccountsAlias = alias(schema.accounts, 'related_accounts'); // Alias for related accounts
 	const drizzleDb = useDrizzleDB();
@@ -57,7 +61,7 @@ export const loadTransactionsData = ({
 		);
 	}
 
-	return drizzleDb
+	const query = drizzleDb
 		.select({
 			transaction: {
 				id: schema.transactions.id,
@@ -110,6 +114,8 @@ export const loadTransactionsData = ({
 			eq(schema.transactions.related_account_id, relatedAccountsAlias.id)
 		)
 		.orderBy(desc(schema.transactions.created_at));
+
+	return limit ? query.limit(limit) : query;
 };
 
 export const useRecordExpenseForm = () => {

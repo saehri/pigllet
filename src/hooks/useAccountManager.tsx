@@ -19,10 +19,12 @@ interface useAccountManager {
 	accountHolder: string;
 	accountNumber: string;
 	cardColor: string;
+	isDefault: number;
 	setAccountName: Dispatch<SetStateAction<string>>;
 	setAccountHolder: Dispatch<SetStateAction<string>>;
 	setAccountNumber: Dispatch<SetStateAction<string>>;
 	setCardColor: Dispatch<SetStateAction<string>>;
+	setIsDefault: Dispatch<SetStateAction<number>>;
 }
 
 export default function useAccountManager(): useAccountManager {
@@ -38,6 +40,7 @@ export default function useAccountManager(): useAccountManager {
 	const [accountHolder, setAccountHolder] = useState<string>('');
 	const [accountNumber, setAccountNumber] = useState<string>('');
 	const [cardColor, setCardColor] = useState<string>('#EA1C7E');
+	const [isDefault, setIsDefault] = useState<number>(0);
 
 	// ---------------------------- form functions
 	async function createMainAccount() {
@@ -245,10 +248,12 @@ export default function useAccountManager(): useAccountManager {
 		editAccount,
 		loading,
 		cardColor,
+		isDefault,
 		accountName,
 		accountHolder,
 		accountNumber,
 		setCardColor,
+		setIsDefault,
 		setAccountName,
 		setAccountHolder,
 		setAccountNumber,

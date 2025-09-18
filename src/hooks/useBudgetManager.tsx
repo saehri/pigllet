@@ -1,5 +1,5 @@
 import { ToastAndroid } from 'react-native';
-import { SetStateAction, useEffect, useState } from 'react';
+import { SetStateAction, useState } from 'react';
 
 import * as schema from '@/db/schema';
 import { asc, eq, sql } from 'drizzle-orm';
@@ -83,9 +83,9 @@ export default function useBudgetManager(): UseBudgetManagerTypes {
 
 			const payload: schema.Budget = {
 				category_id: Number(budgetCategory.id),
-				created_at: moment(new Date()).format('YYYY-MM-DD'),
+				created_at: moment(budgetPeriod).format('YYYY-MM-DD'),
 				limit: Number(budgetLimit),
-				period: moment(new Date()).format('YYYY-MM-DD'),
+				period: moment(budgetPeriod).format('YYYY-MM-DD'),
 			};
 
 			await drizzleDb

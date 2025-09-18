@@ -126,6 +126,7 @@ function TransactionList({ accountId }: TransactionList) {
 	const { data: transactions } = useLiveQuery(
 		loadTransactionsData({
 			accountId,
+			limit: 10,
 		}),
 		[accountId]
 	);
@@ -187,7 +188,7 @@ function TransactionList({ accountId }: TransactionList) {
 									marginTop: 12,
 								}}
 							>
-								Transactions
+								Recent activity
 							</Text>
 
 							<TransactionHeaderBar />

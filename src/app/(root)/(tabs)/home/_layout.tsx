@@ -27,7 +27,7 @@ export default function HomeScreenLayout() {
 				screenOptions={{
 					tabBarActiveTintColor: theme.colors.onPrimary,
 					tabBarActiveBackgroundColor: theme.colors.primary,
-					tabBarInactiveBackgroundColor: theme.colors.elevation.level5,
+					tabBarInactiveBackgroundColor: theme.colors.elevation.level3,
 					tabBarInactiveTintColor: theme.colors.onSurface,
 					tabBarStyle: {
 						position: 'absolute',

@@ -1,4 +1,4 @@
-import { memo, useCallback } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Surface, Text, useTheme } from 'react-native-paper';
 
@@ -47,7 +47,7 @@ function BudgetBigTotals({
 		.format('YYYY-MM-DD');
 	const endOfMonth = moment(selectedDate).endOf('month').format('YYYY-MM-DD');
 
-	const getTotalBudget = useCallback(() => {
+	const getTotalBudget = useMemo(() => {
 		return drizzleDb
 			.select({
 				value: sql<number>`SUM(${schema.budgets.limit})`,
@@ -62,7 +62,7 @@ function BudgetBigTotals({
 			.groupBy(sql<string>`strftime('%Y-%m', ${schema.budgets.created_at})`);
 	}, [selectedDate, budgetIds]);
 
-	const getTotalSpent = useCallback(() => {
+	const getTotalSpent = useMemo(() => {
 		return drizzleDb
 			.select({
 				value: sql<number>`COALESCE(SUM(CASE WHEN ${schema.transactions.type} = 'expense' THEN ${schema.transactions.amount} ELSE 0 END), 0)`,
@@ -76,83 +76,131 @@ function BudgetBigTotals({
 			);
 	}, [selectedDate, budgetIds]);
 
-	const { data: totalLimit } = useLiveQuery(getTotalBudget(), [selectedDate]);
-	const { data: spent } = useLiveQuery(getTotalSpent(), [selectedDate]);
+	const getTotalIncome = useMemo(() => {
+		return drizzleDb
+			.select({
+				value: sql<number>`COALESCE(SUM(CASE WHEN ${schema.transactions.type} = 'income' THEN ${schema.transactions.amount} ELSE 0 END), 0)`,
+			})
+			.from(schema.transactions)
+			.where(
+				and(
+					sql`DATE(${schema.transactions.created_at}) BETWEEN DATE(${startOfMonth}) AND DATE(${endOfMonth})`
+				)
+			);
+	}, [selectedDate, budgetIds]);
+
+	const { data: totalLimit } = useLiveQuery(getTotalBudget, [selectedDate]);
+	const { data: spent } = useLiveQuery(getTotalSpent, [selectedDate]);
+	const { data: income } = useLiveQuery(getTotalIncome, [selectedDate]);
 
 	const totalBudget = totalLimit[0]?.value ?? 0;
 	const totalSpent = spent[0]?.value ?? 0;
+	const totalIncome = income[0]?.value ?? 0;
+	const potentialMoneySaved = totalIncome - totalBudget;
 	const remaining = totalBudget - totalSpent;
 	const remainingPercentage =
 		totalBudget !== 0 ? 100 - (totalSpent / totalBudget) * 100 : 0;
 
 	return (
 		<>
-			<Surface
-				mode="flat"
-				elevation={2}
-				style={[
-					styles.container,
-					{ borderBottomLeftRadius: 6, borderBottomRightRadius: 6 },
-				]}
-			>
-				<View style={styles.column}>
+			<View style={styles.row}>
+				<Surface mode="flat" elevation={2} style={styles.container}>
 					<Text
 						variant="labelSmall"
 						style={{ fontFamily: 'Manrope-Regular', opacity: 0.7 }}
 					>
-						Total budget this month
+						Planned budget*
 					</Text>
 
 					<Text variant="titleMedium" style={{ fontFamily: 'Manrope-Medium' }}>
 						{formatToCurrency(totalBudget)}
 					</Text>
-				</View>
 
-				<View style={styles.column}>
+					<Text
+						variant="labelSmall"
+						style={{
+							fontFamily: 'Manrope-Regular',
+							opacity: 0.7,
+							fontSize: 9,
+						}}
+					>
+						*Sum of all budget
+					</Text>
+				</Surface>
+
+				<Surface mode="flat" elevation={2} style={styles.container}>
 					<Text
 						variant="labelSmall"
 						style={{ fontFamily: 'Manrope-Regular', opacity: 0.7 }}
 					>
-						Total spent this month
+						Projected savings*
+					</Text>
+
+					<Text variant="titleMedium" style={{ fontFamily: 'Manrope-Medium' }}>
+						{formatToCurrency(potentialMoneySaved)}
+					</Text>
+
+					<Text
+						variant="labelSmall"
+						style={{
+							fontFamily: 'Manrope-Regular',
+							opacity: 0.7,
+							fontSize: 9,
+						}}
+					>
+						*Income - Total budget
+					</Text>
+				</Surface>
+			</View>
+
+			<View style={styles.row}>
+				<Surface mode="flat" elevation={2} style={styles.container}>
+					<Text
+						variant="labelSmall"
+						style={{ fontFamily: 'Manrope-Regular', opacity: 0.7 }}
+					>
+						This month's income
+					</Text>
+
+					<Text variant="titleMedium" style={{ fontFamily: 'Manrope-Medium' }}>
+						{formatToCurrency(totalIncome)}
+					</Text>
+				</Surface>
+
+				<Surface mode="flat" elevation={2} style={styles.container}>
+					<Text
+						variant="labelSmall"
+						style={{ fontFamily: 'Manrope-Regular', opacity: 0.7 }}
+					>
+						Total spending
 					</Text>
 
 					<Text variant="titleMedium" style={{ fontFamily: 'Manrope-Medium' }}>
 						{formatToCurrency(totalSpent)}
 					</Text>
-				</View>
-			</Surface>
+				</Surface>
+			</View>
 
-			<Surface
-				mode="flat"
-				elevation={2}
-				style={[
-					styles.container,
-					{
-						borderTopLeftRadius: 6,
-						borderTopRightRadius: 6,
-						alignItems: 'flex-end',
-					},
-				]}
-			>
-				<View style={styles.column}>
+			<View style={styles.row}>
+				<Surface mode="flat" elevation={2} style={styles.container}>
 					<Text
 						variant="labelSmall"
 						style={{ fontFamily: 'Manrope-Regular', opacity: 0.7 }}
 					>
-						Remaining budget (amnt)
+						Left to spend (amnt)
 					</Text>
 
 					<Text variant="titleMedium" style={{ fontFamily: 'Manrope-Medium' }}>
 						{formatToCurrency(remaining)}
 					</Text>
-				</View>
+				</Surface>
 
-				<View style={styles.column}>
+				<Surface mode="flat" elevation={2} style={styles.container}>
 					<Text
 						variant="labelSmall"
 						style={{ fontFamily: 'Manrope-Regular', opacity: 0.7 }}
 					>
-						Remaining budget (%)
+						Left to spend (%)
 					</Text>
 
 					<View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
@@ -166,7 +214,10 @@ function BudgetBigTotals({
 						<View
 							style={[
 								styles.progressContainer,
-								{ backgroundColor: theme.colors.primaryContainer },
+								{
+									backgroundColor: theme.colors.background,
+									borderColor: theme.colors.elevation.level3,
+								},
 							]}
 						>
 							<View
@@ -174,31 +225,35 @@ function BudgetBigTotals({
 									height: '100%',
 									width: `${remainingPercentage}%`,
 									backgroundColor: theme.colors.primary,
+									borderRadius: 6,
 								}}
 							></View>
 						</View>
 					</View>
-				</View>
-			</Surface>
+				</Surface>
+			</View>
 		</>
 	);
 }
 
 const styles = StyleSheet.create({
-	container: {
-		padding: 16,
-		paddingHorizontal: 18,
-		gap: 16,
+	row: {
+		flex: 1,
 		flexDirection: 'row',
-		justifyContent: 'space-between',
-		borderRadius: 16,
+		gap: 4,
 	},
-	column: { flex: 1 },
+	container: {
+		padding: 8,
+		paddingHorizontal: 18,
+		borderRadius: 24,
+		flex: 1,
+	},
 	progressContainer: {
 		flex: 1,
 		height: 18,
 		borderRadius: 6,
 		top: 1,
+		borderWidth: 1,
 		overflow: 'hidden',
 	},
 });

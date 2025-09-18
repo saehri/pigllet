@@ -30,11 +30,13 @@ export default function EditAccountScreen() {
 		accountName,
 		accountNumber,
 		cardColor,
+		isDefault,
 		loading,
 		setAccountHolder,
 		setAccountName,
 		setAccountNumber,
 		setCardColor,
+		setIsDefault,
 	} = useAccountManager();
 
 	useEffect(() => {
@@ -44,12 +46,14 @@ export default function EditAccountScreen() {
 				.from(schema.accounts)
 				.where(eq(schema.accounts.id, Number(selectedAccountId)));
 
-			const { card_color, card_holder, card_name, card_number } = accounts[0];
+			const { card_color, card_holder, card_name, card_number, is_default } =
+				accounts[0];
 
 			setAccountHolder(card_holder);
 			setAccountName(card_name);
 			setCardColor(card_color);
 			setAccountNumber(card_number!);
+			setIsDefault(Number(is_default));
 		}
 
 		load();
@@ -79,7 +83,7 @@ export default function EditAccountScreen() {
 			>
 				<AccountCardPreview
 					animationKey={cardColor}
-					isDefault
+					isDefault={Boolean(isDefault)}
 					accountName={accountName}
 					accountHolder={accountHolder}
 					cardColor={cardColor}
@@ -157,6 +161,20 @@ export default function EditAccountScreen() {
 				>
 					Save changes
 				</Button>
+
+				<Text
+					style={{
+						opacity: 0.7,
+						fontFamily: 'Manrope-Regular',
+						textAlign: 'center',
+						maxWidth: 250,
+						alignSelf: 'center',
+					}}
+					variant="labelSmall"
+				>
+					You might need to close and reopen the app for the change to take
+					effect.
+				</Text>
 			</View>
 		</ScrollView>
 	);

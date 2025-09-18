@@ -1,10 +1,7 @@
-import { SearchX } from 'lucide-react-native';
 import { View } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { Text } from 'react-native-paper';
 
 export default function NoItemNotice() {
-	const theme = useTheme();
-
 	return (
 		<View
 			style={{
@@ -13,7 +10,7 @@ export default function NoItemNotice() {
 				justifyContent: 'center',
 				gap: 8,
 				flex: 1,
-				minHeight: 200,
+				minHeight: 105,
 			}}
 		>
 			<Text
