@@ -10,9 +10,9 @@ import { loadTransactionsData } from '@/src/hooks/useTransactionsManager';
 
 import useBudgetManager from '@/src/hooks/useBudgetManager';
 import NoItemNotice from '@/src/components/reusables/no-items-notice';
-import BudgetBigTotals from '@/src/components/budgets/budget-big-totals';
 import TransactionCard from '@/src/components/reusables/transaction-card';
 import { groupedTransactionsByDate } from '@/utils/group-transactions';
+import BudgetBigTotalsDetail from '@/src/components/budgets/budget-big-totals-detail';
 
 export default function BudgetDetail() {
 	const theme = useTheme();
@@ -71,7 +71,7 @@ export default function BudgetDetail() {
 					</Text>
 
 					<View style={styles.statsContainer}>
-						<BudgetBigTotals
+						<BudgetBigTotalsDetail
 							budgetIds={[Number(budgetId)]}
 							selectedDate={budgetPeriod}
 							transactionCategoryIds={[Number(categoryId)]}

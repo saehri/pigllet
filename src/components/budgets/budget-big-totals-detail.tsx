@@ -18,7 +18,7 @@ type Props = {
 	transactionCategoryIds: number[];
 };
 
-function BudgetBigTotals({
+function BudgetBigTotalsDetail({
 	selectedDate,
 	budgetIds,
 	transactionCategoryIds,
@@ -76,27 +76,12 @@ function BudgetBigTotals({
 			);
 	}, [selectedDate, budgetIds]);
 
-	const getTotalIncome = useMemo(() => {
-		return drizzleDb
-			.select({
-				value: sql<number>`COALESCE(SUM(CASE WHEN ${schema.transactions.type} = 'income' THEN ${schema.transactions.amount} ELSE 0 END), 0)`,
-			})
-			.from(schema.transactions)
-			.where(
-				and(
-					sql`DATE(${schema.transactions.created_at}) BETWEEN DATE(${startOfMonth}) AND DATE(${endOfMonth})`
-				)
-			);
-	}, [selectedDate, budgetIds]);
-
 	const { data: totalLimit } = useLiveQuery(getTotalBudget, [selectedDate]);
 	const { data: spent } = useLiveQuery(getTotalSpent, [selectedDate]);
-	const { data: income } = useLiveQuery(getTotalIncome, [selectedDate]);
 
 	const totalBudget = totalLimit[0]?.value ?? 0;
 	const totalSpent = spent[0]?.value ?? 0;
-	const totalIncome = income[0]?.value ?? 0;
-	const potentialMoneySaved = totalIncome - totalBudget;
+	const potentialMoneySaved = totalBudget - totalSpent;
 	const remaining = totalBudget - totalSpent;
 	const remainingPercentage =
 		totalBudget !== 0 ? 100 - (totalSpent / totalBudget) * 100 : 0;
@@ -109,25 +94,29 @@ function BudgetBigTotals({
 						variant="labelSmall"
 						style={{ fontFamily: 'Manrope-Regular', opacity: 0.7 }}
 					>
-						Planned budget*
+						Planned budget
 					</Text>
 
 					<Text variant="titleMedium" style={{ fontFamily: 'Manrope-Medium' }}>
 						{formatToCurrency(totalBudget)}
 					</Text>
-
-					<Text
-						variant="labelSmall"
-						style={{
-							fontFamily: 'Manrope-Regular',
-							opacity: 0.7,
-							fontSize: 9,
-						}}
-					>
-						*Sum of all budget
-					</Text>
 				</Surface>
 
+				<Surface mode="flat" elevation={2} style={styles.container}>
+					<Text
+						variant="labelSmall"
+						style={{ fontFamily: 'Manrope-Regular', opacity: 0.7 }}
+					>
+						Total spending
+					</Text>
+
+					<Text variant="titleMedium" style={{ fontFamily: 'Manrope-Medium' }}>
+						{formatToCurrency(totalSpent)}
+					</Text>
+				</Surface>
+			</View>
+
+			<View style={styles.row}>
 				<Surface mode="flat" elevation={2} style={styles.container}>
 					<Text
 						variant="labelSmall"
@@ -148,35 +137,7 @@ function BudgetBigTotals({
 							fontSize: 9,
 						}}
 					>
-						*Income - planned budget
-					</Text>
-				</Surface>
-			</View>
-
-			<View style={styles.row}>
-				<Surface mode="flat" elevation={2} style={styles.container}>
-					<Text
-						variant="labelSmall"
-						style={{ fontFamily: 'Manrope-Regular', opacity: 0.7 }}
-					>
-						This month's income
-					</Text>
-
-					<Text variant="titleMedium" style={{ fontFamily: 'Manrope-Medium' }}>
-						{formatToCurrency(totalIncome)}
-					</Text>
-				</Surface>
-
-				<Surface mode="flat" elevation={2} style={styles.container}>
-					<Text
-						variant="labelSmall"
-						style={{ fontFamily: 'Manrope-Regular', opacity: 0.7 }}
-					>
-						Total spending
-					</Text>
-
-					<Text variant="titleMedium" style={{ fontFamily: 'Manrope-Medium' }}>
-						{formatToCurrency(totalSpent)}
+						*Planned budget - total spending
 					</Text>
 				</Surface>
 			</View>
@@ -236,6 +197,8 @@ function BudgetBigTotals({
 	);
 }
 
+export default memo(BudgetBigTotalsDetail);
+
 const styles = StyleSheet.create({
 	row: {
 		flex: 1,
@@ -257,6 +220,4 @@ const styles = StyleSheet.create({
 		overflow: 'hidden',
 	},
 });
-
-export default memo(BudgetBigTotals);
 

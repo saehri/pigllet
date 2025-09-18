@@ -115,7 +115,7 @@ function DeleteModal({ handleDelete, loading }: DeleteModalProps) {
 
 					<Dialog.Content>
 						<Text variant="bodyLarge" style={{ fontFamily: 'Manrope-Regular' }}>
-							The selected transaction records will be permanently deleted.
+							The selected budget records will be permanently deleted.
 						</Text>
 					</Dialog.Content>
 

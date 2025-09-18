@@ -72,6 +72,7 @@ export default function HomeMonthlyTransactionScreen() {
 					onPrev={() => updateMonth(-1)}
 					selectedDate={selectedDate}
 					setSelectedDate={setSelectedDate}
+					labelStyle="MMMM, YYYY"
 				/>
 
 				<TransactionsSummary selectedDate={selectedDate} range="month" />

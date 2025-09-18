@@ -121,15 +121,10 @@ export default function AverageSpending({ selectedDate, range }: Props) {
 	const spendingPercentage =
 		prev === 0 ? 0 : (averageSpendingDiff / prev) * 100;
 
-	const labelDisplay = () => {
-		if (range === 'week' || range === 'month') return 'Daily average spending';
-		return 'Monthly average spending';
-	};
-
 	return (
 		<Surface mode="flat" elevation={2} style={[styles.chart]}>
 			<Text style={styles.chartTitle} variant="bodyLarge">
-				{labelDisplay()}
+				Average daily spending
 			</Text>
 
 			{averageSpending.length ? (

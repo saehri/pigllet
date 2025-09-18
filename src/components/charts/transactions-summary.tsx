@@ -151,8 +151,8 @@ const styles = StyleSheet.create({
 	},
 	itemContainer: {
 		flexDirection: 'row',
-		paddingVertical: 16,
-		paddingHorizontal: 24,
+		paddingVertical: 12,
+		paddingHorizontal: 20,
 		justifyContent: 'space-between',
 		borderRadius: 1000,
 	},
