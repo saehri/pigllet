@@ -1,11 +1,12 @@
-{
+const is_dev = process.env.APP_VARIANT === 'development';
+
+export default {
 	"expo": {
-		"name": "Pigllet",
+		"name": is_dev ? "Pigllet (Dev)" : "Pigllet",
 		"slug": "pigllet-mobile",
 		"version": "2.2.0",
 		"orientation": "portrait",
 		"description": "Personal finance tracker with budgeting, transactions, and insights",
-		"privacy": "public",
 		"owner": "bahree36",
 		"scheme": "myapp",
 		"userInterfaceStyle": "automatic",
@@ -16,7 +17,6 @@
 			"androidMode": "collapse",
 			"androidCollapsedTitle": "#{unread_notifications} new notifications"
 		},
-		"softwareKeyboardLayoutMode": "pan",
 		"ios": {
 			"supportsTablet": false,
 			"icon": "./assets/icons/ios-light.png"
@@ -27,7 +27,7 @@
 				"foregroundImage": "./assets/icons/adaptive-icon.png",
 				"backgroundImage": "./assets/icons/adaptive-icon-background.png"
 			},
-			"package": "com.bahree36.piglletmobile"
+			"package": is_dev ? "com.bahree36.piglletmobile.dev" : "com.bahree36.piglletmobile"
 		},
 		"web": {
 			"bundler": "metro",
