@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { IconButton, useTheme } from "react-native-paper";
+import { IconButton, Text, useTheme } from "react-native-paper";
 import { Tabs, usePathname, useRouter } from "expo-router";
 import {
   BanknoteIcon,
@@ -33,12 +33,8 @@ export default function Layout() {
   }, [pathname]);
 
   return (
-    <View style={{ flex: 1, paddingTop: 8 }}>
-      <AppHeader
-        isOverlayActive={Boolean(isOverlayActive)}
-        budgetOverlayActive={Boolean(selectedBudgets.length)}
-        transactionOverlayActive={Boolean(selectedTransactions.length)}
-      />
+    <View style={{ flex: 1 }}>
+      <AppHeader />
 
       <Tabs
         initialRouteName="home"
@@ -157,24 +153,9 @@ export default function Layout() {
   );
 }
 
-type AppHeaderProps = {
-  isOverlayActive: boolean;
-  budgetOverlayActive: boolean;
-  transactionOverlayActive: boolean;
-};
-
-function AppHeader({
-  budgetOverlayActive,
-  isOverlayActive,
-  transactionOverlayActive,
-}: AppHeaderProps) {
+function AppHeader() {
   const theme = useTheme();
   const router = useRouter();
-
-  const headerOverlayContent = () => {
-    if (budgetOverlayActive) return <BudgetTransactionHeaderBar />;
-    if (transactionOverlayActive) return <TransactionHeaderBar />;
-  };
 
   return (
     <View
@@ -184,33 +165,24 @@ function AppHeader({
         paddingHorizontal: 16,
         alignItems: "center",
         flexDirection: "row",
+        justifyContent: "space-between",
       }}
     >
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-          flex: 1,
-          opacity: isOverlayActive ? 0 : 1,
-        }}
-      >
-        <AccountMiniViewer />
+      <Text style={{ fontFamily: "BHG" }} variant="headlineSmall">
+        Pigllet
+      </Text>
 
-        <IconButton
-          mode="contained-tonal"
-          onPress={() => router.push("/(root)/settings")}
-          icon={(props) => (
-            <SettingsIcon
-              strokeWidth={1.5}
-              color={props.color}
-              size={props.size}
-            />
-          )}
-        />
-      </View>
-
-      {headerOverlayContent()}
+      <IconButton
+        mode="contained-tonal"
+        onPress={() => router.push("/(root)/settings")}
+        icon={(props) => (
+          <SettingsIcon
+            strokeWidth={1.5}
+            color={props.color}
+            size={props.size}
+          />
+        )}
+      />
     </View>
   );
 }

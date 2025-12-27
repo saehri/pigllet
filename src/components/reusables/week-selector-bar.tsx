@@ -1,7 +1,14 @@
 import { memo, useState } from "react";
 import moment from "moment";
 import { View } from "react-native";
-import { Button, Dialog, Portal, Text, useTheme } from "react-native-paper";
+import {
+  Button,
+  Dialog,
+  IconButton,
+  Portal,
+  Text,
+  useTheme,
+} from "react-native-paper";
 import {
   CheckIcon,
   ChevronLeftIcon,
@@ -19,9 +26,9 @@ type Props = {
 };
 
 const timePeriods: { label: string; value: string }[] = [
-  { label: "Weekly", value: "week" },
-  { label: "Monthly", value: "month" },
-  { label: "Yearly", value: "year" },
+  { label: "Week", value: "week" },
+  { label: "Month", value: "month" },
+  { label: "Year", value: "year" },
 ];
 
 function WeekSelectorBar({ selectedDate, onNext, onPrev }: Props) {
@@ -34,51 +41,59 @@ function WeekSelectorBar({ selectedDate, onNext, onPrev }: Props) {
       style={{
         flexDirection: "row",
         justifyContent: "space-between",
+        flex: 1,
+        alignContent: "center",
         alignItems: "center",
         height: 40,
-        marginBottom: 16,
-        flex: 1,
       }}
     >
-      <Text style={{ fontFamily: "Manrope-Medium", fontSize: 18 }}>
+      <Text
+        style={{
+          fontFamily: "GSans",
+          lineHeight: 19,
+          fontSize: 19,
+          marginTop: 8,
+        }}
+      >
         {dateDisplay}
       </Text>
 
       <View style={{ flexDirection: "row", gap: 2 }}>
         <TimePeriodSelector />
 
-        <Button
-          compact
-          contentStyle={{ height: 40 }}
-          style={{
-            borderTopRightRadius: 6,
-            borderBottomRightRadius: 6,
-            backgroundColor: theme.colors.elevation.level2,
-          }}
+        <IconButton
+          mode="contained-tonal"
           onPress={onPrev}
-        >
-          <ChevronLeftIcon
-            size={20}
-            strokeWidth={1.5}
-            color={theme.colors.onSurface}
-          />
-        </Button>
-        <Button
-          compact
-          contentStyle={{ height: 40 }}
+          icon={(props) => (
+            <ChevronLeftIcon
+              size={props.size}
+              strokeWidth={1.5}
+              color={props.color}
+            />
+          )}
           style={{
-            borderTopLeftRadius: 6,
-            borderBottomLeftRadius: 6,
-            backgroundColor: theme.colors.elevation.level2,
+            margin: 0,
+            borderTopRightRadius: 4,
+            borderBottomRightRadius: 4,
           }}
+        />
+
+        <IconButton
+          mode="contained-tonal"
           onPress={onNext}
-        >
-          <ChevronRightIcon
-            size={20}
-            strokeWidth={1.5}
-            color={theme.colors.onSurface}
-          />
-        </Button>
+          icon={(props) => (
+            <ChevronRightIcon
+              size={props.size}
+              strokeWidth={1.5}
+              color={props.color}
+            />
+          )}
+          style={{
+            margin: 0,
+            borderTopLeftRadius: 4,
+            borderBottomLeftRadius: 4,
+          }}
+        />
       </View>
     </View>
   );
@@ -127,14 +142,12 @@ function TimePeriodSelector() {
         compact
         onPress={openDialog}
         contentStyle={{
-          height: 40,
           flexDirection: "row-reverse",
           paddingHorizontal: 4,
         }}
-        mode="contained"
+        mode="contained-tonal"
         labelStyle={{
-          color: theme.colors.onSurface,
-          fontFamily: "Manrope-Regular",
+          fontFamily: "GSans",
         }}
         icon={(props) => (
           <SlidersHorizontalIcon
@@ -144,7 +157,7 @@ function TimePeriodSelector() {
           />
         )}
       >
-        Weekly
+        Week
       </Button>
     </>
   );

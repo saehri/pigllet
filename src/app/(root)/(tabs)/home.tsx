@@ -1,62 +1,40 @@
-import moment from "moment";
 import { useRouter } from "expo-router";
-import { useCallback, useState } from "react";
-import { useLiveQuery } from "drizzle-orm/expo-sqlite";
-import { FAB, Text, useTheme } from "react-native-paper";
-import { FlatList, StyleSheet, View } from "react-native";
+import { ScrollView } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { useCallback, useMemo, useState } from "react";
+import { ChevronRightIcon } from "lucide-react-native";
+import { Button, FAB, Text, useTheme } from "react-native-paper";
 import Animated, { FadeInDown, FadeOutDown } from "react-native-reanimated";
 
 import useScrollDirection from "@/src/hooks/useScrollDirection";
+import { useAccountStore } from "@/store/useAccountStore";
+import { useTransactionStore } from "@/store/useTransactionStore";
 import { fastSpatialEasing, getCardPosition } from "@/utils/utils";
 import { groupedTransactionsByDate } from "@/utils/group-transactions";
-import { loadTransactionsData } from "@/src/hooks/useTransactionsManager";
 
 import NoItemNotice from "@/src/components/reusables/no-items-notice";
 import TransactionCard from "@/src/components/reusables/transaction-card";
-import WeekSelectorBar from "@/src/components/reusables/week-selector-bar";
-import HomeHeaderContainer from "@/src/components/home/home-header-container";
-import TransactionsSummary from "@/src/components/charts/transactions-summary";
 
 export default function WeekTransactionScreen() {
   const theme = useTheme();
   const router = useRouter();
+  const { accounts } = useAccountStore();
+  const { transactions } = useTransactionStore();
   const { direction, handleScroll } = useScrollDirection();
 
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const groupedData = useMemo(() => {
+    if (!transactions?.length) return [];
 
-  const { data: transactions } = useLiveQuery(
-    loadTransactionsData({ date: selectedDate, range: "week" }),
-    [selectedDate],
-  );
+    return groupedTransactionsByDate(transactions as any, "MMM D, YYYY");
+  }, [transactions]); // Only recalculates when the 'transactions' array changes
 
-  const updateWeek = useCallback((offset: number) => {
-    setSelectedDate((prev) => {
-      return moment(prev)
-        .startOf("week") // Monday
-        .add(offset, "weeks") // move weeks
-        .toDate();
-    });
-  }, []);
+  const renderTransactionGroup = () => {
+    if (!groupedData.length) {
+      return <NoItemNotice />;
+    }
 
-  const renderHeader = useCallback(() => {
-    return (
-      <HomeHeaderContainer>
-        <WeekSelectorBar
-          onNext={() => updateWeek(1)}
-          onPrev={() => updateWeek(-1)}
-          selectedDate={selectedDate}
-        />
-        {/* <TransactionsSummary range="week" selectedDate={selectedDate} /> */}
-        <Text variant="titleLarge" style={styles.transactionsTitle}>
-          Transactions
-        </Text>
-      </HomeHeaderContainer>
-    );
-  }, [selectedDate, updateWeek]);
-
-  const renderTransactionGroup = useCallback(
-    ({ item }: any) => (
-      <View style={styles.transactionListContainer}>
+    return groupedData.map((item) => (
+      <View style={styles.transactionListContainer} key={item.created_date}>
         <Text style={styles.transactionListTitle} variant="bodySmall">
           {item.created_date}
         </Text>
@@ -71,9 +49,8 @@ export default function WeekTransactionScreen() {
           ))}
         </View>
       </View>
-    ),
-    [],
-  );
+    ));
+  };
 
   const renderFab = useCallback(() => {
     if (direction === "up")
@@ -98,16 +75,53 @@ export default function WeekTransactionScreen() {
 
   return (
     <>
-      <FlatList
-        onScroll={handleScroll}
-        ListHeaderComponent={renderHeader}
-        style={{ backgroundColor: theme.colors.background }}
-        contentContainerStyle={{ paddingBottom: transactions.length ? 70 : 0 }}
-        ListEmptyComponent={<NoItemNotice />}
+      <ScrollView
         showsVerticalScrollIndicator={false}
-        data={groupedTransactionsByDate(transactions as any, "MMM D, YYYY")}
-        renderItem={renderTransactionGroup}
-      />
+        style={{ flex: 1 }}
+        contentContainerStyle={{ flex: 1 }}
+        onScroll={handleScroll}
+      >
+        <View
+          style={{
+            padding: 16,
+            paddingTop: 0,
+            backgroundColor: theme.colors.elevation.level3,
+            flex: 1,
+            borderTopRightRadius: 32,
+            borderTopLeftRadius: 32,
+          }}
+        >
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <Text variant="titleLarge" style={styles.transactionsTitle}>
+              Transactions
+            </Text>
+
+            <Button
+              compact
+              mode="text"
+              icon={(props) => (
+                <ChevronRightIcon
+                  size={props.size}
+                  color={props.color}
+                  strokeWidth={1.5}
+                />
+              )}
+              labelStyle={{ fontFamily: "GSans" }}
+              contentStyle={{ flexDirection: "row-reverse" }}
+            >
+              More
+            </Button>
+          </View>
+
+          {renderTransactionGroup()}
+        </View>
+      </ScrollView>
 
       {renderFab()}
     </>
@@ -116,13 +130,13 @@ export default function WeekTransactionScreen() {
 
 const styles = StyleSheet.create({
   transactionListTitle: {
-    fontFamily: "Manrope-Light",
+    fontFamily: "GSans",
     opacity: 0.7,
+    marginBottom: 4,
   },
   transactionsTitle: {
-    fontFamily: "Manrope-Regular",
-    marginTop: 16,
-    marginBottom: 4,
+    fontFamily: "GSans",
+    marginVertical: 16,
   },
   transactionListContainer: {
     paddingHorizontal: 16,
