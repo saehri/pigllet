@@ -98,4 +98,6 @@ export function formatCurrencyByCode(
   }).format(value);
 }
 
+export const cardColors = ["#EA1C7E", "#ecb201ff", "#1ab3b3ff"];
+
 export const fastSpatialEasing: any = Easing.bezier(0.42, 1.67, 0.21, 0.9);

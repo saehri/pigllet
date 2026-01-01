@@ -63,14 +63,6 @@ export default function RootLayout() {
 
   // 1. Load Fonts
   const [fontsLoaded, fontError] = useFonts({
-    "Manrope-Bold": require("@/assets/fonts/Manrope-Bold.ttf"),
-    "Manrope-ExtraBold": require("@/assets/fonts/Manrope-ExtraBold.ttf"),
-    "Manrope-ExtraLight": require("@/assets/fonts/Manrope-ExtraLight.ttf"),
-    "Manrope-Light": require("@/assets/fonts/Manrope-Light.ttf"),
-    "Manrope-Medium": require("@/assets/fonts/Manrope-Medium.ttf"),
-    "Manrope-Regular": require("@/assets/fonts/Manrope-Regular.ttf"),
-    "Manrope-SemiBold": require("@/assets/fonts/Manrope-SemiBold.ttf"),
-    BHG: require("@/assets/fonts/BBHHegarty-Regular.ttf"),
     GSans: require("@/assets/fonts/GSans-Variable.ttf"),
   });
 

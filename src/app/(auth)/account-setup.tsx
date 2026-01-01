@@ -8,6 +8,7 @@ import {
 import moment from "moment";
 import { useState } from "react";
 import { useRouter } from "expo-router";
+import { cardColors } from "@/utils/utils";
 import { Button, Text, useTheme } from "react-native-paper";
 
 import { useAccountStore } from "@/store/useAccountStore";
@@ -17,14 +18,12 @@ import ColorPicker from "@/src/components/forms/color-picker";
 import CustomTextInput from "@/src/components/forms/custom-text-input";
 import AccountCardPreview from "@/src/components/reusables/account-card-preview";
 
-const cardColors = ["#EA1C7E", "#ecb201ff", "#1ab3b3ff"];
-
 export default function MainAccountSetupScreen() {
   const theme = useTheme();
   const router = useRouter();
 
   const { setFirstTimer } = useUserFirstTimeStore();
-  const { isLoading, createMainAccount } = useAccountStore();
+  const { isLoading, createAccount } = useAccountStore();
 
   const [accountName, setAccountName] = useState("");
   const [accountHolder, setAccountHolder] = useState("");
@@ -33,7 +32,7 @@ export default function MainAccountSetupScreen() {
 
   async function submit() {
     try {
-      await createMainAccount({
+      await createAccount({
         balance: 0,
         card_color: cardColor,
         card_holder: accountHolder.trim(),
